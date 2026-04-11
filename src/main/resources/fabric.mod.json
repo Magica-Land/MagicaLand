@@ -4,7 +4,10 @@
   "version": "${version}",
   "name": "MagicaLand",
   "description": "",
-  "authors": [],
+  "authors": [
+    "JessDaodao",
+    "MayHooves"
+  ],
   "contact": {},
   "license": "MIT",
   "icon": "assets/magicaland/icon.png",
