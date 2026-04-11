@@ -1,0 +1,11 @@
+{
+  "key.magicaland.config": "Open Config Menu",
+  "category.magicaland.keys": "MagicaLand",
+  "text.magicaland.config.replace_model.on": "Replace Default Player Model: ON",
+  "text.magicaland.config.replace_model.off": "Replace Default Player Model: OFF",
+  "text.magicaland.config.button.done": "Done",
+  "text.magicaland.console.title": "MagicaLand Configuration",
+  "text.magicaland.console.tab.settings": "Settings",
+  "text.magicaland.console.tab.about": "About",
+  "text.magicaland.console.about.description": "Placeholder description"
+}

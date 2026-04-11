@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "magicaland",
+  "version": "${version}",
+  "name": "MagicaLand",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/magicaland/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "top.csituka.magicaland.client.DataGenerator"
+    ],
+    "client": [
+      "top.csituka.magicaland.client.Client"
+    ],
+    "main": [
+      "top.csituka.magicaland.magicaland"
+    ],
+    "modmenu": [
+      "top.csituka.magicaland.client.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "magicaland.mixins.json",
+    {
+      "config": "magicaland.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
