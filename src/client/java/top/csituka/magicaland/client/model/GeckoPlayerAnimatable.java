@@ -31,6 +31,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     private static final RawAnimation BLINK_ANIM = RawAnimation.begin().thenLoop("blink_parallel");
     private static final RawAnimation EAR_ANIM = RawAnimation.begin().thenLoop("ear_parallel");
     private static final RawAnimation TAIL_ANIM = RawAnimation.begin().thenLoop("tail_parallel");
+    private static final RawAnimation ATTACKED_ANIM = RawAnimation.begin().thenPlay("attacked");
 
     private static final RawAnimation FALL_TRANSFER_ANIM = RawAnimation.begin().thenPlay("fall_transfer")
             .thenLoop("fall");
@@ -61,14 +62,17 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
-        controllers.add(new AnimationController<>(this, "blink_controller", 0, this::blinkPredicate));
-        controllers.add(new AnimationController<>(this, "ear_controller", 0, this::earPredicate));
-        controllers.add(new AnimationController<>(this, "tail_controller", 0, this::tailPredicate));
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new AnimationController<>(this, "blink_controller", 5, this::blinkPredicate));
+        controllers.add(new AnimationController<>(this, "ear_controller", 5, this::earPredicate));
+        controllers.add(new AnimationController<>(this, "tail_controller", 5, this::tailPredicate));
     }
 
     private boolean isIdle(AnimationState<GeckoPlayerAnimatable> state) {
         if (player == null)
+            return false;
+
+        if (player.hurtTime > 0)
             return false;
 
         PlayerFallState fallState = fallStates.computeIfAbsent(player.getUuid(), k -> new PlayerFallState());
@@ -119,6 +123,11 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     private PlayState predicate(AnimationState<GeckoPlayerAnimatable> state) {
         if (player == null)
             return PlayState.STOP;
+
+        if (player.hurtTime > 0) {
+            state.getController().setAnimation(ATTACKED_ANIM);
+            return PlayState.CONTINUE;
+        }
 
         PlayerFallState fallState = fallStates.computeIfAbsent(player.getUuid(), k -> new PlayerFallState());
         boolean isOnGround = player.isOnGround();
