@@ -17,7 +17,7 @@
       "top.csituka.magicaland.client.Client"
     ],
     "main": [
-      "top.csituka.magicaland.magicaland"
+      "top.csituka.magicaland.MagicaLand"
     ],
     "modmenu": [
       "top.csituka.magicaland.client.ModMenuIntegration"
