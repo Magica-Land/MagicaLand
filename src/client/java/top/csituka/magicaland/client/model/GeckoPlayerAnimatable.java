@@ -62,10 +62,10 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
-        controllers.add(new AnimationController<>(this, "blink_controller", 5, this::blinkPredicate));
-        controllers.add(new AnimationController<>(this, "ear_controller", 5, this::earPredicate));
-        controllers.add(new AnimationController<>(this, "tail_controller", 5, this::tailPredicate));
+        controllers.add(new AnimationController<>(this, "controller", 3, this::predicate));
+        controllers.add(new AnimationController<>(this, "blink_controller", 3, this::blinkPredicate));
+        controllers.add(new AnimationController<>(this, "ear_controller", 3, this::earPredicate));
+        controllers.add(new AnimationController<>(this, "tail_controller", 3, this::tailPredicate));
     }
 
     private boolean isIdle(AnimationState<GeckoPlayerAnimatable> state) {
