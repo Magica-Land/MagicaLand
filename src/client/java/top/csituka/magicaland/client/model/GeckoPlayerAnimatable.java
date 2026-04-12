@@ -37,6 +37,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     private static final RawAnimation BOAT_ANIM = RawAnimation.begin().thenLoop("boat");
     private static final RawAnimation RIDE_ANIM = RawAnimation.begin().thenLoop("ride");
     private static final RawAnimation RIDE_PIG_ANIM = RawAnimation.begin().thenLoop("ride_pig");
+    private static final RawAnimation SIT_ANIM = RawAnimation.begin().thenLoop("sit");
 
     private static final RawAnimation FALL_TRANSFER_ANIM = RawAnimation.begin().thenPlay("fall_transfer")
             .thenLoop("fall");
@@ -150,10 +151,12 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             net.minecraft.entity.Entity vehicle = player.getVehicle();
             if (vehicle instanceof net.minecraft.entity.passive.PigEntity) {
                 state.getController().setAnimation(RIDE_PIG_ANIM);
-            } else if (vehicle instanceof net.minecraft.entity.vehicle.BoatEntity) {
+            } else if (vehicle instanceof net.minecraft.entity.vehicle.BoatEntity || vehicle instanceof net.minecraft.entity.vehicle.AbstractMinecartEntity) {
                 state.getController().setAnimation(BOAT_ANIM);
-            } else {
+            } else if (vehicle instanceof net.minecraft.entity.passive.AbstractHorseEntity) {
                 state.getController().setAnimation(RIDE_ANIM);
+            } else {
+                state.getController().setAnimation(SIT_ANIM);
             }
             return PlayState.CONTINUE;
         }

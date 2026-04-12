@@ -68,7 +68,7 @@ public abstract class PlayerEntityRendererMixin
                     yOffset -= 0.08;
                 } else if (vehicle instanceof net.minecraft.entity.passive.AbstractHorseEntity) {
                     yOffset -= 0.06;
-                } else if (vehicle instanceof net.minecraft.entity.vehicle.BoatEntity) {
+                } else if (vehicle instanceof net.minecraft.entity.vehicle.BoatEntity || vehicle instanceof net.minecraft.entity.vehicle.AbstractMinecartEntity) {
                     yOffset += 0.4;
                 }
             }
