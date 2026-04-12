@@ -12,6 +12,9 @@ import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.model.GeckoPlayerModel;
 import org.spongepowered.asm.mixin.Mixin;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.UUID;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,6 +30,9 @@ public abstract class PlayerEntityRendererMixin
     private GeckoPlayerAnimatable ponyAnimatable;
     @Unique
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
+
+    @Unique
+    private static final Map<UUID, Float> flightRolls = new HashMap<>();
 
     public PlayerEntityRendererMixin(EntityRendererFactory.Context ctx,
             PlayerEntityModel<AbstractClientPlayerEntity> model, float shadowRadius) {
@@ -59,6 +65,25 @@ public abstract class PlayerEntityRendererMixin
             } else {
                 float bodyYaw = net.minecraft.util.math.MathHelper.lerpAngleDegrees(g, player.prevBodyYaw, player.bodyYaw);
                 matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - bodyYaw));
+
+                if (player.getAbilities().flying && player.isSprinting()) {
+                    float yawDelta = net.minecraft.util.math.MathHelper.wrapDegrees(player.bodyYaw - player.prevBodyYaw);
+                    float targetRoll = net.minecraft.util.math.MathHelper.clamp(yawDelta * -2.5F, -30.0F, 30.0F);
+                    float currentRoll = flightRolls.getOrDefault(player.getUuid(), 0.0F);
+                    currentRoll = net.minecraft.util.math.MathHelper.lerp(0.15F, currentRoll, targetRoll);
+                    flightRolls.put(player.getUuid(), currentRoll);
+                    
+                    matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(currentRoll));
+                } else if (flightRolls.containsKey(player.getUuid())) {
+                    float currentRoll = flightRolls.get(player.getUuid());
+                    currentRoll = net.minecraft.util.math.MathHelper.lerp(0.15F, currentRoll, 0.0F);
+                    if (Math.abs(currentRoll) < 0.1F) {
+                        flightRolls.remove(player.getUuid());
+                    } else {
+                        flightRolls.put(player.getUuid(), currentRoll);
+                        matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(currentRoll));
+                    }
+                }
             }
 
             double yOffset = -0.5;
