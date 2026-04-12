@@ -47,8 +47,19 @@ public abstract class PlayerEntityRendererMixin
 
             matrixStack.push();
 
-            float bodyYaw = net.minecraft.util.math.MathHelper.lerpAngleDegrees(g, player.prevBodyYaw, player.bodyYaw);
-            matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - bodyYaw));
+            if (player.isSleeping()) {
+                net.minecraft.util.math.Direction direction = player.getSleepingDirection();
+                if (direction != null) {
+                    float sleepYaw = direction.asRotation();
+                    matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(270.0F - sleepYaw));
+                    matrixStack.translate(-1.7, -0.1, 0.0);
+                    matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(270.0F));
+                    matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(90.0F));
+                }
+            } else {
+                float bodyYaw = net.minecraft.util.math.MathHelper.lerpAngleDegrees(g, player.prevBodyYaw, player.bodyYaw);
+                matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - bodyYaw));
+            }
 
             matrixStack.translate(-0.5, -0.5, -0.5);
 

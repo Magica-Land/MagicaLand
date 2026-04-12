@@ -33,6 +33,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     private static final RawAnimation TAIL_ANIM = RawAnimation.begin().thenLoop("tail_parallel");
     private static final RawAnimation ATTACKED_ANIM = RawAnimation.begin().thenPlay("attacked");
     private static final RawAnimation JUMP_ANIM = RawAnimation.begin().thenPlayAndHold("jump1");
+    private static final RawAnimation SLEEP_ANIM = RawAnimation.begin().thenLoop("sleep");
 
     private static final RawAnimation FALL_TRANSFER_ANIM = RawAnimation.begin().thenPlay("fall_transfer")
             .thenLoop("fall");
@@ -75,6 +76,9 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             return false;
 
         if (player.hurtTime > 0)
+            return false;
+
+        if (player.isSleeping())
             return false;
 
         PlayerFallState fallState = fallStates.computeIfAbsent(player.getUuid(), k -> new PlayerFallState());
@@ -128,6 +132,11 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
 
         if (player.hurtTime > 0) {
             state.getController().setAnimation(ATTACKED_ANIM);
+            return PlayState.CONTINUE;
+        }
+
+        if (player.isSleeping()) {
+            state.getController().setAnimation(SLEEP_ANIM);
             return PlayState.CONTINUE;
         }
 

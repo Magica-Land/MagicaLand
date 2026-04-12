@@ -43,7 +43,7 @@ public class TabButtonWidget extends PressableWidget {
         int textX = this.getX() + 8;
         if (this.icon != null && !this.icon.isEmpty()) {
             context.drawItem(this.icon, this.getX() + 8, this.getY() + (this.height - 16) / 2);
-            textX = this.getX() + 33;
+            textX = this.getX() + 30;
         }
 
         context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
