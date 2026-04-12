@@ -13,7 +13,10 @@ public class SettingsTab implements TabContent {
         Config config = Config.getInstance();
         int buttonWidth = Math.min(250, width - 20);
         int buttonX = x + (width - buttonWidth) / 2;
-        screen.addConsoleWidget(new CustomButtonWidget(buttonX, y + 60, buttonWidth, 20,
+        int currentY = y + 60;
+        int buttonSpacing = 24;
+
+        screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
                 Text.translatable(config.replacePlayerModel ? "text.magicaland.config.replace_model.on"
                         : "text.magicaland.config.replace_model.off"),
                 false,
@@ -23,6 +26,31 @@ public class SettingsTab implements TabContent {
                     button.setMessage(
                             Text.translatable(config.replacePlayerModel ? "text.magicaland.config.replace_model.on"
                                     : "text.magicaland.config.replace_model.off"));
+                }));
+        
+        currentY += buttonSpacing;
+
+        screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
+                Text.literal("开关: ON"),
+                false,
+                button -> {
+                    if (button.getMessage().getString().endsWith("ON")) {
+                        button.setMessage(Text.literal("开关: OFF"));
+                    } else {
+                        button.setMessage(Text.literal("开关: ON"));
+                    }
+                }));
+        
+        currentY += buttonSpacing;
+
+        screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
+                Text.literal("Placeholder Setting 2: Medium"),
+                false,
+                button -> {
+                    String msg = button.getMessage().getString();
+                    if (msg.endsWith("Low")) button.setMessage(Text.literal("Placeholder Setting 2: Medium"));
+                    else if (msg.endsWith("Medium")) button.setMessage(Text.literal("Placeholder Setting 2: High"));
+                    else button.setMessage(Text.literal("Placeholder Setting 2: Low"));
                 }));
     }
 

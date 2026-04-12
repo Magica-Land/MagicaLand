@@ -4,26 +4,38 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import top.csituka.magicaland.client.gui.widget.CustomButtonWidget;
+import top.csituka.magicaland.client.gui.widget.TabButtonWidget;
 import top.csituka.magicaland.client.gui.tab.TabContent;
+import top.csituka.magicaland.client.gui.tab.TabAnimator;
 import top.csituka.magicaland.client.gui.tab.SettingsTab;
 import top.csituka.magicaland.client.gui.tab.AboutTab;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConsoleScreen extends Screen {
     private final Screen parent;
     private Tab currentTab = Tab.SETTINGS;
     private String modVersion = "Unknown";
+    private float indicatorY = -1;
+    private float targetIndicatorY = -1;
+
+    private final TabAnimator tabAnimator = new TabAnimator();
 
     public enum Tab {
-        SETTINGS("text.magicaland.console.tab.settings", new SettingsTab()),
-        ABOUT("text.magicaland.console.tab.about", new AboutTab());
+        SETTINGS("text.magicaland.console.tab.settings", new SettingsTab(), new ItemStack(Items.REPEATER)),
+        ABOUT("text.magicaland.console.tab.about", new AboutTab(), new ItemStack(Items.WRITABLE_BOOK));
 
         private final String translationKey;
         private final TabContent content;
+        private final ItemStack icon;
 
-        Tab(String translationKey, TabContent content) {
+        Tab(String translationKey, TabContent content, ItemStack icon) {
             this.translationKey = translationKey;
             this.content = content;
+            this.icon = icon;
         }
 
         public Text getText() {
@@ -32,6 +44,10 @@ public class ConsoleScreen extends Screen {
 
         public TabContent getContent() {
             return content;
+        }
+
+        public ItemStack getIcon() {
+            return icon;
         }
     }
 
@@ -62,14 +78,35 @@ public class ConsoleScreen extends Screen {
 
         for (Tab tab : Tab.values()) {
             boolean isSelected = (this.currentTab == tab);
-            CustomButtonWidget tabButton = new CustomButtonWidget(padding, y, leftWidth - padding * 2, tabHeight,
-                    tab.getText(), isSelected, button -> {
-                        this.currentTab = tab;
-                        this.clearChildren();
-                        this.init();
+            final int currentY = y;
+            TabButtonWidget tabButton = new TabButtonWidget(padding, y, leftWidth - padding * 2, tabHeight,
+                    tab.getText(), isSelected, tab.getIcon(), button -> {
+                        if (this.currentTab != tab) {
+                            List<net.minecraft.client.gui.widget.ClickableWidget> oldWidgets = new ArrayList<>();
+                            for (net.minecraft.client.gui.Element element : this.children()) {
+                                if (element instanceof net.minecraft.client.gui.widget.ClickableWidget widget) {
+                                    if (widget.getX() >= leftWidth) {
+                                        oldWidgets.add(widget);
+                                    }
+                                }
+                            }
+
+                            this.tabAnimator.startTransition(this.currentTab, tab, this.height, oldWidgets);
+                            this.currentTab = tab;
+
+                            this.clearChildren();
+                            this.init();
+                        }
                     });
-            tabButton.active = !isSelected;
             this.addDrawableChild(tabButton);
+
+            if (isSelected) {
+                this.targetIndicatorY = y;
+                if (this.indicatorY == -1) {
+                    this.indicatorY = y;
+                }
+            }
+
             y += tabHeight + tabSpacing;
         }
 
@@ -102,10 +139,48 @@ public class ConsoleScreen extends Screen {
                 0xAAAAAA);
         context.getMatrices().pop();
 
+        if (this.indicatorY != -1) {
+            float diff = this.targetIndicatorY - this.indicatorY;
+            if (Math.abs(diff) > 0.5f) {
+                this.indicatorY += diff * 0.3f;
+            } else {
+                this.indicatorY = this.targetIndicatorY;
+            }
+            context.fill(padding, (int) this.indicatorY, padding + 2, (int) this.indicatorY + 20, 0xFFFFFFFF);
+        }
+
+        this.tabAnimator.update();
+
+        context.enableScissor(rightX, 0, this.width, this.height);
+
+        this.tabAnimator.render(context, rightX, rightWidth, this.height, padding, delta);
+
+        context.getMatrices().push();
+        context.getMatrices().translate(0, this.tabAnimator.getContentOffset(), 0);
+
         this.currentTab.getContent().render(context, rightX, 0, rightWidth - padding, this.height, mouseX, mouseY,
                 delta);
 
-        super.render(context, mouseX, mouseY, delta);
+        context.getMatrices().pop();
+
+        context.disableScissor();
+
+        for (net.minecraft.client.gui.Element element : this.children()) {
+            if (element instanceof net.minecraft.client.gui.widget.ClickableWidget widget) {
+                if (widget.getX() < leftWidth) {
+                    widget.render(context, mouseX, mouseY, delta);
+                } else {
+                    if (this.tabAnimator.isAnimating()) {
+                        context.getMatrices().push();
+                        context.getMatrices().translate(0, this.tabAnimator.getContentOffset(), 0);
+                        widget.render(context, -1, -1, delta);
+                        context.getMatrices().pop();
+                    } else {
+                        widget.render(context, mouseX, mouseY, delta);
+                    }
+                }
+            }
+        }
     }
 
     @Override
