@@ -32,9 +32,9 @@ This is a passion project first and foremost. While future monetization is uncer
 If you are interested in contributing or collaborating:  
 1. Fork this repo and submit development via Pull Requests.
 2. Share ideas, report bugs, or suggest features in Issues / Discussions.
-3. For closer collaboration, you can reach out us on Discord or email:
-**Discord ID: mayhooves**
-**email: w2026010008@outlook.com**
+3. Looking for closer collaboration? Please feel free for contact us via Discord or email：
+- **Discord ID: mayhooves**
+- **email: w2026010008@outlook.com**
 
 
 We are really hoping for a wonderful, friendly and enjoyable journey together!
