@@ -146,7 +146,7 @@ public class ConsoleScreen extends Screen {
             } else {
                 this.indicatorY = this.targetIndicatorY;
             }
-            context.fill(padding, (int) this.indicatorY, padding + 2, (int) this.indicatorY + 20, 0xFFFFFFFF);
+            context.fill(padding, Math.round(this.indicatorY), padding + 2, Math.round(this.indicatorY) + 20, 0xFFFFFFFF);
         }
 
         this.tabAnimator.update();

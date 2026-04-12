@@ -85,7 +85,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             return false;
         if (player.isTouchingWater() && moving)
             return false;
-        if (!isOnGround && !player.isTouchingWater() && !player.getAbilities().flying && (player.getVelocity().y > 0 || player.fallDistance > 0.1f))
+        if (!isOnGround && !player.isTouchingWater() && !player.getAbilities().flying && (player.getVelocity().y > 0 || player.fallDistance > 0.1f || (fallState.jumpStartTime != -1 && player.age - fallState.jumpStartTime < 10)))
             return false;
         if (fallState.landed)
             return false;
@@ -185,14 +185,12 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             if (player.getVelocity().y > 0) {
                 state.getController().setAnimation(JUMP_ANIM);
                 return PlayState.CONTINUE;
-            } else if (player.fallDistance > 0.1f) {
-                if (fallState.fallStartTime != -1 && (player.age - fallState.fallStartTime > 10)) {
-                    state.getController().setAnimation(FALL_TRANSFER_ANIM);
-                    return PlayState.CONTINUE;
-                } else if (fallState.jumpStartTime != -1 && (player.age - fallState.jumpStartTime < 10)) {
-                    state.getController().setAnimation(JUMP_ANIM);
-                    return PlayState.CONTINUE;
-                }
+            } else if (fallState.jumpStartTime != -1 && (player.age - fallState.jumpStartTime < 5)) {
+                state.getController().setAnimation(JUMP_ANIM);
+                return PlayState.CONTINUE;
+            } else if (player.fallDistance > 0.1f && fallState.fallStartTime != -1 && (player.age - fallState.fallStartTime > 5)) {
+                state.getController().setAnimation(FALL_TRANSFER_ANIM);
+                return PlayState.CONTINUE;
             }
         }
 

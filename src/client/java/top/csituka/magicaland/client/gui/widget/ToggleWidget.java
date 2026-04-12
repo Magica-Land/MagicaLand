@@ -90,9 +90,9 @@ public class ToggleWidget extends PressableWidget {
         int toggleX = this.getX() + this.width - toggleWidth - 3;
         int toggleY = this.getY() + (this.height - toggleHeight) / 2;
 
-        int r = (int) (117 + (76 - 117) * this.togglePosition);
-        int g = (int) (117 + (175 - 117) * this.togglePosition);
-        int b = (int) (117 + (80 - 117) * this.togglePosition);
+        int r = Math.round(117 + (76 - 117) * this.togglePosition);
+        int g = Math.round(117 + (175 - 117) * this.togglePosition);
+        int b = Math.round(117 + (80 - 117) * this.togglePosition);
         int finalBgColor = 0xFF000000 | (r << 16) | (g << 8) | b;
 
         fillRoundedRect(context, toggleX, toggleY, toggleWidth, toggleHeight, finalBgColor);
@@ -101,7 +101,7 @@ public class ToggleWidget extends PressableWidget {
         int knobHeight = 10;
         int knobMinX = toggleX + 2;
         int knobMaxX = toggleX + toggleWidth - knobWidth - 2;
-        int knobX = (int) (knobMinX + (knobMaxX - knobMinX) * this.togglePosition);
+        int knobX = Math.round(knobMinX + (knobMaxX - knobMinX) * this.togglePosition);
         int knobY = toggleY + (toggleHeight - knobHeight) / 2;
 
         fillRoundedRect(context, knobX, knobY, knobWidth, knobHeight, 0xFFFFFFFF);
