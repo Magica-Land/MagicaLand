@@ -32,6 +32,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     private static final RawAnimation EAR_ANIM = RawAnimation.begin().thenLoop("ear_parallel");
     private static final RawAnimation TAIL_ANIM = RawAnimation.begin().thenLoop("tail_parallel");
     private static final RawAnimation ATTACKED_ANIM = RawAnimation.begin().thenPlay("attacked");
+    private static final RawAnimation JUMP_ANIM = RawAnimation.begin().thenPlayAndHold("jump1");
 
     private static final RawAnimation FALL_TRANSFER_ANIM = RawAnimation.begin().thenPlay("fall_transfer")
             .thenLoop("fall");
@@ -42,6 +43,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         float maxFallDistance = 0;
         int fallStartTime = -1;
         int landStartTime = -1;
+        int jumpStartTime = -1;
         boolean landed = false;
         boolean isLarge = false;
         boolean wasOnGround = true;
@@ -83,7 +85,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             return false;
         if (player.isTouchingWater() && moving)
             return false;
-        if (!isOnGround && !player.isTouchingWater() && !player.getAbilities().flying && player.fallDistance > 0.1f)
+        if (!isOnGround && !player.isTouchingWater() && !player.getAbilities().flying && (player.getVelocity().y > 0 || player.fallDistance > 0.1f))
             return false;
         if (fallState.landed)
             return false;
@@ -138,8 +140,12 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             if (player.fallDistance > 0.1f && fallState.fallStartTime == -1) {
                 fallState.fallStartTime = player.age;
             }
+            if (player.getVelocity().y > 0) {
+                fallState.jumpStartTime = player.age;
+            }
         } else {
             fallState.fallStartTime = -1;
+            fallState.jumpStartTime = -1;
         }
 
         if (isOnGround && !fallState.wasOnGround) {
@@ -175,9 +181,19 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             return PlayState.CONTINUE;
         }
 
-        if (!isOnGround && !player.isTouchingWater() && !player.getAbilities().flying && player.fallDistance > 0.1f) {
-            state.getController().setAnimation(FALL_TRANSFER_ANIM);
-            return PlayState.CONTINUE;
+        if (!isOnGround && !player.isTouchingWater() && !player.getAbilities().flying) {
+            if (player.getVelocity().y > 0) {
+                state.getController().setAnimation(JUMP_ANIM);
+                return PlayState.CONTINUE;
+            } else if (player.fallDistance > 0.1f) {
+                if (fallState.fallStartTime != -1 && (player.age - fallState.fallStartTime > 10)) {
+                    state.getController().setAnimation(FALL_TRANSFER_ANIM);
+                    return PlayState.CONTINUE;
+                } else if (fallState.jumpStartTime != -1 && (player.age - fallState.jumpStartTime < 10)) {
+                    state.getController().setAnimation(JUMP_ANIM);
+                    return PlayState.CONTINUE;
+                }
+            }
         }
 
         if (fallState.landed) {
