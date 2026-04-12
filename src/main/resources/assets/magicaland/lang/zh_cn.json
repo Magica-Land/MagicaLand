@@ -1,8 +1,7 @@
 {
   "key.magicaland.config": "打开配置菜单",
   "category.magicaland.keys": "MagicaLand",
-  "text.magicaland.config.replace_model.on": "是否替换玩家默认模型: 开启",
-  "text.magicaland.config.replace_model.off": "是否替换玩家默认模型: 关闭",
+  "text.magicaland.config.replace_model.name": "替换玩家默认模型",
   "text.magicaland.config.button.done": "完成",
   "text.magicaland.console.title": "MagicaLand 配置",
   "text.magicaland.console.tab.settings": "设置",

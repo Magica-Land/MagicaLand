@@ -5,6 +5,7 @@ import net.minecraft.text.Text;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.gui.ConsoleScreen;
 import top.csituka.magicaland.client.gui.widget.CustomButtonWidget;
+import top.csituka.magicaland.client.gui.widget.ToggleWidget;
 
 public class SettingsTab implements TabContent {
 
@@ -16,29 +17,21 @@ public class SettingsTab implements TabContent {
         int currentY = y + 60;
         int buttonSpacing = 24;
 
-        screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
-                Text.translatable(config.replacePlayerModel ? "text.magicaland.config.replace_model.on"
-                        : "text.magicaland.config.replace_model.off"),
-                false,
-                button -> {
-                    config.replacePlayerModel = !config.replacePlayerModel;
+        screen.addConsoleWidget(new ToggleWidget(buttonX, currentY, buttonWidth, 20,
+                Text.translatable("text.magicaland.config.replace_model.name"),
+                config.replacePlayerModel,
+                toggle -> {
+                    config.replacePlayerModel = toggle.getState();
                     Config.save();
-                    button.setMessage(
-                            Text.translatable(config.replacePlayerModel ? "text.magicaland.config.replace_model.on"
-                                    : "text.magicaland.config.replace_model.off"));
                 }));
         
         currentY += buttonSpacing;
 
-        screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
-                Text.literal("占位: ON"),
-                false,
-                button -> {
-                    if (button.getMessage().getString().endsWith("ON")) {
-                        button.setMessage(Text.literal("开关: OFF"));
-                    } else {
-                        button.setMessage(Text.literal("开关: ON"));
-                    }
+        screen.addConsoleWidget(new ToggleWidget(buttonX, currentY, buttonWidth, 20,
+                Text.literal("占位功能"),
+                true,
+                toggle -> {
+                    // 滚木
                 }));
         
         currentY += buttonSpacing;
