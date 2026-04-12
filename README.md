@@ -13,7 +13,7 @@ English | [简体中文](README_ZH.md)
 
 ## Vision
 - Introduce pony characters into Minecraft in a faithful and polished way  
-- Expand the mod with models, textures, animations, and additional mechanics where possible  
+- Expand the mod with models, textures, animations, and additional mechanics where possible
 - Build a project that can be enjoyed, studied, and improved by fans and developers alike  
 
 
@@ -23,7 +23,7 @@ The **artwork and creative assets** are the foundation of this project, but it c
 We’re looking for long-term collaborators who share a love for both ponies and Minecraft, especially those able to help with:
 - Writing and debugging Java code for mod development.
 - Implementing entity behaviors and animation controllers.
-- Designing custom gameplay mechanics to deepen the experience.
+- Implementing a model customization system similar to pony.town.
 
 This is a passion project first and foremost. While future monetization is uncertain, our primary aim is to create something meaningful together. I also hope that through this project we can form genuine friendships, learn from one another, and grow together as creators.  
 
