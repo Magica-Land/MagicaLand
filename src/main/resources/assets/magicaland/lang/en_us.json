@@ -1,7 +1,7 @@
 {
   "key.magicaland.config": "Open Config Menu",
   "category.magicaland.keys": "MagicaLand",
-  "text.magicaland.config.replace_model.name": "Replace Default Player Model",
+  "text.magicaland.config.replace_model.name": "Enable Pony Model",
   "text.magicaland.config.button.done": "Done",
   "text.magicaland.console.title": "MagicaLand Configuration",
   "text.magicaland.console.tab.settings": "Settings",
