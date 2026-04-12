@@ -135,7 +135,7 @@ public class ConsoleScreen extends Screen {
         context.getMatrices().push();
         context.getMatrices().translate(20.0f, 20.0f, 0.0f);
         context.getMatrices().scale(0.5f, 0.5f, 1.0f);
-        context.drawTextWithShadow(this.textRenderer, Text.literal("MagicaLand v" + this.modVersion + " Fabric"), 0, 0,
+        context.drawTextWithShadow(this.textRenderer, Text.literal("MagicaLand v" + this.modVersion + " · Fabric"), 0, 0,
                 0xAAAAAA);
         context.getMatrices().pop();
 
