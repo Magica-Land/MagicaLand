@@ -129,15 +129,14 @@ public class ConsoleScreen extends Screen {
         int padding = 10;
         int rightX = leftWidth + padding;
 
-        int titleX = leftWidth + (rightWidth - this.textRenderer.getWidth(this.title)) / 2;
-        context.drawTextWithShadow(this.textRenderer, this.title, titleX, 15, 0xFFFFFF);
-
         context.getMatrices().push();
         context.getMatrices().translate(20.0f, 20.0f, 0.0f);
         context.getMatrices().scale(0.5f, 0.5f, 1.0f);
         context.drawTextWithShadow(this.textRenderer, Text.literal("MagicaLand v" + this.modVersion + " · Fabric"), 0, 0,
                 0xAAAAAA);
         context.getMatrices().pop();
+
+        context.drawTextWithShadow(this.textRenderer, this.title, 20, 28, 0xFFFFFF);
 
         if (this.indicatorY != -1) {
             float diff = this.targetIndicatorY - this.indicatorY;
@@ -151,7 +150,7 @@ public class ConsoleScreen extends Screen {
 
         this.tabAnimator.update();
 
-        int contentTop = 35;
+        int contentTop = 0;
         context.enableScissor(rightX, contentTop, this.width, this.height);
 
         this.tabAnimator.render(context, rightX, rightWidth, this.height, padding, delta);

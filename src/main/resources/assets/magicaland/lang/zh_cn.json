@@ -3,7 +3,7 @@
   "category.magicaland.keys": "MagicaLand",
   "text.magicaland.config.replace_model.name": "启用小马模型",
   "text.magicaland.config.button.done": "完成",
-  "text.magicaland.console.title": "MagicaLand 配置",
+  "text.magicaland.console.title": "配置",
   "text.magicaland.console.tab.settings": "设置",
   "text.magicaland.console.tab.about": "关于",
   "text.magicaland.console.about.description": "占位简介"

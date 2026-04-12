@@ -3,7 +3,7 @@
   "category.magicaland.keys": "MagicaLand",
   "text.magicaland.config.replace_model.name": "Enable Pony Model",
   "text.magicaland.config.button.done": "Done",
-  "text.magicaland.console.title": "MagicaLand Configuration",
+  "text.magicaland.console.title": "Configuration",
   "text.magicaland.console.tab.settings": "Settings",
   "text.magicaland.console.tab.about": "About",
   "text.magicaland.console.about.description": "Placeholder description"
