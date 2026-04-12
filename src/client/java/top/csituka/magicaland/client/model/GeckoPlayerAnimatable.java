@@ -185,10 +185,10 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             if (player.getVelocity().y > 0) {
                 state.getController().setAnimation(JUMP_ANIM);
                 return PlayState.CONTINUE;
-            } else if (fallState.jumpStartTime != -1 && (player.age - fallState.jumpStartTime < 5)) {
+            } else if (fallState.jumpStartTime != -1) {
                 state.getController().setAnimation(JUMP_ANIM);
                 return PlayState.CONTINUE;
-            } else if (player.fallDistance > 0.1f && fallState.fallStartTime != -1 && (player.age - fallState.fallStartTime > 5)) {
+            } else if (player.fallDistance > 0.1f && fallState.fallStartTime != -1) {
                 state.getController().setAnimation(FALL_TRANSFER_ANIM);
                 return PlayState.CONTINUE;
             }
