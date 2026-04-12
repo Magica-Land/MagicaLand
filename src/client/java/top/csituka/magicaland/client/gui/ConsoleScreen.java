@@ -151,7 +151,8 @@ public class ConsoleScreen extends Screen {
 
         this.tabAnimator.update();
 
-        context.enableScissor(rightX, 0, this.width, this.height);
+        int contentTop = 35;
+        context.enableScissor(rightX, contentTop, this.width, this.height);
 
         this.tabAnimator.render(context, rightX, rightWidth, this.height, padding, delta);
 
@@ -163,13 +164,9 @@ public class ConsoleScreen extends Screen {
 
         context.getMatrices().pop();
 
-        context.disableScissor();
-
         for (net.minecraft.client.gui.Element element : this.children()) {
             if (element instanceof net.minecraft.client.gui.widget.ClickableWidget widget) {
-                if (widget.getX() < leftWidth) {
-                    widget.render(context, mouseX, mouseY, delta);
-                } else {
+                if (widget.getX() >= leftWidth) {
                     if (this.tabAnimator.isAnimating()) {
                         context.getMatrices().push();
                         context.getMatrices().translate(0, this.tabAnimator.getContentOffset(), 0);
@@ -178,6 +175,16 @@ public class ConsoleScreen extends Screen {
                     } else {
                         widget.render(context, mouseX, mouseY, delta);
                     }
+                }
+            }
+        }
+
+        context.disableScissor();
+
+        for (net.minecraft.client.gui.Element element : this.children()) {
+            if (element instanceof net.minecraft.client.gui.widget.ClickableWidget widget) {
+                if (widget.getX() < leftWidth) {
+                    widget.render(context, mouseX, mouseY, delta);
                 }
             }
         }

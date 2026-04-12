@@ -31,7 +31,7 @@ public class SettingsTab implements TabContent {
         currentY += buttonSpacing;
 
         screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
-                Text.literal("开关: ON"),
+                Text.literal("占位: ON"),
                 false,
                 button -> {
                     if (button.getMessage().getString().endsWith("ON")) {
@@ -44,13 +44,49 @@ public class SettingsTab implements TabContent {
         currentY += buttonSpacing;
 
         screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
-                Text.literal("Placeholder Setting 2: Medium"),
+                Text.literal("占位: Medium"),
                 false,
                 button -> {
                     String msg = button.getMessage().getString();
-                    if (msg.endsWith("Low")) button.setMessage(Text.literal("Placeholder Setting 2: Medium"));
-                    else if (msg.endsWith("Medium")) button.setMessage(Text.literal("Placeholder Setting 2: High"));
-                    else button.setMessage(Text.literal("Placeholder Setting 2: Low"));
+                    if (msg.endsWith("Low")) button.setMessage(Text.literal("占位: Medium"));
+                    else if (msg.endsWith("Medium")) button.setMessage(Text.literal("占位: High"));
+                    else button.setMessage(Text.literal("占位: Low"));
+                }));
+        
+        currentY += buttonSpacing;
+
+        screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
+                Text.literal("占位: Medium"),
+                false,
+                button -> {
+                    String msg = button.getMessage().getString();
+                    if (msg.endsWith("Low")) button.setMessage(Text.literal("占位: Medium"));
+                    else if (msg.endsWith("Medium")) button.setMessage(Text.literal("占位: High"));
+                    else button.setMessage(Text.literal("占位: Low"));
+                }));
+        
+        currentY += buttonSpacing;
+
+        screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
+                Text.literal("占位: Medium"),
+                false,
+                button -> {
+                    String msg = button.getMessage().getString();
+                    if (msg.endsWith("Low")) button.setMessage(Text.literal("占位: Medium"));
+                    else if (msg.endsWith("Medium")) button.setMessage(Text.literal("占位: High"));
+                    else button.setMessage(Text.literal("占位: Low"));
+                }));
+        
+        currentY += buttonSpacing;
+
+        screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
+                Text.literal("占位: Medium"),
+                false,
+                button -> {
+                    String msg = button.getMessage().getString();
+                    if (msg.endsWith("Low")) button.setMessage(Text.literal("占位: Medium"));
+                    else if (msg.endsWith("Medium")) button.setMessage(Text.literal("占位: High"));
+                    else button.setMessage(Text.literal("占位: Low"));
                 }));
     }
 
