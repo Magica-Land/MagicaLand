@@ -61,7 +61,19 @@ public abstract class PlayerEntityRendererMixin
                 matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - bodyYaw));
             }
 
-            matrixStack.translate(-0.5, -0.5, -0.5);
+            double yOffset = -0.5;
+            if (player.hasVehicle()) {
+                net.minecraft.entity.Entity vehicle = player.getVehicle();
+                if (vehicle instanceof net.minecraft.entity.passive.PigEntity) {
+                    yOffset -= 0.08;
+                } else if (vehicle instanceof net.minecraft.entity.passive.AbstractHorseEntity) {
+                    yOffset -= 0.06;
+                } else if (vehicle instanceof net.minecraft.entity.vehicle.BoatEntity) {
+                    yOffset += 0.4;
+                }
+            }
+
+            matrixStack.translate(-0.5, yOffset, -0.5);
 
             RenderLayer renderLayer = this.ponyRenderer.getRenderType(this.ponyAnimatable,
                     this.ponyRenderer.getTextureLocation(this.ponyAnimatable), vertexConsumerProvider, g);
