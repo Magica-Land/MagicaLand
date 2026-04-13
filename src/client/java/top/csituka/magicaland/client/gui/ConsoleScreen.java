@@ -63,6 +63,10 @@ public class ConsoleScreen extends Screen {
         this.addDrawableChild(widget);
     }
 
+    public <T extends net.minecraft.client.gui.Element & net.minecraft.client.gui.Drawable & net.minecraft.client.gui.Selectable> void addConsoleElement(T element) {
+        this.addDrawableChild(element);
+    }
+
     @Override
     protected void init() {
         super.init();
