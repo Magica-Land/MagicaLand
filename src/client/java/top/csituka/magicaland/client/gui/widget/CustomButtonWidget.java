@@ -58,10 +58,13 @@ public class CustomButtonWidget extends PressableWidget {
             currentAlpha = Math.max(targetAlpha, currentAlpha - 0.05f);
         }
 
-        int alpha = (int) (currentAlpha * 255);
+        int alpha = (int) (currentAlpha * this.alpha * 255);
+        int textAlpha = (int) (Math.max(0.04f, this.alpha) * 255);
         fillRoundedRect(context, this.getX(), this.getY(), this.width, this.height, (alpha << 24) | 0xFFFFFF);
 
-        context.drawCenteredTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
-                this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, 0xFFFFFF);
+        if (this.alpha > 0.05f) {
+            context.drawCenteredTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
+                    this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
+        }
     }
 }

@@ -71,11 +71,14 @@ public class ToggleWidget extends PressableWidget {
             currentAlpha = Math.max(targetAlpha, currentAlpha - 0.05f);
         }
 
-        int alpha = (int) (currentAlpha * 255);
+        int alpha = (int) (currentAlpha * this.alpha * 255);
+        int textAlpha = (int) (Math.max(0.04f, this.alpha) * 255);
         fillRoundedRect(context, this.getX(), this.getY(), this.width, this.height, (alpha << 24) | 0xFFFFFF);
 
-        context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
-                this.getX() + 10, this.getY() + (this.height - 8) / 2, 0xFFFFFF);
+        if (this.alpha > 0.05f) {
+            context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
+                    this.getX() + 10, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
+        }
 
         float targetPosition = this.state ? 1.0f : 0.0f;
         float diff = targetPosition - this.togglePosition;
@@ -93,17 +96,19 @@ public class ToggleWidget extends PressableWidget {
         int r = Math.round(117 + (76 - 117) * this.togglePosition);
         int g = Math.round(117 + (175 - 117) * this.togglePosition);
         int b = Math.round(117 + (80 - 117) * this.togglePosition);
-        int finalBgColor = 0xFF000000 | (r << 16) | (g << 8) | b;
+        int finalBgColor = (textAlpha << 24) | (r << 16) | (g << 8) | b;
 
-        fillRoundedRect(context, toggleX, toggleY, toggleWidth, toggleHeight, finalBgColor);
+        if (this.alpha > 0.05f) {
+            fillRoundedRect(context, toggleX, toggleY, toggleWidth, toggleHeight, finalBgColor);
 
-        int knobWidth = 10;
-        int knobHeight = 10;
-        int knobMinX = toggleX + 2;
-        int knobMaxX = toggleX + toggleWidth - knobWidth - 2;
-        int knobX = Math.round(knobMinX + (knobMaxX - knobMinX) * this.togglePosition);
-        int knobY = toggleY + (toggleHeight - knobHeight) / 2;
+            int knobWidth = 10;
+            int knobHeight = 10;
+            int knobMinX = toggleX + 2;
+            int knobMaxX = toggleX + toggleWidth - knobWidth - 2;
+            int knobX = Math.round(knobMinX + (knobMaxX - knobMinX) * this.togglePosition);
+            int knobY = toggleY + (toggleHeight - knobHeight) / 2;
 
-        fillRoundedRect(context, knobX, knobY, knobWidth, knobHeight, 0xFFFFFFFF);
+            fillRoundedRect(context, knobX, knobY, knobWidth, knobHeight, (textAlpha << 24) | 0xFFFFFF);
+        }
     }
 }
