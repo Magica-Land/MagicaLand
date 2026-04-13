@@ -37,9 +37,8 @@ This is a passion project first and foremost. While future monetization is uncer
 
 ## How to Join
 If you are interested in contributing or collaborating:  
-1. Fork this repo and submit development via Pull Requests.
-2. Share ideas, report bugs, or suggest features in Issues / Discussions.
-3. Looking for closer collaboration? Please feel free for contact us via Discord or email：
+1. Share ideas, report bugs, or suggest features in Issues / Discussions.
+2. Looking for closer collaboration? Please feel free for contact us via Discord or email：
 - **Discord ID: mayhooves**
 - **email: w2026010008@outlook.com**
 
