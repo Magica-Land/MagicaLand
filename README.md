@@ -13,15 +13,14 @@ English | [简体中文](README_ZH.md)
 <center>
     <img src="https://github.com/user-attachments/assets/be96510c-c7bc-45e5-a75e-e2c09c7155fb" 
         width ="50%">
-    <br>
-    How it looks like in the game
+    <img src="https://github.com/user-attachments/assets/9d5d3c8d-fb6e-4066-bb05-3bfdbf14ad2d"
+        width ="50%">
 </center>
 
 ## Vision
 - Introduce pony characters into Minecraft in a faithful and polished way  
 - Expand the mod with models, textures, animations, and additional mechanics where possible
-- Build a project that can be enjoyed, studied, and improved by fans and developers alike  
-
+- Build a project that can be enjoyed, studied, and improved by fans and developers alike
 
 ## Looking for Collaborators
 The **artwork and creative assets** are the foundation of this project, but it cannot be completed without strong programming support. 
