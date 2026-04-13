@@ -5,10 +5,7 @@
 			"loop": true,
 			"animation_length": 2.1667,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -300,13 +297,16 @@
 				"CommonFace": {
 					"scale": 1
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
 					"scale": 0
 				},
 				"RWing01": {
+					"scale": 0
+				},
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -895,10 +895,10 @@
 						}
 					}
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				},
 				"Angry": {
@@ -907,7 +907,7 @@
 				"close": {
 					"scale": 0
 				},
-				"mane03": {
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -1502,10 +1502,10 @@
 				"RightEar": {
 					"rotation": [0, 0, -142.5]
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				},
 				"Angry": {
@@ -1514,7 +1514,7 @@
 				"close": {
 					"scale": 0
 				},
-				"mane03": {
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -1523,10 +1523,7 @@
 			"loop": true,
 			"animation_length": 0.6667,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -2398,7 +2395,7 @@
 				"CommonFace": {
 					"scale": 1
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
@@ -2454,6 +2451,9 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
+				},
+				"Bun": {
+					"scale": 0
 				}
 			}
 		},
@@ -2717,10 +2717,13 @@
 				"Smell": {
 					"scale": 1
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"close": {
+					"scale": 0
+				},
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -2731,22 +2734,6 @@
 			"bones": {
 				"RWing01": {
 					"scale": 0
-				},
-				"RWing02": {
-					"rotation": {
-						"0.0": {
-							"post": [0, 0, -40],
-							"lerp_mode": "catmullrom"
-						},
-						"0.5": {
-							"post": [0, 0, -30],
-							"lerp_mode": "catmullrom"
-						},
-						"1.0": {
-							"post": [0, 0, -40],
-							"lerp_mode": "catmullrom"
-						}
-					}
 				},
 				"LWing02": {
 					"rotation": {
@@ -2764,10 +2751,7 @@
 						}
 					}
 				},
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -3213,7 +3197,7 @@
 				"CommonFace": {
 					"scale": 1
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"Head": {
@@ -3240,6 +3224,25 @@
 				},
 				"LWing01": {
 					"scale": 0
+				},
+				"RWing02": {
+					"rotation": {
+						"0.0": {
+							"post": [0, 0, -40],
+							"lerp_mode": "catmullrom"
+						},
+						"0.5": {
+							"post": [0, 0, -30],
+							"lerp_mode": "catmullrom"
+						},
+						"1.0": {
+							"post": [0, 0, -40],
+							"lerp_mode": "catmullrom"
+						}
+					}
+				},
+				"Bun": {
+					"scale": 0
 				}
 			}
 		},
@@ -3247,10 +3250,7 @@
 			"loop": true,
 			"animation_length": 0.375,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -3958,7 +3958,7 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
@@ -3975,6 +3975,9 @@
 				},
 				"PPTail02": {
 					"rotation": [27.5, 0, 0]
+				},
+				"Bun": {
+					"scale": 0
 				}
 			}
 		},
@@ -3982,10 +3985,7 @@
 			"loop": "hold_on_last_frame",
 			"animation_length": 0.25,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -4136,7 +4136,10 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
+					"scale": 0
+				},
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -4144,10 +4147,7 @@
 		"sneaking": {
 			"loop": true,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"Body": {
@@ -4204,7 +4204,7 @@
 				"CommonFace": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
@@ -4215,6 +4215,9 @@
 				},
 				"RRTail01": {
 					"rotation": [-15, 0, 0]
+				},
+				"Bun": {
+					"scale": 0
 				}
 			}
 		},
@@ -4222,10 +4225,7 @@
 			"loop": true,
 			"animation_length": 1.0417,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"leye": {
@@ -4842,7 +4842,7 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
@@ -4856,6 +4856,9 @@
 				},
 				"Root": {
 					"position": [0, 1, 0]
+				},
+				"Bun": {
+					"scale": 0
 				}
 			}
 		},
@@ -4863,10 +4866,7 @@
 			"loop": true,
 			"animation_length": 0.5833,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -5220,7 +5220,7 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
@@ -5325,6 +5325,9 @@
 				},
 				"molang": {
 					"rotation": ["v.s=32", "v.f=32/72", 0]
+				},
+				"Bun": {
+					"scale": 0
 				}
 			}
 		},
@@ -5834,7 +5837,7 @@
 				"CommonFace": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"close": {
@@ -5846,7 +5849,7 @@
 				"RWing01": {
 					"scale": 0
 				},
-				"mane03": {
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -6108,7 +6111,7 @@
 				"CommonFace": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -6117,8 +6120,8 @@
 				"shut": {
 					"scale": 0
 				},
-				"mane03": {
-					"scale": "-"
+				"Bun": {
+					"scale": 0
 				}
 			}
 		},
@@ -6126,10 +6129,7 @@
 			"loop": true,
 			"animation_length": 0.5417,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -6281,7 +6281,7 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
@@ -6552,10 +6552,10 @@
 						}
 					}
 				},
-				"LeftWing": {
+				"LeftClosedWing": {
 					"scale": 0
 				},
-				"RightWing": {
+				"RightClosedWing": {
 					"scale": 0
 				},
 				"Neck": {
@@ -6604,10 +6604,7 @@
 			"loop": true,
 			"animation_length": 0.55,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -6685,7 +6682,7 @@
 				"CommonFace": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
@@ -6800,10 +6797,10 @@
 						}
 					}
 				},
-				"LeftWing": {
+				"LeftClosedWing": {
 					"scale": 0
 				},
-				"RightWing": {
+				"RightClosedWing": {
 					"scale": 0
 				},
 				"Head": {
@@ -6933,10 +6930,7 @@
 			"loop": "hold_on_last_frame",
 			"animation_length": 0.5,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -7020,7 +7014,7 @@
 				"CommonFace": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 1
 				}
 			}
@@ -7418,7 +7412,7 @@
 						}
 					}
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": {
 						"0.0": {
 							"post": [0, 0, 0],
@@ -7466,7 +7460,7 @@
 						}
 					}
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				}
 			}
@@ -7474,10 +7468,7 @@
 		"ride": {
 			"loop": true,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -7529,7 +7520,7 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"RRTail01": {
@@ -7546,10 +7537,7 @@
 		"ride_pig": {
 			"loop": true,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -7601,7 +7589,7 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"RRTail01": {
@@ -7667,19 +7655,16 @@
 				"Smell": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"RightItem": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
-					"scale": 0
-				},
-				"mane03": {
 					"scale": 0
 				}
 			}
@@ -7736,13 +7721,13 @@
 				"Smell": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"RightItem": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -8030,7 +8015,7 @@
 						"0.375": [1, 1, 1]
 					}
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"close": {
@@ -8132,7 +8117,7 @@
 				"RightItem": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"0.375": [1, 1, 1]
@@ -8142,9 +8127,6 @@
 					"scale": 0
 				},
 				"RWing01": {
-					"scale": 0
-				},
-				"mane03": {
 					"scale": 0
 				}
 			}
@@ -8376,10 +8358,7 @@
 			"loop": true,
 			"animation_length": 0.5417,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -8452,7 +8431,7 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
@@ -8677,10 +8656,7 @@
 			"loop": true,
 			"animation_length": 0.5417,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -8754,7 +8730,7 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
@@ -9172,10 +9148,10 @@
 						}
 					}
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				},
 				"Angry": {
@@ -9218,10 +9194,7 @@
 			"loop": true,
 			"animation_length": 0.5,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -9450,7 +9423,7 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
@@ -9751,10 +9724,7 @@
 			"loop": "hold_on_last_frame",
 			"animation_length": 0.5,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -9790,7 +9760,7 @@
 				"CommonFace": {
 					"scale": 1
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
@@ -9805,10 +9775,7 @@
 			"loop": "hold_on_last_frame",
 			"animation_length": 1,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -10067,7 +10034,7 @@
 				"CommonFace": {
 					"scale": 1
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"LWing01": {
@@ -10397,7 +10364,7 @@
 						"0.375": [1, 1, 1]
 					}
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"close": {
@@ -10499,7 +10466,7 @@
 				"RightItem": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"0.375": [1, 1, 1]
@@ -10627,13 +10594,13 @@
 					},
 					"position": [0.8, -0.5, -0.9]
 				},
-				"LeftWing": {
+				"LeftClosedWing": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"4.0": [0, 0, 0]
 					}
 				},
-				"RightWing": {
+				"RightClosedWing": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"4.0": [0, 0, 0]
@@ -10880,7 +10847,7 @@
 						"5.9167": [0, 0, 0]
 					}
 				},
-				"smile": {
+				"Smeile": {
 					"scale": {
 						"0.0": [1, 1, 1],
 						"2.0417": [1, 1, 1],
@@ -10890,7 +10857,7 @@
 						"5.9167": [1, 1, 1]
 					}
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"4.0": [0, 0, 0]
@@ -11028,7 +10995,7 @@
 						}
 					}
 				},
-				"Mane02": {
+				"AJBackMane01": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"4.0": [0, 0, 0]
