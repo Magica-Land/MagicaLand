@@ -8,7 +8,10 @@
     "JessDaodao",
     "MayHooves"
   ],
-  "contact": {},
+  "contact": {
+    "issues": "https://github.com/Magica-Land/MagicaLand/issues",
+    "source": "https://github.com/Magica-Land/MagicaLand"
+  },
   "license": "MIT",
   "icon": "assets/magicaland/icon.png",
   "environment": "*",
