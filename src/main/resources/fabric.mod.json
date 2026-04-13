@@ -33,6 +33,7 @@
       "environment": "client"
     }
   ],
+  "accessWidener": "magicaland.accesswidener",
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric-api": "*",

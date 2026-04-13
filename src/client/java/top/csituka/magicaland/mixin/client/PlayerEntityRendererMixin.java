@@ -106,8 +106,53 @@ public abstract class PlayerEntityRendererMixin
             this.ponyRenderer.render(matrixStack, this.ponyAnimatable, vertexConsumerProvider, renderLayer,
                     vertexConsumer, i);
 
+            this.renderMagicHeldItem(player, matrixStack, vertexConsumerProvider, i, g);
+
             matrixStack.pop();
             ci.cancel();
+        }
+    }
+
+    @Unique
+    private final top.csituka.magicaland.client.render.GlowingItemRenderer magicItemRenderer = new top.csituka.magicaland.client.render.GlowingItemRenderer();
+
+    @Unique
+    private void renderMagicHeldItem(AbstractClientPlayerEntity player, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta) {
+        net.minecraft.item.ItemStack mainHandStack = player.getMainHandStack();
+        net.minecraft.item.ItemStack offHandStack = player.getOffHandStack();
+
+        if (!mainHandStack.isEmpty()) {
+            matrices.push();
+            matrices.translate(1.2, 1.4, -0.4);
+            
+            int glowColor = 0x8844AAFF;
+            net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance().getItemRenderer();
+            
+            magicItemRenderer.renderItemWithGlow(
+                itemRenderer, player, mainHandStack, 
+                net.minecraft.client.render.model.json.ModelTransformationMode.THIRD_PERSON_RIGHT_HAND, 
+                false, matrices, vertexConsumers, player.getWorld(), 
+                light, net.minecraft.client.render.OverlayTexture.DEFAULT_UV, glowColor, true
+            );
+            
+            matrices.pop();
+        }
+        
+        if (!offHandStack.isEmpty()) {
+            matrices.push();
+            matrices.translate(-0.2, 1.4, -0.4);
+            
+            int glowColor = 0x8844AAFF;
+            net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance().getItemRenderer();
+            
+            magicItemRenderer.renderItemWithGlow(
+                itemRenderer, player, offHandStack, 
+                net.minecraft.client.render.model.json.ModelTransformationMode.THIRD_PERSON_LEFT_HAND, 
+                true, matrices, vertexConsumers, player.getWorld(), 
+                light, net.minecraft.client.render.OverlayTexture.DEFAULT_UV, glowColor, true
+            );
+            
+            matrices.pop();
         }
     }
 
