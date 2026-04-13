@@ -3958,7 +3958,7 @@
 					]
 				},
 				{
-					"name": "TSTail02",
+					"name": "TSTail01",
 					"parent": "TSTail",
 					"pivot": [0, 18, 12],
 					"cubes": [
@@ -4077,8 +4077,8 @@
 					]
 				},
 				{
-					"name": "TSTail03",
-					"parent": "TSTail02",
+					"name": "TSTail02",
+					"parent": "TSTail01",
 					"pivot": [0, 16, 15],
 					"cubes": [
 						{
@@ -4357,7 +4357,7 @@
 					]
 				},
 				{
-					"name": "FSTail1",
+					"name": "FSTail01",
 					"parent": "FSTail",
 					"pivot": [0, 16.7, 12.7],
 					"cubes": [
@@ -4406,8 +4406,8 @@
 					]
 				},
 				{
-					"name": "FSTail2",
-					"parent": "FSTail1",
+					"name": "FSTail02",
+					"parent": "FSTail01",
 					"pivot": [0, 15, 20.1],
 					"cubes": [
 						{
@@ -4455,8 +4455,8 @@
 					]
 				},
 				{
-					"name": "FSTail3",
-					"parent": "FSTail2",
+					"name": "FSTail03",
+					"parent": "FSTail02",
 					"pivot": [0, 2.3, 19.6],
 					"cubes": [
 						{
@@ -4525,7 +4525,7 @@
 					]
 				},
 				{
-					"name": "Tail02",
+					"name": "PPTail01",
 					"parent": "PPTail",
 					"pivot": [0, 19, 11],
 					"rotation": [10, 0, 0],
@@ -4617,8 +4617,8 @@
 					]
 				},
 				{
-					"name": "Tail03",
-					"parent": "Tail02",
+					"name": "PPTail02",
+					"parent": "PPTail01",
 					"pivot": [0, 17, 14],
 					"cubes": [
 						{
@@ -4743,7 +4743,7 @@
 					]
 				},
 				{
-					"name": "Tail5",
+					"name": "AJTail01",
 					"parent": "AJTail",
 					"pivot": [0, 18, 11],
 					"cubes": [
@@ -4792,8 +4792,8 @@
 					]
 				},
 				{
-					"name": "Tail6",
-					"parent": "Tail5",
+					"name": "AJTail02",
+					"parent": "AJTail01",
 					"pivot": [0, 16, 15],
 					"cubes": [
 						{
@@ -5044,7 +5044,7 @@
 					]
 				},
 				{
-					"name": "Tail01",
+					"name": "RRTail01",
 					"parent": "RRTail",
 					"pivot": [0, 16.7, 12.7],
 					"cubes": [
@@ -5065,8 +5065,8 @@
 					]
 				},
 				{
-					"name": "Tail3",
-					"parent": "Tail01",
+					"name": "RRTail02",
+					"parent": "RRTail01",
 					"pivot": [0, 15, 23.1],
 					"cubes": [
 						{
@@ -5100,8 +5100,8 @@
 					]
 				},
 				{
-					"name": "Tail4",
-					"parent": "Tail3",
+					"name": "RRTail03",
+					"parent": "RRTail02",
 					"pivot": [0, 1.3, 17.6],
 					"cubes": [
 						{
@@ -5156,7 +5156,7 @@
 					]
 				},
 				{
-					"name": "Tail7",
+					"name": "RDTail01",
 					"parent": "RDTail",
 					"pivot": [0, 18, 11],
 					"cubes": [
@@ -5345,8 +5345,8 @@
 					]
 				},
 				{
-					"name": "Tail8",
-					"parent": "Tail7",
+					"name": "RDTail02",
+					"parent": "RDTail01",
 					"pivot": [0, 16, 14],
 					"cubes": [
 						{
