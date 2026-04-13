@@ -1,6 +1,6 @@
 <div align="center">
 
-# 魔法大陆 (MagicaLand)  
+# 魔法大陆 (Magical Land)  
 将玩家和生物变成小马
 
 [English](README.md) | 简体中文
