@@ -37,9 +37,8 @@
 
 ## 加入方式
 若你有意参与或协作：  
-1. Fork 本仓库并通过 Pull Request 提交贡献。  
-2. 在 Issues / Discussions 中分享想法、反馈 Bug 或提出功能建议。  
-3. 希望深度合作？可通过以下方式联系我们
+1. 在 Issues / Discussions 中分享想法、反馈 Bug 或提出功能建议。  
+2. 希望深度合作？可通过以下方式联系我们
 - QQ ：2026010008
 - 电子邮件：w2026010008@outlook.com
 - Discord：Mayhooves
