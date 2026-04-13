@@ -53,6 +53,7 @@ public class GlowingItemRenderer {
         );
 
         if (shouldRenderGlow) {
+            int fixedGlowColor = 0xAA00FF;
             matrices.push();
 
             itemRenderer.renderItem(
@@ -61,7 +62,7 @@ public class GlowingItemRenderer {
                 lightUv, OverlayTexture.DEFAULT_UV, seed
             );
 
-            VertexConsumerProvider glowContext = createGlowProvider(glowColor, renderContext);
+            VertexConsumerProvider glowContext = createGlowProvider(fixedGlowColor, renderContext);
 
             matrices.scale(1.1F, 1.1F, 1.1F);
             matrices.translate(0.015F, 0.01F, 0.01F);

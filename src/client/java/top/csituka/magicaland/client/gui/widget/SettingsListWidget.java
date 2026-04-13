@@ -11,6 +11,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Entry> {
+    private long lastInteractionTime = 0;
+    private double lastScrollAmount = 0.0;
+    private long lastRenderTime = 0;
+    private float scrollbarAlpha = 0.0f;
 
     public SettingsListWidget(MinecraftClient minecraftClient, int width, int height, int top, int bottom, int itemHeight) {
         super(minecraftClient, width, height, top, bottom, itemHeight);
@@ -32,15 +36,20 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
         return this.left + this.width - 6;
     }
 
-    private void renderRoundedScrollbar(DrawContext context, int x, int y, int width, int height) {
+    private void renderRoundedScrollbar(DrawContext context, int x, int y, int width, int height, float alpha) {
+        if (alpha <= 0.01f) return;
+        
+        int alphaInt = (int)(alpha * 255.0f);
+        int color = (alphaInt << 24) | 0x00C0C0C0;
+        
         int x1 = x;
         int y1 = y;
         int x2 = x + width;
         int y2 = y + height;
         
-        context.fill(x1 + 1, y1, x2 - 1, y1 + 1, 0xFFC0C0C0);
-        context.fill(x1, y1 + 1, x2, y2 - 1, 0xFFC0C0C0);
-        context.fill(x1 + 1, y2 - 1, x2 - 1, y2, 0xFFC0C0C0);
+        context.fill(x1 + 1, y1, x2 - 1, y1 + 1, color);
+        context.fill(x1, y1 + 1, x2, y2 - 1, color);
+        context.fill(x1 + 1, y2 - 1, x2 - 1, y2, color);
     }
 
     @Override
@@ -51,14 +60,37 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
         
         int maxScroll = this.getMaxScroll();
         if (maxScroll > 0) {
+            long currentTime = System.currentTimeMillis();
+            long deltaMs = currentTime - (this.lastRenderTime == 0 ? currentTime : this.lastRenderTime);
+            this.lastRenderTime = currentTime;
+
             int i = this.getScrollbarPositionX();
-            int j = (int)((float)(this.bottom - this.top) * (float)(this.bottom - this.top) / (float)this.getMaxPosition());
-            j = net.minecraft.util.math.MathHelper.clamp(j, 32, this.bottom - this.top - 8);
-            int k = (int)this.getScrollAmount() * (this.bottom - this.top - j) / maxScroll + this.top;
-            if (k < this.top) {
-                k = this.top;
+            
+            boolean isHovering = mouseX >= i - 20 && mouseX <= i + 26 && mouseY >= this.top && mouseY <= this.bottom;
+            boolean isScrolling = Math.abs(this.getScrollAmount() - this.lastScrollAmount) > 0.01;
+            
+            if (isHovering || isScrolling) {
+                this.lastInteractionTime = currentTime;
             }
-            this.renderRoundedScrollbar(context, i, k, 6, j);
+            this.lastScrollAmount = this.getScrollAmount();
+            
+            long timeSinceLastInteraction = currentTime - this.lastInteractionTime;
+            
+            if (timeSinceLastInteraction < 1000) {
+                this.scrollbarAlpha = Math.min(1.0f, this.scrollbarAlpha + deltaMs / 200.0f);
+            } else {
+                this.scrollbarAlpha = Math.max(0.0f, this.scrollbarAlpha - deltaMs / 500.0f);
+            }
+            
+            if (this.scrollbarAlpha > 0.0f) {
+                int j = (int)((float)(this.bottom - this.top) * (float)(this.bottom - this.top) / (float)this.getMaxPosition());
+                j = net.minecraft.util.math.MathHelper.clamp(j, 32, this.bottom - this.top - 8);
+                int k = (int)this.getScrollAmount() * (this.bottom - this.top - j) / maxScroll + this.top;
+                if (k < this.top) {
+                    k = this.top;
+                }
+                this.renderRoundedScrollbar(context, i, k, 6, j, this.scrollbarAlpha);
+            }
         }
     }
 
