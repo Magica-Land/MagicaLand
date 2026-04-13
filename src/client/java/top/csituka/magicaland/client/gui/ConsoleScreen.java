@@ -10,8 +10,6 @@ import top.csituka.magicaland.client.gui.tab.TabAnimator;
 import top.csituka.magicaland.client.gui.tab.SettingsTab;
 import top.csituka.magicaland.client.gui.tab.AboutTab;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,17 +23,15 @@ public class ConsoleScreen extends Screen {
     private final TabAnimator tabAnimator = new TabAnimator();
 
     public enum Tab {
-        SETTINGS("text.magicaland.console.tab.settings", new SettingsTab(), new ItemStack(Items.REPEATER)),
-        ABOUT("text.magicaland.console.tab.about", new AboutTab(), new ItemStack(Items.WRITABLE_BOOK));
+        SETTINGS("text.magicaland.console.tab.settings", new SettingsTab()),
+        ABOUT("text.magicaland.console.tab.about", new AboutTab());
 
         private final String translationKey;
         private final TabContent content;
-        private final ItemStack icon;
 
-        Tab(String translationKey, TabContent content, ItemStack icon) {
+        Tab(String translationKey, TabContent content) {
             this.translationKey = translationKey;
             this.content = content;
-            this.icon = icon;
         }
 
         public Text getText() {
@@ -44,10 +40,6 @@ public class ConsoleScreen extends Screen {
 
         public TabContent getContent() {
             return content;
-        }
-
-        public ItemStack getIcon() {
-            return icon;
         }
     }
 
@@ -84,7 +76,7 @@ public class ConsoleScreen extends Screen {
             boolean isSelected = (this.currentTab == tab);
             final int currentY = y;
             TabButtonWidget tabButton = new TabButtonWidget(padding, y, leftWidth - padding * 2, tabHeight,
-                    tab.getText(), isSelected, tab.getIcon(), button -> {
+                    tab.getText(), isSelected, button -> {
                         if (this.currentTab != tab) {
                             List<net.minecraft.client.gui.widget.ClickableWidget> oldWidgets = new ArrayList<>();
                             for (net.minecraft.client.gui.Element element : this.children()) {
