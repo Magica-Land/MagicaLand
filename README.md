@@ -8,7 +8,7 @@ English | [简体中文](README_ZH.md)
 </div>
 
 ## About the Project
-**MagicaLand** is a Minecraft Java Edition mod that brings ponies and other elements from the television series "My Little Pony" in to the game.
+**Magical Land** is a Minecraft Java Edition mod that brings ponies and other elements from the television series "My Little Pony" in to the game.
 
 <p align="center">
     <img src="https://github.com/user-attachments/assets/9d5d3c8d-fb6e-4066-bb05-3bfdbf14ad2d"
