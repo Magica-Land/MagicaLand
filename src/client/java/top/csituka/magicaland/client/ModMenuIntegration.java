@@ -7,6 +7,6 @@ import top.csituka.magicaland.client.gui.ConsoleScreen;
 public class ModMenuIntegration implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> new ConsoleScreen(parent);
+        return ConsoleScreen::new;
     }
 }
