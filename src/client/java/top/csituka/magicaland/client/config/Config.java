@@ -15,6 +15,7 @@ public class Config {
             "magicaland.json");
 
     public boolean replacePlayerModel = true;
+    public boolean firstPersonMagicGlow = true;
 
     private static Config instance;
 

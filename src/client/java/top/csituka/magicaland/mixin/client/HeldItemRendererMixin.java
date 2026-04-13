@@ -31,8 +31,15 @@ public class HeldItemRendererMixin {
     )
     private void redirectRenderItem(ItemRenderer instance, LivingEntity entity, ItemStack item, ModelTransformationMode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int light, int overlay, int seed) {
         if (entity instanceof AbstractClientPlayerEntity && Config.getInstance().replacePlayerModel) {
+            boolean isFirstPerson = renderMode.isFirstPerson();
+            
+            if (isFirstPerson && !Config.getInstance().firstPersonMagicGlow) {
+                instance.renderItem(entity, item, renderMode, leftHanded, matrices, vertexConsumers, world, light, overlay, seed);
+                return;
+            }
+            
             matrices.push();
-            if (renderMode.isFirstPerson()) {
+            if (isFirstPerson) {
                 double xOffset = leftHanded ? -0.15 : 0.15;
                 matrices.translate(xOffset, 0.2, -0.4);
             }

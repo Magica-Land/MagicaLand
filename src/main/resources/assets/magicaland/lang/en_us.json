@@ -6,5 +6,6 @@
   "text.magicaland.console.title": "Configuration",
   "text.magicaland.console.tab.settings": "Settings",
   "text.magicaland.console.tab.about": "About",
-  "text.magicaland.console.about.description": "Placeholder description"
+  "text.magicaland.console.about.description": "Placeholder description",
+  "text.magicaland.config.first_person_magic_glow.name": "Magic Glow (First Person)"
 }

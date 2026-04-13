@@ -28,58 +28,11 @@ public class SettingsTab implements TabContent {
         currentY += buttonSpacing;
 
         screen.addConsoleWidget(new ToggleWidget(buttonX, currentY, buttonWidth, 20,
-                Text.literal("占位功能"),
-                true,
+                Text.translatable("text.magicaland.config.first_person_magic_glow.name"),
+                config.firstPersonMagicGlow,
                 toggle -> {
-                    // 滚木
-                }));
-        
-        currentY += buttonSpacing;
-
-        screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
-                Text.literal("占位: Medium"),
-                false,
-                button -> {
-                    String msg = button.getMessage().getString();
-                    if (msg.endsWith("Low")) button.setMessage(Text.literal("占位: Medium"));
-                    else if (msg.endsWith("Medium")) button.setMessage(Text.literal("占位: High"));
-                    else button.setMessage(Text.literal("占位: Low"));
-                }));
-        
-        currentY += buttonSpacing;
-
-        screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
-                Text.literal("占位: Medium"),
-                false,
-                button -> {
-                    String msg = button.getMessage().getString();
-                    if (msg.endsWith("Low")) button.setMessage(Text.literal("占位: Medium"));
-                    else if (msg.endsWith("Medium")) button.setMessage(Text.literal("占位: High"));
-                    else button.setMessage(Text.literal("占位: Low"));
-                }));
-        
-        currentY += buttonSpacing;
-
-        screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
-                Text.literal("占位: Medium"),
-                false,
-                button -> {
-                    String msg = button.getMessage().getString();
-                    if (msg.endsWith("Low")) button.setMessage(Text.literal("占位: Medium"));
-                    else if (msg.endsWith("Medium")) button.setMessage(Text.literal("占位: High"));
-                    else button.setMessage(Text.literal("占位: Low"));
-                }));
-        
-        currentY += buttonSpacing;
-
-        screen.addConsoleWidget(new CustomButtonWidget(buttonX, currentY, buttonWidth, 20,
-                Text.literal("占位: Medium"),
-                false,
-                button -> {
-                    String msg = button.getMessage().getString();
-                    if (msg.endsWith("Low")) button.setMessage(Text.literal("占位: Medium"));
-                    else if (msg.endsWith("Medium")) button.setMessage(Text.literal("占位: High"));
-                    else button.setMessage(Text.literal("占位: Low"));
+                    config.firstPersonMagicGlow = toggle.getState();
+                    Config.save();
                 }));
     }
 
