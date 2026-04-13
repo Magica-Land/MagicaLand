@@ -16,7 +16,7 @@ English | [简体中文](README_ZH.md)
     <img src="https://github.com/user-attachments/assets/be96510c-c7bc-45e5-a75e-e2c09c7155fb" 
         width ="45%">
     <p align="center">
-        <em> Test model </em>
+        <sub><em> *Twilight Sparkel in Minecraft* </em></sub>
 </p>
 
 ## Vision
