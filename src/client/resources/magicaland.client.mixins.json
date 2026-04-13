@@ -4,6 +4,7 @@
   "package": "top.csituka.magicaland.mixin.client",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "HeldItemRendererMixin",
     "LivingEntityRendererAccessor",
     "PlayerEntityRendererMixin"
   ],
