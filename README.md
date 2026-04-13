@@ -1,6 +1,6 @@
 <div align="center">
 
-# MagicaLand  
+# Magical Land  
 A Minecraft Project that turns players and mobs into ponies
 
 English | [简体中文](README_ZH.md)
