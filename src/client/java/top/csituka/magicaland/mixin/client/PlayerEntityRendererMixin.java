@@ -120,40 +120,104 @@ public abstract class PlayerEntityRendererMixin
     private void renderMagicHeldItem(AbstractClientPlayerEntity player, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta) {
         net.minecraft.item.ItemStack mainHandStack = player.getMainHandStack();
         net.minecraft.item.ItemStack offHandStack = player.getOffHandStack();
+        
+        if (mainHandStack.isEmpty() && offHandStack.isEmpty()) return;
 
+        float limbPos = 0.0F;
+        float limbSpeed = 0.0F;
+        if (player.isAlive()) {
+            limbPos = player.limbAnimator.getPos(tickDelta);
+            limbSpeed = player.limbAnimator.getSpeed(tickDelta);
+        }
+        
+        float swingProgress = player.getHandSwingProgress(tickDelta);
+        net.minecraft.util.Arm mainArm = player.getMainArm();
+
+        boolean isSneaking = player.isSneaking();
+        float pitch = player.getPitch();
+        
         if (!mainHandStack.isEmpty()) {
-            matrices.push();
-            matrices.translate(1.2, 1.4, -0.4);
-            
-            int glowColor = 0x8844AAFF;
-            net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance().getItemRenderer();
-            
-            magicItemRenderer.renderItemWithGlow(
-                itemRenderer, player, mainHandStack, 
-                net.minecraft.client.render.model.json.ModelTransformationMode.THIRD_PERSON_RIGHT_HAND, 
-                false, matrices, vertexConsumers, player.getWorld(), 
-                light, net.minecraft.client.render.OverlayTexture.DEFAULT_UV, glowColor, true
-            );
-            
-            matrices.pop();
+            boolean isRightArm = mainArm == net.minecraft.util.Arm.RIGHT;
+            renderHandItem(player, mainHandStack, matrices, vertexConsumers, light, tickDelta, true, isRightArm, isSneaking, limbPos, limbSpeed, swingProgress, pitch);
         }
         
         if (!offHandStack.isEmpty()) {
-            matrices.push();
-            matrices.translate(-0.2, 1.4, -0.4);
-            
-            int glowColor = 0x8844AAFF;
-            net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance().getItemRenderer();
-            
-            magicItemRenderer.renderItemWithGlow(
-                itemRenderer, player, offHandStack, 
-                net.minecraft.client.render.model.json.ModelTransformationMode.THIRD_PERSON_LEFT_HAND, 
-                true, matrices, vertexConsumers, player.getWorld(), 
-                light, net.minecraft.client.render.OverlayTexture.DEFAULT_UV, glowColor, true
-            );
-            
-            matrices.pop();
+            boolean isRightArm = mainArm == net.minecraft.util.Arm.LEFT;
+            renderHandItem(player, offHandStack, matrices, vertexConsumers, light, tickDelta, false, isRightArm, isSneaking, limbPos, limbSpeed, swingProgress, pitch);
         }
+    }
+
+    @Unique
+    private void renderHandItem(AbstractClientPlayerEntity player, net.minecraft.item.ItemStack stack, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta, boolean isMainHand, boolean isRightArm, boolean isSneaking, float limbPos, float limbSpeed, float swingProgress, float pitch) {
+        matrices.push();
+        
+        if (isSneaking) {
+            matrices.translate(0.0, -0.2, 0.0);
+            matrices.translate(0.5, 1.0, 0.5);
+            matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotationDegrees(28.6F));
+            matrices.translate(-0.5, -1.0, -0.5);
+        }
+
+        float pivotX = isRightArm ? 1.0F : 0.0F;
+        float pivotY = 1.4F;
+        float pivotZ = 0.0F;
+        matrices.translate(pivotX, pivotY, pivotZ);
+        
+        float armPitch = 0.0F;
+        float armYaw = 0.0F;
+        float armRoll = 0.0F;
+        
+        if (player.hasVehicle()) {
+            armPitch = -0.62F;
+        } else {
+            armPitch = net.minecraft.util.math.MathHelper.cos(limbPos * 0.6662F + (isRightArm ? (float)Math.PI : 0.0F)) * 2.0F * limbSpeed * 0.5F;
+        }
+
+        armPitch += pitch * ((float)Math.PI / 180F) * 0.1F;
+
+        if (swingProgress > 0.0F) {
+            net.minecraft.util.Hand activeHand = player.preferredHand; 
+            boolean isSwingingArm = (activeHand == net.minecraft.util.Hand.MAIN_HAND && isMainHand) || (activeHand == net.minecraft.util.Hand.OFF_HAND && !isMainHand);
+            if (activeHand == null) {
+                isSwingingArm = isMainHand;
+            }
+
+            if (isSwingingArm) {
+                float swing1 = net.minecraft.util.math.MathHelper.sin(swingProgress * (float)Math.PI);
+                float swing2 = net.minecraft.util.math.MathHelper.sin(net.minecraft.util.math.MathHelper.sqrt(swingProgress) * (float)Math.PI);
+                armPitch -= swing2 * 1.2F + swing1 * 0.4F;
+                armYaw += isRightArm ? swing2 * 0.4F : -swing2 * 0.4F;
+                armRoll += isRightArm ? swing1 * 0.2F : -swing1 * 0.2F;
+            }
+        }
+
+        matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotation(armRoll));
+        matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotation(armYaw));
+        matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotation(armPitch));
+        
+        float offsetX = isRightArm ? 0.2F : -0.2F;
+        float offsetY = 0.0F;
+        float offsetZ = -0.4F;
+        matrices.translate(offsetX, offsetY, offsetZ);
+
+        float time = player.age + tickDelta;
+        matrices.translate(0.0, net.minecraft.util.math.MathHelper.sin(time * 0.1F) * 0.05F, 0.0);
+
+        int glowColor = 0x8844AAFF;
+        net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance().getItemRenderer();
+        
+        net.minecraft.client.render.model.json.ModelTransformationMode mode = isRightArm ? 
+            net.minecraft.client.render.model.json.ModelTransformationMode.THIRD_PERSON_RIGHT_HAND : 
+            net.minecraft.client.render.model.json.ModelTransformationMode.THIRD_PERSON_LEFT_HAND;
+
+        magicItemRenderer.renderItemWithGlow(
+            itemRenderer, player, stack, 
+            mode, 
+            !isRightArm, matrices, vertexConsumers, player.getWorld(), 
+            light, net.minecraft.client.render.OverlayTexture.DEFAULT_UV, glowColor, true
+        );
+        
+        matrices.pop();
     }
 
     @Inject(method = "renderRightArm", at = @At("HEAD"), cancellable = true)
