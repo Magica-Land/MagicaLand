@@ -2,15 +2,15 @@
   "schemaVersion": 1,
   "id": "magicaland",
   "version": "${version}",
-  "name": "MagicaLand",
+  "name": "Magical Land",
   "description": "Turn players into ponies.",
   "authors": [
     "JessDaodao",
     "MayHooves"
   ],
   "contact": {
-    "issues": "https://github.com/Magica-Land/MagicaLand/issues",
-    "sources": "https://github.com/Magica-Land/MagicaLand"
+    "issues": "https://github.com/Magical-Land-Official/Magical-Land/issues",
+    "sources": "https://github.com/Magical-Land-Official/Magical-Land"
   },
   "license": "MIT",
   "icon": "assets/magicaland/icon.png",
