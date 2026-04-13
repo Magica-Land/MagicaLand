@@ -8,7 +8,7 @@
 </div>
 
 ## 项目介绍
-**魔法大陆（MagicaLand）** 是一款《我的世界》 Java 版模组，致力于将动画剧集《小马宝莉：友谊是魔法》中的小马角色及相关内容融入游戏。
+**魔法大陆（Magical Land）** 是一款《我的世界》 Java 版模组，致力于将动画剧集《小马宝莉：友谊是魔法》中的小马角色及相关内容融入游戏。
 
 <p align="center">
     <img src="https://github.com/user-attachments/assets/9d5d3c8d-fb6e-4066-bb05-3bfdbf14ad2d"
