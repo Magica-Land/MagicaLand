@@ -37,7 +37,7 @@ public class HeldItemRendererMixin {
 
         matrices.push();
 
-        if (isTridentUsing) {
+        if (isTridentUsing && entity instanceof AbstractClientPlayerEntity && Config.getInstance().replacePlayerModel) {
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
         }
 

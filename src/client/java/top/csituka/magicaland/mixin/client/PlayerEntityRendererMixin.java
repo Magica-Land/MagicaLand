@@ -202,7 +202,7 @@ public abstract class PlayerEntityRendererMixin
         matrices.translate(0.0, net.minecraft.util.math.MathHelper.sin(time * 0.1F) * 0.05F, 0.0);
 
         boolean isTridentUsing = stack.isOf(net.minecraft.item.Items.TRIDENT) && player.isUsingItem() && player.getActiveItem() == stack;
-        if (isTridentUsing) {
+        if (isTridentUsing && Config.getInstance().replacePlayerModel) {
             matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
         }
 
