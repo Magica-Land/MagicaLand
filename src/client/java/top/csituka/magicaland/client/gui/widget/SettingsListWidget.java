@@ -15,6 +15,8 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
     private double lastScrollAmount = 0.0;
     private long lastRenderTime = 0;
     private float scrollbarAlpha = 0.0f;
+    private double targetScrollAmount = 0.0;
+    private boolean isDraggingScrollbar = false;
 
     public SettingsListWidget(MinecraftClient minecraftClient, int width, int height, int top, int bottom, int itemHeight) {
         super(minecraftClient, width, height, top, bottom, itemHeight);
@@ -54,6 +56,14 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.targetScrollAmount = net.minecraft.util.math.MathHelper.clamp(this.targetScrollAmount, 0.0, this.getMaxScroll());
+        if (Math.abs(this.targetScrollAmount - this.getScrollAmount()) > 0.1) {
+            double newScroll = net.minecraft.util.math.MathHelper.lerp(0.3, this.getScrollAmount(), this.targetScrollAmount);
+            this.setScrollAmount(newScroll);
+        } else {
+            this.setScrollAmount(this.targetScrollAmount);
+        }
+
         context.getMatrices().push();
         this.renderList(context, mouseX, mouseY, delta);
         context.getMatrices().pop();
@@ -99,7 +109,8 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
         this.updateScrollingState(mouseX, mouseY, button);
         if (this.isMouseOver(mouseX, mouseY)) {
             int i = this.getScrollbarPositionX();
-            if (mouseX >= (double)i && mouseX <= (double)(i + 6)) {
+            if (button == 0 && mouseX >= (double)i && mouseX <= (double)(i + 6)) {
+                this.isDraggingScrollbar = true;
                 return true;
             }
         }
@@ -107,18 +118,35 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
     }
 
     @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (button == 0) {
+            this.isDraggingScrollbar = false;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+        this.targetScrollAmount = net.minecraft.util.math.MathHelper.clamp(this.targetScrollAmount - amount * this.itemHeight, 0.0, this.getMaxScroll());
+        return true;
+    }
+
+    @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (this.getScrollbarPositionX() <= mouseX && mouseX <= this.getScrollbarPositionX() + 6) {
+        if (this.isDraggingScrollbar) {
             int maxScroll = this.getMaxScroll();
             if (maxScroll > 0) {
                 int j = (int)((float)(this.bottom - this.top) * (float)(this.bottom - this.top) / (float)this.getMaxPosition());
                 j = net.minecraft.util.math.MathHelper.clamp(j, 32, this.bottom - this.top - 8);
                 double d = Math.max(1.0, maxScroll / (double)(this.bottom - this.top - j));
-                this.setScrollAmount(this.getScrollAmount() + deltaY * d);
+                this.targetScrollAmount = net.minecraft.util.math.MathHelper.clamp(this.targetScrollAmount + deltaY * d, 0.0, maxScroll);
+                this.setScrollAmount(this.targetScrollAmount);
                 return true;
             }
         }
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        boolean result = super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        this.targetScrollAmount = this.getScrollAmount();
+        return result;
     }
 
     public static class Entry extends ElementListWidget.Entry<Entry> {
