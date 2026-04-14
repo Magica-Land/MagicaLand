@@ -169,8 +169,6 @@ public abstract class PlayerEntityRendererMixin
         
         if (player.hasVehicle()) {
             armPitch = -0.62F;
-        } else {
-            armPitch = net.minecraft.util.math.MathHelper.cos(limbPos * 0.6662F + (isRightArm ? (float)Math.PI : 0.0F)) * 2.0F * limbSpeed * 0.5F;
         }
 
         armPitch += pitch * ((float)Math.PI / 180F) * 0.1F;
@@ -202,6 +200,12 @@ public abstract class PlayerEntityRendererMixin
 
         float time = player.age + tickDelta;
         matrices.translate(0.0, net.minecraft.util.math.MathHelper.sin(time * 0.1F) * 0.05F, 0.0);
+
+        boolean isTridentUsing = stack.isOf(net.minecraft.item.Items.TRIDENT) && player.isUsingItem() && player.getActiveItem() == stack;
+        if (isTridentUsing && Config.getInstance().replacePlayerModel) {
+            matrices.translate(0.0, 1.0, 0.0);
+            matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
+        }
 
         int glowColor = 0x8844AAFF;
         net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance().getItemRenderer();

@@ -1,6 +1,6 @@
 <div align="center">
 
-# 魔法大陆 (MagicaLand)  
+# 魔法大陆 (Magical Land)  
 将玩家和生物变成小马
 
 [English](README.md) | 简体中文
@@ -8,7 +8,7 @@
 </div>
 
 ## 项目介绍
-**魔法大陆（MagicaLand）** 是一款《我的世界》 Java 版模组，致力于将动画剧集《小马宝莉：友谊是魔法》中的小马角色及相关内容融入游戏。
+**魔法大陆（Magical Land）** 是一款《我的世界》 Java 版模组，致力于将动画剧集《小马宝莉：友谊是魔法》中的小马角色及相关内容融入游戏。
 
 <p align="center">
     <img src="https://github.com/user-attachments/assets/9d5d3c8d-fb6e-4066-bb05-3bfdbf14ad2d"
@@ -37,9 +37,8 @@
 
 ## 加入方式
 若你有意参与或协作：  
-1. Fork 本仓库并通过 Pull Request 提交贡献。  
-2. 在 Issues / Discussions 中分享想法、反馈 Bug 或提出功能建议。  
-3. 希望深度合作？可通过以下方式联系我们
+1. 在 Issues / Discussions 中分享想法、反馈 Bug 或提出功能建议。  
+2. 希望深度合作？可通过以下方式联系我们
 - QQ ：2026010008
 - 电子邮件：w2026010008@outlook.com
 - Discord：Mayhooves
