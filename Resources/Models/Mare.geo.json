@@ -2123,7 +2123,7 @@
 					"pivot": [0, 28, -10.2]
 				},
 				{
-					"name": "horn",
+					"name": "Horn",
 					"parent": "Top",
 					"pivot": [0, 28, -10.2],
 					"cubes": [
@@ -2132,7 +2132,7 @@
 				},
 				{
 					"name": "magic",
-					"parent": "horn",
+					"parent": "Horn",
 					"pivot": [0, 28, -10.2],
 					"cubes": [
 						{

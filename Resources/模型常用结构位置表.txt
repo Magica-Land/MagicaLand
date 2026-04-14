@@ -1,0 +1,11 @@
+模型常用结构位置表
+
+独角兽角的位置：Root/Body/BodyParts/Neck/Head/Accessories/Top/Horn
+鬃毛位置：Root/Body/BodyParts/Neck/Head/Accessories/Top/Mane
+帽子位置：Root/Body/BodyParts/Neck/Head/Accessories/Top/Hat
+尾巴位置：Root/Body/BodyAccessory/Butt/Tail
+
+张开的翅膀：Root/Body/BodyAccessory/Back/Wings/Opend
+关闭的翅膀：Root/Body/BodyAccessory/Back/Wings/Closed
+
+眼睛位置：Root/Body/BodyParts/Neck/Head/Accessories/Front/Face
