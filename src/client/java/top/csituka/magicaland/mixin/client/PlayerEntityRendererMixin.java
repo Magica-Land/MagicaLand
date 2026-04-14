@@ -201,6 +201,11 @@ public abstract class PlayerEntityRendererMixin
         float time = player.age + tickDelta;
         matrices.translate(0.0, net.minecraft.util.math.MathHelper.sin(time * 0.1F) * 0.05F, 0.0);
 
+        boolean isTridentUsing = stack.isOf(net.minecraft.item.Items.TRIDENT) && player.isUsingItem() && player.getActiveItem() == stack;
+        if (isTridentUsing) {
+            matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
+        }
+
         int glowColor = 0x8844AAFF;
         net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance().getItemRenderer();
         
