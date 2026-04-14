@@ -169,8 +169,6 @@ public abstract class PlayerEntityRendererMixin
         
         if (player.hasVehicle()) {
             armPitch = -0.62F;
-        } else {
-            armPitch = net.minecraft.util.math.MathHelper.cos(limbPos * 0.6662F + (isRightArm ? (float)Math.PI : 0.0F)) * 2.0F * limbSpeed * 0.5F;
         }
 
         armPitch += pitch * ((float)Math.PI / 180F) * 0.1F;

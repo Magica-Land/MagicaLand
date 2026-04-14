@@ -23,7 +23,7 @@
       "top.csituka.magicaland.client.Client"
     ],
     "main": [
-      "top.csituka.magicaland.MagicaLand"
+      "top.csituka.magicaland.Magical_Land"
     ],
     "modmenu": [
       "top.csituka.magicaland.client.ModMenuIntegration"
