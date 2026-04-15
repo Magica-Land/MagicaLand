@@ -3,8 +3,8 @@ package top.csituka.magicaland.client.gui;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
-import top.csituka.magicaland.client.gui.widget.CustomButtonWidget;
-import top.csituka.magicaland.client.gui.widget.TabButtonWidget;
+import top.csituka.magicaland.client.gui.widget.CustomButton;
+import top.csituka.magicaland.client.gui.widget.TabButton;
 import top.csituka.magicaland.client.gui.tab.TabContent;
 import top.csituka.magicaland.client.gui.tab.TabAnimator;
 import top.csituka.magicaland.client.gui.tab.SettingsTab;
@@ -76,7 +76,7 @@ public class ConsoleScreen extends Screen {
         for (Tab tab : Tab.values()) {
             boolean isSelected = (this.currentTab == tab);
             final int currentY = y;
-            TabButtonWidget tabButton = new TabButtonWidget(padding, y, leftWidth - padding * 2, tabHeight,
+            TabButton tabButton = new TabButton(padding, y, leftWidth - padding * 2, tabHeight,
                     tab.getText(), isSelected, button -> {
                         if (this.currentTab != tab) {
                             List<net.minecraft.client.gui.widget.ClickableWidget> oldWidgets = new ArrayList<>();
@@ -107,7 +107,7 @@ public class ConsoleScreen extends Screen {
             y += tabHeight + tabSpacing;
         }
 
-        this.addDrawableChild(new CustomButtonWidget(padding, this.height - 30, leftWidth - padding * 2, 20,
+        this.addDrawableChild(new CustomButton(padding, this.height - 30, leftWidth - padding * 2, 20,
                 Text.translatable("text.magicaland.config.button.done"), false,
                 button -> this.client.setScreen(this.parent)));
 

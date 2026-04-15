@@ -8,14 +8,14 @@ import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
 
-public class ToggleWidget extends PressableWidget {
-    private final Consumer<ToggleWidget> onPress;
+public class Toggle extends PressableWidget {
+    private final Consumer<Toggle> onPress;
     private float currentAlpha;
     private boolean state;
     private float togglePosition;
 
-    public ToggleWidget(int x, int y, int width, int height, Text message, boolean initialState,
-            Consumer<ToggleWidget> onPress) {
+    public Toggle(int x, int y, int width, int height, Text message, boolean initialState,
+            Consumer<Toggle> onPress) {
         super(x, y, width, height, message);
         this.state = initialState;
         this.onPress = onPress;

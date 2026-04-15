@@ -5,12 +5,12 @@ import net.minecraft.text.Text;
 import net.minecraft.client.MinecraftClient;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.gui.ConsoleScreen;
-import top.csituka.magicaland.client.gui.widget.CustomButtonWidget;
-import top.csituka.magicaland.client.gui.widget.SettingsListWidget;
-import top.csituka.magicaland.client.gui.widget.ToggleWidget;
+import top.csituka.magicaland.client.gui.widget.CustomButton;
+import top.csituka.magicaland.client.gui.widget.SettingsList;
+import top.csituka.magicaland.client.gui.widget.Toggle;
 
 public class SettingsTab implements TabContent {
-    private SettingsListWidget listWidget;
+    private SettingsList listWidget;
 
     @Override
     public void init(ConsoleScreen screen, int x, int y, int width, int height) {
@@ -21,11 +21,11 @@ public class SettingsTab implements TabContent {
         int topMargin = 40;
         int bottomMargin = 40;
 
-        listWidget = new SettingsListWidget(MinecraftClient.getInstance(), width, height, y + topMargin,
+        listWidget = new SettingsList(MinecraftClient.getInstance(), width, height, y + topMargin,
                 y + height - bottomMargin, 24);
         listWidget.setLeftPos(x);
 
-        listWidget.addWidget(new ToggleWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new Toggle(buttonX, 0, buttonWidth, 20,
                 Text.translatable("text.magicaland.config.replace_model.name"),
                 config.replacePlayerModel,
                 toggle -> {
@@ -33,7 +33,7 @@ public class SettingsTab implements TabContent {
                     Config.save();
                 }));
 
-        listWidget.addWidget(new ToggleWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new Toggle(buttonX, 0, buttonWidth, 20,
                 Text.translatable("text.magicaland.config.first_person_magic_glow.name"),
                 config.firstPersonMagicGlow,
                 toggle -> {
@@ -41,7 +41,7 @@ public class SettingsTab implements TabContent {
                     Config.save();
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -54,7 +54,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -67,7 +67,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -80,7 +80,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -93,7 +93,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -106,7 +106,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -119,7 +119,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -132,7 +132,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -145,7 +145,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -158,7 +158,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -171,7 +171,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -184,7 +184,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -197,7 +197,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -210,7 +210,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -223,7 +223,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -236,7 +236,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {
@@ -249,7 +249,7 @@ public class SettingsTab implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButtonWidget(buttonX, 0, buttonWidth, 20,
+        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
                 Text.literal("占位: Medium"),
                 false,
                 button -> {

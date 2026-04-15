@@ -8,11 +8,11 @@ import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
 
-public class TabButtonWidget extends PressableWidget {
-    private final Consumer<TabButtonWidget> onPress;
+public class TabButton extends PressableWidget {
+    private final Consumer<TabButton> onPress;
 
-    public TabButtonWidget(int x, int y, int width, int height, Text message, boolean isSelected,
-            Consumer<TabButtonWidget> onPress) {
+    public TabButton(int x, int y, int width, int height, Text message, boolean isSelected,
+            Consumer<TabButton> onPress) {
         super(x, y, width, height, message);
         this.onPress = onPress;
         this.active = !isSelected;

@@ -8,12 +8,12 @@ import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
 
-public class CustomButtonWidget extends PressableWidget {
-    private final Consumer<CustomButtonWidget> onPress;
+public class CustomButton extends PressableWidget {
+    private final Consumer<CustomButton> onPress;
     private float currentAlpha;
 
-    public CustomButtonWidget(int x, int y, int width, int height, Text message, boolean isSelected,
-            Consumer<CustomButtonWidget> onPress) {
+    public CustomButton(int x, int y, int width, int height, Text message, boolean isSelected,
+            Consumer<CustomButton> onPress) {
         super(x, y, width, height, message);
         this.onPress = onPress;
         this.currentAlpha = isSelected ? 0.35f : 0.15f;

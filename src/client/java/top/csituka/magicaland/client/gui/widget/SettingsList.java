@@ -10,7 +10,7 @@ import net.minecraft.client.gui.widget.ElementListWidget;
 import java.util.Collections;
 import java.util.List;
 
-public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Entry> {
+public class SettingsList extends ElementListWidget<SettingsList.Entry> {
     private long lastInteractionTime = 0;
     private double lastScrollAmount = 0.0;
     private long lastRenderTime = 0;
@@ -18,7 +18,7 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
     private double targetScrollAmount = 0.0;
     private boolean isDraggingScrollbar = false;
 
-    public SettingsListWidget(MinecraftClient minecraftClient, int width, int height, int top, int bottom,
+    public SettingsList(MinecraftClient minecraftClient, int width, int height, int top, int bottom,
             int itemHeight) {
         super(minecraftClient, width, height, top, bottom, itemHeight);
         this.setRenderBackground(false);
@@ -159,9 +159,9 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
 
     public static class Entry extends ElementListWidget.Entry<Entry> {
         public final ClickableWidget widget;
-        private final SettingsListWidget parent;
+        private final SettingsList parent;
 
-        public Entry(ClickableWidget widget, SettingsListWidget parent) {
+        public Entry(ClickableWidget widget, SettingsList parent) {
             this.widget = widget;
             this.parent = parent;
         }
