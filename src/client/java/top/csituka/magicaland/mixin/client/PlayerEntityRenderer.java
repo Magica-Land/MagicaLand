@@ -4,7 +4,6 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
@@ -23,8 +22,8 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import top.csituka.magicaland.client.render.GlowingItem;
 
-@Mixin(PlayerEntityRenderer.class)
-public abstract class PlayerEntityRendererMixin
+@Mixin(net.minecraft.client.render.entity.PlayerEntityRenderer.class)
+public abstract class PlayerEntityRenderer
         extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
 
     @Unique
@@ -35,7 +34,7 @@ public abstract class PlayerEntityRendererMixin
     @Unique
     private static final Map<UUID, Float> flightRolls = new HashMap<>();
 
-    public PlayerEntityRendererMixin(EntityRendererFactory.Context ctx,
+    public PlayerEntityRenderer(EntityRendererFactory.Context ctx,
             PlayerEntityModel<AbstractClientPlayerEntity> model, float shadowRadius) {
         super(ctx, model, shadowRadius);
     }

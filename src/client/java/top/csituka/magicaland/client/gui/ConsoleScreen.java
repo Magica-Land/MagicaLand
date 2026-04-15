@@ -7,8 +7,8 @@ import top.csituka.magicaland.client.gui.widget.CustomButton;
 import top.csituka.magicaland.client.gui.widget.TabButton;
 import top.csituka.magicaland.client.gui.tab.TabContent;
 import top.csituka.magicaland.client.gui.tab.TabAnimator;
-import top.csituka.magicaland.client.gui.tab.SettingsTab;
-import top.csituka.magicaland.client.gui.tab.AboutTab;
+import top.csituka.magicaland.client.gui.tab.Settings;
+import top.csituka.magicaland.client.gui.tab.About;
 import net.fabricmc.loader.api.FabricLoader;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +23,8 @@ public class ConsoleScreen extends Screen {
     private final TabAnimator tabAnimator = new TabAnimator();
 
     public enum Tab {
-        SETTINGS("text.magicaland.console.tab.settings", new SettingsTab()),
-        ABOUT("text.magicaland.console.tab.about", new AboutTab());
+        SETTINGS("text.magicaland.console.tab.settings", new Settings()),
+        ABOUT("text.magicaland.console.tab.about", new About());
 
         private final String translationKey;
         private final TabContent content;

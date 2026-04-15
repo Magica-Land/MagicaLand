@@ -6,7 +6,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import top.csituka.magicaland.client.gui.ConsoleScreen;
 
-public class AboutTab implements TabContent {
+public class About implements TabContent {
 
     @Override
     public void init(ConsoleScreen screen, int x, int y, int width, int height) {

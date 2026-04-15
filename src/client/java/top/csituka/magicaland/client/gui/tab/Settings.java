@@ -9,7 +9,7 @@ import top.csituka.magicaland.client.gui.widget.CustomButton;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 import top.csituka.magicaland.client.gui.widget.Toggle;
 
-public class SettingsTab implements TabContent {
+public class Settings implements TabContent {
     private SettingsList listWidget;
 
     @Override
