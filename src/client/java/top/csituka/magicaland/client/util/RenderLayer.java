@@ -1,13 +1,13 @@
 package top.csituka.magicaland.client.util;
 
 import java.util.Optional;
-import net.minecraft.client.render.RenderLayer;
+
 import net.minecraft.util.Identifier;
 
-public interface RenderLayerUtil {
+public interface RenderLayer {
     
-    static Optional<Identifier> getTexture(RenderLayer layer) {
-        if (layer instanceof RenderLayer.MultiPhase multiphase) {
+    static Optional<Identifier> getTexture(net.minecraft.client.render.RenderLayer layer) {
+        if (layer instanceof net.minecraft.client.render.RenderLayer.MultiPhase multiphase) {
             return multiphase.getPhases().texture.getId();
         }
         return Optional.empty();

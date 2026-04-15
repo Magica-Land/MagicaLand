@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
+import top.csituka.magicaland.client.render.GlowingItem;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class PlayerEntityRendererMixin
@@ -156,7 +157,7 @@ public abstract class PlayerEntityRendererMixin
     }
 
     @Unique
-    private final top.csituka.magicaland.client.render.GlowingItemRenderer magicItemRenderer = new top.csituka.magicaland.client.render.GlowingItemRenderer();
+    private final GlowingItem magicItemRenderer = new GlowingItem();
 
     @Unique
     private void renderMagicHeldItem(AbstractClientPlayerEntity player, MatrixStack matrices,

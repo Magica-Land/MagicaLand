@@ -40,9 +40,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.world.World;
 
-import top.csituka.magicaland.client.util.RenderLayerUtil;
+import top.csituka.magicaland.client.util.RenderLayer;
 
-public class GlowingItemRenderer {
+public class GlowingItem {
 
     private VertexConsumerProvider createGlowProvider(
             int glowColor,
@@ -53,7 +53,7 @@ public class GlowingItemRenderer {
             }
             return originalContext.getBuffer(
                     MagicGlow.getColoured(
-                            RenderLayerUtil.getTexture(layer)
+                            RenderLayer.getTexture(layer)
                                     .orElse(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE),
                             glowColor));
         };

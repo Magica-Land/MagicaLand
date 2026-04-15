@@ -16,13 +16,13 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import top.csituka.magicaland.client.config.Config;
-import top.csituka.magicaland.client.render.GlowingItemRenderer;
+import top.csituka.magicaland.client.render.GlowingItem;
 
 @Mixin(HeldItemRenderer.class)
 public class HeldItemRendererMixin {
 
     @Unique
-    private final GlowingItemRenderer magicItemRenderer = new GlowingItemRenderer();
+    private final GlowingItem magicItemRenderer = new GlowingItem();
 
     @Redirect(method = "renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/world/World;III)V"))
     private void redirectRenderItem(ItemRenderer instance, LivingEntity entity, ItemStack item,
