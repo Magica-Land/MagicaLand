@@ -43,25 +43,34 @@ public abstract class PlayerEntityRendererMixin
     private void onInit(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
         this.ponyAnimatable = new GeckoPlayerAnimatable();
         // this.ponyRenderer = new GeoObjectRenderer<>(new GeckoPlayerModel());
-        this.ponyRenderer = new GeoObjectRenderer<GeckoPlayerAnimatable>(new GeckoPlayerModel()) {
-            private static final net.minecraft.util.Identifier PONY_BASE = new net.minecraft.util.Identifier("magicaland", "textures/entity/pony_base.png");
-            private static final net.minecraft.util.Identifier PONY_TS = new net.minecraft.util.Identifier("magicaland", "textures/entity/pony_ts.png");
+        this.ponyRenderer = new GeoObjectRenderer<>(new GeckoPlayerModel()) {
+            private static final net.minecraft.util.Identifier PONY_BASE = new net.minecraft.util.Identifier(
+                    "magicaland", "textures/entity/pony_base.png");
+            private static final net.minecraft.util.Identifier PONY_TS = new net.minecraft.util.Identifier("magicaland",
+                    "textures/entity/pony_ts.png");
 
             @Override
-            public void renderRecursively(MatrixStack poseStack, GeckoPlayerAnimatable animatable, software.bernie.geckolib.cache.object.GeoBone bone, RenderLayer renderType, VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+            public void renderRecursively(MatrixStack poseStack, GeckoPlayerAnimatable animatable,
+                    software.bernie.geckolib.cache.object.GeoBone bone, RenderLayer renderType,
+                    VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick,
+                    int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
                 String name = bone.getName().toLowerCase();
-                boolean isOther = name.contains("mane") || name.contains("tail") || name.contains("wing") || name.contains("horn") || name.contains("magic");
-                
+                boolean isOther = name.contains("mane") || name.contains("tail") || name.contains("wing")
+                        || name.contains("horn") || name.contains("magic");
+
                 // 为不同身体部件应用不同的贴图 (后续可实现鬃毛与身体应用不同的贴图)
                 net.minecraft.util.Identifier texture = isOther ? PONY_TS : PONY_BASE;
                 RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
                 VertexConsumer newBuffer = bufferSource.getBuffer(newRenderType);
 
-                super.renderRecursively(poseStack, animatable, bone, newRenderType, bufferSource, newBuffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+                super.renderRecursively(poseStack, animatable, bone, newRenderType, bufferSource, newBuffer, isReRender,
+                        partialTick, packedLight, packedOverlay, red, green, blue, alpha);
             }
 
             @Override
-            public void renderCubesOfBone(MatrixStack poseStack, software.bernie.geckolib.cache.object.GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+            public void renderCubesOfBone(MatrixStack poseStack, software.bernie.geckolib.cache.object.GeoBone bone,
+                    VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
+                    float alpha) {
                 // 为身体施加染色效果，这里染成蓝色，后续可实现用户自定义身体部件颜色的实现
                 if (bone.getName().equalsIgnoreCase("body")) {
                     red *= 0.2f;
@@ -85,22 +94,25 @@ public abstract class PlayerEntityRendererMixin
                 net.minecraft.util.math.Direction direction = player.getSleepingDirection();
                 if (direction != null) {
                     float sleepYaw = direction.asRotation();
-                    matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(270.0F - sleepYaw));
+                    matrixStack.multiply(
+                            net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(270.0F - sleepYaw));
                     matrixStack.translate(-1.7, -0.1, 0.0);
                     matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(270.0F));
                     matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(90.0F));
                 }
             } else {
-                float bodyYaw = net.minecraft.util.math.MathHelper.lerpAngleDegrees(g, player.prevBodyYaw, player.bodyYaw);
+                float bodyYaw = net.minecraft.util.math.MathHelper.lerpAngleDegrees(g, player.prevBodyYaw,
+                        player.bodyYaw);
                 matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - bodyYaw));
 
                 if (player.getAbilities().flying && player.isSprinting()) {
-                    float yawDelta = net.minecraft.util.math.MathHelper.wrapDegrees(player.bodyYaw - player.prevBodyYaw);
+                    float yawDelta = net.minecraft.util.math.MathHelper
+                            .wrapDegrees(player.bodyYaw - player.prevBodyYaw);
                     float targetRoll = net.minecraft.util.math.MathHelper.clamp(yawDelta * -2.5F, -30.0F, 30.0F);
                     float currentRoll = flightRolls.getOrDefault(player.getUuid(), 0.0F);
                     currentRoll = net.minecraft.util.math.MathHelper.lerp(0.15F, currentRoll, targetRoll);
                     flightRolls.put(player.getUuid(), currentRoll);
-                    
+
                     matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(currentRoll));
                 } else if (flightRolls.containsKey(player.getUuid())) {
                     float currentRoll = flightRolls.get(player.getUuid());
@@ -109,7 +121,8 @@ public abstract class PlayerEntityRendererMixin
                         flightRolls.remove(player.getUuid());
                     } else {
                         flightRolls.put(player.getUuid(), currentRoll);
-                        matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(currentRoll));
+                        matrixStack
+                                .multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(currentRoll));
                     }
                 }
             }
@@ -121,7 +134,8 @@ public abstract class PlayerEntityRendererMixin
                     yOffset -= 0.08;
                 } else if (vehicle instanceof net.minecraft.entity.passive.AbstractHorseEntity) {
                     yOffset -= 0.06;
-                } else if (vehicle instanceof net.minecraft.entity.vehicle.BoatEntity || vehicle instanceof net.minecraft.entity.vehicle.AbstractMinecartEntity) {
+                } else if (vehicle instanceof net.minecraft.entity.vehicle.BoatEntity
+                        || vehicle instanceof net.minecraft.entity.vehicle.AbstractMinecartEntity) {
                     yOffset += 0.4;
                 }
             }
@@ -145,11 +159,13 @@ public abstract class PlayerEntityRendererMixin
     private final top.csituka.magicaland.client.render.GlowingItemRenderer magicItemRenderer = new top.csituka.magicaland.client.render.GlowingItemRenderer();
 
     @Unique
-    private void renderMagicHeldItem(AbstractClientPlayerEntity player, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta) {
+    private void renderMagicHeldItem(AbstractClientPlayerEntity player, MatrixStack matrices,
+            VertexConsumerProvider vertexConsumers, int light, float tickDelta) {
         net.minecraft.item.ItemStack mainHandStack = player.getMainHandStack();
         net.minecraft.item.ItemStack offHandStack = player.getOffHandStack();
-        
-        if (mainHandStack.isEmpty() && offHandStack.isEmpty()) return;
+
+        if (mainHandStack.isEmpty() && offHandStack.isEmpty())
+            return;
 
         float limbPos = 0.0F;
         float limbSpeed = 0.0F;
@@ -157,28 +173,33 @@ public abstract class PlayerEntityRendererMixin
             limbPos = player.limbAnimator.getPos(tickDelta);
             limbSpeed = player.limbAnimator.getSpeed(tickDelta);
         }
-        
+
         float swingProgress = player.getHandSwingProgress(tickDelta);
         net.minecraft.util.Arm mainArm = player.getMainArm();
 
         boolean isSneaking = player.isSneaking();
         float pitch = player.getPitch();
-        
+
         if (!mainHandStack.isEmpty()) {
             boolean isRightArm = mainArm == net.minecraft.util.Arm.RIGHT;
-            renderHandItem(player, mainHandStack, matrices, vertexConsumers, light, tickDelta, true, isRightArm, isSneaking, limbPos, limbSpeed, swingProgress, pitch);
+            renderHandItem(player, mainHandStack, matrices, vertexConsumers, light, tickDelta, true, isRightArm,
+                    isSneaking, limbPos, limbSpeed, swingProgress, pitch);
         }
-        
+
         if (!offHandStack.isEmpty()) {
             boolean isRightArm = mainArm == net.minecraft.util.Arm.LEFT;
-            renderHandItem(player, offHandStack, matrices, vertexConsumers, light, tickDelta, false, isRightArm, isSneaking, limbPos, limbSpeed, swingProgress, pitch);
+            renderHandItem(player, offHandStack, matrices, vertexConsumers, light, tickDelta, false, isRightArm,
+                    isSneaking, limbPos, limbSpeed, swingProgress, pitch);
         }
     }
 
     @Unique
-    private void renderHandItem(AbstractClientPlayerEntity player, net.minecraft.item.ItemStack stack, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta, boolean isMainHand, boolean isRightArm, boolean isSneaking, float limbPos, float limbSpeed, float swingProgress, float pitch) {
+    private void renderHandItem(AbstractClientPlayerEntity player, net.minecraft.item.ItemStack stack,
+            MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta,
+            boolean isMainHand, boolean isRightArm, boolean isSneaking, float limbPos, float limbSpeed,
+            float swingProgress, float pitch) {
         matrices.push();
-        
+
         if (isSneaking) {
             matrices.translate(0.0, -0.2, 0.0);
             matrices.translate(0.5, 1.0, 0.5);
@@ -190,27 +211,29 @@ public abstract class PlayerEntityRendererMixin
         float pivotY = 1.4F;
         float pivotZ = 0.0F;
         matrices.translate(pivotX, pivotY, pivotZ);
-        
+
         float armPitch = 0.0F;
         float armYaw = 0.0F;
         float armRoll = 0.0F;
-        
+
         if (player.hasVehicle()) {
             armPitch = -0.62F;
         }
 
-        armPitch += pitch * ((float)Math.PI / 180F) * 0.1F;
+        armPitch += pitch * ((float) Math.PI / 180F) * 0.1F;
 
         if (swingProgress > 0.0F) {
-            net.minecraft.util.Hand activeHand = player.preferredHand; 
-            boolean isSwingingArm = (activeHand == net.minecraft.util.Hand.MAIN_HAND && isMainHand) || (activeHand == net.minecraft.util.Hand.OFF_HAND && !isMainHand);
+            net.minecraft.util.Hand activeHand = player.preferredHand;
+            boolean isSwingingArm = (activeHand == net.minecraft.util.Hand.MAIN_HAND && isMainHand)
+                    || (activeHand == net.minecraft.util.Hand.OFF_HAND && !isMainHand);
             if (activeHand == null) {
                 isSwingingArm = isMainHand;
             }
 
             if (isSwingingArm) {
-                float swing1 = net.minecraft.util.math.MathHelper.sin(swingProgress * (float)Math.PI);
-                float swing2 = net.minecraft.util.math.MathHelper.sin(net.minecraft.util.math.MathHelper.sqrt(swingProgress) * (float)Math.PI);
+                float swing1 = net.minecraft.util.math.MathHelper.sin(swingProgress * (float) Math.PI);
+                float swing2 = net.minecraft.util.math.MathHelper
+                        .sin(net.minecraft.util.math.MathHelper.sqrt(swingProgress) * (float) Math.PI);
                 armPitch -= swing2 * 1.2F + swing1 * 0.4F;
                 armYaw += isRightArm ? swing2 * 0.4F : -swing2 * 0.4F;
                 armRoll += isRightArm ? swing1 * 0.2F : -swing1 * 0.2F;
@@ -220,7 +243,7 @@ public abstract class PlayerEntityRendererMixin
         matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotation(armRoll));
         matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotation(armYaw));
         matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotation(armPitch));
-        
+
         float offsetX = isRightArm ? 0.2F : -0.2F;
         float offsetY = 0.0F;
         float offsetZ = -0.4F;
@@ -229,26 +252,27 @@ public abstract class PlayerEntityRendererMixin
         float time = player.age + tickDelta;
         matrices.translate(0.0, net.minecraft.util.math.MathHelper.sin(time * 0.1F) * 0.05F, 0.0);
 
-        boolean isTridentUsing = stack.isOf(net.minecraft.item.Items.TRIDENT) && player.isUsingItem() && player.getActiveItem() == stack;
+        boolean isTridentUsing = stack.isOf(net.minecraft.item.Items.TRIDENT) && player.isUsingItem()
+                && player.getActiveItem() == stack;
         if (isTridentUsing && Config.getInstance().replacePlayerModel) {
             matrices.translate(0.0, 1.0, 0.0);
             matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
         }
 
         int glowColor = 0x8844AAFF;
-        net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance().getItemRenderer();
-        
-        net.minecraft.client.render.model.json.ModelTransformationMode mode = isRightArm ? 
-            net.minecraft.client.render.model.json.ModelTransformationMode.THIRD_PERSON_RIGHT_HAND : 
-            net.minecraft.client.render.model.json.ModelTransformationMode.THIRD_PERSON_LEFT_HAND;
+        net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance()
+                .getItemRenderer();
+
+        net.minecraft.client.render.model.json.ModelTransformationMode mode = isRightArm
+                ? net.minecraft.client.render.model.json.ModelTransformationMode.THIRD_PERSON_RIGHT_HAND
+                : net.minecraft.client.render.model.json.ModelTransformationMode.THIRD_PERSON_LEFT_HAND;
 
         magicItemRenderer.renderItemWithGlow(
-            itemRenderer, player, stack, 
-            mode, 
-            !isRightArm, matrices, vertexConsumers, player.getWorld(), 
-            light, net.minecraft.client.render.OverlayTexture.DEFAULT_UV, glowColor, true
-        );
-        
+                itemRenderer, player, stack,
+                mode,
+                !isRightArm, matrices, vertexConsumers, player.getWorld(),
+                light, net.minecraft.client.render.OverlayTexture.DEFAULT_UV, glowColor, true);
+
         matrices.pop();
     }
 

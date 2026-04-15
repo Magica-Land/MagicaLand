@@ -55,7 +55,8 @@ public class ConsoleScreen extends Screen {
         this.addDrawableChild(widget);
     }
 
-    public <T extends net.minecraft.client.gui.Element & net.minecraft.client.gui.Drawable & net.minecraft.client.gui.Selectable> void addConsoleElement(T element) {
+    public <T extends net.minecraft.client.gui.Element & net.minecraft.client.gui.Drawable & net.minecraft.client.gui.Selectable> void addConsoleElement(
+            T element) {
         this.addDrawableChild(element);
     }
 
@@ -128,7 +129,8 @@ public class ConsoleScreen extends Screen {
         context.getMatrices().push();
         context.getMatrices().translate(20.0f, 20.0f, 0.0f);
         context.getMatrices().scale(0.5f, 0.5f, 1.0f);
-        context.drawTextWithShadow(this.textRenderer, Text.literal("Magical Land v" + this.modVersion + " · Fabric"), 0, 0,
+        context.drawTextWithShadow(this.textRenderer, Text.literal("Magical Land v" + this.modVersion + " · Fabric"), 0,
+                0,
                 0xAAAAAA);
         context.getMatrices().pop();
 
@@ -141,7 +143,8 @@ public class ConsoleScreen extends Screen {
             } else {
                 this.indicatorY = this.targetIndicatorY;
             }
-            context.fill(padding, Math.round(this.indicatorY), padding + 2, Math.round(this.indicatorY) + 20, 0xFFFFFFFF);
+            context.fill(padding, Math.round(this.indicatorY), padding + 2, Math.round(this.indicatorY) + 20,
+                    0xFFFFFFFF);
         }
 
         this.tabAnimator.update();

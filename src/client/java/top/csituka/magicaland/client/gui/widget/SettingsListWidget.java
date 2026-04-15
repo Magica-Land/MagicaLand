@@ -18,7 +18,8 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
     private double targetScrollAmount = 0.0;
     private boolean isDraggingScrollbar = false;
 
-    public SettingsListWidget(MinecraftClient minecraftClient, int width, int height, int top, int bottom, int itemHeight) {
+    public SettingsListWidget(MinecraftClient minecraftClient, int width, int height, int top, int bottom,
+            int itemHeight) {
         super(minecraftClient, width, height, top, bottom, itemHeight);
         this.setRenderBackground(false);
         this.setRenderHorizontalShadows(false);
@@ -39,16 +40,17 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
     }
 
     private void renderRoundedScrollbar(DrawContext context, int x, int y, int width, int height, float alpha) {
-        if (alpha <= 0.01f) return;
-        
-        int alphaInt = (int)(alpha * 255.0f);
+        if (alpha <= 0.01f)
+            return;
+
+        int alphaInt = (int) (alpha * 255.0f);
         int color = (alphaInt << 24) | 0x00C0C0C0;
-        
+
         int x1 = x;
         int y1 = y;
         int x2 = x + width;
         int y2 = y + height;
-        
+
         context.fill(x1 + 1, y1, x2 - 1, y1 + 1, color);
         context.fill(x1, y1 + 1, x2, y2 - 1, color);
         context.fill(x1 + 1, y2 - 1, x2 - 1, y2, color);
@@ -56,9 +58,11 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.targetScrollAmount = net.minecraft.util.math.MathHelper.clamp(this.targetScrollAmount, 0.0, this.getMaxScroll());
+        this.targetScrollAmount = net.minecraft.util.math.MathHelper.clamp(this.targetScrollAmount, 0.0,
+                this.getMaxScroll());
         if (Math.abs(this.targetScrollAmount - this.getScrollAmount()) > 0.1) {
-            double newScroll = net.minecraft.util.math.MathHelper.lerp(0.3, this.getScrollAmount(), this.targetScrollAmount);
+            double newScroll = net.minecraft.util.math.MathHelper.lerp(0.3, this.getScrollAmount(),
+                    this.targetScrollAmount);
             this.setScrollAmount(newScroll);
         } else {
             this.setScrollAmount(this.targetScrollAmount);
@@ -67,7 +71,7 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
         context.getMatrices().push();
         this.renderList(context, mouseX, mouseY, delta);
         context.getMatrices().pop();
-        
+
         int maxScroll = this.getMaxScroll();
         if (maxScroll > 0) {
             long currentTime = System.currentTimeMillis();
@@ -75,27 +79,28 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
             this.lastRenderTime = currentTime;
 
             int i = this.getScrollbarPositionX();
-            
+
             boolean isHovering = mouseX >= i - 20 && mouseX <= i + 26 && mouseY >= this.top && mouseY <= this.bottom;
             boolean isScrolling = Math.abs(this.getScrollAmount() - this.lastScrollAmount) > 0.01;
-            
+
             if (isHovering || isScrolling) {
                 this.lastInteractionTime = currentTime;
             }
             this.lastScrollAmount = this.getScrollAmount();
-            
+
             long timeSinceLastInteraction = currentTime - this.lastInteractionTime;
-            
+
             if (timeSinceLastInteraction < 1000) {
                 this.scrollbarAlpha = Math.min(1.0f, this.scrollbarAlpha + deltaMs / 200.0f);
             } else {
                 this.scrollbarAlpha = Math.max(0.0f, this.scrollbarAlpha - deltaMs / 500.0f);
             }
-            
+
             if (this.scrollbarAlpha > 0.0f) {
-                int j = (int)((float)(this.bottom - this.top) * (float)(this.bottom - this.top) / (float)this.getMaxPosition());
+                int j = (int) ((float) (this.bottom - this.top) * (float) (this.bottom - this.top)
+                        / (float) this.getMaxPosition());
                 j = net.minecraft.util.math.MathHelper.clamp(j, 32, this.bottom - this.top - 8);
-                int k = (int)this.getScrollAmount() * (this.bottom - this.top - j) / maxScroll + this.top;
+                int k = (int) this.getScrollAmount() * (this.bottom - this.top - j) / maxScroll + this.top;
                 if (k < this.top) {
                     k = this.top;
                 }
@@ -109,7 +114,7 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
         this.updateScrollingState(mouseX, mouseY, button);
         if (this.isMouseOver(mouseX, mouseY)) {
             int i = this.getScrollbarPositionX();
-            if (button == 0 && mouseX >= (double)i && mouseX <= (double)(i + 6)) {
+            if (button == 0 && mouseX >= (double) i && mouseX <= (double) (i + 6)) {
                 this.isDraggingScrollbar = true;
                 return true;
             }
@@ -127,7 +132,8 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        this.targetScrollAmount = net.minecraft.util.math.MathHelper.clamp(this.targetScrollAmount - amount * this.itemHeight, 0.0, this.getMaxScroll());
+        this.targetScrollAmount = net.minecraft.util.math.MathHelper
+                .clamp(this.targetScrollAmount - amount * this.itemHeight, 0.0, this.getMaxScroll());
         return true;
     }
 
@@ -136,10 +142,12 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
         if (this.isDraggingScrollbar) {
             int maxScroll = this.getMaxScroll();
             if (maxScroll > 0) {
-                int j = (int)((float)(this.bottom - this.top) * (float)(this.bottom - this.top) / (float)this.getMaxPosition());
+                int j = (int) ((float) (this.bottom - this.top) * (float) (this.bottom - this.top)
+                        / (float) this.getMaxPosition());
                 j = net.minecraft.util.math.MathHelper.clamp(j, 32, this.bottom - this.top - 8);
-                double d = Math.max(1.0, maxScroll / (double)(this.bottom - this.top - j));
-                this.targetScrollAmount = net.minecraft.util.math.MathHelper.clamp(this.targetScrollAmount + deltaY * d, 0.0, maxScroll);
+                double d = Math.max(1.0, maxScroll / (double) (this.bottom - this.top - j));
+                this.targetScrollAmount = net.minecraft.util.math.MathHelper.clamp(this.targetScrollAmount + deltaY * d,
+                        0.0, maxScroll);
                 this.setScrollAmount(this.targetScrollAmount);
                 return true;
             }
@@ -169,24 +177,25 @@ public class SettingsListWidget extends ElementListWidget<SettingsListWidget.Ent
         }
 
         @Override
-        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
+                int mouseY, boolean hovered, float tickDelta) {
             this.widget.setX(x + (entryWidth - this.widget.getWidth()) / 2);
             this.widget.setY(y);
 
             int widgetTop = y;
             int widgetBottom = y + this.widget.getHeight();
-            
+
             int fadeDistance = 15;
             float alpha = 1.0f;
-            
+
             if (widgetTop < this.parent.top) {
-                alpha = Math.max(0.0f, 1.0f - (float)(this.parent.top - widgetTop) / fadeDistance);
+                alpha = Math.max(0.0f, 1.0f - (float) (this.parent.top - widgetTop) / fadeDistance);
             } else if (widgetBottom > this.parent.bottom) {
-                alpha = Math.max(0.0f, 1.0f - (float)(widgetBottom - this.parent.bottom) / fadeDistance);
+                alpha = Math.max(0.0f, 1.0f - (float) (widgetBottom - this.parent.bottom) / fadeDistance);
             }
-            
+
             this.widget.setAlpha(alpha);
-            
+
             this.widget.render(context, mouseX, mouseY, tickDelta);
         }
     }

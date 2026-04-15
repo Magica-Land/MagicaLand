@@ -42,49 +42,46 @@ import com.google.common.base.Suppliers;
 import java.util.function.BiFunction;
 
 public abstract class MagicGlow extends RenderPhase {
-    
+
     private MagicGlow() {
         super(null, null, null);
     }
 
-    private static final java.util.function.Supplier<RenderLayer> MAGIC = 
-        Suppliers.memoize((com.google.common.base.Supplier<RenderLayer>) () -> {
-            return RenderLayer.of(
-                "mod_magic_glow",
-                VertexFormats.POSITION_COLOR_LIGHT,
-                VertexFormat.DrawMode.QUADS, 
-                256, 
-                RenderLayer.MultiPhaseParameters.builder()
-                    .program(EYES_PROGRAM)
-                    .writeMaskState(COLOR_MASK)
-                    .depthTest(LEQUAL_DEPTH_TEST)
-                    .transparency(LIGHTNING_TRANSPARENCY)
-                    .lightmap(DISABLE_LIGHTMAP)
-                    .cull(DISABLE_CULLING)
-                    .build(false)
-            );
-        })::get;
+    private static final java.util.function.Supplier<RenderLayer> MAGIC = Suppliers
+            .memoize((com.google.common.base.Supplier<RenderLayer>) () -> {
+                return RenderLayer.of(
+                        "mod_magic_glow",
+                        VertexFormats.POSITION_COLOR_LIGHT,
+                        VertexFormat.DrawMode.QUADS,
+                        256,
+                        RenderLayer.MultiPhaseParameters.builder()
+                                .program(EYES_PROGRAM)
+                                .writeMaskState(COLOR_MASK)
+                                .depthTest(LEQUAL_DEPTH_TEST)
+                                .transparency(LIGHTNING_TRANSPARENCY)
+                                .lightmap(DISABLE_LIGHTMAP)
+                                .cull(DISABLE_CULLING)
+                                .build(false));
+            })::get;
 
-    private static final BiFunction<Identifier, Integer, RenderLayer> TINTED_LAYER = 
-        Util.memoize((texture, color) -> {
-            return RenderLayer.of(
-                "mod_tint_layer", 
-                VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, 
-                VertexFormat.DrawMode.QUADS, 
-                256, 
-                true, 
-                true, 
+    private static final BiFunction<Identifier, Integer, RenderLayer> TINTED_LAYER = Util.memoize((texture, color) -> {
+        return RenderLayer.of(
+                "mod_tint_layer",
+                VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
+                VertexFormat.DrawMode.QUADS,
+                256,
+                true,
+                true,
                 RenderLayer.MultiPhaseParameters.builder()
-                    .texture(new Colored(texture, color))
-                    .program(EYES_PROGRAM)
-                    .writeMaskState(COLOR_MASK)
-                    .depthTest(LEQUAL_DEPTH_TEST)
-                    .transparency(LIGHTNING_TRANSPARENCY)
-                    .lightmap(DISABLE_LIGHTMAP)
-                    .cull(DISABLE_CULLING)
-                    .build(true)
-            );
-        });
+                        .texture(new Colored(texture, color))
+                        .program(EYES_PROGRAM)
+                        .writeMaskState(COLOR_MASK)
+                        .depthTest(LEQUAL_DEPTH_TEST)
+                        .transparency(LIGHTNING_TRANSPARENCY)
+                        .lightmap(DISABLE_LIGHTMAP)
+                        .cull(DISABLE_CULLING)
+                        .build(true));
+    });
 
     public static RenderLayer getRenderLayer() {
         return MAGIC.get();
@@ -122,8 +119,10 @@ public abstract class MagicGlow extends RenderPhase {
 
         @Override
         public boolean equals(Object other) {
-            if (this == other) return true;
-            if (!(other instanceof Colored otherColored)) return false;
+            if (this == other)
+                return true;
+            if (!(other instanceof Colored otherColored))
+                return false;
             return super.equals(other)
                     && otherColored.red == red
                     && otherColored.green == green
