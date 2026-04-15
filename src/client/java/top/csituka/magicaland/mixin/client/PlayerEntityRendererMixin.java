@@ -42,7 +42,35 @@ public abstract class PlayerEntityRendererMixin
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
         this.ponyAnimatable = new GeckoPlayerAnimatable();
-        this.ponyRenderer = new GeoObjectRenderer<>(new GeckoPlayerModel());
+        // this.ponyRenderer = new GeoObjectRenderer<>(new GeckoPlayerModel());
+        this.ponyRenderer = new GeoObjectRenderer<GeckoPlayerAnimatable>(new GeckoPlayerModel()) {
+            private static final net.minecraft.util.Identifier PONY_BASE = new net.minecraft.util.Identifier("magicaland", "textures/entity/pony_base.png");
+            private static final net.minecraft.util.Identifier PONY_TS = new net.minecraft.util.Identifier("magicaland", "textures/entity/pony_ts.png");
+
+            @Override
+            public void renderRecursively(MatrixStack poseStack, GeckoPlayerAnimatable animatable, software.bernie.geckolib.cache.object.GeoBone bone, RenderLayer renderType, VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+                String name = bone.getName().toLowerCase();
+                boolean isOther = name.contains("mane") || name.contains("tail") || name.contains("wing") || name.contains("horn") || name.contains("magic");
+                
+                // 为不同身体部件应用不同的贴图 (后续可实现鬃毛与身体应用不同的贴图)
+                net.minecraft.util.Identifier texture = isOther ? PONY_TS : PONY_BASE;
+                RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
+                VertexConsumer newBuffer = bufferSource.getBuffer(newRenderType);
+
+                super.renderRecursively(poseStack, animatable, bone, newRenderType, bufferSource, newBuffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+            }
+
+            @Override
+            public void renderCubesOfBone(MatrixStack poseStack, software.bernie.geckolib.cache.object.GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+                // 为身体施加染色效果，这里染成蓝色，后续可实现用户自定义身体部件颜色的实现
+                if (bone.getName().equalsIgnoreCase("body")) {
+                    red *= 0.2f;
+                    green *= 0.5f;
+                    blue *= 1.0f;
+                }
+                super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            }
+        };
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)

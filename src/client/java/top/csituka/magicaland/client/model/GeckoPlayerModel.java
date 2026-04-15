@@ -14,7 +14,7 @@ public class GeckoPlayerModel extends GeoModel<GeckoPlayerAnimatable> {
 
     @Override
     public Identifier getTextureResource(GeckoPlayerAnimatable object) {
-        return new Identifier("magicaland", "textures/entity/pony_ts.png");
+        return new Identifier("magicaland", "textures/entity/pony_base.png");
     }
 
     @Override
