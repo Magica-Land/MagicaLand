@@ -2,6 +2,7 @@ package top.csituka.magicaland.mixin.client;
 
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
@@ -17,8 +18,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.render.GlowingItem;
 
-@Mixin(net.minecraft.client.render.item.HeldItemRenderer.class)
-public class HeldItemRenderer {
+@Mixin(HeldItemRenderer.class)
+public class HeldItemRendererMixin {
 
     @Unique
     private final GlowingItem magicItemRenderer = new GlowingItem();
