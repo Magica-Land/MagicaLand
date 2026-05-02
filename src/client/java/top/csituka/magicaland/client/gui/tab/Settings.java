@@ -4,7 +4,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.client.MinecraftClient;
 import top.csituka.magicaland.client.config.Config;
-import top.csituka.magicaland.client.gui.ConsoleScreen;
+import top.csituka.magicaland.client.gui.ConfigScreen;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 import top.csituka.magicaland.client.gui.widget.Toggle;
@@ -13,7 +13,7 @@ public class Settings implements TabContent {
     private SettingsList listWidget;
 
     @Override
-    public void init(ConsoleScreen screen, int x, int y, int width, int height) {
+    public void init(ConfigScreen screen, int x, int y, int width, int height) {
         Config config = Config.getInstance();
         int buttonWidth = Math.min(250, width - 20);
         int buttonX = x + (width - buttonWidth) / 2;

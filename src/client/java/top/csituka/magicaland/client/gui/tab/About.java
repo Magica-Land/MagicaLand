@@ -6,7 +6,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import top.csituka.magicaland.client.gui.ConsoleScreen;
+import top.csituka.magicaland.client.gui.ConfigScreen;
 
 public class About implements TabContent {
 
@@ -16,7 +16,7 @@ public class About implements TabContent {
             .orElse("Unknown");
 
     @Override
-    public void init(ConsoleScreen screen, int x, int y, int width, int height) {
+    public void init(ConfigScreen screen, int x, int y, int width, int height) {
         // 滚木
     }
 

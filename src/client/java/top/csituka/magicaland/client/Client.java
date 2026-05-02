@@ -7,7 +7,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 import top.csituka.magicaland.client.config.Config;
-import top.csituka.magicaland.client.gui.ConsoleScreen;
+import top.csituka.magicaland.client.gui.ConfigScreen;
 
 public class Client implements ClientModInitializer {
     private static KeyBinding configKeyBinding;
@@ -24,7 +24,7 @@ public class Client implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (configKeyBinding.wasPressed()) {
-                client.setScreen(new ConsoleScreen(client.currentScreen));
+                client.setScreen(new ConfigScreen(client.currentScreen));
             }
         });
     }

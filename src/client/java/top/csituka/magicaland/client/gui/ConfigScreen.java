@@ -13,7 +13,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConsoleScreen extends Screen {
+public class ConfigScreen extends Screen {
     private final Screen parent;
     private Tab currentTab = Tab.SETTINGS;
     private String modVersion = "Unknown";
@@ -43,7 +43,7 @@ public class ConsoleScreen extends Screen {
         }
     }
 
-    public ConsoleScreen(Screen parent) {
+    public ConfigScreen(Screen parent) {
         super(Text.translatable("text.magicaland.console.title"));
         this.parent = parent;
         FabricLoader.getInstance().getModContainer("magicaland").ifPresent(container -> {

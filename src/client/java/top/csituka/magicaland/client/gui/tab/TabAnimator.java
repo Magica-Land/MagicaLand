@@ -2,7 +2,7 @@ package top.csituka.magicaland.client.gui.tab;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import top.csituka.magicaland.client.gui.ConsoleScreen;
+import top.csituka.magicaland.client.gui.ConfigScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +13,11 @@ public class TabAnimator {
     private boolean isAnimatingContent = false;
     private int animationDirection = 1;
 
-    private ConsoleScreen.Tab previousTab = null;
+    private ConfigScreen.Tab previousTab = null;
     private final List<ClickableWidget> previousWidgets = new ArrayList<>();
 
-    public void startTransition(ConsoleScreen.Tab previousTab, ConsoleScreen.Tab currentTab, int height,
-            List<ClickableWidget> oldWidgets) {
+    public void startTransition(ConfigScreen.Tab previousTab, ConfigScreen.Tab currentTab, int height,
+                                List<ClickableWidget> oldWidgets) {
         this.previousTab = previousTab;
         int prevIndex = previousTab.ordinal();
         int newIndex = currentTab.ordinal();
