@@ -1,5 +1,8 @@
 <div align="center">
 
+<img src="Resources\Icon\full-缩放.png"
+        width ="45%">
+
 # Magical Land  
 A Minecraft Project that turns players and mobs into ponies
 

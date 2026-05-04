@@ -1,5 +1,8 @@
 <div align="center">
 
+<img src="Resources\Icon\full-缩放.png"
+        width ="45%">
+
 # 魔法大陆 (Magical Land)  
 将玩家和生物变成小马
 
