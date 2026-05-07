@@ -2,7 +2,6 @@ package top.csituka.magicaland.client.gui.tab;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
@@ -30,7 +29,6 @@ public class About implements TabContent {
         int iconX = x + (width - iconWidth) / 2;
         int iconY = y + (height - iconHeight - 40) / 2;
 
-        RenderSystem.enableBlend();
         context.drawTexture(ICON, iconX, iconY, 0, 0, iconWidth, iconHeight, iconWidth, iconHeight);
 
         Text descriptionText = Text.translatable("text.magicaland.console.about.description");

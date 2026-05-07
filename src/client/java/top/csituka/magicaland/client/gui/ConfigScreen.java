@@ -1,6 +1,5 @@
 package top.csituka.magicaland.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -91,7 +90,7 @@ public class ConfigScreen extends Screen {
                                 }
                             }
 
-                            this.tabAnimator.startTransition(this.currentTab, tab, 40, oldWidgets);
+                            this.tabAnimator.startTransition(this.currentTab, tab, this.height, oldWidgets);
                             this.currentTab = tab;
 
                             this.clearChildren();
@@ -157,12 +156,8 @@ public class ConfigScreen extends Screen {
 
         this.tabAnimator.render(context, rightX, rightWidth, this.height, padding, delta);
 
-        float currentAlpha = this.tabAnimator.isAnimating() ? this.tabAnimator.getAnimationProgress() : 1.0f;
-
         context.getMatrices().push();
         context.getMatrices().translate(0, this.tabAnimator.getContentOffset(), 0);
-        RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, currentAlpha);
 
         this.currentTab.getContent().render(context, rightX, 0, rightWidth - padding, this.height, mouseX, mouseY,
                 delta);
@@ -183,8 +178,6 @@ public class ConfigScreen extends Screen {
                 }
             }
         }
-
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         context.disableScissor();
 
