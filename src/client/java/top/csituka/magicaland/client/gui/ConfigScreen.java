@@ -9,6 +9,7 @@ import top.csituka.magicaland.client.gui.widget.TabButton;
 import top.csituka.magicaland.client.gui.tab.TabContent;
 import top.csituka.magicaland.client.gui.tab.TabAnimator;
 import top.csituka.magicaland.client.gui.tab.Settings;
+import top.csituka.magicaland.client.gui.tab.PonyCustom;
 import top.csituka.magicaland.client.gui.tab.About;
 import net.fabricmc.loader.api.FabricLoader;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class ConfigScreen extends Screen {
 
     public enum Tab {
         SETTINGS("text.magicaland.console.tab.settings", new Settings()),
+        PONY_CUSTOM("text.magicaland.console.tab.pony_custom", new PonyCustom()),
         ABOUT("text.magicaland.console.tab.about", new About());
 
         private final String translationKey;

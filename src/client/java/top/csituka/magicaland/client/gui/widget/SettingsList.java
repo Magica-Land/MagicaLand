@@ -25,8 +25,17 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
         this.setRenderHorizontalShadows(false);
     }
 
+    public enum Alignment {
+        CENTER,
+        RIGHT
+    }
+
     public void addWidget(ClickableWidget widget) {
-        this.addEntry(new Entry(widget, this));
+        this.addEntry(new Entry(widget, this, Alignment.CENTER));
+    }
+
+    public void addWidget(ClickableWidget widget, Alignment alignment) {
+        this.addEntry(new Entry(widget, this, alignment));
     }
 
     @Override
@@ -160,10 +169,16 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
     public static class Entry extends ElementListWidget.Entry<Entry> {
         public final ClickableWidget widget;
         private final SettingsList parent;
+        private final Alignment alignment;
 
         public Entry(ClickableWidget widget, SettingsList parent) {
+            this(widget, parent, Alignment.CENTER);
+        }
+
+        public Entry(ClickableWidget widget, SettingsList parent, Alignment alignment) {
             this.widget = widget;
             this.parent = parent;
+            this.alignment = alignment;
         }
 
         @Override
@@ -179,7 +194,11 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
         @Override
         public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
                 int mouseY, boolean hovered, float tickDelta) {
-            this.widget.setX(x + (entryWidth - this.widget.getWidth()) / 2);
+            if (this.alignment == Alignment.RIGHT) {
+                this.widget.setX(x + entryWidth - this.widget.getWidth());
+            } else {
+                this.widget.setX(x + (entryWidth - this.widget.getWidth()) / 2);
+            }
             this.widget.setY(y);
 
             int widgetTop = y;

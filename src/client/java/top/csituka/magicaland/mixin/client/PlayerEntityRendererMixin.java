@@ -29,6 +29,7 @@ public abstract class PlayerEntityRendererMixin
 
     @Unique
     private GeckoPlayerAnimatable ponyAnimatable;
+
     @Unique
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
 
@@ -43,7 +44,6 @@ public abstract class PlayerEntityRendererMixin
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
         this.ponyAnimatable = new GeckoPlayerAnimatable();
-        // this.ponyRenderer = new GeoObjectRenderer<>(new GeckoPlayerModel());
         this.ponyRenderer = new GeoObjectRenderer<>(new GeckoPlayerModel()) {
             private static final net.minecraft.util.Identifier PONY_BASE = new net.minecraft.util.Identifier(
                     "magicaland", "textures/entity/base.png");
@@ -56,10 +56,10 @@ public abstract class PlayerEntityRendererMixin
                     VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick,
                     int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
                 String name = bone.getName().toLowerCase();
+
                 boolean isOther = name.contains("mane") || name.contains("tail") || name.contains("wing")
                         || name.contains("horn") || name.contains("magic");
 
-                // 为不同身体部件应用不同的贴图 (后续可实现鬃毛与身体应用不同的贴图)
                 net.minecraft.util.Identifier texture = isOther ? PONY_TS : PONY_BASE;
                 RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
                 VertexConsumer newBuffer = bufferSource.getBuffer(newRenderType);
@@ -72,13 +72,46 @@ public abstract class PlayerEntityRendererMixin
             public void renderCubesOfBone(MatrixStack poseStack, software.bernie.geckolib.cache.object.GeoBone bone,
                     VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
                     float alpha) {
-                // 为身体施加染色效果，这里染成蓝色，后续可实现用户自定义身体部件颜色的实现
+                if (!shouldRenderSelectedMane(bone.getName())) {
+                    return;
+                }
+
                 if (bone.getName().equalsIgnoreCase("body")) {
                     red *= 0.2f;
                     green *= 0.5f;
                     blue *= 1.0f;
                 }
                 super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            }
+
+            private boolean shouldRenderSelectedMane(String boneName) {
+                Config config = Config.getInstance();
+                String lower = boneName.toLowerCase();
+
+                if (boneName.equals("Bun")) {
+                    return false;
+                }
+
+                if (!lower.contains("mane")) {
+                    return true;
+                }
+
+                if (boneName.equals("Mane") || boneName.equals("FrontMane") || boneName.equals("BackMane")) {
+                    return true;
+                }
+
+                String frontStyle = config.frontManeStyle;
+                String backStyle = config.backManeStyle;
+
+                if (boneName.startsWith(frontStyle + "FrontMane")) {
+                    return true;
+                }
+
+                if (boneName.startsWith(backStyle + "BackMane")) {
+                    return true;
+                }
+
+                return false;
             }
         };
     }

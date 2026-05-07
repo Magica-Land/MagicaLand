@@ -5,7 +5,10 @@
   "text.magicaland.config.button.done": "完成",
   "text.magicaland.console.title": "配置",
   "text.magicaland.console.tab.settings": "设置",
+  "text.magicaland.console.tab.pony_custom": "捏马",
   "text.magicaland.console.tab.about": "关于",
   "text.magicaland.console.about.description": "将玩家变成小马",
-  "text.magicaland.config.first_person_magic_glow.name": "物品魔法光效 (第一人称)"
+  "text.magicaland.config.first_person_magic_glow.name": "物品魔法光效 (第一人称)",
+  "text.magicaland.config.front_mane_style.name": "前鬃毛样式",
+  "text.magicaland.config.back_mane_style.name": "后鬃毛样式"
 }

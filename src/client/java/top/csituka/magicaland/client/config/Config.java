@@ -17,6 +17,10 @@ public class Config {
     public boolean replacePlayerModel = true;
     public boolean firstPersonMagicGlow = true;
 
+    public String frontManeStyle = "TS";
+
+    public String backManeStyle = "TS";
+
     private static Config instance;
 
     public static Config getInstance() {

@@ -5,7 +5,10 @@
   "text.magicaland.config.button.done": "Done",
   "text.magicaland.console.title": "Configuration",
   "text.magicaland.console.tab.settings": "Settings",
+  "text.magicaland.console.tab.pony_custom": "Pony Custom",
   "text.magicaland.console.tab.about": "About",
   "text.magicaland.console.about.description": "Turn players into ponies.",
-  "text.magicaland.config.first_person_magic_glow.name": "Magic Glow (First Person)"
+  "text.magicaland.config.first_person_magic_glow.name": "Magic Glow (First Person)",
+  "text.magicaland.config.front_mane_style.name": "Front Mane Style",
+  "text.magicaland.config.back_mane_style.name": "Back Mane Style"
 }
