@@ -7,6 +7,20 @@ import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.gui.ConfigScreen;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.RotationAxis;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.renderer.GeoObjectRenderer;
+import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
+import top.csituka.magicaland.client.model.GeckoPlayerModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +31,9 @@ public class PonyCustom implements TabContent {
     private int rightX;
     private int rightWidth;
     private int rightHeight;
+
+    private GeckoPlayerAnimatable ponyAnimatable;
+    private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
 
     private static final String[] FRONT_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
 
@@ -30,15 +47,43 @@ public class PonyCustom implements TabContent {
         this.rightHeight = height;
         this.widgets.clear();
 
-        int buttonWidth = Math.min(200, width - 10);
+        if (this.ponyAnimatable == null) {
+            this.ponyAnimatable = new GeckoPlayerAnimatable() {
+                @Override
+                public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+                    controllers.add(new AnimationController<>(this, "controller", 0, state -> {
+                        state.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
+                        return PlayState.CONTINUE;
+                    }));
+                    controllers.add(new AnimationController<>(this, "blink_controller", 0, state -> {
+                        state.getController().setAnimation(RawAnimation.begin().thenLoop("blink_parallel"));
+                        return PlayState.CONTINUE;
+                    }));
+                    controllers.add(new AnimationController<>(this, "ear_controller", 0, state -> {
+                        state.getController().setAnimation(RawAnimation.begin().thenLoop("ear_parallel"));
+                        return PlayState.CONTINUE;
+                    }));
+                    controllers.add(new AnimationController<>(this, "tail_controller", 0, state -> {
+                        state.getController().setAnimation(RawAnimation.begin().thenLoop("tail_parallel"));
+                        return PlayState.CONTINUE;
+                    }));
+                }
+            };
+            this.ponyRenderer = createPonyRenderer();
+        }
+        this.ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
+
+        int buttonWidth = Math.min(180, width / 2);
         int buttonHeight = 20;
-        int spacing = 5;
+        int spacing = 10;
 
         int totalContentHeight = buttonHeight * 2 + spacing;
-
         int startY = (height - totalContentHeight) / 2;
 
-        int btnX = width - buttonWidth - 4;
+        int btnX = x + width - buttonWidth - 20;
+        if (width < 250) {
+            btnX = x + (width - buttonWidth) / 2;
+        }
 
         CustomButton frontBtn = createStyleButton(btnX, startY, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.front_mane_style.name"),
@@ -84,6 +129,115 @@ public class PonyCustom implements TabContent {
 
     @Override
     public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta) {
-        // 滚木
+        if (this.ponyAnimatable == null)
+            return;
+
+        this.ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
+
+        int modelX = x + (width > 300 ? width / 4 : 75);
+        int modelY = y + height / 2 + 115;
+
+        MatrixStack matrices = context.getMatrices();
+        matrices.push();
+        matrices.translate(modelX, modelY, 100);
+        matrices.scale(120, 120, 120);
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
+
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(155.0f));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-10.0f));
+
+        try {
+            RenderLayer renderLayer = this.ponyRenderer.getRenderType(this.ponyAnimatable,
+                    this.ponyRenderer.getTextureLocation(this.ponyAnimatable), context.getVertexConsumers(), delta);
+            if (renderLayer != null) {
+                VertexConsumer vertexConsumer = context.getVertexConsumers().getBuffer(renderLayer);
+                this.ponyRenderer.render(matrices, this.ponyAnimatable, context.getVertexConsumers(), renderLayer,
+                        vertexConsumer, 0xF000F0);
+            }
+        } catch (Exception e) {
+            // 滚木
+        }
+
+        matrices.pop();
+    }
+
+    private GeoObjectRenderer<GeckoPlayerAnimatable> createPonyRenderer() {
+        return new GeoObjectRenderer<>(new GeckoPlayerModel() {
+            @Override
+            public void applyMolangQueries(GeckoPlayerAnimatable animatable, double animTime) {
+                try {
+                    super.applyMolangQueries(animatable, animTime);
+                } catch (Exception ignored) {
+                    // 滚木
+                }
+            }
+        }) {
+            private static final Identifier PONY_BASE = new Identifier("magicaland", "textures/entity/base.png");
+            private static final Identifier PONY_TS = new Identifier("magicaland", "textures/entity/mane.png");
+
+            @Override
+            public void renderRecursively(MatrixStack poseStack, GeckoPlayerAnimatable animatable,
+                    GeoBone bone, RenderLayer renderType,
+                    VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick,
+                    int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+                String name = bone.getName().toLowerCase();
+
+                boolean isOther = name.contains("mane") || name.contains("tail") || name.contains("wing")
+                        || name.contains("horn") || name.contains("magic");
+
+                Identifier texture = isOther ? PONY_TS : PONY_BASE;
+                RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
+                VertexConsumer newBuffer = bufferSource.getBuffer(newRenderType);
+
+                super.renderRecursively(poseStack, animatable, bone, newRenderType, bufferSource, newBuffer, isReRender,
+                        partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+            }
+
+            @Override
+            public void renderCubesOfBone(MatrixStack poseStack, GeoBone bone,
+                    VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
+                    float alpha) {
+                if (!shouldRenderSelectedMane(bone.getName())) {
+                    return;
+                }
+
+                if (bone.getName().equalsIgnoreCase("body")) {
+                    red *= 0.2f;
+                    green *= 0.5f;
+                    blue *= 1.0f;
+                }
+                super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            }
+
+            private boolean shouldRenderSelectedMane(String boneName) {
+                Config config = Config.getInstance();
+                String lower = boneName.toLowerCase();
+
+                if (boneName.equals("Bun")) {
+                    return false;
+                }
+
+                if (!lower.contains("mane")) {
+                    return true;
+                }
+
+                if (boneName.equals("Mane") || boneName.equals("FrontMane") || boneName.equals("BackMane")) {
+                    return true;
+                }
+
+                String frontStyle = config.frontManeStyle;
+                String backStyle = config.backManeStyle;
+
+                if (boneName.startsWith(frontStyle + "FrontMane")) {
+                    return true;
+                }
+
+                if (boneName.startsWith(backStyle + "BackMane")) {
+                    return true;
+                }
+
+                return false;
+            }
+        };
     }
 }
