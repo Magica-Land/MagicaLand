@@ -46,9 +46,9 @@ public abstract class PlayerEntityRendererMixin
         // this.ponyRenderer = new GeoObjectRenderer<>(new GeckoPlayerModel());
         this.ponyRenderer = new GeoObjectRenderer<>(new GeckoPlayerModel()) {
             private static final net.minecraft.util.Identifier PONY_BASE = new net.minecraft.util.Identifier(
-                    "magicaland", "textures/entity/pony_base.png");
+                    "magicaland", "textures/entity/base.png");
             private static final net.minecraft.util.Identifier PONY_TS = new net.minecraft.util.Identifier("magicaland",
-                    "textures/entity/pony_ts.png");
+                    "textures/entity/mane.png");
 
             @Override
             public void renderRecursively(MatrixStack poseStack, GeckoPlayerAnimatable animatable,

@@ -5,10 +5,7 @@
 			"loop": true,
 			"animation_length": 2.1667,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -70,7 +67,7 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.5833": {
 							"pre": [5, 0, -5],
@@ -105,7 +102,7 @@
 						}
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-5, 0, 0],
@@ -129,7 +126,7 @@
 						}
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.5833": {
 							"pre": [0, 0, -5],
@@ -142,7 +139,7 @@
 						}
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, 0],
@@ -166,7 +163,7 @@
 						}
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.5833": {
 							"pre": [2.5, 0, 5],
@@ -201,7 +198,7 @@
 						}
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-2.5, 0, 0],
@@ -225,7 +222,7 @@
 						}
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.5833": {
 							"pre": [0, 0, 5],
@@ -238,7 +235,7 @@
 						}
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, 0],
@@ -300,13 +297,16 @@
 				"CommonFace": {
 					"scale": 1
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
+					"scale": 0
+				},
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -360,13 +360,13 @@
 						}
 					}
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [23.6596, 2.01079, -4.57879],
@@ -406,7 +406,7 @@
 						"0.75": [1.04, 0.972, 1.04]
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-5.62, 0, 0],
@@ -446,7 +446,7 @@
 						"0.75": [0, -0.81, 0.01]
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [-21.18, 0, 0],
@@ -489,7 +489,7 @@
 						"0.75": [0, 0.45, 0.24]
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [8.11946, -6.00622, -10.95644],
@@ -549,7 +549,7 @@
 						"0.75": [1.2, 0.8, 1.1]
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-20.58, 0, 0],
@@ -581,7 +581,7 @@
 						"0.75": [1, 1, 1]
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [32.82, 0, 0],
@@ -629,7 +629,7 @@
 						"0.75": [0, -0.47, 0.14]
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-14.94548, -1.29256, -4.83045],
@@ -664,7 +664,7 @@
 						"0.75": [1.1, 0.91, 1.1]
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [7.5, 0, 0],
@@ -699,7 +699,7 @@
 						"0.75": [0, -0.8, 0]
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [7.5, 0, 0],
@@ -738,7 +738,7 @@
 						"0.75": [0, -0.9, 0]
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [12.45392, 1.08089, -4.88206],
@@ -795,7 +795,7 @@
 						"0.5833": [1, 1, 1]
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": [-2.5, 0, 0],
 						"0.125": {
@@ -819,7 +819,7 @@
 						"0.75": [1, 0.83, 1]
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [-7.5, 0, 0],
@@ -895,10 +895,10 @@
 						}
 					}
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				},
 				"Angry": {
@@ -907,7 +907,7 @@
 				"close": {
 					"scale": 0
 				},
-				"Mane03": {
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -961,13 +961,13 @@
 						}
 					}
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [23.6596, 2.01079, -4.57879],
@@ -1007,7 +1007,7 @@
 						"0.75": [1.04, 0.972, 1.04]
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-5.62, 0, 0],
@@ -1047,7 +1047,7 @@
 						"0.75": [0, -0.81, 0.01]
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [-21.18, 0, 0],
@@ -1090,7 +1090,7 @@
 						"0.75": [0, 0.45, 0.24]
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [8.11946, -6.00622, -10.95644],
@@ -1150,7 +1150,7 @@
 						"0.75": [1.2, 0.8, 1.1]
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-20.58, 0, 0],
@@ -1182,7 +1182,7 @@
 						"0.75": [1, 1, 1]
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [32.82, 0, 0],
@@ -1230,7 +1230,7 @@
 						"0.75": [0, -0.47, 0.14]
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-14.94548, -1.29256, -4.83045],
@@ -1265,7 +1265,7 @@
 						"0.75": [1.1, 0.91, 1.1]
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [7.5, 0, 0],
@@ -1300,7 +1300,7 @@
 						"0.75": [0, -0.8, 0]
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [7.5, 0, 0],
@@ -1339,7 +1339,7 @@
 						"0.75": [0, -0.9, 0]
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [12.45392, 1.08089, -4.88206],
@@ -1396,7 +1396,7 @@
 						"0.5833": [1, 1, 1]
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": [-2.5, 0, 0],
 						"0.125": {
@@ -1420,7 +1420,7 @@
 						"0.75": [1, 0.83, 1]
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [-7.5, 0, 0],
@@ -1502,10 +1502,10 @@
 				"RightEar": {
 					"rotation": [0, 0, -142.5]
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				},
 				"Angry": {
@@ -1514,7 +1514,7 @@
 				"close": {
 					"scale": 0
 				},
-				"Mane03": {
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -1523,10 +1523,7 @@
 			"loop": true,
 			"animation_length": 0.6667,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -1628,7 +1625,7 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-55.00858, -5.71106, -5.54526],
@@ -1708,7 +1705,7 @@
 						}
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [90, 0, 0],
@@ -1748,7 +1745,7 @@
 						"0.6667": [0, 0.53, -1.47]
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [20, 0, 0],
@@ -1796,7 +1793,7 @@
 						"0.6667": [0, -1, 0]
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-2.34, 2.66, -2.66],
@@ -1876,7 +1873,7 @@
 						}
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-9.1, 0, 0],
@@ -1948,7 +1945,7 @@
 						}
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [10, 0, 5],
@@ -1988,7 +1985,7 @@
 						"0.6667": [0, -1.41, 0.13]
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-3.10661, 11.60405, 4.82874],
@@ -2068,7 +2065,7 @@
 						}
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-12.5, 0, 0],
@@ -2108,7 +2105,7 @@
 						"0.6667": [0, -0.45, 0.05]
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [14.31, 0, 0.43],
@@ -2156,7 +2153,7 @@
 						"0.6667": [0, -0.99, 0]
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [25, 0, 0],
@@ -2236,7 +2233,7 @@
 						}
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [12.5, 0, 0],
@@ -2308,7 +2305,7 @@
 						}
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [42.5, 0, 0],
@@ -2398,16 +2395,16 @@
 				"CommonFace": {
 					"scale": 1
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": {
 						"0.0": {
 							"post": [-17.5, 0, 0],
@@ -2423,7 +2420,7 @@
 						}
 					}
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": {
 						"0.0": {
 							"post": [25, 0, 0],
@@ -2439,7 +2436,7 @@
 						}
 					}
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": {
 						"0.0": {
 							"post": [-15, 0, 0],
@@ -2454,6 +2451,280 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
+				},
+				"Bun": {
+					"scale": 0
+				}
+			}
+		},
+		"pp_walk": {
+			"loop": true,
+			"animation_length": 1.5,
+			"bones": {
+				"Body": {
+					"position": {
+						"0.0": [0, -3, 0],
+						"0.2083": [0, 16.64, 0],
+						"0.4167": [0, 21.38, 0],
+						"0.625": [0, 0.48, 0],
+						"0.75": [0, -3, 0],
+						"0.9583": [0, 16.64, 0],
+						"1.1667": [0, 21.38, 0],
+						"1.375": [0, 0.48, 0],
+						"1.5": [0, -3, 0]
+					},
+					"scale": {
+						"0.0": [1, 0.8, 1],
+						"0.125": [1, 1.26, 1],
+						"0.2083": [1, 0.83, 1],
+						"0.2917": [1, 1, 1],
+						"0.4167": [1, 1, 1],
+						"0.5417": [1, 1.325, 1],
+						"0.625": [1, 1.0625, 1],
+						"0.75": [1, 0.8, 1],
+						"0.875": [1, 1.26, 1],
+						"0.9583": [1, 0.83, 1],
+						"1.0417": [1, 1, 1],
+						"1.1667": [1, 1, 1],
+						"1.2917": [1, 1.325, 1],
+						"1.375": [1, 1.0625, 1],
+						"1.5": [1, 0.8, 1]
+					}
+				},
+				"LForeLeg": {
+					"rotation": {
+						"0.0": [-22.5, 0, 0],
+						"0.125": [8.5, 0, 0],
+						"0.2083": [12.5, 0, 0],
+						"0.625": [-19.58, 0, 0],
+						"0.75": [-22.5, 0, 0],
+						"0.875": [8.5, 0, 0],
+						"0.9583": [12.5, 0, 0],
+						"1.375": [-19.58, 0, 0],
+						"1.5": [-22.5, 0, 0]
+					}
+				},
+				"LFrontCalf": {
+					"rotation": {
+						"0.0": [22.5, 0, 0],
+						"0.2083": [0, 0, 0],
+						"0.625": [20.63, 0, 0],
+						"0.75": [22.5, 0, 0],
+						"0.875": [0, 0, 0],
+						"0.9583": [0, 0, 0],
+						"1.375": [20.63, 0, 0],
+						"1.5": [22.5, 0, 0]
+					}
+				},
+				"LFrontHoof": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.125": [16.5, 0, 0],
+						"0.2083": [15, 0, 0],
+						"0.625": [1.25, 0, 0],
+						"0.75": [0, 0, 0],
+						"0.875": [16.5, 0, 0],
+						"0.9583": [15, 0, 0],
+						"1.375": [1.25, 0, 0],
+						"1.5": [0, 0, 0]
+					}
+				},
+				"LHindLeg": {
+					"rotation": {
+						"0.0": [15, 0, 0],
+						"0.125": [11.5, 0, 0],
+						"0.2083": [-7.5, 0, 0],
+						"0.4167": [-12.18, 0, 0],
+						"0.625": [13.13, 0, 0],
+						"0.75": [15, 0, 0],
+						"0.875": [11.5, 0, 0],
+						"0.9583": [-7.5, 0, 0],
+						"1.1667": [-12.18, 0, 0],
+						"1.375": [13.13, 0, 0],
+						"1.5": [15, 0, 0]
+					}
+				},
+				"LHindCalf": {
+					"rotation": {
+						"0.0": [-32.5, 0, 0],
+						"0.2083": [-10, 0, 0],
+						"0.625": [-30.62, 0, 0],
+						"0.75": [-32.5, 0, 0],
+						"0.875": [-10, 0, 0],
+						"0.9583": [-10, 0, 0],
+						"1.375": [-30.62, 0, 0],
+						"1.5": [-32.5, 0, 0]
+					}
+				},
+				"LHindHoof": {
+					"rotation": {
+						"0.0": [17.5, 0, 0],
+						"0.125": [30, 0, 0],
+						"0.625": [17.5, 0, 0],
+						"0.75": [17.5, 0, 0],
+						"0.875": [30, 0, 0],
+						"1.375": [17.5, 0, 0],
+						"1.5": [17.5, 0, 0]
+					}
+				},
+				"RForeLeg": {
+					"rotation": {
+						"0.0": [-25, 0, 0],
+						"0.125": [10, 0, 0],
+						"0.2083": [12.5, 0, 0],
+						"0.625": [-21.87, 0, 0],
+						"0.75": [-25, 0, 0],
+						"0.875": [10, 0, 0],
+						"0.9583": [12.5, 0, 0],
+						"1.375": [-21.87, 0, 0],
+						"1.5": [-25, 0, 0]
+					}
+				},
+				"RFrontCalf": {
+					"rotation": {
+						"0.0": [25, 0, 0],
+						"0.2083": [0, 0, 0],
+						"0.625": [22.92, 0, 0],
+						"0.75": [25, 0, 0],
+						"0.875": [0, 0, 0],
+						"0.9583": [0, 0, 0],
+						"1.375": [22.92, 0, 0],
+						"1.5": [25, 0, 0]
+					}
+				},
+				"RFrontHoof": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.2083": [15, 0, 0],
+						"0.625": [1.25, 0, 0],
+						"0.75": [0, 0, 0],
+						"0.875": [15, 0, 0],
+						"0.9583": [15, 0, 0],
+						"1.375": [1.25, 0, 0],
+						"1.5": [0, 0, 0]
+					}
+				},
+				"RHindLeg": {
+					"rotation": {
+						"0.0": [15, 0, 0],
+						"0.125": [11.5, 0, 0],
+						"0.2083": [-7.5, 0, 0],
+						"0.4167": [-14.68, 0, 0],
+						"0.625": [13.13, 0, 0],
+						"0.75": [15, 0, 0],
+						"0.875": [11.5, 0, 0],
+						"0.9583": [-7.5, 0, 0],
+						"1.1667": [-14.68, 0, 0],
+						"1.375": [13.13, 0, 0],
+						"1.5": [15, 0, 0]
+					}
+				},
+				"RHindCalf": {
+					"rotation": {
+						"0.0": [-32.5, 0, 0],
+						"0.2083": [-10, 0, 0],
+						"0.625": [-30.62, 0, 0],
+						"0.75": [-32.5, 0, 0],
+						"0.875": [-10, 0, 0],
+						"0.9583": [-10, 0, 0],
+						"1.375": [-30.62, 0, 0],
+						"1.5": [-32.5, 0, 0]
+					}
+				},
+				"RHindHoof": {
+					"rotation": {
+						"0.0": [17.5, 0, 0],
+						"0.125": [30, 0, 0],
+						"0.625": [17.5, 0, 0],
+						"0.75": [17.5, 0, 0],
+						"0.875": [30, 0, 0],
+						"1.375": [17.5, 0, 0],
+						"1.5": [17.5, 0, 0]
+					}
+				},
+				"Neck": {
+					"rotation": {
+						"0.0": [17.5, 0, 0],
+						"0.5417": [-4.17, 0, 0],
+						"0.9167": [17.5, 0, 0],
+						"1.25": [-4.17, 0, 0],
+						"1.5": [17.5, 0, 0]
+					}
+				},
+				"Head": {
+					"rotation": {
+						"0.0": [10, 0, 0],
+						"0.5417": [-13.33, 0, 0],
+						"0.9167": [10, 0, 0],
+						"1.25": [-13.33, 0, 0],
+						"1.5": [10, 0, 0]
+					}
+				},
+				"LeftEar": {
+					"rotation": {
+						"0.0": [0, 0, 147.5],
+						"0.4167": [0, 0, 147.5],
+						"0.5417": [0, 0, 0],
+						"0.75": [0, 0, 147.5],
+						"1.1667": [0, 0, 147.5],
+						"1.2917": [0, 0, 0]
+					}
+				},
+				"RightEar": {
+					"rotation": {
+						"0.0": [0, 0, -162.5],
+						"0.4167": [0, 0, -162.5],
+						"0.5417": [0, 0, 0],
+						"0.75": [0, 0, -162.5],
+						"1.1667": [0, 0, -162.5],
+						"1.2917": [0, 0, 0]
+					}
+				},
+				"PPTail01": {
+					"rotation": {
+						"0.0": [-15, 0, 0],
+						"0.4583": [22.5, 0, 0],
+						"0.5833": [62.5, 0, 0],
+						"0.75": [-15, 0, 0],
+						"1.2083": [22.5, 0, 0],
+						"1.3333": [62.5, 0, 0],
+						"1.5": [-15, 0, 0]
+					},
+					"scale": {
+						"0.0": [1, 1, 1],
+						"0.125": [1, 1.2, 1],
+						"0.25": [1, 1, 1],
+						"0.75": [1, 1, 1],
+						"0.875": [1, 1.2, 1],
+						"1.0": [1, 1, 1],
+						"1.5": [1, 1, 1]
+					}
+				},
+				"PPTail02": {
+					"rotation": {
+						"0.4583": [0, 0, 0],
+						"0.5833": [17.5, 0, 0],
+						"1.1667": [0, 0, 0],
+						"1.2917": [17.5, 0, 0]
+					}
+				},
+				"Angry": {
+					"scale": 0
+				},
+				"CommonFace": {
+					"scale": 0
+				},
+				"Smell": {
+					"scale": 1
+				},
+				"ScrunchedEyes": {
+					"scale": 0
+				},
+				"close": {
+					"scale": 0
+				},
+				"Bun": {
+					"scale": 0
 				}
 			}
 		},
@@ -2469,22 +2740,6 @@
 						"1.0": {
 							"pre": [-56.44214, 5.48341, 76.99329],
 							"post": [-56.44214, 5.48341, 76.99329],
-							"lerp_mode": "catmullrom"
-						}
-					}
-				},
-				"RWing02": {
-					"rotation": {
-						"0.0": {
-							"post": [0, 0, -40],
-							"lerp_mode": "catmullrom"
-						},
-						"0.5": {
-							"post": [0, 0, -30],
-							"lerp_mode": "catmullrom"
-						},
-						"1.0": {
-							"post": [0, 0, -40],
 							"lerp_mode": "catmullrom"
 						}
 					}
@@ -2505,10 +2760,7 @@
 						}
 					}
 				},
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -2564,7 +2816,7 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [4.99527, -0.21782, 2.4905],
@@ -2610,7 +2862,7 @@
 						}
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": [17.5, 0, 0],
 						"0.5": [-2.5, 0, 0],
@@ -2626,7 +2878,7 @@
 						"1.0": [0, -0.545, -0.065]
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": {
 						"0.0": [-22.5, 0, 0],
 						"0.25": [-5, 0, 0],
@@ -2655,7 +2907,7 @@
 						"1.0": [0, 0.5, 0.3]
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-9.96271, -0.86717, -4.92442],
@@ -2718,7 +2970,7 @@
 						}
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": [-5, 0, 0],
 						"0.5": [2.5, 0, 0],
@@ -2726,7 +2978,7 @@
 						"1.0": [-5, 0, 0]
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": [15, 0, 0],
 						"0.1389": [-5, 0, 0],
@@ -2746,7 +2998,7 @@
 						"1.0": [0, -1.325, 0.175]
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-9.91615, -1.29875, -7.38732],
@@ -2792,7 +3044,7 @@
 						}
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": [-2.5, 0, 0],
 						"0.0556": [5, 0, 0],
@@ -2807,7 +3059,7 @@
 						"0.5": [0, -0.545, -0.065]
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [10, 0, 0],
@@ -2839,7 +3091,7 @@
 						"1.0": [0, -0.9, 0]
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [7.49294, 0.32621, -2.47864],
@@ -2903,7 +3155,7 @@
 						"1.0": [1.13, 0.9, 1]
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": [2.5, 0, 0],
 						"0.3333": [-2.5, 0, 0],
@@ -2911,7 +3163,7 @@
 						"1.0": [2.5, 0, 0]
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": [-10, 0, 0],
 						"0.2778": [22.5, 0, 0],
@@ -2954,7 +3206,7 @@
 				"CommonFace": {
 					"scale": 1
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"Head": {
@@ -2976,13 +3228,29 @@
 				"reye": {
 					"position": [-1, 0, 0]
 				},
-				"BodyRot": {
-					"position": [0, 3, 0]
-				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
+					"scale": 0
+				},
+				"ROpendWing01": {
+					"rotation": {
+						"0.0": {
+							"post": [0, 0, -40],
+							"lerp_mode": "catmullrom"
+						},
+						"0.5": {
+							"post": [0, 0, -30],
+							"lerp_mode": "catmullrom"
+						},
+						"1.0": {
+							"post": [0, 0, -40],
+							"lerp_mode": "catmullrom"
+						}
+					}
+				},
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -2991,10 +3259,7 @@
 			"loop": true,
 			"animation_length": 0.375,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -3037,7 +3302,7 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [40, 0, 0],
@@ -3091,7 +3356,7 @@
 						}
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [12.5, 0, 0],
@@ -3161,7 +3426,7 @@
 						}
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [40, 0, 0],
@@ -3215,7 +3480,7 @@
 						}
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [15, 0, 0],
@@ -3283,7 +3548,7 @@
 						}
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [30, 0, 0],
@@ -3341,7 +3606,7 @@
 						}
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [20, 0, 0],
@@ -3411,7 +3676,7 @@
 						}
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-87.5, 0, 0],
@@ -3469,7 +3734,7 @@
 						}
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [67.5, 0, 0],
@@ -3539,7 +3804,7 @@
 						}
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [35, 0, 0],
@@ -3589,7 +3854,7 @@
 						}
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": [0.01, 0, 0],
 						"0.0417": [12.5, 0, 0],
@@ -3613,7 +3878,7 @@
 						"0.375": [1, 0.82, 1]
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": [-15, 0, 0],
 						"0.0417": [-17.5, 0, 0],
@@ -3629,7 +3894,7 @@
 						"0.375": [1, 1, 1]
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": [11.66, 0, 0],
 						"0.0417": [2.5, 0, 0],
@@ -3702,23 +3967,26 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": [30, 0, 0]
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": [17.5, 0, 0]
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": [27.5, 0, 0]
+				},
+				"Bun": {
+					"scale": 0
 				}
 			}
 		},
@@ -3726,10 +3994,7 @@
 			"loop": "hold_on_last_frame",
 			"animation_length": 0.25,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -3745,13 +4010,13 @@
 						"0.125": [0, 0, 2]
 					}
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.125": [0, 0, 0]
@@ -3765,7 +4030,7 @@
 						"0.125": [1, 1.15, 1]
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": [-20, 0, 0],
 						"0.125": [-20, 0, 0]
@@ -3775,7 +4040,7 @@
 						"0.125": [1, 0.9, 1]
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": {
 						"0.0": [27.5, 0, 0],
 						"0.125": [27.5, 0, 0]
@@ -3785,25 +4050,25 @@
 						"0.125": [0, -1, 0]
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": [-5.46689, -18.21718, -5.46689],
 						"0.125": [-5.46689, -18.21718, -5.46689]
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": [-22.5, 0, 0],
 						"0.125": [-22.5, 0, 0]
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": [37.5, 0, 0],
 						"0.125": [37.5, 0, 0]
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.125": [0, 0, 0]
@@ -3817,7 +4082,7 @@
 						"0.125": [1, 1.15, 1]
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": [-20, 0, 0],
 						"0.125": [-20, 0, 0]
@@ -3827,7 +4092,7 @@
 						"0.125": [1, 0.9, 1]
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.0": [25, 0, 0],
 						"0.125": [25, 0, 0]
@@ -3837,19 +4102,19 @@
 						"0.125": [0, -1, 0]
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": [-5.46689, 18.21718, 5.46689],
 						"0.125": [-5.46689, 18.21718, 5.46689]
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": [-22.5, 0, 0],
 						"0.125": [-22.5, 0, 0]
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": [37.5, 0, 0],
 						"0.125": [37.5, 0, 0]
@@ -3880,7 +4145,10 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
+					"scale": 0
+				},
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -3888,51 +4156,48 @@
 		"sneaking": {
 			"loop": true,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"Body": {
 					"rotation": [20, 0, 0],
 					"position": [0, -2, 0]
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": [-92.5, -27.5, 10]
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": [70, 0, 0],
 					"position": [0, 0.4, -1],
 					"scale": [1, 1.14, 1]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": [-10, 0, -10]
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": [-10, 0, 0],
 					"scale": [1, 0.91, 1]
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": [0, 0, 10],
 					"position": [-0.125, -1.7, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": [-92.5, 15, -5]
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": [70, 0, 0],
 					"position": [0, 0.4, -1],
 					"scale": [1, 1.16, 1]
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": [-10, 0, 10]
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": [-10, 0, 0],
 					"scale": [1, 0.89, 1]
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": [0, 0, -10],
 					"position": [0.15, -1.675, 0]
 				},
@@ -3948,17 +4213,20 @@
 				"CommonFace": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": [-15, 0, 0]
+				},
+				"Bun": {
+					"scale": 0
 				}
 			}
 		},
@@ -3966,10 +4234,7 @@
 			"loop": true,
 			"animation_length": 1.0417,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"leye": {
@@ -4029,7 +4294,7 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-86.78, -15, 5],
@@ -4060,7 +4325,7 @@
 						"1.0417": [0.8741, 1.0315, 0.8741]
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [69.72, -0.92, 0],
@@ -4120,7 +4385,7 @@
 						}
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [-5.41, 0, 0],
@@ -4158,7 +4423,7 @@
 						"1.0417": [0, -0.62, 0.04]
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-2.5, 0, -10],
@@ -4218,7 +4483,7 @@
 						}
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-42.5, 0, 0],
@@ -4260,7 +4525,7 @@
 						}
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [42.5, 0, 0],
@@ -4293,7 +4558,7 @@
 						"1.0417": [0, -0.05, 0.025]
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-57.5, 15, -5],
@@ -4323,7 +4588,7 @@
 						"1.0417": [1, 1, 1]
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [90, 0, 0],
@@ -4380,7 +4645,7 @@
 						}
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [27.5, 0, 0],
@@ -4416,7 +4681,7 @@
 						"1.0417": [0, -0.95, 0]
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-30.84, 0, 10],
@@ -4488,7 +4753,7 @@
 						}
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-7.89, 0, 0],
@@ -4534,7 +4799,7 @@
 						}
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [17.56, 0, 0],
@@ -4586,20 +4851,23 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": [-22.5, 0, 0]
 				},
 				"Root": {
 					"position": [0, 1, 0]
+				},
+				"Bun": {
+					"scale": 0
 				}
 			}
 		},
@@ -4607,10 +4875,7 @@
 			"loop": true,
 			"animation_length": 0.5833,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -4666,7 +4931,7 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-75, -12.5, 7.5],
@@ -4683,7 +4948,7 @@
 					},
 					"position": [0, 1, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [70, 0, 0],
@@ -4735,7 +5000,7 @@
 						}
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, 0],
@@ -4779,7 +5044,7 @@
 						}
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [32.5, 0, 0],
@@ -4791,7 +5056,7 @@
 						"0.2917": [0, -0.5, 0.15]
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-88.81928, 5.93795, -3.13463],
@@ -4808,7 +5073,7 @@
 					},
 					"position": [0, 1, 0]
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [27.5, 0, 0],
@@ -4864,7 +5129,7 @@
 						}
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-97.5, 0, 0],
@@ -4916,7 +5181,7 @@
 						}
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [32.5, 0, 0],
@@ -4964,16 +5229,16 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [130, 0, 0],
@@ -5003,11 +5268,11 @@
 						}
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": [42.5, 0, 0],
 					"position": [0, -1, 0]
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [112.5, 0, 0],
@@ -5037,22 +5302,22 @@
 						}
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": [55, 0, 0],
 					"position": [0, -1, 0],
 					"scale": [1, 1.1, 1]
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": [37.5, 0, 0]
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.25": [-7.5, 0, 0],
 						"0.5833": [0, 0, 0]
 					}
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": {
 						"0.0": [42.5, 0, 0],
 						"0.25": [47.5, 0, 0],
@@ -5064,8 +5329,11 @@
 						"0.5833": [0.9, 1.4, 0.9]
 					}
 				},
-				"BodyRot": {
-					"rotation": [0, 0, 0]
+				"molang": {
+					"rotation": ["v.s=32", "v.f=32/72", 0]
+				},
+				"Bun": {
+					"scale": 0
 				}
 			}
 		},
@@ -5120,7 +5388,7 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-2.5, 0, 0],
@@ -5158,7 +5426,7 @@
 						}
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [2.5, 0, 0],
@@ -5189,7 +5457,7 @@
 						"0.5833": [0, 0, 0]
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, 0],
@@ -5211,7 +5479,7 @@
 						"0.5833": [0, 0, 0]
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [27.5, 0, 0],
@@ -5271,7 +5539,7 @@
 						}
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, 0],
@@ -5291,7 +5559,7 @@
 						}
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [33.28, 0, 0],
@@ -5331,7 +5599,7 @@
 						"0.5833": [1, 1.15, 1]
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-64.19662, 3.56163, 9.98105],
@@ -5373,7 +5641,7 @@
 						}
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [90, 0, 0],
@@ -5404,7 +5672,7 @@
 						"0.5833": [0, 0.5, -1.5]
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [27.5, 0, 0],
@@ -5426,7 +5694,7 @@
 						"0.5833": [0, -1, 0]
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [5, 0, 0],
@@ -5490,7 +5758,7 @@
 						}
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-72.5, 0, 0],
@@ -5510,7 +5778,7 @@
 						}
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [60, 0, 0],
@@ -5575,19 +5843,19 @@
 				"CommonFace": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"close": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"Mane03": {
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -5609,7 +5877,7 @@
 						"0.4583": [0, 0, 0]
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.0833": [-90, -20, 0],
@@ -5625,7 +5893,7 @@
 						"0.4583": [1, 1, 1]
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.0833": [117.5, 0, 0],
@@ -5639,7 +5907,7 @@
 						"0.4583": [0, 0, 0]
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.0833": [40, 0, 0],
@@ -5647,7 +5915,7 @@
 						"0.4583": [0, 0, 0]
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.0833": [-10, -5, 5],
@@ -5665,7 +5933,7 @@
 						"0.4583": [1, 1, 1]
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.4583": [0, 0, 0]
@@ -5679,7 +5947,7 @@
 						"0.4583": [1, 1, 1]
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.0833": [15, 0, -7.5],
@@ -5687,7 +5955,7 @@
 						"0.4583": [0, 0, 0]
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.0833": [-15, 0, 0],
@@ -5705,7 +5973,7 @@
 						"0.4583": [1, 1, 1]
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.0833": [20, 0, 0],
@@ -5717,7 +5985,7 @@
 						"0.4583": [0, 0, 0]
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.0833": [-20, -20, 7.5],
@@ -5735,7 +6003,7 @@
 						"0.4583": [1, 1, 1]
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.4583": [0, 0, 0]
@@ -5749,7 +6017,7 @@
 						"0.4583": [1, 1, 1]
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.0833": [25, 2.5, -10],
@@ -5837,10 +6105,10 @@
 						"0.4583": [1, 1, 1]
 					}
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
 				"Angry": {
@@ -5849,7 +6117,7 @@
 				"CommonFace": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -5858,7 +6126,7 @@
 				"shut": {
 					"scale": 0
 				},
-				"Mane03": {
+				"Bun": {
 					"scale": 0
 				}
 			}
@@ -5867,10 +6135,7 @@
 			"loop": true,
 			"animation_length": 0.5417,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -5918,7 +6183,7 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-95, 0, -5],
@@ -5938,7 +6203,7 @@
 						}
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [105, 0, 0],
@@ -5947,21 +6212,21 @@
 					},
 					"position": [0, 0.45, 2]
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": [52.5, 0, 0],
 					"position": [0, -1, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": [15, 0, -5]
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": [-12.5, 0, 0]
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": [47.5, 0, 0],
 					"position": [0, 0.1, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-90, 0, 5],
@@ -5981,7 +6246,7 @@
 						}
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [105, 0, 0],
@@ -6005,27 +6270,27 @@
 						"0.1667": [0, 0.45, 2.05]
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": [35, 0, 0],
 					"position": [0, -1, 0]
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": [15, 0, 5]
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": [-15, 0, 0]
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": [37.5, 0, 0],
 					"position": [0, -0.2, 0.1]
 				},
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"rotation": {
 						"0.0": {
 							"post": [6.15491, -16.41371, -83.38852],
@@ -6075,7 +6340,7 @@
 						}
 					}
 				},
-				"Wing02": {
+				"LOpendWing01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, -15],
@@ -6159,7 +6424,7 @@
 						}
 					}
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"rotation": {
 						"0.0": {
 							"post": [6.15491, 16.41371, 83.38852],
@@ -6209,7 +6474,7 @@
 						}
 					}
 				},
-				"Wing3": {
+				"ROpendWing01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, 15],
@@ -6293,10 +6558,10 @@
 						}
 					}
 				},
-				"LeftWing": {
+				"LClosedWing": {
 					"scale": 0
 				},
-				"RightWing": {
+				"RClosedWing": {
 					"scale": 0
 				},
 				"Neck": {
@@ -6345,10 +6610,7 @@
 			"loop": true,
 			"animation_length": 0.55,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -6379,10 +6641,10 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": [-94.93623, -8.55346, -16.81028]
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [10, 0, 0],
@@ -6390,34 +6652,34 @@
 						}
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": [-2.5, 0, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": [65, 0, -5]
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": [-12.5, 0, 0]
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": [47.5, 0, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": [-90, 7.5, 15]
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": [5, 0, 0]
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": [0, 0, 0]
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": [67.5, 0, 5]
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": [-15, 0, 0]
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": [37.5, 0, 0]
 				},
 				"Neck": {
@@ -6426,10 +6688,10 @@
 				"CommonFace": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"rotation": {
 						"0.0": {
 							"post": [6.15491, -16.41371, -83.38852],
@@ -6485,7 +6747,7 @@
 						}
 					}
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"rotation": {
 						"0.0": {
 							"post": [6.15491, 16.41371, 83.38852],
@@ -6541,16 +6803,16 @@
 						}
 					}
 				},
-				"LeftWing": {
+				"LClosedWing": {
 					"scale": 0
 				},
-				"RightWing": {
+				"RClosedWing": {
 					"scale": 0
 				},
 				"Head": {
 					"rotation": [0, 0, 0]
 				},
-				"Wing02": {
+				"LOpendWing01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, -15],
@@ -6598,7 +6860,7 @@
 						}
 					}
 				},
-				"Wing3": {
+				"ROpendWing01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, 15],
@@ -6646,17 +6908,18 @@
 						}
 					}
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": [-2.5, 0, 0]
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": [47.5, 0, 0]
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": [25, 0, 0]
 				},
-				"BodyRot": {
-					"rotation": [0, 0, 0]
+				"molang": {
+					"rotation": ["90+v.bv=math.sin(query.life_time*2000)*3", 0, 0],
+					"position": [0, 0, 16.5]
 				}
 			},
 			"particle_effects": {
@@ -6670,10 +6933,7 @@
 			"loop": "hold_on_last_frame",
 			"animation_length": 0.5,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -6697,10 +6957,10 @@
 						"0.5": [0, 12, 0]
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": [-25, 0, -5]
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [105, 0, 0],
@@ -6709,37 +6969,37 @@
 					},
 					"position": [0, 0.45, 2.1]
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": [52.5, 0, 0],
 					"position": [0, -0.9, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": [32.5, 0, -5]
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": [27.5, 0, 0]
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": [47.5, 0, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": [-27.5, 0, 5]
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": [105, 0, 0],
 					"position": [0, 0.4, 2]
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": [35, 0, 0],
 					"position": [0, -1, 0]
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": [25, 0, 5]
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": [-15, 0, 0]
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": [37.5, 0, 0]
 				},
 				"Neck": {
@@ -6757,7 +7017,7 @@
 				"CommonFace": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 1
 				}
 			}
@@ -6793,7 +7053,7 @@
 						}
 					}
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": {
 						"0.0": {
 							"post": [0, 0, 0],
@@ -6805,7 +7065,7 @@
 						}
 					}
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": {
 						"0.0": {
 							"post": [0, 0, 0],
@@ -6817,7 +7077,7 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-65.40924, -8.09841, -6.33901],
@@ -6837,7 +7097,7 @@
 						}
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [130, 0, 0],
@@ -6859,7 +7119,7 @@
 						}
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [30, 0, 0],
@@ -6881,7 +7141,7 @@
 						}
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 17.5, 0],
@@ -6913,7 +7173,7 @@
 						}
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-12.5, 0, 0],
@@ -6945,7 +7205,7 @@
 						}
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [40, 0, 0],
@@ -6957,7 +7217,7 @@
 						}
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-64.33352, 47.33397, -6.70241],
@@ -6977,7 +7237,7 @@
 						}
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [105, 0, 0],
@@ -7003,7 +7263,7 @@
 						}
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [37.5, 0, 0],
@@ -7025,7 +7285,7 @@
 						}
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [55, -5, 0],
@@ -7045,7 +7305,7 @@
 						}
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [5, 0, 0],
@@ -7057,7 +7317,7 @@
 						}
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": {
 							"post": [47.5, 0, 0],
@@ -7155,7 +7415,7 @@
 						}
 					}
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": {
 						"0.0": {
 							"post": [0, 0, 0],
@@ -7167,7 +7427,7 @@
 						}
 					}
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": {
 						"0.0": {
 							"post": [-31.07765, 17.49972, -30.72917],
@@ -7179,7 +7439,7 @@
 						}
 					}
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": {
 						"0.0": {
 							"post": [-9.11316, 9.79781, -42.15258],
@@ -7191,7 +7451,7 @@
 						}
 					}
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": {
 						"0.0": {
 							"post": [-6.97488, 0.14366, -19.75377],
@@ -7203,7 +7463,7 @@
 						}
 					}
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				}
 			}
@@ -7211,10 +7471,7 @@
 		"ride": {
 			"loop": true,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -7229,34 +7486,34 @@
 					"rotation": [-80, 0, 0],
 					"position": [0, 6, 0]
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": [22.5, 2.5, -2.5]
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": [-27.5, 0, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": [70, 0, -22.5]
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": [-82.5, 0, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": [12.5, -12.5, 7.5]
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": [-20, 0, 0]
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": [72.5, 0, 12.5]
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": [-80, 0, 0]
 				},
 				"Neck": {
@@ -7266,16 +7523,16 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": [80, 0, 0]
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": [32.5, 0, 0]
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": [5, 0, 0]
 				}
 			}
@@ -7283,10 +7540,7 @@
 		"ride_pig": {
 			"loop": true,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -7301,34 +7555,34 @@
 					"rotation": [-80, 0, 0],
 					"position": [0, 6, 0]
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": [22.5, 2.5, -2.5]
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": [-27.5, 0, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": [70, 0, -22.5]
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": [-82.5, 0, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": [12.5, -12.5, 7.5]
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": [-20, 0, 0]
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": [72.5, 0, 12.5]
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": [-80, 0, 0]
 				},
 				"Neck": {
@@ -7338,16 +7592,16 @@
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": [75, 0, 0]
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": [37.5, 0, 0]
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": [7.5, 0, 0]
 				}
 			}
@@ -7364,38 +7618,38 @@
 					"rotation": [-80, 0, 0],
 					"position": [0, -2, 0]
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": [60, 2.5, -2.5]
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": [-27.5, 0, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": [70, 0, -22.5]
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": [-82.5, 0, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": [60.71031, -3.80336, 2.50805]
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": [-20, 0, 0]
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": [72.5, 0, 12.5]
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": [-80, 0, 0]
 				},
 				"Neck": {
 					"rotation": [80, 0, 0],
 					"position": [0, 0, -2]
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
 				"Angry": {
@@ -7404,19 +7658,16 @@
 				"Smell": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"RightItem": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
-					"scale": 0
-				},
-				"Mane03": {
 					"scale": 0
 				}
 			}
@@ -7433,38 +7684,38 @@
 					"rotation": [-80, 0, 0],
 					"position": [0, -2, 0]
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": [60, 2.5, -2.5]
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": [-27.5, 0, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": [70, 0, -22.5]
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": [-82.5, 0, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": [60.71031, -3.80336, 2.50805]
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": [-20, 0, 0]
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": [72.5, 0, 12.5]
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": [-80, 0, 0]
 				},
 				"Neck": {
 					"rotation": [80, 0, 0],
 					"position": [0, 0, -2]
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
 				"Angry": {
@@ -7473,25 +7724,25 @@
 				"Smell": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"RightItem": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
 					"scale": 0
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": [39.89531, -28.28858, 29.54836]
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": [0, 0, 20]
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": [0, 0, 30]
 				}
 			}
@@ -7582,17 +7833,17 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"relative_to": {
 						"rotation": "entity"
 					},
 					"rotation": [0, 0, -2.5],
 					"scale": 1
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": [-5, 0, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"relative_to": {
 						"rotation": "entity"
 					},
@@ -7603,10 +7854,10 @@
 						"1.75": [0, 0, 0.01]
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": [0, 0, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"relative_to": {
 						"rotation": "entity"
 					},
@@ -7658,7 +7909,7 @@
 						"1.75": [1, 1, 1]
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.1667": [-2.5, 0, 0],
 						"0.4167": {
@@ -7693,7 +7944,7 @@
 						"1.75": [0, 0, 0]
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.1667": [0, 0, 0],
 						"0.4167": {
@@ -7728,7 +7979,7 @@
 						"1.75": [0, 0, 0]
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"relative_to": {
 						"rotation": "entity"
 					},
@@ -7746,7 +7997,7 @@
 						"1.75": [0, 0, 0]
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": [0, 0, 0]
 				},
 				"Angry": {
@@ -7767,7 +8018,7 @@
 						"0.375": [1, 1, 1]
 					}
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"close": {
@@ -7779,7 +8030,7 @@
 						"0.375": [0, 0, 0]
 					}
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": {
 						"0.1667": {
 							"pre": [0, 0, 0],
@@ -7808,7 +8059,7 @@
 						}
 					}
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": {
 						"0.1667": {
 							"pre": [0, 0, 0],
@@ -7837,7 +8088,7 @@
 						}
 					}
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": {
 						"0.1667": {
 							"pre": [0, 0, 0],
@@ -7869,19 +8120,16 @@
 				"RightItem": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"0.375": [1, 1, 1]
 					}
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
-					"scale": 0
-				},
-				"Mane03": {
+				"ROpendWing": {
 					"scale": 0
 				}
 			}
@@ -7925,7 +8173,7 @@
 			"loop": true,
 			"animation_length": 4.0417,
 			"bones": {
-				"Tail01": {
+				"RRTail01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 12.5, 0],
@@ -7941,7 +8189,7 @@
 						}
 					}
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, -12.5],
@@ -7957,7 +8205,7 @@
 						}
 					}
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, -5],
@@ -8113,10 +8361,7 @@
 			"loop": true,
 			"animation_length": 0.5417,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -8139,10 +8384,10 @@
 					},
 					"scale": [1, 1.1, 1]
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": [-77.5, 0, -5]
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [105, 0, 0],
@@ -8151,48 +8396,48 @@
 					},
 					"position": [0, 0.45, 2]
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": [52.5, 0, 0],
 					"position": [0, -1, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": [15, 0, -5]
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": [-12.5, 0, 0]
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": [47.5, 0, 0],
 					"position": [0, 0.1, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": [-65, 0, 5]
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": [105, 0, 0],
 					"position": [0, 0.4, 2.1]
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": [35, 0, 0],
 					"position": [0, -1, 0]
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": [35, 0, 5]
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": [-15, 0, 0]
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": [37.5, 0, 0],
 					"position": [0, -0.2, 0.1]
 				},
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"rotation": {
 						"0.0": {
 							"post": [6.15491, -16.41371, -83.38852],
@@ -8249,7 +8494,7 @@
 					},
 					"scale": 0
 				},
-				"Wing02": {
+				"LOpendWing01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, -15],
@@ -8297,7 +8542,7 @@
 						}
 					}
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"rotation": {
 						"0.0": {
 							"post": [6.15491, 16.41371, 83.38852],
@@ -8354,7 +8599,7 @@
 					},
 					"scale": 0
 				},
-				"Wing3": {
+				"ROpendWing01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, 15],
@@ -8405,7 +8650,7 @@
 				"Neck": {
 					"rotation": [17.5, 0, 0]
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": [15, 0, 0]
 				}
 			}
@@ -8414,10 +8659,7 @@
 			"loop": true,
 			"animation_length": 0.5417,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -8441,10 +8683,10 @@
 					},
 					"scale": [1, 1.1, 1]
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": [-77.5, 0, -5]
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [105, 0, 0],
@@ -8453,48 +8695,48 @@
 					},
 					"position": [0, 0.45, 2]
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": [52.5, 0, 0],
 					"position": [0, -1, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": [15, 0, -5]
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": [-12.5, 0, 0]
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": [47.5, 0, 0],
 					"position": [0, 0.1, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": [-65, 0, 5]
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": [105, 0, 0],
 					"position": [0, 0.4, 2.1]
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": [35, 0, 0],
 					"position": [0, -1, 0]
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": [35, 0, 5]
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": [-15, 0, 0]
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": [37.5, 0, 0],
 					"position": [0, -0.2, 0.1]
 				},
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"rotation": {
 						"0.0": {
 							"post": [6.15491, -16.41371, -83.38852],
@@ -8551,7 +8793,7 @@
 					},
 					"scale": 0
 				},
-				"Wing02": {
+				"LOpendWing01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, -15],
@@ -8599,7 +8841,7 @@
 						}
 					}
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"rotation": {
 						"0.0": {
 							"post": [6.15491, 16.41371, 83.38852],
@@ -8656,7 +8898,7 @@
 					},
 					"scale": 0
 				},
-				"Wing3": {
+				"ROpendWing01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, 15],
@@ -8707,7 +8949,7 @@
 				"Neck": {
 					"rotation": [17.5, 0, 0]
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": [15, 0, 0]
 				}
 			}
@@ -8740,13 +8982,13 @@
 						"0.75": [1, 1.1, 1]
 					}
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": [-77.5, 0, -5],
 						"0.75": {
@@ -8757,7 +8999,7 @@
 					},
 					"position": [1, 0, 1]
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [105, 0, 0],
@@ -8777,7 +9019,7 @@
 						}
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": {
 						"0.0": [52.5, 0, 0],
 						"0.75": [52.5, 0, 0]
@@ -8787,7 +9029,7 @@
 						"0.75": [0, -1, 0]
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": [15, 0, -5],
 						"0.75": {
@@ -8797,7 +9039,7 @@
 						}
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": [-12.5, 0, 0],
 						"0.75": {
@@ -8807,7 +9049,7 @@
 						}
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": [47.5, 0, 0],
 						"0.75": [47.5, 0, 0]
@@ -8817,7 +9059,7 @@
 						"0.75": [0, 0.1, 0]
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": [-65, 0, 5],
 						"0.75": {
@@ -8828,7 +9070,7 @@
 					},
 					"position": [-1, 0, 1]
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": [105, 0, 0],
 						"0.75": {
@@ -8846,7 +9088,7 @@
 						}
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.0": [35, 0, 0],
 						"0.75": [35, 0, 0]
@@ -8856,7 +9098,7 @@
 						"0.75": [0, -1, 0]
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": [35, 0, 5],
 						"0.75": {
@@ -8866,7 +9108,7 @@
 						}
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": [-15, 0, 0],
 						"0.75": {
@@ -8876,7 +9118,7 @@
 						}
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": [37.5, 0, 0],
 						"0.75": [37.5, 0, 0]
@@ -8909,22 +9151,22 @@
 						}
 					}
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": 0
 				},
 				"Angry": {
 					"scale": 0
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": {
 						"0.0": [15, 0, 0],
 						"0.75": [-90, 35, -90]
 					}
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": {
 						"0.75": {
 							"pre": [0, 0, 0],
@@ -8933,7 +9175,7 @@
 						}
 					}
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": {
 						"0.75": {
 							"pre": [7.43656, 0.9762, -7.43656],
@@ -8955,10 +9197,7 @@
 			"loop": true,
 			"animation_length": 0.5,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -8986,7 +9225,7 @@
 					},
 					"scale": [1, 1.1, 1]
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-21.33362, -27.96183, -9.72357],
@@ -9003,7 +9242,7 @@
 					},
 					"position": [1, 0, 1]
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [105, 0, 0],
@@ -9041,11 +9280,11 @@
 						}
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": [52.5, 0, 0],
 					"position": [0, -1, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [35, 0, -5],
@@ -9065,7 +9304,7 @@
 						}
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-52.5, 0, 0],
@@ -9081,11 +9320,11 @@
 						}
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": [47.5, 0, 0],
 					"position": [0, 0.1, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-56.88052, 21.11497, -7.75377],
@@ -9102,7 +9341,7 @@
 					},
 					"position": [-1, 0, 1]
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [111.25, 0, 0],
@@ -9140,11 +9379,11 @@
 						}
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": [35, 0, 0],
 					"position": [0, -1, 0]
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [34.9, 0.18, 5.12],
@@ -9164,7 +9403,7 @@
 						}
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": {
 							"post": [-77.5, 0, 0],
@@ -9180,17 +9419,17 @@
 						}
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": [37.5, 0, 0],
 					"position": [0, -0.2, 0.1]
 				},
 				"Angry": {
 					"scale": 0
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"rotation": {
 						"0.0": {
 							"post": [6.15491, -16.41371, -83.38852],
@@ -9247,7 +9486,7 @@
 					},
 					"scale": 0
 				},
-				"Wing02": {
+				"LOpendWing01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, -15],
@@ -9295,7 +9534,7 @@
 						}
 					}
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"rotation": {
 						"0.0": {
 							"post": [6.15491, 16.41371, 83.38852],
@@ -9352,7 +9591,7 @@
 					},
 					"scale": 0
 				},
-				"Wing3": {
+				"ROpendWing01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, 15],
@@ -9433,10 +9672,10 @@
 						}
 					}
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": [-90, 35, -90]
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, 0],
@@ -9452,7 +9691,7 @@
 						}
 					}
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": {
 						"0.0": {
 							"post": [7.43656, 0.9762, -7.43656],
@@ -9488,10 +9727,7 @@
 			"loop": "hold_on_last_frame",
 			"animation_length": 0.5,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -9527,13 +9763,13 @@
 				"CommonFace": {
 					"scale": 1
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				}
 			}
@@ -9542,10 +9778,7 @@
 			"loop": "hold_on_last_frame",
 			"animation_length": 1,
 			"bones": {
-				"smile": {
-					"scale": 0
-				},
-				"Mane03": {
+				"Smeile": {
 					"scale": 0
 				},
 				"close": {
@@ -9600,7 +9833,7 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0833": {
 							"pre": [-92.5, -27.5, 10],
@@ -9620,7 +9853,7 @@
 						}
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0833": {
 							"pre": [70, 0, 0],
@@ -9655,7 +9888,7 @@
 						}
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0833": {
 							"pre": [-10, 0, -10],
@@ -9668,7 +9901,7 @@
 						}
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0833": {
 							"pre": [-10, 0, 0],
@@ -9692,7 +9925,7 @@
 						}
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0833": {
 							"pre": [-92.5, 15, -5],
@@ -9712,7 +9945,7 @@
 						}
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.0833": {
 							"pre": [70, 0, 0],
@@ -9747,7 +9980,7 @@
 						}
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0833": {
 							"pre": [-10, 0, 10],
@@ -9760,7 +9993,7 @@
 						}
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0833": {
 							"pre": [-10, 0, 0],
@@ -9804,16 +10037,16 @@
 				"CommonFace": {
 					"scale": 1
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0833": {
 							"pre": [0, 0, 10],
@@ -9837,7 +10070,7 @@
 						}
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0833": {
 							"pre": [0, 0, -10],
@@ -9949,17 +10182,17 @@
 						}
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"relative_to": {
 						"rotation": "entity"
 					},
 					"rotation": [0, 0, -2.5],
 					"scale": 1
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": [-5, 0, 0]
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"relative_to": {
 						"rotation": "entity"
 					},
@@ -9970,10 +10203,10 @@
 						"1.75": [0, 0, 0.01]
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": [0, 0, 0]
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"relative_to": {
 						"rotation": "entity"
 					},
@@ -10025,7 +10258,7 @@
 						"1.75": [1, 1, 1]
 					}
 				},
-				"RightForearm": {
+				"RFrontCalf": {
 					"rotation": {
 						"0.1667": [-2.5, 0, 0],
 						"0.4167": {
@@ -10060,7 +10293,7 @@
 						"1.75": [0, 0, 0]
 					}
 				},
-				"RightHand": {
+				"RFrontHoof": {
 					"rotation": {
 						"0.1667": [0, 0, 0],
 						"0.4167": {
@@ -10095,7 +10328,7 @@
 						"1.75": [0, 0, 0]
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"relative_to": {
 						"rotation": "entity"
 					},
@@ -10113,7 +10346,7 @@
 						"1.75": [0, 0, 0]
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": [0, 0, 0]
 				},
 				"Angry": {
@@ -10134,7 +10367,7 @@
 						"0.375": [1, 1, 1]
 					}
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": 0
 				},
 				"close": {
@@ -10146,7 +10379,7 @@
 						"0.375": [0, 0, 0]
 					}
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": {
 						"0.1667": {
 							"pre": [0, 0, 0],
@@ -10175,7 +10408,7 @@
 						}
 					}
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": {
 						"0.1667": {
 							"pre": [0, 0, 0],
@@ -10204,7 +10437,7 @@
 						}
 					}
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": {
 						"0.1667": {
 							"pre": [0, 0, 0],
@@ -10236,16 +10469,16 @@
 				"RightItem": {
 					"scale": 0
 				},
-				"smile": {
+				"Smeile": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"0.375": [1, 1, 1]
 					}
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"scale": 0
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"scale": 0
 				}
 			}
@@ -10276,7 +10509,7 @@
 						"4.0": [1, 1, 1]
 					}
 				},
-				"LWing01": {
+				"LOpendWing": {
 					"rotation": {
 						"0.0": [3.35927, 17.05915, -44.35356],
 						"2.0": {
@@ -10304,7 +10537,7 @@
 						"4.0": [1.3, 1, 1]
 					}
 				},
-				"Wing02": {
+				"LOpendWing01": {
 					"rotation": {
 						"0.0": [0, -27.5, 0],
 						"2.0": {
@@ -10319,7 +10552,7 @@
 					},
 					"position": [-0.3, -0.4, -1]
 				},
-				"RWing2": {
+				"ROpendWing": {
 					"rotation": {
 						"0.0": [2.71994, -19.82169, 54.52468],
 						"2.0": {
@@ -10347,7 +10580,7 @@
 						"4.0": [1.4, 1, 1]
 					}
 				},
-				"Wing3": {
+				"ROpendWing01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 25, 0],
@@ -10364,19 +10597,19 @@
 					},
 					"position": [0.8, -0.5, -0.9]
 				},
-				"LeftWing": {
+				"LClosedWing": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"4.0": [0, 0, 0]
 					}
 				},
-				"RightWing": {
+				"RClosedWing": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"4.0": [0, 0, 0]
 					}
 				},
-				"Leftarm": {
+				"LForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [20, 0, -87.5],
@@ -10420,19 +10653,19 @@
 						"4.0": [0, 2, 1]
 					}
 				},
-				"LeftForeArm": {
+				"LFrontCalf": {
 					"rotation": {
 						"0.0": [-12.5, 0, 0],
 						"4.0": [-12.5, 0, 0]
 					}
 				},
-				"LeftHand": {
+				"LFrontHoof": {
 					"rotation": {
 						"0.0": [-20, 0, 0],
 						"4.0": [-20, 0, 0]
 					}
 				},
-				"LeftBackUpperLeg": {
+				"LHindLeg": {
 					"rotation": {
 						"0.0": [122.99686, 13.68318, 20.54111],
 						"2.0": {
@@ -10453,19 +10686,19 @@
 						"4.0": [0.4, 2, 1]
 					}
 				},
-				"LeftBackLowerLeg": {
+				"LHindCalf": {
 					"rotation": {
 						"0.0": [17.5, 0, 0],
 						"4.0": [17.5, 0, 0]
 					}
 				},
-				"LeftBackToe": {
+				"LHindHoof": {
 					"rotation": {
 						"0.0": [45, 0, 0],
 						"4.0": [45, 0, 0]
 					}
 				},
-				"RightArm": {
+				"RForeLeg": {
 					"rotation": {
 						"0.0": {
 							"post": [-38.66901, -11.14485, 78.92125],
@@ -10493,7 +10726,7 @@
 						"4.0": [0, 3, 2]
 					}
 				},
-				"RightBackUpperLeg": {
+				"RHindLeg": {
 					"rotation": {
 						"0.0": [57.42407, 13.02538, 6.53311],
 						"4.0": [57.42407, 13.02538, 6.53311]
@@ -10503,7 +10736,7 @@
 						"4.0": [0, 1.2, 1]
 					}
 				},
-				"RightBackLowerLeg": {
+				"RHindCalf": {
 					"rotation": {
 						"0.0": [12.5, 0, 0],
 						"4.0": [12.5, 0, 0]
@@ -10513,7 +10746,7 @@
 						"4.0": [1, 1.2, 1]
 					}
 				},
-				"RightBackToe": {
+				"RHindHoof": {
 					"rotation": {
 						"0.0": [27.5, 0, 0],
 						"4.0": [27.5, 0, 0]
@@ -10617,7 +10850,7 @@
 						"5.9167": [0, 0, 0]
 					}
 				},
-				"smile": {
+				"Smeile": {
 					"scale": {
 						"0.0": [1, 1, 1],
 						"2.0417": [1, 1, 1],
@@ -10627,7 +10860,7 @@
 						"5.9167": [1, 1, 1]
 					}
 				},
-				"AAA": {
+				"ScrunchedEyes": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"4.0": [0, 0, 0]
@@ -10639,7 +10872,7 @@
 						"5.5833": [0, 0, 0]
 					}
 				},
-				"Tail01": {
+				"RRTail01": {
 					"rotation": {
 						"0.0": {
 							"post": [42.5, 0, 0],
@@ -10663,7 +10896,7 @@
 						}
 					}
 				},
-				"Tail02": {
+				"PPTail01": {
 					"rotation": {
 						"0.0": {
 							"post": [9.25249, -3.81024, 22.19157],
@@ -10725,7 +10958,7 @@
 						}
 					}
 				},
-				"Tail03": {
+				"PPTail02": {
 					"rotation": {
 						"0.0": {
 							"post": [12.2127, -2.68507, 12.2127],
@@ -10765,7 +10998,7 @@
 						}
 					}
 				},
-				"Mane02": {
+				"AJBackMane01": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"4.0": [0, 0, 0]
