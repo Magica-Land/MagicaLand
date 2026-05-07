@@ -135,7 +135,7 @@ public class PonyCustom implements TabContent {
         this.ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
 
         int modelX = x + (width > 300 ? width / 4 : 75);
-        int modelY = y + height / 2 + 115;
+        int modelY = y + height / 2 + 175;
 
         MatrixStack matrices = context.getMatrices();
         matrices.push();
