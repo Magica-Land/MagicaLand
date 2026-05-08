@@ -62,6 +62,11 @@ public class ConfigScreen extends Screen {
         this.addDrawableChild(element);
     }
 
+    public void reinitScreen() {
+        this.clearChildren();
+        this.init();
+    }
+
     @Override
     protected void init() {
         super.init();

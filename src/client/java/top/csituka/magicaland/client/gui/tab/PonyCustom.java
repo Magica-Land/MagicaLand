@@ -6,6 +6,7 @@ import net.minecraft.text.Text;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.gui.ConfigScreen;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
+import top.csituka.magicaland.client.gui.widget.Toggle;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -33,14 +34,18 @@ public class PonyCustom implements TabContent {
     private int rightHeight;
     private float currentAlpha = 1.0f;
 
+    private boolean hornMenuOpen = false;
+
     private GeckoPlayerAnimatable ponyAnimatable;
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
 
+    private ConfigScreen screen;
+
     private static final String[] FRONT_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
-
     private static final String[] BACK_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
-
     private static final String[] EYE_STYLES = {"TS", "FS", "RR"};
+    private static final String[] HORN_COLOR_PRESETS = {"#FFFFFFFF", "#FFF5D700", "#FFC0C0C0", "#FF000000", "#FFFF69B4", "#FF00BFFF"};
+    private static final String[] HORN_COLOR_NAMES = {"White", "Gold", "Silver", "Black", "Pink", "DeepSkyBlue"};
 
     @Override
     public void init(ConfigScreen screen, int x, int y, int width, int height) {
@@ -48,6 +53,7 @@ public class PonyCustom implements TabContent {
         this.rightX = x;
         this.rightWidth = width;
         this.rightHeight = height;
+        this.screen = screen;
         this.widgets.clear();
 
         if (this.ponyAnimatable == null) {
@@ -76,11 +82,20 @@ public class PonyCustom implements TabContent {
         }
         this.ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
 
+        if (hornMenuOpen) {
+            initHornMenu(screen, x, y, width, height);
+        } else {
+            initMainMenu(screen, x, y, width, height);
+        }
+    }
+
+    private void initMainMenu(ConfigScreen screen, int x, int y, int width, int height) {
+        Config config = Config.getInstance();
         int buttonWidth = Math.min(180, width / 2);
         int buttonHeight = 20;
         int spacing = 10;
 
-        int totalContentHeight = buttonHeight * 3 + spacing * 2;
+        int totalContentHeight = buttonHeight * 4 + spacing * 3;
         int startY = (height - totalContentHeight) / 2;
 
         int btnX = x + width - buttonWidth - 20;
@@ -114,6 +129,73 @@ public class PonyCustom implements TabContent {
                 });
         this.widgets.add(eyeBtn);
         screen.addConsoleWidget(eyeBtn);
+
+        CustomButton hornBtn = new CustomButton(btnX, startY + (buttonHeight + spacing) * 3, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.horn_menu.name"),
+                false, button -> {
+                    hornMenuOpen = true;
+                    reinit(screen);
+                });
+        this.widgets.add(hornBtn);
+        screen.addConsoleWidget(hornBtn);
+    }
+
+    private void initHornMenu(ConfigScreen screen, int x, int y, int width, int height) {
+        Config config = Config.getInstance();
+        int buttonWidth = Math.min(180, width / 2);
+        int buttonHeight = 20;
+        int spacing = 10;
+
+        int totalContentHeight = buttonHeight * 5 + spacing * 4 + 30;
+        int startY = (height - totalContentHeight) / 2;
+
+        int btnX = x + width - buttonWidth - 20;
+        if (width < 250) {
+            btnX = x + (width - buttonWidth) / 2;
+        }
+
+        int backBtnWidth = 60;
+        int backBtnX = btnX + buttonWidth - backBtnWidth;
+        CustomButton backBtn = new CustomButton(backBtnX, startY, backBtnWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.horn_back.name"),
+                false, button -> {
+                    hornMenuOpen = false;
+                    reinit(screen);
+                });
+        this.widgets.add(backBtn);
+        screen.addConsoleWidget(backBtn);
+
+        int toggleY = startY + buttonHeight + spacing;
+        Toggle hornToggle = new Toggle(btnX, toggleY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.show_horn.name"),
+                config.showHorn, toggle -> {
+                    config.showHorn = toggle.getState();
+                    Config.save();
+                });
+        this.widgets.add(hornToggle);
+        screen.addConsoleWidget(hornToggle);
+
+        int colorBtnY = toggleY + buttonHeight + spacing;
+        Text colorLabel = Text.translatable("text.magicaland.config.horn_color.name");
+        for (int i = 0; i < HORN_COLOR_PRESETS.length; i++) {
+            final String presetColor = HORN_COLOR_PRESETS[i];
+            final int colorIndex = i;
+            int presetBtnY = colorBtnY + (buttonHeight + spacing) * i;
+
+            CustomButton colorBtn = new CustomButton(btnX, presetBtnY, buttonWidth, buttonHeight,
+                    Text.literal(colorLabel.getString() + ": " + HORN_COLOR_NAMES[colorIndex]),
+                    config.hornColor.equals(presetColor), button -> {
+                        config.hornColor = presetColor;
+                        Config.save();
+                        reinit(screen);
+                    });
+            this.widgets.add(colorBtn);
+            screen.addConsoleWidget(colorBtn);
+        }
+    }
+
+    private void reinit(ConfigScreen screen) {
+        screen.reinitScreen();
     }
 
     private CustomButton createStyleButton(int x, int y, int width, int height, Text label, String currentStyle,
@@ -207,8 +289,7 @@ public class PonyCustom implements TabContent {
                     int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
                 String name = bone.getName().toLowerCase();
 
-                boolean isOther = name.contains("mane") || name.contains("tail") || name.contains("wing")
-                        || name.contains("horn") || name.contains("magic");
+                boolean isOther = name.contains("mane") || name.contains("tail") || name.contains("wing");
 
                 Identifier texture = isOther ? PONY_TS : PONY_BASE;
                 RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
@@ -222,6 +303,8 @@ public class PonyCustom implements TabContent {
             public void renderCubesOfBone(MatrixStack poseStack, GeoBone bone,
                     VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
                     float alpha) {
+                Config config = Config.getInstance();
+
                 if (!shouldRenderSelectedMane(bone.getName())) {
                     return;
                 }
@@ -230,12 +313,37 @@ public class PonyCustom implements TabContent {
                     return;
                 }
 
+                if (!config.showHorn && bone.getName().equalsIgnoreCase("Horn")) {
+                    return;
+                }
+
+                if (config.showHorn && bone.getName().equalsIgnoreCase("Horn")) {
+                    int color = parseColor(config.hornColor);
+                    float cr = ((color >> 16) & 0xFF) / 255.0f;
+                    float cg = ((color >> 8) & 0xFF) / 255.0f;
+                    float cb = (color & 0xFF) / 255.0f;
+                    red *= cr;
+                    green *= cg;
+                    blue *= cb;
+                }
+
                 if (bone.getName().equalsIgnoreCase("body")) {
                     red *= 0.2f;
                     green *= 0.5f;
                     blue *= 1.0f;
                 }
                 super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            }
+
+            private int parseColor(String hex) {
+                try {
+                    if (hex.startsWith("#")) {
+                        hex = hex.substring(1);
+                    }
+                    return (int) Long.parseLong(hex, 16);
+                } catch (Exception e) {
+                    return 0xFFFFFFFF;
+                }
             }
 
             private boolean shouldRenderSelectedMane(String boneName) {

@@ -57,8 +57,7 @@ public abstract class PlayerEntityRendererMixin
                     int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
                 String name = bone.getName().toLowerCase();
 
-                boolean isOther = name.contains("mane") || name.contains("tail") || name.contains("wing")
-                        || name.contains("horn") || name.contains("magic");
+                boolean isOther = name.contains("mane") || name.contains("tail") || name.contains("wing");
 
                 net.minecraft.util.Identifier texture = isOther ? PONY_TS : PONY_BASE;
                 RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
@@ -72,8 +71,24 @@ public abstract class PlayerEntityRendererMixin
             public void renderCubesOfBone(MatrixStack poseStack, software.bernie.geckolib.cache.object.GeoBone bone,
                     VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
                     float alpha) {
+                Config config = Config.getInstance();
+
                 if (!shouldRenderSelectedMane(bone.getName())) {
                     return;
+                }
+
+                if (!config.showHorn && bone.getName().equalsIgnoreCase("Horn")) {
+                    return;
+                }
+
+                if (config.showHorn && bone.getName().equalsIgnoreCase("Horn")) {
+                    int color = parseHornColor(config.hornColor);
+                    float cr = ((color >> 16) & 0xFF) / 255.0f;
+                    float cg = ((color >> 8) & 0xFF) / 255.0f;
+                    float cb = (color & 0xFF) / 255.0f;
+                    red *= cr;
+                    green *= cg;
+                    blue *= cb;
                 }
 
                 if (bone.getName().equalsIgnoreCase("body")) {
@@ -82,6 +97,17 @@ public abstract class PlayerEntityRendererMixin
                     blue *= 1.0f;
                 }
                 super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            }
+
+            private int parseHornColor(String hex) {
+                try {
+                    if (hex.startsWith("#")) {
+                        hex = hex.substring(1);
+                    }
+                    return (int) Long.parseLong(hex, 16);
+                } catch (Exception e) {
+                    return 0xFFFFFFFF;
+                }
             }
 
             private boolean shouldRenderSelectedMane(String boneName) {

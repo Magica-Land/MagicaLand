@@ -23,6 +23,10 @@ public class Config {
 
     public String eyeStyle = "TS";
 
+    public boolean showHorn = true;
+
+    public String hornColor = "#FFFFFFFF";
+
     private static Config instance;
 
     public static Config getInstance() {
