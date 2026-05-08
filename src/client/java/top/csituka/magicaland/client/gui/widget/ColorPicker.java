@@ -16,11 +16,15 @@ public class ColorPicker extends ClickableWidget {
     private float currentAlpha = 0.15f;
 
     private static final int PICKER_WIDTH = 75;
-    private static final int PICKER_HEIGHT = 95;
+    private static final int PICKER_HEIGHT = 115;
     private static final int HUE_HEIGHT = 8;
     private static final int PADDING = 4;
+    private static final int INPUT_HEIGHT = 12;
 
     private float h, s, v;
+    private String hexInput = "";
+    private boolean inputFocused = false;
+    private int cursorTick = 0;
     
     private enum DragMode {
         NONE,
@@ -35,6 +39,7 @@ public class ColorPicker extends ClickableWidget {
         this.currentColor = initialColor;
         this.onColorChanged = onColorChanged;
         parseColor(initialColor);
+        this.hexInput = getHexNoAlpha();
     }
 
     private void parseColor(String hex) {
@@ -62,12 +67,18 @@ public class ColorPicker extends ClickableWidget {
         return String.format("#FF%06X", (rgb & 0xFFFFFF));
     }
 
+    private String getHexNoAlpha() {
+        int rgb = Color.HSBtoRGB(h, s, v);
+        return String.format("#%06X", (rgb & 0xFFFFFF));
+    }
+
     private int getPickerX() { return this.getX() + this.width - PICKER_WIDTH; }
     private int getPickerY() { return this.getY() + this.height + 10; }
     private int getSBSize() { return PICKER_WIDTH - PADDING * 2; }
     private int getSBX() { return getPickerX() + PADDING; }
     private int getSBY() { return getPickerY() + PADDING; }
     private int getHueY() { return getSBY() + getSBSize() + PADDING; }
+    private int getInputY() { return getHueY() + HUE_HEIGHT + PADDING; }
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
@@ -87,9 +98,13 @@ public class ColorPicker extends ClickableWidget {
         if (!this.visible || !this.active || button != 0) return false;
 
         this.dragMode = DragMode.NONE;
+        this.inputFocused = false;
 
         if (mouseX >= this.getX() && mouseX < this.getX() + this.width && mouseY >= this.getY() && mouseY < this.getY() + this.height) {
             this.open = !this.open;
+            if (open) {
+                this.hexInput = getHexNoAlpha();
+            }
             this.playDownSound(MinecraftClient.getInstance().getSoundManager());
             return true;
         }
@@ -99,6 +114,7 @@ public class ColorPicker extends ClickableWidget {
             int sbY = getSBY();
             int sbSize = getSBSize();
             int hueY = getHueY();
+            int inputY = getInputY();
 
             if (mouseX >= sbX && mouseX <= sbX + sbSize && mouseY >= sbY && mouseY <= sbY + sbSize) {
                 this.dragMode = DragMode.SB_SQUARE;
@@ -112,6 +128,12 @@ public class ColorPicker extends ClickableWidget {
                 return true;
             }
 
+            if (mouseX >= sbX && mouseX <= sbX + sbSize && mouseY >= inputY && mouseY <= inputY + INPUT_HEIGHT) {
+                this.inputFocused = true;
+                this.setFocused(true);
+                return true;
+            }
+
             int px = getPickerX();
             int py = getPickerY();
             if (mouseX >= px && mouseX < px + PICKER_WIDTH && mouseY >= py && mouseY < py + PICKER_HEIGHT) {
@@ -121,6 +143,57 @@ public class ColorPicker extends ClickableWidget {
             this.open = false;
         }
         return false;
+    }
+
+    @Override
+    public boolean charTyped(char chr, int modifiers) {
+        if (open && inputFocused) {
+            String validChars = "0123456789ABCDEFabcdef#";
+            if (validChars.indexOf(chr) != -1) {
+                if (hexInput.length() < 7 || (chr == '#' && !hexInput.contains("#"))) {
+                    hexInput += chr;
+                    tryParseHexInput();
+                }
+                return true;
+            }
+        }
+        return super.charTyped(chr, modifiers);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (open && inputFocused) {
+            if (keyCode == 259) {
+                if (!hexInput.isEmpty()) {
+                    hexInput = hexInput.substring(0, hexInput.length() - 1);
+                    tryParseHexInput();
+                }
+                return true;
+            }
+            if (keyCode == 257 || keyCode == 335) {
+                inputFocused = false;
+                return true;
+            }
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    private void tryParseHexInput() {
+        String hex = hexInput;
+        if (hex.startsWith("#")) hex = hex.substring(1);
+        if (hex.length() == 6) {
+            try {
+                int colorVal = Integer.parseInt(hex, 16);
+                int r = (colorVal >> 16) & 0xFF;
+                int g = (colorVal >> 8) & 0xFF;
+                int b = colorVal & 0xFF;
+                float[] hsv = Color.RGBtoHSB(r, g, b, null);
+                this.h = hsv[0];
+                this.s = hsv[1];
+                this.v = hsv[2];
+                updateColor();
+            } catch (NumberFormatException ignored) {}
+        }
     }
 
     @Override
@@ -157,6 +230,9 @@ public class ColorPicker extends ClickableWidget {
 
     private void updateColor() {
         this.currentColor = getHexColor();
+        if (!inputFocused) {
+            this.hexInput = getHexNoAlpha();
+        }
         if (onColorChanged != null) {
             onColorChanged.accept(this.currentColor);
         }
@@ -210,6 +286,9 @@ public class ColorPicker extends ClickableWidget {
         int sbY = getSBY();
         int sbSize = getSBSize();
         int hueY = getHueY();
+        int inputY = getInputY();
+
+        cursorTick++;
 
         context.getMatrices().push();
         context.getMatrices().translate(0, 0, 400);
@@ -236,6 +315,22 @@ public class ColorPicker extends ClickableWidget {
 
         int hMarkerX = sbX + (int) (h * sbSize);
         context.fill(hMarkerX - 1, hueY - 2, hMarkerX + 1, hueY + HUE_HEIGHT + 2, 0xFFFFFFFF);
+
+        fillRoundedRect(context, sbX, inputY, sbSize, INPUT_HEIGHT, 0x40000000);
+        if (inputFocused) {
+            context.drawHorizontalLine(sbX, sbX + sbSize - 1, inputY, 0xFFFFFFFF);
+            context.drawHorizontalLine(sbX, sbX + sbSize - 1, inputY + INPUT_HEIGHT - 1, 0xFFFFFFFF);
+            context.drawVerticalLine(sbX, inputY, inputY + INPUT_HEIGHT - 1, 0xFFFFFFFF);
+            context.drawVerticalLine(sbX + sbSize - 1, inputY, inputY + INPUT_HEIGHT - 1, 0xFFFFFFFF);
+        }
+
+        String displayText = hexInput;
+        if (inputFocused && (cursorTick / 10) % 2 == 0) {
+            displayText += "_";
+        }
+        
+        context.drawText(MinecraftClient.getInstance().textRenderer, displayText, 
+                sbX + 2, inputY + 2, 0xFFFFFFFF, false);
 
         context.getMatrices().pop();
     }
