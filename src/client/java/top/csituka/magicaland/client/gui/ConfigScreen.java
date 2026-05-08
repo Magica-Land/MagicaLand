@@ -159,8 +159,13 @@ public class ConfigScreen extends Screen {
         context.getMatrices().push();
         context.getMatrices().translate(0, this.tabAnimator.getContentOffset(), 0);
 
+        float currentAlpha = 1.0f;
+        if (this.tabAnimator.isAnimating()) {
+            currentAlpha = 1.0f - (Math.abs(this.tabAnimator.getContentOffset()) / this.height);
+        }
+
         this.currentTab.getContent().render(context, rightX, 0, rightWidth - padding, this.height, mouseX, mouseY,
-                delta);
+                delta, currentAlpha);
 
         context.getMatrices().pop();
 
@@ -170,9 +175,11 @@ public class ConfigScreen extends Screen {
                     if (this.tabAnimator.isAnimating()) {
                         context.getMatrices().push();
                         context.getMatrices().translate(0, this.tabAnimator.getContentOffset(), 0);
+                        widget.setAlpha(currentAlpha);
                         widget.render(context, -1, -1, delta);
                         context.getMatrices().pop();
                     } else {
+                        widget.setAlpha(1.0f);
                         widget.render(context, mouseX, mouseY, delta);
                     }
                 }

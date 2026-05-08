@@ -266,7 +266,8 @@ public class Settings implements TabContent {
     }
 
     @Override
-    public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta,
+            float alpha) {
         if (listWidget != null) {
             listWidget.render(context, mouseX, mouseY, delta);
         }

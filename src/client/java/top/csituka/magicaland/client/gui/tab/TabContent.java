@@ -6,5 +6,5 @@ import top.csituka.magicaland.client.gui.ConfigScreen;
 public interface TabContent {
     void init(ConfigScreen screen, int x, int y, int width, int height);
 
-    void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta);
+    void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta, float alpha);
 }

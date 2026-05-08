@@ -58,14 +58,18 @@ public class TabAnimator {
             return;
         }
 
+        float progress = Math.abs(this.contentOffset) / height;
+        float alpha = progress;
+
         float prevOffset = this.contentOffset - (this.animationDirection * height);
 
         context.getMatrices().push();
         context.getMatrices().translate(0, prevOffset, 0);
 
-        this.previousTab.getContent().render(context, rightX, 0, rightWidth - padding, height, -1, -1, delta);
+        this.previousTab.getContent().render(context, rightX, 0, rightWidth - padding, height, -1, -1, delta, alpha);
 
         for (ClickableWidget widget : this.previousWidgets) {
+            widget.setAlpha(alpha);
             widget.render(context, -1, -1, delta);
         }
 

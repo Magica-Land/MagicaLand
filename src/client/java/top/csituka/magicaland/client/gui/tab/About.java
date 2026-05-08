@@ -21,7 +21,8 @@ public class About implements TabContent {
     }
 
     @Override
-    public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta,
+            float alpha) {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
         int iconWidth = 128;

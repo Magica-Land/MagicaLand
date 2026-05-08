@@ -31,6 +31,7 @@ public class PonyCustom implements TabContent {
     private int rightX;
     private int rightWidth;
     private int rightHeight;
+    private float currentAlpha = 1.0f;
 
     private GeckoPlayerAnimatable ponyAnimatable;
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
@@ -128,10 +129,12 @@ public class PonyCustom implements TabContent {
     }
 
     @Override
-    public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta,
+            float alpha) {
         if (this.ponyAnimatable == null)
             return;
 
+        this.currentAlpha = alpha;
         this.ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
 
         int modelX = x + (width > 300 ? width / 4 : 75);
@@ -140,7 +143,7 @@ public class PonyCustom implements TabContent {
         MatrixStack matrices = context.getMatrices();
         matrices.push();
         matrices.translate(modelX, modelY, 100);
-        matrices.scale(120, 120, 120);
+        matrices.scale(120 * alpha, 120 * alpha, 120 * alpha);
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
 
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(155.0f));
@@ -176,6 +179,15 @@ public class PonyCustom implements TabContent {
             private static final Identifier PONY_TS = new Identifier("magicaland", "textures/entity/mane.png");
 
             @Override
+            public RenderLayer getRenderType(GeckoPlayerAnimatable animatable, Identifier texture,
+                    VertexConsumerProvider bufferSource, float partialTick) {
+                if (PonyCustom.this.currentAlpha < 1.0f) {
+                    return RenderLayer.getEntityTranslucent(texture);
+                }
+                return super.getRenderType(animatable, texture, bufferSource, partialTick);
+            }
+
+            @Override
             public void renderRecursively(MatrixStack poseStack, GeckoPlayerAnimatable animatable,
                     GeoBone bone, RenderLayer renderType,
                     VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick,
@@ -190,7 +202,7 @@ public class PonyCustom implements TabContent {
                 VertexConsumer newBuffer = bufferSource.getBuffer(newRenderType);
 
                 super.renderRecursively(poseStack, animatable, bone, newRenderType, bufferSource, newBuffer, isReRender,
-                        partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+                        partialTick, packedLight, packedOverlay, red, green, blue, alpha * PonyCustom.this.currentAlpha);
             }
 
             @Override
