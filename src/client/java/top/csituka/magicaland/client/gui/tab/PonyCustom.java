@@ -138,7 +138,7 @@ public class PonyCustom implements TabContent {
         this.ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
 
         int modelX = x + (width > 300 ? width / 4 : 75);
-        int modelY = y + height / 2 + 175;
+        int modelY = y + height / 2 + 185;
 
         MatrixStack matrices = context.getMatrices();
         matrices.push();
@@ -181,10 +181,7 @@ public class PonyCustom implements TabContent {
             @Override
             public RenderLayer getRenderType(GeckoPlayerAnimatable animatable, Identifier texture,
                     VertexConsumerProvider bufferSource, float partialTick) {
-                if (PonyCustom.this.currentAlpha < 1.0f) {
-                    return RenderLayer.getEntityTranslucent(texture);
-                }
-                return super.getRenderType(animatable, texture, bufferSource, partialTick);
+                return RenderLayer.getEntityTranslucent(texture);
             }
 
             @Override
@@ -202,7 +199,7 @@ public class PonyCustom implements TabContent {
                 VertexConsumer newBuffer = bufferSource.getBuffer(newRenderType);
 
                 super.renderRecursively(poseStack, animatable, bone, newRenderType, bufferSource, newBuffer, isReRender,
-                        partialTick, packedLight, packedOverlay, red, green, blue, alpha * PonyCustom.this.currentAlpha);
+                        partialTick, packedLight, packedOverlay, red, green, blue, alpha);
             }
 
             @Override
