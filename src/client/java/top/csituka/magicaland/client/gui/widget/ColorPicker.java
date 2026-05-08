@@ -16,7 +16,7 @@ public class ColorPicker extends ClickableWidget {
     private float currentAlpha = 0.15f;
 
     private static final int PICKER_WIDTH = 75;
-    private static final int PICKER_HEIGHT = 115;
+    private static final int PICKER_HEIGHT = 103;
     private static final int HUE_HEIGHT = 8;
     private static final int PADDING = 4;
     private static final int INPUT_HEIGHT = 12;
