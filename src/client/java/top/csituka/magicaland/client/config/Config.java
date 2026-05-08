@@ -21,6 +21,8 @@ public class Config {
 
     public String backManeStyle = "TS";
 
+    public String eyeStyle = "TS";
+
     private static Config instance;
 
     public static Config getInstance() {

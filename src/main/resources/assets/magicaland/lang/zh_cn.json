@@ -10,5 +10,6 @@
   "text.magicaland.console.about.description": "将玩家变成小马",
   "text.magicaland.config.first_person_magic_glow.name": "物品魔法光效 (第一人称)",
   "text.magicaland.config.front_mane_style.name": "前鬃毛样式",
-  "text.magicaland.config.back_mane_style.name": "后鬃毛样式"
+  "text.magicaland.config.back_mane_style.name": "后鬃毛样式",
+  "text.magicaland.config.eye_style.name": "眼睛样式"
 }

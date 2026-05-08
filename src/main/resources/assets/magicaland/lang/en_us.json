@@ -10,5 +10,6 @@
   "text.magicaland.console.about.description": "Turn players into ponies.",
   "text.magicaland.config.first_person_magic_glow.name": "Magic Glow (First Person)",
   "text.magicaland.config.front_mane_style.name": "Front Mane Style",
-  "text.magicaland.config.back_mane_style.name": "Back Mane Style"
+  "text.magicaland.config.back_mane_style.name": "Back Mane Style",
+  "text.magicaland.config.eye_style.name": "Eye Style"
 }

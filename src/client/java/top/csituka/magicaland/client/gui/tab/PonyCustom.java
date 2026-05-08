@@ -40,6 +40,8 @@ public class PonyCustom implements TabContent {
 
     private static final String[] BACK_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
 
+    private static final String[] EYE_STYLES = {"TS", "FS", "RR"};
+
     @Override
     public void init(ConfigScreen screen, int x, int y, int width, int height) {
         Config config = Config.getInstance();
@@ -78,7 +80,7 @@ public class PonyCustom implements TabContent {
         int buttonHeight = 20;
         int spacing = 10;
 
-        int totalContentHeight = buttonHeight * 2 + spacing;
+        int totalContentHeight = buttonHeight * 3 + spacing * 2;
         int startY = (height - totalContentHeight) / 2;
 
         int btnX = x + width - buttonWidth - 20;
@@ -103,6 +105,15 @@ public class PonyCustom implements TabContent {
                 });
         this.widgets.add(backBtn);
         screen.addConsoleWidget(backBtn);
+
+        CustomButton eyeBtn = createStyleButton(btnX, startY + (buttonHeight + spacing) * 2, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.eye_style.name"),
+                config.eyeStyle, EYE_STYLES, newStyle -> {
+                    config.eyeStyle = newStyle;
+                    Config.save();
+                });
+        this.widgets.add(eyeBtn);
+        screen.addConsoleWidget(eyeBtn);
     }
 
     private CustomButton createStyleButton(int x, int y, int width, int height, Text label, String currentStyle,
@@ -137,13 +148,18 @@ public class PonyCustom implements TabContent {
         this.currentAlpha = alpha;
         this.ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
 
-        int modelX = x + (width > 300 ? width / 4 : 75);
-        int modelY = y + height / 2 + 185;
+        float baseScale = Math.min(width / 6.0f, height / 4.0f);
+        float modelScale = Math.max(30.0f, Math.min(baseScale, 150.0f));
+
+        int btnWidth = Math.min(180, this.rightWidth / 2);
+        int btnX = this.rightX + this.rightWidth - btnWidth - 20;
+        int modelX = (this.rightX * 3 + btnX) / 4;
+        int modelY = y + height / 2 + (int)(height * 0.42f);
 
         MatrixStack matrices = context.getMatrices();
         matrices.push();
         matrices.translate(modelX, modelY, 100);
-        matrices.scale(120 * alpha, 120 * alpha, 120 * alpha);
+        matrices.scale(modelScale * alpha, modelScale * alpha, modelScale * alpha);
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
 
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(155.0f));
@@ -210,6 +226,10 @@ public class PonyCustom implements TabContent {
                     return;
                 }
 
+                if (!shouldRenderSelectedEye(bone.getName())) {
+                    return;
+                }
+
                 if (bone.getName().equalsIgnoreCase("body")) {
                     red *= 0.2f;
                     green *= 0.5f;
@@ -246,6 +266,30 @@ public class PonyCustom implements TabContent {
                 }
 
                 return false;
+            }
+
+            private boolean shouldRenderSelectedEye(String boneName) {
+                Config config = Config.getInstance();
+                String eyeStyle = config.eyeStyle;
+
+                boolean isEyeBone = boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye")
+                        || boneName.equals("FSCommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
+                        || boneName.equals("RRCommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
+
+                if (!isEyeBone) {
+                    return true;
+                }
+
+                switch (eyeStyle) {
+                    case "TS":
+                        return boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye");
+                    case "FS":
+                        return boneName.equals("FSCommonFace") || boneName.equals("leye2") || boneName.equals("reye2");
+                    case "RR":
+                        return boneName.equals("RRCommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
+                    default:
+                        return boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye");
+                }
             }
         };
     }
