@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.gui.ConfigScreen;
+import top.csituka.magicaland.client.gui.widget.ColorPicker;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
 import top.csituka.magicaland.client.gui.widget.Toggle;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -44,8 +45,6 @@ public class PonyCustom implements TabContent {
     private static final String[] FRONT_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
     private static final String[] BACK_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
     private static final String[] EYE_STYLES = {"TS", "FS", "RR"};
-    private static final String[] HORN_COLOR_PRESETS = {"#FFFFFFFF", "#FFF5D700", "#FFC0C0C0", "#FF000000", "#FFFF69B4", "#FF00BFFF"};
-    private static final String[] HORN_COLOR_NAMES = {"White", "Gold", "Silver", "Black", "Pink", "DeepSkyBlue"};
 
     @Override
     public void init(ConfigScreen screen, int x, int y, int width, int height) {
@@ -146,7 +145,7 @@ public class PonyCustom implements TabContent {
         int buttonHeight = 20;
         int spacing = 10;
 
-        int totalContentHeight = buttonHeight * 5 + spacing * 4 + 30;
+        int totalContentHeight = buttonHeight * 3 + spacing * 2;
         int startY = (height - totalContentHeight) / 2;
 
         int btnX = x + width - buttonWidth - 20;
@@ -177,21 +176,13 @@ public class PonyCustom implements TabContent {
 
         int colorBtnY = toggleY + buttonHeight + spacing;
         Text colorLabel = Text.translatable("text.magicaland.config.horn_color.name");
-        for (int i = 0; i < HORN_COLOR_PRESETS.length; i++) {
-            final String presetColor = HORN_COLOR_PRESETS[i];
-            final int colorIndex = i;
-            int presetBtnY = colorBtnY + (buttonHeight + spacing) * i;
-
-            CustomButton colorBtn = new CustomButton(btnX, presetBtnY, buttonWidth, buttonHeight,
-                    Text.literal(colorLabel.getString() + ": " + HORN_COLOR_NAMES[colorIndex]),
-                    config.hornColor.equals(presetColor), button -> {
-                        config.hornColor = presetColor;
-                        Config.save();
-                        reinit(screen);
-                    });
-            this.widgets.add(colorBtn);
-            screen.addConsoleWidget(colorBtn);
-        }
+        ColorPicker colorPicker = new ColorPicker(btnX, colorBtnY, buttonWidth, buttonHeight,
+                colorLabel, config.hornColor, newColor -> {
+                    config.hornColor = newColor;
+                    Config.save();
+                });
+        this.widgets.add(colorPicker);
+        screen.addConsoleWidget(colorPicker);
     }
 
     private void reinit(ConfigScreen screen) {

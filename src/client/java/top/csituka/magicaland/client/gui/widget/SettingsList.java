@@ -161,6 +161,12 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
                 return true;
             }
         }
+        
+        Element focused = this.getFocused();
+        if (focused != null && focused.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
+            return true;
+        }
+
         boolean result = super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
         this.targetScrollAmount = this.getScrollAmount();
         return result;
