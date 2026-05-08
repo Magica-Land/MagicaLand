@@ -15,10 +15,10 @@ public class ColorPicker extends ClickableWidget {
     private boolean open = false;
     private float currentAlpha = 0.15f;
 
-    private static final int PICKER_WIDTH = 150;
-    private static final int PICKER_HEIGHT = 190;
-    private static final int HUE_HEIGHT = 16;
-    private static final int PADDING = 8;
+    private static final int PICKER_WIDTH = 75;
+    private static final int PICKER_HEIGHT = 95;
+    private static final int HUE_HEIGHT = 8;
+    private static final int PADDING = 4;
 
     private float h, s, v;
     
@@ -62,7 +62,7 @@ public class ColorPicker extends ClickableWidget {
         return String.format("#FF%06X", (rgb & 0xFFFFFF));
     }
 
-    private int getPickerX() { return this.getX() + (this.width - PICKER_WIDTH) / 2; }
+    private int getPickerX() { return this.getX() + this.width - PICKER_WIDTH; }
     private int getPickerY() { return this.getY() + this.height + 10; }
     private int getSBSize() { return PICKER_WIDTH - PADDING * 2; }
     private int getSBX() { return getPickerX() + PADDING; }
@@ -117,6 +117,8 @@ public class ColorPicker extends ClickableWidget {
             if (mouseX >= px && mouseX < px + PICKER_WIDTH && mouseY >= py && mouseY < py + PICKER_HEIGHT) {
                 return true;
             }
+            
+            this.open = false;
         }
         return false;
     }
