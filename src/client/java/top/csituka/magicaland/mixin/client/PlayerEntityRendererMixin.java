@@ -90,12 +90,6 @@ public abstract class PlayerEntityRendererMixin
                     green *= cg;
                     blue *= cb;
                 }
-
-                if (bone.getName().equalsIgnoreCase("body")) {
-                    red *= 0.2f;
-                    green *= 0.5f;
-                    blue *= 1.0f;
-                }
                 super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             }
 
