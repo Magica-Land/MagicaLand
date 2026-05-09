@@ -262,7 +262,7 @@ public class ColorPicker extends ClickableWidget {
         fillRoundedRect(context, this.getX(), this.getY(), this.width, this.height, (alphaVal << 24) | 0xFFFFFF);
 
         context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
-                this.getX() + 10, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
+                this.getX() + 6, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
 
         int previewWidth = 30;
         int previewHeight = 14;

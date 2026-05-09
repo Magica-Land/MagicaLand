@@ -77,7 +77,7 @@ public class Toggle extends PressableWidget {
 
         if (this.alpha > 0.05f) {
             context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
-                    this.getX() + 10, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
+                    this.getX() + 6, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
         }
 
         float targetPosition = this.state ? 1.0f : 0.0f;
