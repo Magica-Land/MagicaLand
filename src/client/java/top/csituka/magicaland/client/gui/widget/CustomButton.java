@@ -12,19 +12,28 @@ public class CustomButton extends PressableWidget {
     private final Consumer<CustomButton> onPress;
     private float currentAlpha;
     private final boolean showArrow;
+    private final boolean noBackground;
+    private final boolean textAlignLeft;
     private static final String ARROW = "  →";
 
     public CustomButton(int x, int y, int width, int height, Text message, boolean isSelected,
             Consumer<CustomButton> onPress) {
-        this(x, y, width, height, message, isSelected, onPress, false);
+        this(x, y, width, height, message, isSelected, onPress, false, false);
     }
 
     public CustomButton(int x, int y, int width, int height, Text message, boolean isSelected,
             Consumer<CustomButton> onPress, boolean showArrow) {
+        this(x, y, width, height, message, isSelected, onPress, showArrow, false);
+    }
+
+    public CustomButton(int x, int y, int width, int height, Text message, boolean isSelected,
+            Consumer<CustomButton> onPress, boolean showArrow, boolean noBackground) {
         super(x, y, width, height, message);
         this.onPress = onPress;
         this.currentAlpha = isSelected ? 0.35f : 0.15f;
         this.showArrow = showArrow;
+        this.noBackground = noBackground;
+        this.textAlignLeft = showArrow || noBackground;
     }
 
     @Override
@@ -68,18 +77,23 @@ public class CustomButton extends PressableWidget {
 
         int alpha = (int) (currentAlpha * this.alpha * 255);
         int textAlpha = (int) (Math.max(0.04f, this.alpha) * 255);
-        fillRoundedRect(context, this.getX(), this.getY(), this.width, this.height, (alpha << 24) | 0xFFFFFF);
+
+        if (!this.noBackground) {
+            fillRoundedRect(context, this.getX(), this.getY(), this.width, this.height, (alpha << 24) | 0xFFFFFF);
+        }
 
         if (this.alpha > 0.05f) {
-            if (this.showArrow) {
+            if (this.textAlignLeft) {
                 var textRenderer = MinecraftClient.getInstance().textRenderer;
                 int textX = this.getX() + 6;
                 int textY = this.getY() + (this.height - 8) / 2;
                 context.drawTextWithShadow(textRenderer, this.getMessage(),
                         textX, textY, (textAlpha << 24) | 0xFFFFFF);
-                int arrowX = this.getX() + this.width - textRenderer.getWidth(ARROW) - 6;
-                context.drawTextWithShadow(textRenderer, ARROW,
-                        arrowX, textY, (textAlpha << 24) | 0xFFFFFF);
+                if (this.showArrow) {
+                    int arrowX = this.getX() + this.width - textRenderer.getWidth(ARROW) - 6;
+                    context.drawTextWithShadow(textRenderer, ARROW,
+                            arrowX, textY, (textAlpha << 24) | 0xFFFFFF);
+                }
             } else {
                 context.drawCenteredTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
                         this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);

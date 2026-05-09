@@ -163,14 +163,12 @@ public class PonyCustom implements TabContent {
             btnX = x + (width - buttonWidth) / 2;
         }
 
-        int backBtnWidth = 60;
-        int backBtnX = btnX + buttonWidth - backBtnWidth;
-        CustomButton backBtn = new CustomButton(backBtnX, startY, backBtnWidth, buttonHeight,
-                Text.literal("← " + Text.translatable("text.magicaland.config.button.back").getString()),
+        CustomButton backBtn = new CustomButton(btnX, startY, buttonWidth, buttonHeight,
+                Text.literal("← " + Text.translatable("text.magicaland.config.mane_menu.name").getString()),
                 false, button -> {
                     maneMenuOpen = false;
                     reinit(screen);
-                });
+                }, false, true);
         this.widgets.add(backBtn);
         screen.addConsoleWidget(backBtn);
 
@@ -209,14 +207,12 @@ public class PonyCustom implements TabContent {
             btnX = x + (width - buttonWidth) / 2;
         }
 
-        int backBtnWidth = 60;
-        int backBtnX = btnX + buttonWidth - backBtnWidth;
-        CustomButton backBtn = new CustomButton(backBtnX, startY, backBtnWidth, buttonHeight,
-                Text.literal("← " + Text.translatable("text.magicaland.config.button.back").getString()),
+        CustomButton backBtn = new CustomButton(btnX, startY, buttonWidth, buttonHeight,
+                Text.literal("← " + Text.translatable("text.magicaland.config.face_menu.name").getString()),
                 false, button -> {
                     faceMenuOpen = false;
                     reinit(screen);
-                });
+                }, false, true);
         this.widgets.add(backBtn);
         screen.addConsoleWidget(backBtn);
 
@@ -245,14 +241,12 @@ public class PonyCustom implements TabContent {
             btnX = x + (width - buttonWidth) / 2;
         }
 
-        int backBtnWidth = 60;
-        int backBtnX = btnX + buttonWidth - backBtnWidth;
-        CustomButton backBtn = new CustomButton(backBtnX, startY, backBtnWidth, buttonHeight,
-                Text.literal("← " + Text.translatable("text.magicaland.config.button.back").getString()),
+        CustomButton backBtn = new CustomButton(btnX, startY, buttonWidth, buttonHeight,
+                Text.literal("← " + Text.translatable("text.magicaland.config.horn_menu.name").getString()),
                 false, button -> {
                     hornMenuOpen = false;
                     reinit(screen);
-                });
+                }, false, true);
         this.widgets.add(backBtn);
         screen.addConsoleWidget(backBtn);
 
@@ -291,14 +285,12 @@ public class PonyCustom implements TabContent {
             btnX = x + (width - buttonWidth) / 2;
         }
 
-        int backBtnWidth = 60;
-        int backBtnX = btnX + buttonWidth - backBtnWidth;
-        CustomButton backBtn = new CustomButton(backBtnX, startY, backBtnWidth, buttonHeight,
-                Text.literal("← " + Text.translatable("text.magicaland.config.button.back").getString()),
+        CustomButton backBtn = new CustomButton(btnX, startY, buttonWidth, buttonHeight,
+                Text.literal("← " + Text.translatable("text.magicaland.config.body_menu.name").getString()),
                 false, button -> {
                     bodyMenuOpen = false;
                     reinit(screen);
-                });
+                }, false, true);
         this.widgets.add(backBtn);
         screen.addConsoleWidget(backBtn);
 
