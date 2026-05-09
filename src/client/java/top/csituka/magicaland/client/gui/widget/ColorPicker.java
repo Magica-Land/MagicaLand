@@ -17,6 +17,7 @@ public class ColorPicker extends ClickableWidget {
     private static final List<ColorPicker> bodyLinkGroup = new ArrayList<>();
 
     private final Consumer<String> onColorChanged;
+    private Consumer<Boolean> onLockChanged;
     private String currentColor;
     private boolean open = false;
     private float currentAlpha = 0.15f;
@@ -75,6 +76,18 @@ public class ColorPicker extends ClickableWidget {
         this.currentColor = color;
         parseColor(color);
         this.hexInput = getHexNoAlpha();
+    }
+
+    public void setOnLockChanged(Consumer<Boolean> onLockChanged) {
+        this.onLockChanged = onLockChanged;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public boolean isLocked() {
+        return this.locked;
     }
 
     private void parseColor(String hex) {
@@ -137,6 +150,9 @@ public class ColorPicker extends ClickableWidget {
 
         if (mouseX >= this.getX() + this.width - 50 && mouseX < this.getX() + this.width - 30 && mouseY >= this.getY() + (this.height - 8) / 2 && mouseY < this.getY() + (this.height - 8) / 2 + 10) {
             this.locked = !this.locked;
+            if (this.onLockChanged != null) {
+                this.onLockChanged.accept(this.locked);
+            }
             this.playDownSound(MinecraftClient.getInstance().getSoundManager());
             return true;
         }

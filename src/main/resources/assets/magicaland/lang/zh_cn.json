@@ -24,5 +24,8 @@
   "text.magicaland.config.head_color.name": "头部颜色",
   "text.magicaland.config.left_ear_color.name": "左耳颜色",
   "text.magicaland.config.right_ear_color.name": "右耳颜色",
-  "text.magicaland.config.limb_color.name": "四肢颜色"
+  "text.magicaland.config.left_front_limb_color.name": "左前肢颜色",
+  "text.magicaland.config.right_front_limb_color.name": "右前肢颜色",
+  "text.magicaland.config.left_hind_limb_color.name": "左后肢颜色",
+  "text.magicaland.config.right_hind_limb_color.name": "右后肢颜色"
 }

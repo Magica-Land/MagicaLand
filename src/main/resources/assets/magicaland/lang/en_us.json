@@ -24,5 +24,8 @@
   "text.magicaland.config.head_color.name": "Head Color",
   "text.magicaland.config.left_ear_color.name": "Left Ear Color",
   "text.magicaland.config.right_ear_color.name": "Right Ear Color",
-  "text.magicaland.config.limb_color.name": "Limb Color"
+  "text.magicaland.config.left_front_limb_color.name": "Left Front Limb Color",
+  "text.magicaland.config.right_front_limb_color.name": "Right Front Limb Color",
+  "text.magicaland.config.left_hind_limb_color.name": "Left Hind Limb Color",
+  "text.magicaland.config.right_hind_limb_color.name": "Right Hind Limb Color"
 }

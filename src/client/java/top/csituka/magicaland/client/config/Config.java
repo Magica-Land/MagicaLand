@@ -18,21 +18,32 @@ public class Config {
     public boolean firstPersonMagicGlow = true;
 
     public String frontManeStyle = "TS";
-
     public String backManeStyle = "TS";
-
     public String eyeStyle = "TS";
 
-    public boolean showHorn = true;
-
     public String hornColor = "#FFFFFFFF";
-
     public String bodyColor = "#FFFFFFFF";
-    public String limbColor = "#FFFFFFFF";
     public String neckColor = "#FFFFFFFF";
     public String headColor = "#FFFFFFFF";
     public String leftEarColor = "#FFFFFFFF";
     public String rightEarColor = "#FFFFFFFF";
+    public String limbColor = "#FFFFFFFF";
+    public String leftFrontLimbColor = "#FFFFFFFF";
+    public String rightFrontLimbColor = "#FFFFFFFF";
+    public String leftHindLimbColor = "#FFFFFFFF";
+    public String rightHindLimbColor = "#FFFFFFFF";
+
+    public boolean showHorn = true;
+
+    public boolean bodyColorLocked = true;
+    public boolean neckColorLocked = true;
+    public boolean headColorLocked = true;
+    public boolean leftEarColorLocked = true;
+    public boolean rightEarColorLocked = true;
+    public boolean leftFrontLimbColorLocked = true;
+    public boolean rightFrontLimbColorLocked = true;
+    public boolean leftHindLimbColorLocked = true;
+    public boolean rightHindLimbColorLocked = true;
 
     private static Config instance;
 

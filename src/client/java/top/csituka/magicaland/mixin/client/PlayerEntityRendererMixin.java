@@ -82,7 +82,7 @@ public abstract class PlayerEntityRendererMixin
                 }
 
                 if (config.showHorn && bone.getName().equalsIgnoreCase("Horn")) {
-                    int color = parseHornColor(config.hornColor);
+                    int color = parseHexColor(config.hornColor);
                     float cr = ((color >> 16) & 0xFF) / 255.0f;
                     float cg = ((color >> 8) & 0xFF) / 255.0f;
                     float cb = (color & 0xFF) / 255.0f;
@@ -90,10 +90,43 @@ public abstract class PlayerEntityRendererMixin
                     green *= cg;
                     blue *= cb;
                 }
+
+                String boneName = bone.getName();
+                String colorField = null;
+                if (boneName.equalsIgnoreCase("Body")) {
+                    colorField = config.bodyColor;
+                } else if (boneName.equalsIgnoreCase("Neck")) {
+                    colorField = config.neckColor;
+                } else if (boneName.equalsIgnoreCase("Head")) {
+                    colorField = config.headColor;
+                } else if (boneName.equalsIgnoreCase("LeftEar")) {
+                    colorField = config.leftEarColor;
+                } else if (boneName.equalsIgnoreCase("RightEar")) {
+                    colorField = config.rightEarColor;
+                } else if (boneName.startsWith("LFront") || boneName.equalsIgnoreCase("LForeLeg")) {
+                    colorField = config.leftFrontLimbColor;
+                } else if (boneName.startsWith("RFront") || boneName.equalsIgnoreCase("RForeLeg")) {
+                    colorField = config.rightFrontLimbColor;
+                } else if (boneName.startsWith("LHind")) {
+                    colorField = config.leftHindLimbColor;
+                } else if (boneName.startsWith("RHind")) {
+                    colorField = config.rightHindLimbColor;
+                }
+
+                if (colorField != null) {
+                    int color = parseHexColor(colorField);
+                    float cr = ((color >> 16) & 0xFF) / 255.0f;
+                    float cg = ((color >> 8) & 0xFF) / 255.0f;
+                    float cb = (color & 0xFF) / 255.0f;
+                    red *= cr;
+                    green *= cg;
+                    blue *= cb;
+                }
+
                 super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             }
 
-            private int parseHornColor(String hex) {
+            private int parseHexColor(String hex) {
                 try {
                     if (hex.startsWith("#")) {
                         hex = hex.substring(1);
