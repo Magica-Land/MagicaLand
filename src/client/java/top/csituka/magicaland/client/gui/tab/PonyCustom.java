@@ -37,6 +37,7 @@ public class PonyCustom implements TabContent {
 
     private boolean hornMenuOpen = false;
     private boolean maneMenuOpen = false;
+    private boolean faceMenuOpen = false;
 
     private GeckoPlayerAnimatable ponyAnimatable;
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
@@ -86,6 +87,8 @@ public class PonyCustom implements TabContent {
             initHornMenu(screen, x, y, width, height);
         } else if (maneMenuOpen) {
             initManeMenu(screen, x, y, width, height);
+        } else if (faceMenuOpen) {
+            initFaceMenu(screen, x, y, width, height);
         } else {
             initMainMenu(screen, x, y, width, height);
         }
@@ -97,7 +100,7 @@ public class PonyCustom implements TabContent {
         int buttonHeight = 20;
         int spacing = 10;
 
-        int totalContentHeight = buttonHeight * 4 + spacing * 3;
+        int totalContentHeight = buttonHeight * 3 + spacing * 2;
         int startY = (height - totalContentHeight) / 2;
 
         int btnX = x + width - buttonWidth - 20;
@@ -110,25 +113,25 @@ public class PonyCustom implements TabContent {
                 false, button -> {
                     maneMenuOpen = true;
                     reinit(screen);
-                });
+                }, true);
         this.widgets.add(maneBtn);
         screen.addConsoleWidget(maneBtn);
 
-        CustomButton eyeBtn = createStyleButton(btnX, startY + buttonHeight + spacing, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.eye_style.name"),
-                config.eyeStyle, EYE_STYLES, newStyle -> {
-                    config.eyeStyle = newStyle;
-                    Config.save();
-                });
-        this.widgets.add(eyeBtn);
-        screen.addConsoleWidget(eyeBtn);
+        CustomButton faceBtn = new CustomButton(btnX, startY + buttonHeight + spacing, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.face_menu.name"),
+                false, button -> {
+                    faceMenuOpen = true;
+                    reinit(screen);
+                }, true);
+        this.widgets.add(faceBtn);
+        screen.addConsoleWidget(faceBtn);
 
         CustomButton hornBtn = new CustomButton(btnX, startY + (buttonHeight + spacing) * 2, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.horn_menu.name"),
                 false, button -> {
                     hornMenuOpen = true;
                     reinit(screen);
-                });
+                }, true);
         this.widgets.add(hornBtn);
         screen.addConsoleWidget(hornBtn);
     }
@@ -177,6 +180,42 @@ public class PonyCustom implements TabContent {
                 });
         this.widgets.add(backManeBtn);
         screen.addConsoleWidget(backManeBtn);
+    }
+
+    private void initFaceMenu(ConfigScreen screen, int x, int y, int width, int height) {
+        Config config = Config.getInstance();
+        int buttonWidth = Math.min(180, width / 2);
+        int buttonHeight = 20;
+        int spacing = 10;
+
+        int totalContentHeight = buttonHeight * 2 + spacing;
+        int startY = (height - totalContentHeight) / 2;
+
+        int btnX = x + width - buttonWidth - 20;
+        if (width < 250) {
+            btnX = x + (width - buttonWidth) / 2;
+        }
+
+        int backBtnWidth = 60;
+        int backBtnX = btnX + buttonWidth - backBtnWidth;
+        CustomButton backBtn = new CustomButton(backBtnX, startY, backBtnWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.button.back"),
+                false, button -> {
+                    faceMenuOpen = false;
+                    reinit(screen);
+                });
+        this.widgets.add(backBtn);
+        screen.addConsoleWidget(backBtn);
+
+        int eyeBtnY = startY + buttonHeight + spacing;
+        CustomButton eyeBtn = createStyleButton(btnX, eyeBtnY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.eye_style.name"),
+                config.eyeStyle, EYE_STYLES, newStyle -> {
+                    config.eyeStyle = newStyle;
+                    Config.save();
+                });
+        this.widgets.add(eyeBtn);
+        screen.addConsoleWidget(eyeBtn);
     }
 
     private void initHornMenu(ConfigScreen screen, int x, int y, int width, int height) {

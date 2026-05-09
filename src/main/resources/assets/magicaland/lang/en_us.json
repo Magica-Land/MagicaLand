@@ -11,10 +11,11 @@
   "text.magicaland.config.replace_model.name": "Enable Pony Model",
   "text.magicaland.config.first_person_magic_glow.name": "Magic Glow (First Person)",
   "text.magicaland.config.mane_menu.name": "Mane & Tail",
+  "text.magicaland.config.face_menu.name": "Facial Features",
+  "text.magicaland.config.horn_menu.name": "Horn & Wings",
   "text.magicaland.config.front_mane_style.name": "Front Mane Style",
   "text.magicaland.config.back_mane_style.name": "Back Mane Style",
   "text.magicaland.config.eye_style.name": "Eye Style",
-  "text.magicaland.config.horn_menu.name": "Horn",
   "text.magicaland.config.show_horn.name": "Show Horn",
   "text.magicaland.config.horn_color.name": "Horn Color"
 }

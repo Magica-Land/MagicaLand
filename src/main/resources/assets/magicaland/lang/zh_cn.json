@@ -11,10 +11,11 @@
   "text.magicaland.config.replace_model.name": "启用小马模型",
   "text.magicaland.config.first_person_magic_glow.name": "物品魔法光效 (第一人称)",
   "text.magicaland.config.mane_menu.name": "鬃毛&尾巴",
+  "text.magicaland.config.face_menu.name": "五官",
+  "text.magicaland.config.horn_menu.name": "独角&翅膀",
   "text.magicaland.config.front_mane_style.name": "前鬃毛样式",
   "text.magicaland.config.back_mane_style.name": "后鬃毛样式",
   "text.magicaland.config.eye_style.name": "眼睛样式",
-  "text.magicaland.config.horn_menu.name": "独角",
   "text.magicaland.config.show_horn.name": "显示独角",
   "text.magicaland.config.horn_color.name": "独角颜色"
 }
