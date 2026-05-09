@@ -10,6 +10,8 @@ import java.awt.Color;
 import java.util.function.Consumer;
 
 public class ColorPicker extends ClickableWidget {
+    private static ColorPicker openPicker = null;
+
     private final Consumer<String> onColorChanged;
     private String currentColor;
     private boolean open = false;
@@ -101,6 +103,14 @@ public class ColorPicker extends ClickableWidget {
         this.inputFocused = false;
 
         if (mouseX >= this.getX() && mouseX < this.getX() + this.width && mouseY >= this.getY() && mouseY < this.getY() + this.height) {
+            if (!this.open) {
+                if (openPicker != null && openPicker != this) {
+                    openPicker.open = false;
+                }
+                openPicker = this;
+            } else {
+                openPicker = null;
+            }
             this.open = !this.open;
             if (open) {
                 this.hexInput = getHexNoAlpha();

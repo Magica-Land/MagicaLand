@@ -38,6 +38,7 @@ public class PonyCustom implements TabContent {
     private boolean hornMenuOpen = false;
     private boolean maneMenuOpen = false;
     private boolean faceMenuOpen = false;
+    private boolean bodyMenuOpen = false;
 
     private GeckoPlayerAnimatable ponyAnimatable;
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
@@ -89,6 +90,8 @@ public class PonyCustom implements TabContent {
             initManeMenu(screen, x, y, width, height);
         } else if (faceMenuOpen) {
             initFaceMenu(screen, x, y, width, height);
+        } else if (bodyMenuOpen) {
+            initBodyMenu(screen, x, y, width, height);
         } else {
             initMainMenu(screen, x, y, width, height);
         }
@@ -100,7 +103,7 @@ public class PonyCustom implements TabContent {
         int buttonHeight = 20;
         int spacing = 10;
 
-        int totalContentHeight = buttonHeight * 3 + spacing * 2;
+        int totalContentHeight = buttonHeight * 4 + spacing * 3;
         int startY = (height - totalContentHeight) / 2;
 
         int btnX = x + width - buttonWidth - 20;
@@ -134,6 +137,15 @@ public class PonyCustom implements TabContent {
                 }, true);
         this.widgets.add(hornBtn);
         screen.addConsoleWidget(hornBtn);
+
+        CustomButton bodyBtn = new CustomButton(btnX, startY + (buttonHeight + spacing) * 3, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.body_menu.name"),
+                false, button -> {
+                    bodyMenuOpen = true;
+                    reinit(screen);
+                }, true);
+        this.widgets.add(bodyBtn);
+        screen.addConsoleWidget(bodyBtn);
     }
 
     private void initManeMenu(ConfigScreen screen, int x, int y, int width, int height) {
@@ -262,6 +274,82 @@ public class PonyCustom implements TabContent {
                 });
         this.widgets.add(colorPicker);
         screen.addConsoleWidget(colorPicker);
+    }
+
+    private void initBodyMenu(ConfigScreen screen, int x, int y, int width, int height) {
+        Config config = Config.getInstance();
+        int buttonWidth = Math.min(180, width / 2);
+        int buttonHeight = 20;
+        int spacing = 10;
+
+        int totalContentHeight = buttonHeight * 6 + spacing * 5;
+        int startY = (height - totalContentHeight) / 2;
+
+        int btnX = x + width - buttonWidth - 20;
+        if (width < 250) {
+            btnX = x + (width - buttonWidth) / 2;
+        }
+
+        int backBtnWidth = 60;
+        int backBtnX = btnX + buttonWidth - backBtnWidth;
+        CustomButton backBtn = new CustomButton(backBtnX, startY, backBtnWidth, buttonHeight,
+                Text.literal("← " + Text.translatable("text.magicaland.config.button.back").getString()),
+                false, button -> {
+                    bodyMenuOpen = false;
+                    reinit(screen);
+                });
+        this.widgets.add(backBtn);
+        screen.addConsoleWidget(backBtn);
+
+        int offsetY = startY + buttonHeight + spacing;
+        ColorPicker bodyPicker = new ColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.body_color.name"),
+                config.bodyColor, newColor -> {
+                    config.bodyColor = newColor;
+                    Config.save();
+                });
+        this.widgets.add(bodyPicker);
+        screen.addConsoleWidget(bodyPicker);
+
+        offsetY += buttonHeight + spacing;
+        ColorPicker neckPicker = new ColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.neck_color.name"),
+                config.neckColor, newColor -> {
+                    config.neckColor = newColor;
+                    Config.save();
+                });
+        this.widgets.add(neckPicker);
+        screen.addConsoleWidget(neckPicker);
+
+        offsetY += buttonHeight + spacing;
+        ColorPicker headPicker = new ColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.head_color.name"),
+                config.headColor, newColor -> {
+                    config.headColor = newColor;
+                    Config.save();
+                });
+        this.widgets.add(headPicker);
+        screen.addConsoleWidget(headPicker);
+
+        offsetY += buttonHeight + spacing;
+        ColorPicker earPicker = new ColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.ear_color.name"),
+                config.earColor, newColor -> {
+                    config.earColor = newColor;
+                    Config.save();
+                });
+        this.widgets.add(earPicker);
+        screen.addConsoleWidget(earPicker);
+
+        offsetY += buttonHeight + spacing;
+        ColorPicker limbPicker = new ColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.limb_color.name"),
+                config.limbColor, newColor -> {
+                    config.limbColor = newColor;
+                    Config.save();
+                });
+        this.widgets.add(limbPicker);
+        screen.addConsoleWidget(limbPicker);
     }
 
     private void reinit(ConfigScreen screen) {
@@ -397,11 +485,30 @@ public class PonyCustom implements TabContent {
                     blue *= cb;
                 }
 
-                if (bone.getName().equalsIgnoreCase("body")) {
-                    red *= 0.2f;
-                    green *= 0.5f;
-                    blue *= 1.0f;
+                String boneName = bone.getName();
+                String colorField = null;
+                if (boneName.equalsIgnoreCase("Body")) {
+                    colorField = config.bodyColor;
+                } else if (boneName.equalsIgnoreCase("Neck")) {
+                    colorField = config.neckColor;
+                } else if (boneName.equalsIgnoreCase("Head")) {
+                    colorField = config.headColor;
+                } else if (boneName.equalsIgnoreCase("LeftEar") || boneName.equalsIgnoreCase("RightEar")) {
+                    colorField = config.earColor;
+                } else if (boneName.contains("Leg") || boneName.contains("Calf") || boneName.contains("Hoof")) {
+                    colorField = config.limbColor;
                 }
+
+                if (colorField != null) {
+                    int color = parseColor(colorField);
+                    float cr = ((color >> 16) & 0xFF) / 255.0f;
+                    float cg = ((color >> 8) & 0xFF) / 255.0f;
+                    float cb = (color & 0xFF) / 255.0f;
+                    red *= cr;
+                    green *= cg;
+                    blue *= cb;
+                }
+
                 super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             }
 

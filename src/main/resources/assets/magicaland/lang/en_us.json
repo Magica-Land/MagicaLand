@@ -17,5 +17,11 @@
   "text.magicaland.config.back_mane_style.name": "Back Mane Style",
   "text.magicaland.config.eye_style.name": "Eye Style",
   "text.magicaland.config.show_horn.name": "Show Horn",
-  "text.magicaland.config.horn_color.name": "Horn Color"
+  "text.magicaland.config.horn_color.name": "Horn Color",
+  "text.magicaland.config.body_menu.name": "Body",
+  "text.magicaland.config.body_color.name": "Body Color",
+  "text.magicaland.config.neck_color.name": "Neck Color",
+  "text.magicaland.config.head_color.name": "Head Color",
+  "text.magicaland.config.ear_color.name": "Ear Color",
+  "text.magicaland.config.limb_color.name": "Limb Color"
 }

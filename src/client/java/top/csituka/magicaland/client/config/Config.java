@@ -27,6 +27,12 @@ public class Config {
 
     public String hornColor = "#FFFFFFFF";
 
+    public String bodyColor = "#FFFFFFFF";
+    public String limbColor = "#FFFFFFFF";
+    public String neckColor = "#FFFFFFFF";
+    public String headColor = "#FFFFFFFF";
+    public String earColor = "#FFFFFFFF";
+
     private static Config instance;
 
     public static Config getInstance() {

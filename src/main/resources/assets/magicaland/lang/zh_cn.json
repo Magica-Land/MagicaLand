@@ -17,5 +17,11 @@
   "text.magicaland.config.back_mane_style.name": "后鬃毛样式",
   "text.magicaland.config.eye_style.name": "眼睛样式",
   "text.magicaland.config.show_horn.name": "显示独角",
-  "text.magicaland.config.horn_color.name": "独角颜色"
+  "text.magicaland.config.horn_color.name": "独角颜色",
+  "text.magicaland.config.body_menu.name": "身体",
+  "text.magicaland.config.body_color.name": "身体颜色",
+  "text.magicaland.config.neck_color.name": "脖子颜色",
+  "text.magicaland.config.head_color.name": "头部颜色",
+  "text.magicaland.config.ear_color.name": "耳朵颜色",
+  "text.magicaland.config.limb_color.name": "四肢颜色"
 }
