@@ -153,7 +153,7 @@ public class PonyCustom implements TabContent {
         int backBtnWidth = 60;
         int backBtnX = btnX + buttonWidth - backBtnWidth;
         CustomButton backBtn = new CustomButton(backBtnX, startY, backBtnWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.button.back"),
+                Text.literal("← " + Text.translatable("text.magicaland.config.button.back").getString()),
                 false, button -> {
                     maneMenuOpen = false;
                     reinit(screen);
@@ -199,7 +199,7 @@ public class PonyCustom implements TabContent {
         int backBtnWidth = 60;
         int backBtnX = btnX + buttonWidth - backBtnWidth;
         CustomButton backBtn = new CustomButton(backBtnX, startY, backBtnWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.button.back"),
+                Text.literal("← " + Text.translatable("text.magicaland.config.button.back").getString()),
                 false, button -> {
                     faceMenuOpen = false;
                     reinit(screen);
@@ -235,7 +235,7 @@ public class PonyCustom implements TabContent {
         int backBtnWidth = 60;
         int backBtnX = btnX + buttonWidth - backBtnWidth;
         CustomButton backBtn = new CustomButton(backBtnX, startY, backBtnWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.button.back"),
+                Text.literal("← " + Text.translatable("text.magicaland.config.button.back").getString()),
                 false, button -> {
                     hornMenuOpen = false;
                     reinit(screen);
