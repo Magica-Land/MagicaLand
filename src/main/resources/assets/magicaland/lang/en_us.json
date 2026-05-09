@@ -10,6 +10,8 @@
   "text.magicaland.console.about.description": "Turn players into ponies.",
   "text.magicaland.config.replace_model.name": "Enable Pony Model",
   "text.magicaland.config.first_person_magic_glow.name": "Magic Glow (First Person)",
+  "text.magicaland.config.section.ears.name": "Ears",
+  "text.magicaland.config.section.limbs.name": "Limbs",
   "text.magicaland.config.mane_menu.name": "Mane & Tail",
   "text.magicaland.config.face_menu.name": "Facial Features",
   "text.magicaland.config.horn_menu.name": "Horn & Wings",

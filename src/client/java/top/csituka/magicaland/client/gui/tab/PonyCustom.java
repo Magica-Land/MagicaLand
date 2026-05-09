@@ -7,6 +7,7 @@ import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.gui.ConfigScreen;
 import top.csituka.magicaland.client.gui.widget.ColorPicker;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
+import top.csituka.magicaland.client.gui.widget.SectionLabel;
 import top.csituka.magicaland.client.gui.widget.Toggle;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderLayer;
@@ -282,7 +283,7 @@ public class PonyCustom implements TabContent {
         int buttonHeight = 20;
         int spacing = 10;
 
-        int totalContentHeight = buttonHeight * 10 + spacing * 9;
+        int totalContentHeight = buttonHeight * 12 + spacing * 9;
         int startY = (height - totalContentHeight) / 2;
 
         int btnX = x + width - buttonWidth - 20;
@@ -329,6 +330,12 @@ public class PonyCustom implements TabContent {
         screen.addConsoleWidget(headPicker);
 
         offsetY += buttonHeight + spacing;
+        SectionLabel earLabel = new SectionLabel(btnX, offsetY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.section.ears.name"));
+        this.widgets.add(earLabel);
+        screen.addConsoleWidget(earLabel);
+
+        offsetY += buttonHeight;
         ColorPicker leftEarPicker = createBodyColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.left_ear_color.name"),
                 config.leftEarColor, config.leftEarColorLocked,
@@ -347,6 +354,12 @@ public class PonyCustom implements TabContent {
         screen.addConsoleWidget(rightEarPicker);
 
         offsetY += buttonHeight + spacing;
+        SectionLabel limbLabel = new SectionLabel(btnX, offsetY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.section.limbs.name"));
+        this.widgets.add(limbLabel);
+        screen.addConsoleWidget(limbLabel);
+
+        offsetY += buttonHeight;
         ColorPicker leftFrontLimbPicker = createBodyColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.left_front_limb_color.name"),
                 config.leftFrontLimbColor, config.leftFrontLimbColorLocked,
