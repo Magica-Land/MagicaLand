@@ -22,6 +22,7 @@
   "text.magicaland.config.body_color.name": "Body Color",
   "text.magicaland.config.neck_color.name": "Neck Color",
   "text.magicaland.config.head_color.name": "Head Color",
-  "text.magicaland.config.ear_color.name": "Ear Color",
+  "text.magicaland.config.left_ear_color.name": "Left Ear Color",
+  "text.magicaland.config.right_ear_color.name": "Right Ear Color",
   "text.magicaland.config.limb_color.name": "Limb Color"
 }

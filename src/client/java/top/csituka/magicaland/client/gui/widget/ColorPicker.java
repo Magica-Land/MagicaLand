@@ -7,10 +7,14 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class ColorPicker extends ClickableWidget {
     private static ColorPicker openPicker = null;
+
+    private static final List<ColorPicker> bodyLinkGroup = new ArrayList<>();
 
     private final Consumer<String> onColorChanged;
     private String currentColor;
@@ -22,11 +26,34 @@ public class ColorPicker extends ClickableWidget {
     private static final int HUE_HEIGHT = 8;
     private static final int PADDING = 4;
     private static final int INPUT_HEIGHT = 12;
+    private static final int LOCK_SIZE = 12;
 
     private float h, s, v;
     private String hexInput = "";
     private boolean inputFocused = false;
     private int cursorTick = 0;
+
+    private boolean locked = false;
+    private boolean syncing = false;
+
+    public static void addToBodyLinkGroup(ColorPicker picker, boolean initiallyLocked) {
+        picker.locked = initiallyLocked;
+        bodyLinkGroup.add(picker);
+    }
+
+    private static void syncFrom(ColorPicker source) {
+        if (!source.locked) return;
+        for (ColorPicker picker : bodyLinkGroup) {
+            if (picker != source && picker.locked && !picker.syncing) {
+                picker.syncing = true;
+                picker.setColorSilent(source.currentColor);
+                if (picker.onColorChanged != null) {
+                    picker.onColorChanged.accept(source.currentColor);
+                }
+                picker.syncing = false;
+            }
+        }
+    }
     
     private enum DragMode {
         NONE,
@@ -41,6 +68,12 @@ public class ColorPicker extends ClickableWidget {
         this.currentColor = initialColor;
         this.onColorChanged = onColorChanged;
         parseColor(initialColor);
+        this.hexInput = getHexNoAlpha();
+    }
+
+    public void setColorSilent(String color) {
+        this.currentColor = color;
+        parseColor(color);
         this.hexInput = getHexNoAlpha();
     }
 
@@ -101,6 +134,12 @@ public class ColorPicker extends ClickableWidget {
 
         this.dragMode = DragMode.NONE;
         this.inputFocused = false;
+
+        if (mouseX >= this.getX() + this.width - 50 && mouseX < this.getX() + this.width - 30 && mouseY >= this.getY() + (this.height - 8) / 2 && mouseY < this.getY() + (this.height - 8) / 2 + 10) {
+            this.locked = !this.locked;
+            this.playDownSound(MinecraftClient.getInstance().getSoundManager());
+            return true;
+        }
 
         if (mouseX >= this.getX() && mouseX < this.getX() + this.width && mouseY >= this.getY() && mouseY < this.getY() + this.height) {
             if (!this.open) {
@@ -246,6 +285,9 @@ public class ColorPicker extends ClickableWidget {
         if (onColorChanged != null) {
             onColorChanged.accept(this.currentColor);
         }
+        if (!syncing) {
+            syncFrom(this);
+        }
     }
 
     @Override
@@ -274,6 +316,8 @@ public class ColorPicker extends ClickableWidget {
         context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
                 this.getX() + 6, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
 
+        drawLockIcon(context);
+
         int previewWidth = 30;
         int previewHeight = 14;
         int previewX = this.getX() + this.width - previewWidth - 4;
@@ -287,6 +331,17 @@ public class ColorPicker extends ClickableWidget {
         } catch (Exception e) {
             fillRoundedRect(context, previewX, previewY, previewWidth, previewHeight, 0xFFFFFFFF);
         }
+    }
+
+    private void drawLockIcon(DrawContext context) {
+        if (!bodyLinkGroup.contains(this)) return;
+
+        int lx = this.getX() + this.width - 50;
+        int ly = this.getY() + (this.height - 8) / 2;
+        String lockChar = locked ? "\uD83D\uDD12" : "\uD83D\uDD13";
+        int color = locked ? 0xFFCC8844 : 0x88FFFFFF;
+        context.drawText(MinecraftClient.getInstance().textRenderer, lockChar,
+                lx, ly, color, false);
     }
 
     private void renderPicker(DrawContext context, int mouseX, int mouseY) {

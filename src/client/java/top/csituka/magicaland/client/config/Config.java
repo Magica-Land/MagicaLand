@@ -31,7 +31,8 @@ public class Config {
     public String limbColor = "#FFFFFFFF";
     public String neckColor = "#FFFFFFFF";
     public String headColor = "#FFFFFFFF";
-    public String earColor = "#FFFFFFFF";
+    public String leftEarColor = "#FFFFFFFF";
+    public String rightEarColor = "#FFFFFFFF";
 
     private static Config instance;
 

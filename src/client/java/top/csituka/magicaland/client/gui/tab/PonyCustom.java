@@ -282,7 +282,7 @@ public class PonyCustom implements TabContent {
         int buttonHeight = 20;
         int spacing = 10;
 
-        int totalContentHeight = buttonHeight * 6 + spacing * 5;
+        int totalContentHeight = buttonHeight * 7 + spacing * 6;
         int startY = (height - totalContentHeight) / 2;
 
         int btnX = x + width - buttonWidth - 20;
@@ -310,6 +310,7 @@ public class PonyCustom implements TabContent {
                 });
         this.widgets.add(bodyPicker);
         screen.addConsoleWidget(bodyPicker);
+        ColorPicker.addToBodyLinkGroup(bodyPicker, true);
 
         offsetY += buttonHeight + spacing;
         ColorPicker neckPicker = new ColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
@@ -320,6 +321,7 @@ public class PonyCustom implements TabContent {
                 });
         this.widgets.add(neckPicker);
         screen.addConsoleWidget(neckPicker);
+        ColorPicker.addToBodyLinkGroup(neckPicker, true);
 
         offsetY += buttonHeight + spacing;
         ColorPicker headPicker = new ColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
@@ -330,16 +332,29 @@ public class PonyCustom implements TabContent {
                 });
         this.widgets.add(headPicker);
         screen.addConsoleWidget(headPicker);
+        ColorPicker.addToBodyLinkGroup(headPicker, true);
 
         offsetY += buttonHeight + spacing;
-        ColorPicker earPicker = new ColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.ear_color.name"),
-                config.earColor, newColor -> {
-                    config.earColor = newColor;
+        ColorPicker leftEarPicker = new ColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.left_ear_color.name"),
+                config.leftEarColor, newColor -> {
+                    config.leftEarColor = newColor;
                     Config.save();
                 });
-        this.widgets.add(earPicker);
-        screen.addConsoleWidget(earPicker);
+        this.widgets.add(leftEarPicker);
+        screen.addConsoleWidget(leftEarPicker);
+        ColorPicker.addToBodyLinkGroup(leftEarPicker, true);
+
+        offsetY += buttonHeight + spacing;
+        ColorPicker rightEarPicker = new ColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.right_ear_color.name"),
+                config.rightEarColor, newColor -> {
+                    config.rightEarColor = newColor;
+                    Config.save();
+                });
+        this.widgets.add(rightEarPicker);
+        screen.addConsoleWidget(rightEarPicker);
+        ColorPicker.addToBodyLinkGroup(rightEarPicker, true);
 
         offsetY += buttonHeight + spacing;
         ColorPicker limbPicker = new ColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
@@ -350,6 +365,7 @@ public class PonyCustom implements TabContent {
                 });
         this.widgets.add(limbPicker);
         screen.addConsoleWidget(limbPicker);
+        ColorPicker.addToBodyLinkGroup(limbPicker, true);
     }
 
     private void reinit(ConfigScreen screen) {
@@ -493,8 +509,10 @@ public class PonyCustom implements TabContent {
                     colorField = config.neckColor;
                 } else if (boneName.equalsIgnoreCase("Head")) {
                     colorField = config.headColor;
-                } else if (boneName.equalsIgnoreCase("LeftEar") || boneName.equalsIgnoreCase("RightEar")) {
-                    colorField = config.earColor;
+                } else if (boneName.equalsIgnoreCase("LeftEar")) {
+                    colorField = config.leftEarColor;
+                } else if (boneName.equalsIgnoreCase("RightEar")) {
+                    colorField = config.rightEarColor;
                 } else if (boneName.contains("Leg") || boneName.contains("Calf") || boneName.contains("Hoof")) {
                     colorField = config.limbColor;
                 }
