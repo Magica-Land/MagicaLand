@@ -1,19 +1,20 @@
 {
   "key.magicaland.config": "Open Config Menu",
   "category.magicaland.keys": "Magical Land",
-  "text.magicaland.config.replace_model.name": "Enable Pony Model",
   "text.magicaland.config.button.done": "Done",
+  "text.magicaland.config.button.back": "Back",
   "text.magicaland.console.title": "Configuration",
   "text.magicaland.console.tab.settings": "Settings",
   "text.magicaland.console.tab.pony_custom": "Pony Custom",
   "text.magicaland.console.tab.about": "About",
   "text.magicaland.console.about.description": "Turn players into ponies.",
+  "text.magicaland.config.replace_model.name": "Enable Pony Model",
   "text.magicaland.config.first_person_magic_glow.name": "Magic Glow (First Person)",
+  "text.magicaland.config.mane_menu.name": "Mane & Tail",
   "text.magicaland.config.front_mane_style.name": "Front Mane Style",
   "text.magicaland.config.back_mane_style.name": "Back Mane Style",
   "text.magicaland.config.eye_style.name": "Eye Style",
   "text.magicaland.config.horn_menu.name": "Horn",
   "text.magicaland.config.show_horn.name": "Show Horn",
-  "text.magicaland.config.horn_color.name": "Horn Color",
-  "text.magicaland.config.horn_back.name": "Back"
+  "text.magicaland.config.horn_color.name": "Horn Color"
 }

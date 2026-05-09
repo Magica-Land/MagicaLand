@@ -36,6 +36,7 @@ public class PonyCustom implements TabContent {
     private float currentAlpha = 1.0f;
 
     private boolean hornMenuOpen = false;
+    private boolean maneMenuOpen = false;
 
     private GeckoPlayerAnimatable ponyAnimatable;
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
@@ -83,6 +84,8 @@ public class PonyCustom implements TabContent {
 
         if (hornMenuOpen) {
             initHornMenu(screen, x, y, width, height);
+        } else if (maneMenuOpen) {
+            initManeMenu(screen, x, y, width, height);
         } else {
             initMainMenu(screen, x, y, width, height);
         }
@@ -102,25 +105,16 @@ public class PonyCustom implements TabContent {
             btnX = x + (width - buttonWidth) / 2;
         }
 
-        CustomButton frontBtn = createStyleButton(btnX, startY, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.front_mane_style.name"),
-                config.frontManeStyle, FRONT_MANE_STYLES, newStyle -> {
-                    config.frontManeStyle = newStyle;
-                    Config.save();
+        CustomButton maneBtn = new CustomButton(btnX, startY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.mane_menu.name"),
+                false, button -> {
+                    maneMenuOpen = true;
+                    reinit(screen);
                 });
-        this.widgets.add(frontBtn);
-        screen.addConsoleWidget(frontBtn);
+        this.widgets.add(maneBtn);
+        screen.addConsoleWidget(maneBtn);
 
-        CustomButton backBtn = createStyleButton(btnX, startY + buttonHeight + spacing, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.back_mane_style.name"),
-                config.backManeStyle, BACK_MANE_STYLES, newStyle -> {
-                    config.backManeStyle = newStyle;
-                    Config.save();
-                });
-        this.widgets.add(backBtn);
-        screen.addConsoleWidget(backBtn);
-
-        CustomButton eyeBtn = createStyleButton(btnX, startY + (buttonHeight + spacing) * 2, buttonWidth, buttonHeight,
+        CustomButton eyeBtn = createStyleButton(btnX, startY + buttonHeight + spacing, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.eye_style.name"),
                 config.eyeStyle, EYE_STYLES, newStyle -> {
                     config.eyeStyle = newStyle;
@@ -129,7 +123,7 @@ public class PonyCustom implements TabContent {
         this.widgets.add(eyeBtn);
         screen.addConsoleWidget(eyeBtn);
 
-        CustomButton hornBtn = new CustomButton(btnX, startY + (buttonHeight + spacing) * 3, buttonWidth, buttonHeight,
+        CustomButton hornBtn = new CustomButton(btnX, startY + (buttonHeight + spacing) * 2, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.horn_menu.name"),
                 false, button -> {
                     hornMenuOpen = true;
@@ -137,6 +131,52 @@ public class PonyCustom implements TabContent {
                 });
         this.widgets.add(hornBtn);
         screen.addConsoleWidget(hornBtn);
+    }
+
+    private void initManeMenu(ConfigScreen screen, int x, int y, int width, int height) {
+        Config config = Config.getInstance();
+        int buttonWidth = Math.min(180, width / 2);
+        int buttonHeight = 20;
+        int spacing = 10;
+
+        int totalContentHeight = buttonHeight * 3 + spacing * 2;
+        int startY = (height - totalContentHeight) / 2;
+
+        int btnX = x + width - buttonWidth - 20;
+        if (width < 250) {
+            btnX = x + (width - buttonWidth) / 2;
+        }
+
+        int backBtnWidth = 60;
+        int backBtnX = btnX + buttonWidth - backBtnWidth;
+        CustomButton backBtn = new CustomButton(backBtnX, startY, backBtnWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.button.back"),
+                false, button -> {
+                    maneMenuOpen = false;
+                    reinit(screen);
+                });
+        this.widgets.add(backBtn);
+        screen.addConsoleWidget(backBtn);
+
+        int frontBtnY = startY + buttonHeight + spacing;
+        CustomButton frontBtn = createStyleButton(btnX, frontBtnY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.front_mane_style.name"),
+                config.frontManeStyle, FRONT_MANE_STYLES, newStyle -> {
+                    config.frontManeStyle = newStyle;
+                    Config.save();
+                });
+        this.widgets.add(frontBtn);
+        screen.addConsoleWidget(frontBtn);
+
+        int backBtnY = frontBtnY + buttonHeight + spacing;
+        CustomButton backManeBtn = createStyleButton(btnX, backBtnY, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.back_mane_style.name"),
+                config.backManeStyle, BACK_MANE_STYLES, newStyle -> {
+                    config.backManeStyle = newStyle;
+                    Config.save();
+                });
+        this.widgets.add(backManeBtn);
+        screen.addConsoleWidget(backManeBtn);
     }
 
     private void initHornMenu(ConfigScreen screen, int x, int y, int width, int height) {
@@ -156,7 +196,7 @@ public class PonyCustom implements TabContent {
         int backBtnWidth = 60;
         int backBtnX = btnX + buttonWidth - backBtnWidth;
         CustomButton backBtn = new CustomButton(backBtnX, startY, backBtnWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.horn_back.name"),
+                Text.translatable("text.magicaland.config.button.back"),
                 false, button -> {
                     hornMenuOpen = false;
                     reinit(screen);

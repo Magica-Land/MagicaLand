@@ -1,19 +1,20 @@
 {
   "key.magicaland.config": "打开配置菜单",
   "category.magicaland.keys": "Magical Land",
-  "text.magicaland.config.replace_model.name": "启用小马模型",
   "text.magicaland.config.button.done": "完成",
+  "text.magicaland.config.button.back": "返回",
   "text.magicaland.console.title": "配置",
   "text.magicaland.console.tab.settings": "设置",
   "text.magicaland.console.tab.pony_custom": "捏马",
   "text.magicaland.console.tab.about": "关于",
   "text.magicaland.console.about.description": "将玩家变成小马",
+  "text.magicaland.config.replace_model.name": "启用小马模型",
   "text.magicaland.config.first_person_magic_glow.name": "物品魔法光效 (第一人称)",
+  "text.magicaland.config.mane_menu.name": "鬃毛&尾巴",
   "text.magicaland.config.front_mane_style.name": "前鬃毛样式",
   "text.magicaland.config.back_mane_style.name": "后鬃毛样式",
   "text.magicaland.config.eye_style.name": "眼睛样式",
   "text.magicaland.config.horn_menu.name": "独角",
   "text.magicaland.config.show_horn.name": "显示独角",
-  "text.magicaland.config.horn_color.name": "独角颜色",
-  "text.magicaland.config.horn_back.name": "返回"
+  "text.magicaland.config.horn_color.name": "独角颜色"
 }
