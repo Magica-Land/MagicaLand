@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ColorPicker extends ClickableWidget {
-    private static ColorPicker openPicker = null;
+    public static ColorPicker openPicker = null;
 
     private static final List<ColorPicker> bodyLinkGroup = new ArrayList<>();
 
     private final Consumer<String> onColorChanged;
     private Consumer<Boolean> onLockChanged;
     private String currentColor;
-    private boolean open = false;
+    public boolean open = false;
     private float currentAlpha = 0.15f;
 
     private static final int PICKER_WIDTH = 75;

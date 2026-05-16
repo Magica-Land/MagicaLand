@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
 import top.csituka.magicaland.client.gui.widget.TabButton;
+import top.csituka.magicaland.client.gui.widget.ColorPicker;
 import top.csituka.magicaland.client.gui.tab.TabContent;
 import top.csituka.magicaland.client.gui.tab.TabAnimator;
 import top.csituka.magicaland.client.gui.tab.Settings;
@@ -63,6 +64,10 @@ public class ConfigScreen extends Screen {
     }
 
     public void reinitScreen() {
+        if (ColorPicker.openPicker != null) {
+            ColorPicker.openPicker.open = false;
+            ColorPicker.openPicker = null;
+        }
         this.clearChildren();
         this.init();
     }
@@ -97,6 +102,11 @@ public class ConfigScreen extends Screen {
 
                             this.tabAnimator.startTransition(this.currentTab, tab, this.height, oldWidgets);
                             this.currentTab = tab;
+
+                            if (ColorPicker.openPicker != null) {
+                                ColorPicker.openPicker.open = false;
+                                ColorPicker.openPicker = null;
+                            }
 
                             this.clearChildren();
                             this.init();
@@ -203,7 +213,26 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (ColorPicker.openPicker != null && ColorPicker.openPicker.open) {
+            if (ColorPicker.openPicker.isMouseOver(mouseX, mouseY)) {
+                if (ColorPicker.openPicker.mouseClicked(mouseX, mouseY, button)) {
+                    return true;
+                }
+            } else {
+                ColorPicker.openPicker.open = false;
+                ColorPicker.openPicker = null;
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
     public void close() {
+        if (ColorPicker.openPicker != null) {
+            ColorPicker.openPicker.open = false;
+            ColorPicker.openPicker = null;
+        }
         this.client.setScreen(this.parent);
     }
 }
