@@ -2,18 +2,11 @@ package top.csituka.magicaland.client.gui.tab;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-import top.csituka.magicaland.client.config.Config;
-import top.csituka.magicaland.client.gui.ConfigScreen;
-import top.csituka.magicaland.client.gui.widget.ColorPicker;
-import top.csituka.magicaland.client.gui.widget.CustomButton;
-import top.csituka.magicaland.client.gui.widget.SectionLabel;
-import top.csituka.magicaland.client.gui.widget.Toggle;
-import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -22,19 +15,22 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
+import top.csituka.magicaland.client.config.Config;
+import top.csituka.magicaland.client.gui.ConfigScreen;
+import top.csituka.magicaland.client.gui.widget.ColorPicker;
+import top.csituka.magicaland.client.gui.widget.CustomButton;
+import top.csituka.magicaland.client.gui.widget.SectionLabel;
+import top.csituka.magicaland.client.gui.widget.SettingsList;
+import top.csituka.magicaland.client.gui.widget.Toggle;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.model.GeckoPlayerModel;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class PonyCustom implements TabContent {
-    private final List<ClickableWidget> widgets = new ArrayList<>();
+    private SettingsList listWidget;
     private int rightX;
     private int rightWidth;
-    private int rightHeight;
-    private float currentAlpha = 1.0f;
 
     private boolean hornMenuOpen = false;
     private boolean maneMenuOpen = false;
@@ -44,20 +40,20 @@ public class PonyCustom implements TabContent {
     private GeckoPlayerAnimatable ponyAnimatable;
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
 
-    private ConfigScreen screen;
-
     private static final String[] FRONT_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
     private static final String[] BACK_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
     private static final String[] EYE_STYLES = {"TS", "FS", "RR"};
 
     @Override
     public void init(ConfigScreen screen, int x, int y, int width, int height) {
-        Config config = Config.getInstance();
         this.rightX = x;
         this.rightWidth = width;
-        this.rightHeight = height;
-        this.screen = screen;
-        this.widgets.clear();
+
+        int topMargin = 40;
+        int bottomMargin = 40;
+        this.listWidget = new SettingsList(MinecraftClient.getInstance(), width, height, y + topMargin,
+                y + height - bottomMargin, 24);
+        this.listWidget.setLeftPos(x);
 
         if (this.ponyAnimatable == null) {
             this.ponyAnimatable = new GeckoPlayerAnimatable() {
@@ -96,296 +92,238 @@ public class PonyCustom implements TabContent {
         } else {
             initMainMenu(screen, x, y, width, height);
         }
+
+        this.listWidget.centerIfShort();
+        screen.addConsoleElement(this.listWidget);
     }
 
     private void initMainMenu(ConfigScreen screen, int x, int y, int width, int height) {
-        Config config = Config.getInstance();
         int buttonWidth = Math.min(180, width / 2);
         int buttonHeight = 20;
-        int spacing = 10;
-
-        int totalContentHeight = buttonHeight * 4 + spacing * 3;
-        int startY = (height - totalContentHeight) / 2;
 
         int btnX = x + width - buttonWidth - 20;
         if (width < 250) {
             btnX = x + (width - buttonWidth) / 2;
         }
 
-        CustomButton maneBtn = new CustomButton(btnX, startY, buttonWidth, buttonHeight,
+        CustomButton maneBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.mane_menu.name"),
                 false, button -> {
                     maneMenuOpen = true;
                     reinit(screen);
                 }, true);
-        this.widgets.add(maneBtn);
-        screen.addConsoleWidget(maneBtn);
+        this.listWidget.addWidget(maneBtn, SettingsList.Alignment.RIGHT);
 
-        CustomButton faceBtn = new CustomButton(btnX, startY + buttonHeight + spacing, buttonWidth, buttonHeight,
+        CustomButton faceBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.face_menu.name"),
                 false, button -> {
                     faceMenuOpen = true;
                     reinit(screen);
                 }, true);
-        this.widgets.add(faceBtn);
-        screen.addConsoleWidget(faceBtn);
+        this.listWidget.addWidget(faceBtn, SettingsList.Alignment.RIGHT);
 
-        CustomButton hornBtn = new CustomButton(btnX, startY + (buttonHeight + spacing) * 2, buttonWidth, buttonHeight,
+        CustomButton hornBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.horn_menu.name"),
                 false, button -> {
                     hornMenuOpen = true;
                     reinit(screen);
                 }, true);
-        this.widgets.add(hornBtn);
-        screen.addConsoleWidget(hornBtn);
+        this.listWidget.addWidget(hornBtn, SettingsList.Alignment.RIGHT);
 
-        CustomButton bodyBtn = new CustomButton(btnX, startY + (buttonHeight + spacing) * 3, buttonWidth, buttonHeight,
+        CustomButton bodyBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.body_menu.name"),
                 false, button -> {
                     bodyMenuOpen = true;
                     reinit(screen);
                 }, true);
-        this.widgets.add(bodyBtn);
-        screen.addConsoleWidget(bodyBtn);
+        this.listWidget.addWidget(bodyBtn, SettingsList.Alignment.RIGHT);
     }
 
     private void initManeMenu(ConfigScreen screen, int x, int y, int width, int height) {
         Config config = Config.getInstance();
         int buttonWidth = Math.min(180, width / 2);
         int buttonHeight = 20;
-        int spacing = 10;
-
-        int totalContentHeight = buttonHeight * 3 + spacing * 2;
-        int startY = (height - totalContentHeight) / 2;
 
         int btnX = x + width - buttonWidth - 20;
         if (width < 250) {
             btnX = x + (width - buttonWidth) / 2;
         }
 
-        CustomButton backBtn = new CustomButton(btnX, startY, buttonWidth, buttonHeight,
+        CustomButton backBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.literal("← " + Text.translatable("text.magicaland.config.mane_menu.name").getString()),
                 false, button -> {
                     maneMenuOpen = false;
                     reinit(screen);
                 }, false, true);
-        this.widgets.add(backBtn);
-        screen.addConsoleWidget(backBtn);
+        this.listWidget.addWidget(backBtn, SettingsList.Alignment.RIGHT);
 
-        int frontBtnY = startY + buttonHeight + spacing;
-        CustomButton frontBtn = createStyleButton(btnX, frontBtnY, buttonWidth, buttonHeight,
+        CustomButton frontBtn = createStyleButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.front_mane_style.name"),
                 config.frontManeStyle, FRONT_MANE_STYLES, newStyle -> {
                     config.frontManeStyle = newStyle;
                     Config.save();
                 });
-        this.widgets.add(frontBtn);
-        screen.addConsoleWidget(frontBtn);
+        this.listWidget.addWidget(frontBtn, SettingsList.Alignment.RIGHT);
 
-        int backBtnY = frontBtnY + buttonHeight + spacing;
-        CustomButton backManeBtn = createStyleButton(btnX, backBtnY, buttonWidth, buttonHeight,
+        CustomButton backManeBtn = createStyleButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.back_mane_style.name"),
                 config.backManeStyle, BACK_MANE_STYLES, newStyle -> {
                     config.backManeStyle = newStyle;
                     Config.save();
                 });
-        this.widgets.add(backManeBtn);
-        screen.addConsoleWidget(backManeBtn);
+        this.listWidget.addWidget(backManeBtn, SettingsList.Alignment.RIGHT);
     }
 
     private void initFaceMenu(ConfigScreen screen, int x, int y, int width, int height) {
         Config config = Config.getInstance();
         int buttonWidth = Math.min(180, width / 2);
         int buttonHeight = 20;
-        int spacing = 10;
-
-        int totalContentHeight = buttonHeight * 2 + spacing;
-        int startY = (height - totalContentHeight) / 2;
 
         int btnX = x + width - buttonWidth - 20;
         if (width < 250) {
             btnX = x + (width - buttonWidth) / 2;
         }
 
-        CustomButton backBtn = new CustomButton(btnX, startY, buttonWidth, buttonHeight,
+        CustomButton backBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.literal("← " + Text.translatable("text.magicaland.config.face_menu.name").getString()),
                 false, button -> {
                     faceMenuOpen = false;
                     reinit(screen);
                 }, false, true);
-        this.widgets.add(backBtn);
-        screen.addConsoleWidget(backBtn);
+        this.listWidget.addWidget(backBtn, SettingsList.Alignment.RIGHT);
 
-        int eyeBtnY = startY + buttonHeight + spacing;
-        CustomButton eyeBtn = createStyleButton(btnX, eyeBtnY, buttonWidth, buttonHeight,
+        CustomButton eyeBtn = createStyleButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.eye_style.name"),
                 config.eyeStyle, EYE_STYLES, newStyle -> {
                     config.eyeStyle = newStyle;
                     Config.save();
                 });
-        this.widgets.add(eyeBtn);
-        screen.addConsoleWidget(eyeBtn);
+        this.listWidget.addWidget(eyeBtn, SettingsList.Alignment.RIGHT);
     }
 
     private void initHornMenu(ConfigScreen screen, int x, int y, int width, int height) {
         Config config = Config.getInstance();
         int buttonWidth = Math.min(180, width / 2);
         int buttonHeight = 20;
-        int spacing = 10;
-
-        int totalContentHeight = buttonHeight * 3 + spacing * 2;
-        int startY = (height - totalContentHeight) / 2;
 
         int btnX = x + width - buttonWidth - 20;
         if (width < 250) {
             btnX = x + (width - buttonWidth) / 2;
         }
 
-        CustomButton backBtn = new CustomButton(btnX, startY, buttonWidth, buttonHeight,
+        CustomButton backBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.literal("← " + Text.translatable("text.magicaland.config.horn_menu.name").getString()),
                 false, button -> {
                     hornMenuOpen = false;
                     reinit(screen);
                 }, false, true);
-        this.widgets.add(backBtn);
-        screen.addConsoleWidget(backBtn);
+        this.listWidget.addWidget(backBtn, SettingsList.Alignment.RIGHT);
 
-        int toggleY = startY + buttonHeight + spacing;
-        Toggle hornToggle = new Toggle(btnX, toggleY, buttonWidth, buttonHeight,
+        Toggle hornToggle = new Toggle(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.show_horn.name"),
                 config.showHorn, toggle -> {
                     config.showHorn = toggle.getState();
                     Config.save();
                 });
-        this.widgets.add(hornToggle);
-        screen.addConsoleWidget(hornToggle);
+        this.listWidget.addWidget(hornToggle, SettingsList.Alignment.RIGHT);
 
-        int colorBtnY = toggleY + buttonHeight + spacing;
         Text colorLabel = Text.translatable("text.magicaland.config.horn_color.name");
-        ColorPicker colorPicker = new ColorPicker(btnX, colorBtnY, buttonWidth, buttonHeight,
+        ColorPicker colorPicker = new ColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 colorLabel, config.hornColor, newColor -> {
                     config.hornColor = newColor;
                     Config.save();
                 });
-        this.widgets.add(colorPicker);
-        screen.addConsoleWidget(colorPicker);
+        this.listWidget.addWidget(colorPicker, SettingsList.Alignment.RIGHT);
     }
 
     private void initBodyMenu(ConfigScreen screen, int x, int y, int width, int height) {
         Config config = Config.getInstance();
         int buttonWidth = Math.min(180, width / 2);
         int buttonHeight = 20;
-        int spacing = 10;
-
-        int totalContentHeight = buttonHeight * 12 + spacing * 9;
-        int startY = (height - totalContentHeight) / 2;
 
         int btnX = x + width - buttonWidth - 20;
         if (width < 250) {
             btnX = x + (width - buttonWidth) / 2;
         }
 
-        CustomButton backBtn = new CustomButton(btnX, startY, buttonWidth, buttonHeight,
+        CustomButton backBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.literal("← " + Text.translatable("text.magicaland.config.body_menu.name").getString()),
                 false, button -> {
                     bodyMenuOpen = false;
                     reinit(screen);
                 }, false, true);
-        this.widgets.add(backBtn);
-        screen.addConsoleWidget(backBtn);
+        this.listWidget.addWidget(backBtn, SettingsList.Alignment.RIGHT);
 
-        int offsetY = startY + buttonHeight + spacing;
-        ColorPicker bodyPicker = createBodyColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+        ColorPicker bodyPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.body_color.name"),
                 config.bodyColor, config.bodyColorLocked,
                 newColor -> { config.bodyColor = newColor; Config.save(); },
                 locked -> { config.bodyColorLocked = locked; Config.save(); });
-        this.widgets.add(bodyPicker);
-        screen.addConsoleWidget(bodyPicker);
+        this.listWidget.addWidget(bodyPicker, SettingsList.Alignment.RIGHT);
 
-        offsetY += buttonHeight + spacing;
-        ColorPicker neckPicker = createBodyColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+        ColorPicker neckPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.neck_color.name"),
                 config.neckColor, config.neckColorLocked,
                 newColor -> { config.neckColor = newColor; Config.save(); },
                 locked -> { config.neckColorLocked = locked; Config.save(); });
-        this.widgets.add(neckPicker);
-        screen.addConsoleWidget(neckPicker);
+        this.listWidget.addWidget(neckPicker, SettingsList.Alignment.RIGHT);
 
-        offsetY += buttonHeight + spacing;
-        ColorPicker headPicker = createBodyColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+        ColorPicker headPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.head_color.name"),
                 config.headColor, config.headColorLocked,
                 newColor -> { config.headColor = newColor; Config.save(); },
                 locked -> { config.headColorLocked = locked; Config.save(); });
-        this.widgets.add(headPicker);
-        screen.addConsoleWidget(headPicker);
+        this.listWidget.addWidget(headPicker, SettingsList.Alignment.RIGHT);
 
-        offsetY += buttonHeight + spacing;
-        SectionLabel earLabel = new SectionLabel(btnX, offsetY, buttonWidth, buttonHeight,
+        SectionLabel earLabel = new SectionLabel(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.section.ears.name"));
-        this.widgets.add(earLabel);
-        screen.addConsoleWidget(earLabel);
+        this.listWidget.addWidget(earLabel, SettingsList.Alignment.RIGHT);
 
-        offsetY += buttonHeight;
-        ColorPicker leftEarPicker = createBodyColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+        ColorPicker leftEarPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.left_ear_color.name"),
                 config.leftEarColor, config.leftEarColorLocked,
                 newColor -> { config.leftEarColor = newColor; Config.save(); },
                 locked -> { config.leftEarColorLocked = locked; Config.save(); });
-        this.widgets.add(leftEarPicker);
-        screen.addConsoleWidget(leftEarPicker);
+        this.listWidget.addWidget(leftEarPicker, SettingsList.Alignment.RIGHT);
 
-        offsetY += buttonHeight + spacing;
-        ColorPicker rightEarPicker = createBodyColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+        ColorPicker rightEarPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.right_ear_color.name"),
                 config.rightEarColor, config.rightEarColorLocked,
                 newColor -> { config.rightEarColor = newColor; Config.save(); },
                 locked -> { config.rightEarColorLocked = locked; Config.save(); });
-        this.widgets.add(rightEarPicker);
-        screen.addConsoleWidget(rightEarPicker);
+        this.listWidget.addWidget(rightEarPicker, SettingsList.Alignment.RIGHT);
 
-        offsetY += buttonHeight + spacing;
-        SectionLabel limbLabel = new SectionLabel(btnX, offsetY, buttonWidth, buttonHeight,
+        SectionLabel limbLabel = new SectionLabel(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.section.limbs.name"));
-        this.widgets.add(limbLabel);
-        screen.addConsoleWidget(limbLabel);
+        this.listWidget.addWidget(limbLabel, SettingsList.Alignment.RIGHT);
 
-        offsetY += buttonHeight;
-        ColorPicker leftFrontLimbPicker = createBodyColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+        ColorPicker leftFrontLimbPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.left_front_limb_color.name"),
                 config.leftFrontLimbColor, config.leftFrontLimbColorLocked,
                 newColor -> { config.leftFrontLimbColor = newColor; Config.save(); },
                 locked -> { config.leftFrontLimbColorLocked = locked; Config.save(); });
-        this.widgets.add(leftFrontLimbPicker);
-        screen.addConsoleWidget(leftFrontLimbPicker);
+        this.listWidget.addWidget(leftFrontLimbPicker, SettingsList.Alignment.RIGHT);
 
-        offsetY += buttonHeight + spacing;
-        ColorPicker rightFrontLimbPicker = createBodyColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+        ColorPicker rightFrontLimbPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.right_front_limb_color.name"),
                 config.rightFrontLimbColor, config.rightFrontLimbColorLocked,
                 newColor -> { config.rightFrontLimbColor = newColor; Config.save(); },
                 locked -> { config.rightFrontLimbColorLocked = locked; Config.save(); });
-        this.widgets.add(rightFrontLimbPicker);
-        screen.addConsoleWidget(rightFrontLimbPicker);
+        this.listWidget.addWidget(rightFrontLimbPicker, SettingsList.Alignment.RIGHT);
 
-        offsetY += buttonHeight + spacing;
-        ColorPicker leftHindLimbPicker = createBodyColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+        ColorPicker leftHindLimbPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.left_hind_limb_color.name"),
                 config.leftHindLimbColor, config.leftHindLimbColorLocked,
                 newColor -> { config.leftHindLimbColor = newColor; Config.save(); },
                 locked -> { config.leftHindLimbColorLocked = locked; Config.save(); });
-        this.widgets.add(leftHindLimbPicker);
-        screen.addConsoleWidget(leftHindLimbPicker);
+        this.listWidget.addWidget(leftHindLimbPicker, SettingsList.Alignment.RIGHT);
 
-        offsetY += buttonHeight + spacing;
-        ColorPicker rightHindLimbPicker = createBodyColorPicker(btnX, offsetY, buttonWidth, buttonHeight,
+        ColorPicker rightHindLimbPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.right_hind_limb_color.name"),
                 config.rightHindLimbColor, config.rightHindLimbColorLocked,
                 newColor -> { config.rightHindLimbColor = newColor; Config.save(); },
                 locked -> { config.rightHindLimbColorLocked = locked; Config.save(); });
-        this.widgets.add(rightHindLimbPicker);
-        screen.addConsoleWidget(rightHindLimbPicker);
+        this.listWidget.addWidget(rightHindLimbPicker, SettingsList.Alignment.RIGHT);
     }
 
     private ColorPicker createBodyColorPicker(int x, int y, int width, int height, Text label,
@@ -431,10 +369,13 @@ public class PonyCustom implements TabContent {
     @Override
     public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta,
             float alpha) {
+        if (this.listWidget != null) {
+            this.listWidget.render(context, mouseX, mouseY, delta);
+        }
+
         if (this.ponyAnimatable == null)
             return;
 
-        this.currentAlpha = alpha;
         this.ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
 
         float baseScale = Math.min(width / 6.0f, height / 4.0f);

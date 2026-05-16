@@ -197,71 +197,7 @@ public class Settings implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("占位: Medium"),
-                false,
-                button -> {
-                    String msg = button.getMessage().getString();
-                    if (msg.endsWith("Low"))
-                        button.setMessage(Text.literal("占位: Medium"));
-                    else if (msg.endsWith("Medium"))
-                        button.setMessage(Text.literal("占位: High"));
-                    else
-                        button.setMessage(Text.literal("占位: Low"));
-                }));
-
-        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("占位: Medium"),
-                false,
-                button -> {
-                    String msg = button.getMessage().getString();
-                    if (msg.endsWith("Low"))
-                        button.setMessage(Text.literal("占位: Medium"));
-                    else if (msg.endsWith("Medium"))
-                        button.setMessage(Text.literal("占位: High"));
-                    else
-                        button.setMessage(Text.literal("占位: Low"));
-                }));
-
-        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("占位: Medium"),
-                false,
-                button -> {
-                    String msg = button.getMessage().getString();
-                    if (msg.endsWith("Low"))
-                        button.setMessage(Text.literal("占位: Medium"));
-                    else if (msg.endsWith("Medium"))
-                        button.setMessage(Text.literal("占位: High"));
-                    else
-                        button.setMessage(Text.literal("占位: Low"));
-                }));
-
-        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("占位: Medium"),
-                false,
-                button -> {
-                    String msg = button.getMessage().getString();
-                    if (msg.endsWith("Low"))
-                        button.setMessage(Text.literal("占位: Medium"));
-                    else if (msg.endsWith("Medium"))
-                        button.setMessage(Text.literal("占位: High"));
-                    else
-                        button.setMessage(Text.literal("占位: Low"));
-                }));
-
-        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("占位: Medium"),
-                false,
-                button -> {
-                    String msg = button.getMessage().getString();
-                    if (msg.endsWith("Low"))
-                        button.setMessage(Text.literal("占位: Medium"));
-                    else if (msg.endsWith("Medium"))
-                        button.setMessage(Text.literal("占位: High"));
-                    else
-                        button.setMessage(Text.literal("占位: Low"));
-                }));
-
+        listWidget.centerIfShort();
         screen.addConsoleElement(listWidget);
     }
 

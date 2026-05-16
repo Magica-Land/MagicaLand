@@ -17,12 +17,34 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
     private float scrollbarAlpha = 0.0f;
     private double targetScrollAmount = 0.0;
     private boolean isDraggingScrollbar = false;
+    private final int originalTop;
+    private final int originalBottom;
 
     public SettingsList(MinecraftClient minecraftClient, int width, int height, int top, int bottom,
             int itemHeight) {
         super(minecraftClient, width, height, top, bottom, itemHeight);
+        this.originalTop = top;
+        this.originalBottom = bottom;
         this.setRenderBackground(false);
         this.setRenderHorizontalShadows(false);
+    }
+
+    public void centerIfShort() {
+        int totalHeight = this.getEntryCount() * this.itemHeight;
+        int availableHeight = this.originalBottom - this.originalTop;
+        if (totalHeight < availableHeight) {
+            int padding = (availableHeight - totalHeight) / 2;
+            this.top = this.originalTop + padding;
+            this.bottom = this.originalBottom - padding;
+        } else {
+            this.top = this.originalTop;
+            this.bottom = this.originalBottom;
+        }
+    }
+
+    @Override
+    public int getMaxScroll() {
+        return Math.max(0, this.getMaxPosition() - (this.originalBottom - this.originalTop - 4));
     }
 
     public enum Alignment {
@@ -141,6 +163,9 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+        if (this.getMaxScroll() <= 0) {
+            return false;
+        }
         this.targetScrollAmount = net.minecraft.util.math.MathHelper
                 .clamp(this.targetScrollAmount - amount * this.itemHeight, 0.0, this.getMaxScroll());
         return true;
