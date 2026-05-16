@@ -180,7 +180,7 @@ public class ConfigScreen extends Screen {
                     if (this.tabAnimator.isAnimating()) {
                         context.getMatrices().push();
                         context.getMatrices().translate(0, this.tabAnimator.getContentOffset(), 0);
-                        widget.setAlpha(currentAlpha);
+                        widget.setAlpha(1.0f);
                         widget.render(context, -1, -1, delta);
                         context.getMatrices().pop();
                     } else {

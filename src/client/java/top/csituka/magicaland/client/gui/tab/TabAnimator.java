@@ -69,7 +69,7 @@ public class TabAnimator {
         this.previousTab.getContent().render(context, rightX, 0, rightWidth - padding, height, -1, -1, delta, alpha);
 
         for (ClickableWidget widget : this.previousWidgets) {
-            widget.setAlpha(alpha);
+            widget.setAlpha(1.0f);
             widget.render(context, -1, -1, delta);
         }
 
