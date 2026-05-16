@@ -228,6 +228,16 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        if (ColorPicker.openPicker != null && ColorPicker.openPicker.open && button == 0) {
+            if (ColorPicker.openPicker.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
+                return true;
+            }
+        }
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
+
+    @Override
     public void close() {
         if (ColorPicker.openPicker != null) {
             ColorPicker.openPicker.open = false;

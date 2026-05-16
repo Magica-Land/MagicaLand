@@ -29,6 +29,11 @@ import java.util.function.Consumer;
 
 public class PonyCustom implements TabContent {
     private SettingsList listWidget;
+    private SettingsList previousListWidget;
+    private float transitionAlpha = 1.0f;
+    private boolean isTransitioning = false;
+    private int transitionDirection = 1;
+
     private int rightX;
     private int rightWidth;
 
@@ -108,34 +113,22 @@ public class PonyCustom implements TabContent {
 
         CustomButton maneBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.mane_menu.name"),
-                false, button -> {
-                    maneMenuOpen = true;
-                    reinit(screen);
-                }, true);
+                false, button -> switchMenu(screen, 1, () -> maneMenuOpen = true), true);
         this.listWidget.addWidget(maneBtn, SettingsList.Alignment.RIGHT);
 
         CustomButton faceBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.face_menu.name"),
-                false, button -> {
-                    faceMenuOpen = true;
-                    reinit(screen);
-                }, true);
+                false, button -> switchMenu(screen, 1, () -> faceMenuOpen = true), true);
         this.listWidget.addWidget(faceBtn, SettingsList.Alignment.RIGHT);
 
         CustomButton hornBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.horn_menu.name"),
-                false, button -> {
-                    hornMenuOpen = true;
-                    reinit(screen);
-                }, true);
+                false, button -> switchMenu(screen, 1, () -> hornMenuOpen = true), true);
         this.listWidget.addWidget(hornBtn, SettingsList.Alignment.RIGHT);
 
         CustomButton bodyBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.body_menu.name"),
-                false, button -> {
-                    bodyMenuOpen = true;
-                    reinit(screen);
-                }, true);
+                false, button -> switchMenu(screen, 1, () -> bodyMenuOpen = true), true);
         this.listWidget.addWidget(bodyBtn, SettingsList.Alignment.RIGHT);
     }
 
@@ -151,10 +144,7 @@ public class PonyCustom implements TabContent {
 
         CustomButton backBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.literal("← " + Text.translatable("text.magicaland.config.mane_menu.name").getString()),
-                false, button -> {
-                    maneMenuOpen = false;
-                    reinit(screen);
-                }, false, true);
+                false, button -> switchMenu(screen, -1, () -> maneMenuOpen = false), false, true);
         this.listWidget.addWidget(backBtn, SettingsList.Alignment.RIGHT);
 
         CustomButton frontBtn = createStyleButton(btnX, 0, buttonWidth, buttonHeight,
@@ -186,10 +176,7 @@ public class PonyCustom implements TabContent {
 
         CustomButton backBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.literal("← " + Text.translatable("text.magicaland.config.face_menu.name").getString()),
-                false, button -> {
-                    faceMenuOpen = false;
-                    reinit(screen);
-                }, false, true);
+                false, button -> switchMenu(screen, -1, () -> faceMenuOpen = false), false, true);
         this.listWidget.addWidget(backBtn, SettingsList.Alignment.RIGHT);
 
         CustomButton eyeBtn = createStyleButton(btnX, 0, buttonWidth, buttonHeight,
@@ -213,10 +200,7 @@ public class PonyCustom implements TabContent {
 
         CustomButton backBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.literal("← " + Text.translatable("text.magicaland.config.horn_menu.name").getString()),
-                false, button -> {
-                    hornMenuOpen = false;
-                    reinit(screen);
-                }, false, true);
+                false, button -> switchMenu(screen, -1, () -> hornMenuOpen = false), false, true);
         this.listWidget.addWidget(backBtn, SettingsList.Alignment.RIGHT);
 
         Toggle hornToggle = new Toggle(btnX, 0, buttonWidth, buttonHeight,
@@ -248,10 +232,7 @@ public class PonyCustom implements TabContent {
 
         CustomButton backBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.literal("← " + Text.translatable("text.magicaland.config.body_menu.name").getString()),
-                false, button -> {
-                    bodyMenuOpen = false;
-                    reinit(screen);
-                }, false, true);
+                false, button -> switchMenu(screen, -1, () -> bodyMenuOpen = false), false, true);
         this.listWidget.addWidget(backBtn, SettingsList.Alignment.RIGHT);
 
         ColorPicker bodyPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
@@ -339,6 +320,15 @@ public class PonyCustom implements TabContent {
         return picker;
     }
 
+    private void switchMenu(ConfigScreen screen, int direction, Runnable action) {
+        this.previousListWidget = this.listWidget;
+        action.run();
+        this.isTransitioning = true;
+        this.transitionDirection = direction;
+        this.transitionAlpha = 0.0f;
+        screen.reinitScreen();
+    }
+
     private void reinit(ConfigScreen screen) {
         screen.reinitScreen();
     }
@@ -369,7 +359,35 @@ public class PonyCustom implements TabContent {
     @Override
     public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta,
             float alpha) {
-        if (this.listWidget != null) {
+        if (isTransitioning) {
+            transitionAlpha += 0.1f;
+            if (transitionAlpha >= 1.0f) {
+                transitionAlpha = 1.0f;
+                isTransitioning = false;
+                previousListWidget = null;
+            }
+        }
+
+        if (isTransitioning && previousListWidget != null) {
+            float progress = transitionAlpha;
+
+            float oldAlpha = (1.0f - progress) * alpha;
+            float oldOffset = -progress * 60 * transitionDirection;
+            previousListWidget.setBaseAlpha(oldAlpha);
+            context.getMatrices().push();
+            context.getMatrices().translate(oldOffset, 0, 0);
+            previousListWidget.render(context, -1, -1, delta);
+            context.getMatrices().pop();
+
+            float newAlpha = progress * alpha;
+            float newOffset = (1.0f - progress) * 60 * transitionDirection;
+            listWidget.setBaseAlpha(newAlpha);
+            context.getMatrices().push();
+            context.getMatrices().translate(newOffset, 0, 0);
+            listWidget.render(context, mouseX, mouseY, delta);
+            context.getMatrices().pop();
+        } else if (this.listWidget != null) {
+            this.listWidget.setBaseAlpha(alpha);
             this.listWidget.render(context, mouseX, mouseY, delta);
         }
 
