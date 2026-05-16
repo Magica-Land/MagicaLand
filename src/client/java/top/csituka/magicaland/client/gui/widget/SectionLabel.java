@@ -14,7 +14,10 @@ public class SectionLabel extends ClickableWidget {
 
     @Override
     public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
-        int textColor = 0x88FFFFFF;
+        if (this.alpha < 0.05f) return;
+        int combinedAlpha = (int) (136 * this.alpha);
+        if (combinedAlpha < 5) return;
+        int textColor = (combinedAlpha << 24) | 0xFFFFFF;
         context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
                 this.getX() + 6, this.getY() + (this.height - 8) / 2, textColor);
     }

@@ -197,7 +197,6 @@ public class Settings implements TabContent {
                         button.setMessage(Text.literal("占位: Low"));
                 }));
 
-        listWidget.centerIfShort();
         screen.addConsoleElement(listWidget);
     }
 

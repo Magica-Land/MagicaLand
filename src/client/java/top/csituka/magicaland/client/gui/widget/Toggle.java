@@ -58,6 +58,7 @@ public class Toggle extends PressableWidget {
 
     @Override
     public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+        if (this.alpha < 0.05f) return;
         boolean hovered = this.isHovered();
         float targetAlpha = 0.15f;
 
@@ -72,10 +73,13 @@ public class Toggle extends PressableWidget {
         }
 
         int alpha = (int) (currentAlpha * this.alpha * 255);
-        int textAlpha = (int) (Math.max(0.04f, this.alpha) * 255);
-        fillRoundedRect(context, this.getX(), this.getY(), this.width, this.height, (alpha << 24) | 0xFFFFFF);
+        int textAlpha = (int) (this.alpha * 255);
 
-        if (this.alpha > 0.05f) {
+        if (alpha > 0) {
+            fillRoundedRect(context, this.getX(), this.getY(), this.width, this.height, (alpha << 24) | 0xFFFFFF);
+        }
+
+        if (textAlpha > 0) {
             context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
                     this.getX() + 6, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
         }
@@ -98,7 +102,7 @@ public class Toggle extends PressableWidget {
         int b = Math.round(117 + (80 - 117) * this.togglePosition);
         int finalBgColor = (textAlpha << 24) | (r << 16) | (g << 8) | b;
 
-        if (this.alpha > 0.05f) {
+        if (textAlpha > 0) {
             fillRoundedRect(context, toggleX, toggleY, toggleWidth, toggleHeight, finalBgColor);
 
             int knobWidth = 10;

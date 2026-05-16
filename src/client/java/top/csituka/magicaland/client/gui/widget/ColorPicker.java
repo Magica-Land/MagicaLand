@@ -308,6 +308,7 @@ public class ColorPicker extends ClickableWidget {
 
     @Override
     public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+        if (this.alpha <= 0.0f) return;
         renderMainButton(context, mouseX, mouseY);
         if (open) {
             renderPicker(context, mouseX, mouseY);
@@ -325,37 +326,50 @@ public class ColorPicker extends ClickableWidget {
         }
 
         int alphaVal = (int) (currentAlpha * this.alpha * 255);
-        int textAlpha = (int) (Math.max(0.04f, this.alpha) * 255);
+        int textAlpha = (int) (this.alpha * 255);
 
-        fillRoundedRect(context, this.getX(), this.getY(), this.width, this.height, (alphaVal << 24) | 0xFFFFFF);
+        if (alphaVal > 0) {
+            fillRoundedRect(context, this.getX(), this.getY(), this.width, this.height, (alphaVal << 24) | 0xFFFFFF);
+        }
 
-        context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
-                this.getX() + 6, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
+        if (textAlpha > 0) {
+            context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
+                    this.getX() + 6, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
+        }
 
-        drawLockIcon(context);
+        drawLockIcon(context, this.alpha);
 
         int previewWidth = 30;
         int previewHeight = 14;
         int previewX = this.getX() + this.width - previewWidth - 4;
         int previewY = this.getY() + (this.height - previewHeight) / 2;
 
-        try {
-            String hex = currentColor.startsWith("#") ? currentColor.substring(1) : currentColor;
-            if (hex.length() > 6) hex = hex.substring(hex.length() - 6);
-            int colorInt = (int) Long.parseLong(hex, 16);
-            fillRoundedRect(context, previewX, previewY, previewWidth, previewHeight, 0xFF000000 | (colorInt & 0xFFFFFF));
-        } catch (Exception e) {
-            fillRoundedRect(context, previewX, previewY, previewWidth, previewHeight, 0xFFFFFFFF);
+        int combinedAlpha = MathHelper.clamp((int) (this.alpha * 255), 0, 255);
+        if (combinedAlpha > 0) {
+            try {
+                String hex = currentColor.startsWith("#") ? currentColor.substring(1) : currentColor;
+                if (hex.length() > 6) hex = hex.substring(hex.length() - 6);
+                int colorInt = (int) Long.parseLong(hex, 16);
+                fillRoundedRect(context, previewX, previewY, previewWidth, previewHeight, (combinedAlpha << 24) | (colorInt & 0xFFFFFF));
+            } catch (Exception e) {
+                fillRoundedRect(context, previewX, previewY, previewWidth, previewHeight, (combinedAlpha << 24) | 0xFFFFFF);
+            }
         }
     }
 
-    private void drawLockIcon(DrawContext context) {
+    private void drawLockIcon(DrawContext context, float alpha) {
         if (!bodyLinkGroup.contains(this)) return;
 
         int lx = this.getX() + this.width - 50;
         int ly = this.getY() + (this.height - 8) / 2;
         String lockChar = locked ? "\uD83D\uDD12" : "\uD83D\uDD13";
-        int color = locked ? 0xFFCC8844 : 0x88FFFFFF;
+
+        int baseColor = locked ? 0xCC8844 : 0xFFFFFF;
+        int baseAlpha = locked ? 255 : 136;
+        int combinedAlpha = MathHelper.clamp((int) (baseAlpha * alpha), 0, 255);
+        if (combinedAlpha <= 0) return;
+        int color = (combinedAlpha << 24) | (baseColor & 0xFFFFFF);
+
         context.drawText(MinecraftClient.getInstance().textRenderer, lockChar,
                 lx, ly, color, false);
     }
@@ -374,35 +388,39 @@ public class ColorPicker extends ClickableWidget {
         context.getMatrices().push();
         context.getMatrices().translate(0, 0, 400);
 
-        fillRoundedRect(context, px, py, PICKER_WIDTH, PICKER_HEIGHT, 0x59FFFFFF);
+        int pickerAlpha = (int) (this.alpha * 255);
+        int bgAlpha = (int) (this.alpha * 89);
+        int inputBgAlpha = (int) (this.alpha * 64);
+
+        fillRoundedRect(context, px, py, PICKER_WIDTH, PICKER_HEIGHT, (bgAlpha << 24) | 0xFFFFFF);
 
         for (int i = 0; i < sbSize; i++) {
             float s_val = (float) i / sbSize;
             int colorTop = Color.HSBtoRGB(h, s_val, 1.0f);
             int colorBottom = Color.HSBtoRGB(h, s_val, 0.0f);
-            context.fillGradient(sbX + i, sbY, sbX + i + 1, sbY + sbSize, 0xFF000000 | (colorTop & 0xFFFFFF), 0xFF000000 | (colorBottom & 0xFFFFFF));
+            context.fillGradient(sbX + i, sbY, sbX + i + 1, sbY + sbSize, (pickerAlpha << 24) | (colorTop & 0xFFFFFF), (pickerAlpha << 24) | (colorBottom & 0xFFFFFF));
         }
 
         int markerX = sbX + (int) (s * sbSize);
         int markerY = sbY + (int) ((1.0f - v) * sbSize);
-        context.fill(markerX - 2, markerY - 2, markerX + 2, markerY + 2, 0xFFFFFFFF);
-        context.fill(markerX - 1, markerY - 1, markerX + 1, markerY + 1, 0xFF000000);
+        context.fill(markerX - 2, markerY - 2, markerX + 2, markerY + 2, (pickerAlpha << 24) | 0xFFFFFF);
+        context.fill(markerX - 1, markerY - 1, markerX + 1, markerY + 1, (pickerAlpha << 24) | 0x000000);
 
         for (int i = 0; i < sbSize; i++) {
             float h_val = (float) i / sbSize;
             int hueColor = Color.HSBtoRGB(h_val, 1.0f, 1.0f);
-            context.fill(sbX + i, hueY, sbX + i + 1, hueY + HUE_HEIGHT, 0xFF000000 | (hueColor & 0xFFFFFF));
+            context.fill(sbX + i, hueY, sbX + i + 1, hueY + HUE_HEIGHT, (pickerAlpha << 24) | (hueColor & 0xFFFFFF));
         }
 
         int hMarkerX = sbX + (int) (h * sbSize);
-        context.fill(hMarkerX - 1, hueY - 2, hMarkerX + 1, hueY + HUE_HEIGHT + 2, 0xFFFFFFFF);
+        context.fill(hMarkerX - 1, hueY - 2, hMarkerX + 1, hueY + HUE_HEIGHT + 2, (pickerAlpha << 24) | 0xFFFFFF);
 
-        fillRoundedRect(context, sbX, inputY, sbSize, INPUT_HEIGHT, 0x40000000);
+        fillRoundedRect(context, sbX, inputY, sbSize, INPUT_HEIGHT, (inputBgAlpha << 24) | 0x000000);
         if (inputFocused) {
-            context.drawHorizontalLine(sbX, sbX + sbSize - 1, inputY, 0xFFFFFFFF);
-            context.drawHorizontalLine(sbX, sbX + sbSize - 1, inputY + INPUT_HEIGHT - 1, 0xFFFFFFFF);
-            context.drawVerticalLine(sbX, inputY, inputY + INPUT_HEIGHT - 1, 0xFFFFFFFF);
-            context.drawVerticalLine(sbX + sbSize - 1, inputY, inputY + INPUT_HEIGHT - 1, 0xFFFFFFFF);
+            context.drawHorizontalLine(sbX, sbX + sbSize - 1, inputY, (pickerAlpha << 24) | 0xFFFFFF);
+            context.drawHorizontalLine(sbX, sbX + sbSize - 1, inputY + INPUT_HEIGHT - 1, (pickerAlpha << 24) | 0xFFFFFF);
+            context.drawVerticalLine(sbX, inputY, inputY + INPUT_HEIGHT - 1, (pickerAlpha << 24) | 0xFFFFFF);
+            context.drawVerticalLine(sbX + sbSize - 1, inputY, inputY + INPUT_HEIGHT - 1, (pickerAlpha << 24) | 0xFFFFFF);
         }
 
         String displayText = hexInput;
@@ -411,7 +429,7 @@ public class ColorPicker extends ClickableWidget {
         }
         
         context.drawText(MinecraftClient.getInstance().textRenderer, displayText, 
-                sbX + 2, inputY + 2, 0xFFFFFFFF, false);
+                sbX + 2, inputY + 2, (pickerAlpha << 24) | 0xFFFFFF, false);
 
         context.getMatrices().pop();
     }

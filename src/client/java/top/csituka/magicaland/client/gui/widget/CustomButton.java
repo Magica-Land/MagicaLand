@@ -62,6 +62,7 @@ public class CustomButton extends PressableWidget {
 
     @Override
     public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+        if (this.alpha < 0.05f) return;
         boolean hovered = this.isHovered();
         float targetAlpha = 0.15f;
 
@@ -76,13 +77,13 @@ public class CustomButton extends PressableWidget {
         }
 
         int alpha = (int) (currentAlpha * this.alpha * 255);
-        int textAlpha = (int) (Math.max(0.04f, this.alpha) * 255);
+        int textAlpha = (int) (this.alpha * 255);
 
-        if (!this.noBackground) {
+        if (!this.noBackground && alpha > 0) {
             fillRoundedRect(context, this.getX(), this.getY(), this.width, this.height, (alpha << 24) | 0xFFFFFF);
         }
 
-        if (this.alpha > 0.05f) {
+        if (textAlpha > 0) {
             if (this.textAlignLeft) {
                 var textRenderer = MinecraftClient.getInstance().textRenderer;
                 int textX = this.getX() + 6;

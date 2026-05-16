@@ -244,7 +244,8 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
                 alpha = Math.max(0.0f, 1.0f - (float) (widgetBottom - this.parent.bottom) / fadeDistance);
             }
 
-            this.widget.setAlpha(alpha);
+            float finalAlpha = alpha < 0.01f ? 0.0f : alpha;
+            this.widget.setAlpha(finalAlpha);
 
             this.widget.render(context, mouseX, mouseY, tickDelta);
         }
