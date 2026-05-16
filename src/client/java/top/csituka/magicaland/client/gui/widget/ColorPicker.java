@@ -121,7 +121,14 @@ public class ColorPicker extends ClickableWidget {
     }
 
     private int getPickerX() { return this.getX() + this.width - PICKER_WIDTH; }
-    private int getPickerY() { return this.getY() + this.height + 10; }
+    private int getPickerY() {
+        int belowY = this.getY() + this.height + 8;
+        int screenHeight = MinecraftClient.getInstance().getWindow().getScaledHeight();
+        if (belowY + PICKER_HEIGHT > screenHeight) {
+            return this.getY() - 8 - PICKER_HEIGHT;
+        }
+        return belowY;
+    }
     private int getSBSize() { return PICKER_WIDTH - PADDING * 2; }
     private int getSBX() { return getPickerX() + PADDING; }
     private int getSBY() { return getPickerY() + PADDING; }
