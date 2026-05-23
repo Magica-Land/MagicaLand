@@ -2,6 +2,7 @@ package top.csituka.magicaland.client.gui.tab;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -15,16 +16,19 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
-import top.csituka.magicaland.client.config.Config;
+import top.csituka.magicaland.client.config.ModelConfig;
+import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.gui.ConfigScreen;
 import top.csituka.magicaland.client.gui.widget.ColorPicker;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
+import top.csituka.magicaland.client.gui.widget.DropdownBox;
 import top.csituka.magicaland.client.gui.widget.SectionLabel;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 import top.csituka.magicaland.client.gui.widget.Toggle;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.model.GeckoPlayerModel;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class PonyCustom implements TabContent {
@@ -36,14 +40,25 @@ public class PonyCustom implements TabContent {
 
     private int rightX;
     private int rightWidth;
+    private int rightY;
+    private int rightHeight;
 
     private boolean hornMenuOpen = false;
     private boolean maneMenuOpen = false;
     private boolean faceMenuOpen = false;
     private boolean bodyMenuOpen = false;
+    private boolean createNewOpen = false;
 
     private GeckoPlayerAnimatable ponyAnimatable;
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
+
+    private DropdownBox modelDropdown;
+    private CustomButton editBtn;
+    private CustomButton newBtn;
+    private CustomButton deleteBtn;
+    private TextFieldWidget newModelNameField;
+    private CustomButton confirmCreateBtn;
+    private CustomButton cancelCreateBtn;
 
     private static final String[] FRONT_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
     private static final String[] BACK_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
@@ -53,6 +68,8 @@ public class PonyCustom implements TabContent {
     public void init(ConfigScreen screen, int x, int y, int width, int height) {
         this.rightX = x;
         this.rightWidth = width;
+        this.rightY = y;
+        this.rightHeight = height;
 
         int topMargin = 40;
         int bottomMargin = 40;
@@ -86,20 +103,96 @@ public class PonyCustom implements TabContent {
         }
         this.ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
 
-        if (hornMenuOpen) {
-            initHornMenu(screen, x, y, width, height);
-        } else if (maneMenuOpen) {
-            initManeMenu(screen, x, y, width, height);
-        } else if (faceMenuOpen) {
-            initFaceMenu(screen, x, y, width, height);
-        } else if (bodyMenuOpen) {
-            initBodyMenu(screen, x, y, width, height);
+        ModelConfig activeModel = ModelManager.getActiveModel();
+
+        if (activeModel == null) {
+            initWelcomeScreen(screen, x, y, width, height);
         } else {
-            initMainMenu(screen, x, y, width, height);
+            if (hornMenuOpen) {
+                initHornMenu(screen, x, y, width, height);
+            } else if (maneMenuOpen) {
+                initManeMenu(screen, x, y, width, height);
+            } else if (faceMenuOpen) {
+                initFaceMenu(screen, x, y, width, height);
+            } else if (bodyMenuOpen) {
+                initBodyMenu(screen, x, y, width, height);
+            } else {
+                initMainMenu(screen, x, y, width, height);
+            }
         }
 
         this.listWidget.centerIfShort();
         screen.addConsoleElement(this.listWidget);
+    }
+
+    private void initWelcomeScreen(ConfigScreen screen, int x, int y, int width, int height) {
+        ModelManager.refreshModelList();
+        List<String> models = ModelManager.getAvailableModels();
+
+        int dropdownWidth = Math.min(160, width / 2 - 30);
+        int dropdownHeight = 20;
+        int iconBtnWidth = 20;
+
+        int totalWidth = dropdownWidth + iconBtnWidth * 3 + 15;
+        int startX = x + (width - totalWidth) / 2;
+        int centerY = y + height / 2;
+
+        if (createNewOpen) {
+            var textRenderer = MinecraftClient.getInstance().textRenderer;
+            this.newModelNameField = new TextFieldWidget(textRenderer, x + (width - 150) / 2, centerY - 20, 150, 20, Text.translatable("text.magicaland.config.create_model.name_placeholder"));
+            this.newModelNameField.setMaxLength(32);
+            screen.addConsoleWidget(this.newModelNameField);
+
+            this.confirmCreateBtn = new CustomButton(x + (width - 150) / 2, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.confirm"), false, button -> {
+                String name = this.newModelNameField.getText();
+                if (ModelManager.createModel(name)) {
+                    this.createNewOpen = false;
+                    reinit(screen);
+                }
+            });
+            screen.addConsoleWidget(this.confirmCreateBtn);
+
+            this.cancelCreateBtn = new CustomButton(x + (width - 150) / 2 + 80, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.cancel"), false, button -> {
+                this.createNewOpen = false;
+                reinit(screen);
+            });
+            screen.addConsoleWidget(this.cancelCreateBtn);
+        } else {
+            int initialSelect = -1;
+            this.modelDropdown = new DropdownBox(startX, centerY, dropdownWidth, dropdownHeight, models, initialSelect, index -> {
+                this.editBtn.active = true;
+                this.deleteBtn.active = true;
+            });
+            screen.addConsoleWidget(this.modelDropdown);
+
+            this.editBtn = new CustomButton(startX + dropdownWidth + 5, centerY, iconBtnWidth, dropdownHeight, Text.literal("✎"), false, button -> {
+                String selected = this.modelDropdown.getSelectedOption();
+                if (selected != null) {
+                    if (ModelManager.loadModel(selected)) {
+                        reinit(screen);
+                    }
+                }
+            });
+            this.editBtn.active = false;
+            screen.addConsoleWidget(this.editBtn);
+
+            this.deleteBtn = new CustomButton(startX + dropdownWidth + iconBtnWidth + 10, centerY, iconBtnWidth, dropdownHeight, Text.literal("✖"), false, button -> {
+                String selected = this.modelDropdown.getSelectedOption();
+                if (selected != null) {
+                    if (ModelManager.deleteModel(selected)) {
+                        reinit(screen);
+                    }
+                }
+            });
+            this.deleteBtn.active = false;
+            screen.addConsoleWidget(this.deleteBtn);
+
+            this.newBtn = new CustomButton(startX + dropdownWidth + iconBtnWidth * 2 + 15, centerY, iconBtnWidth, dropdownHeight, Text.literal("+"), false, button -> {
+                this.createNewOpen = true;
+                reinit(screen);
+            });
+            screen.addConsoleWidget(this.newBtn);
+        }
     }
 
     private void initMainMenu(ConfigScreen screen, int x, int y, int width, int height) {
@@ -110,6 +203,15 @@ public class PonyCustom implements TabContent {
         if (width < 250) {
             btnX = x + (width - buttonWidth) / 2;
         }
+
+        CustomButton quitBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
+                Text.literal("← " + Text.translatable("text.magicaland.config.button.quit_edit").getString()),
+                false, button -> {
+                    ModelManager.saveActiveModel();
+                    ModelManager.setActiveModel(null);
+                    reinit(screen);
+                }, false, true);
+        this.listWidget.addWidget(quitBtn, SettingsList.Alignment.RIGHT);
 
         CustomButton maneBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.mane_menu.name"),
@@ -133,7 +235,9 @@ public class PonyCustom implements TabContent {
     }
 
     private void initManeMenu(ConfigScreen screen, int x, int y, int width, int height) {
-        Config config = Config.getInstance();
+        ModelConfig config = ModelManager.getActiveModel();
+        if (config == null) return;
+
         int buttonWidth = Math.min(180, width / 2);
         int buttonHeight = 20;
 
@@ -151,7 +255,7 @@ public class PonyCustom implements TabContent {
                 Text.translatable("text.magicaland.config.front_mane_style.name"),
                 config.frontManeStyle, FRONT_MANE_STYLES, newStyle -> {
                     config.frontManeStyle = newStyle;
-                    Config.save();
+                    ModelManager.saveActiveModel();
                 });
         this.listWidget.addWidget(frontBtn, SettingsList.Alignment.RIGHT);
 
@@ -159,13 +263,15 @@ public class PonyCustom implements TabContent {
                 Text.translatable("text.magicaland.config.back_mane_style.name"),
                 config.backManeStyle, BACK_MANE_STYLES, newStyle -> {
                     config.backManeStyle = newStyle;
-                    Config.save();
+                    ModelManager.saveActiveModel();
                 });
         this.listWidget.addWidget(backManeBtn, SettingsList.Alignment.RIGHT);
     }
 
     private void initFaceMenu(ConfigScreen screen, int x, int y, int width, int height) {
-        Config config = Config.getInstance();
+        ModelConfig config = ModelManager.getActiveModel();
+        if (config == null) return;
+
         int buttonWidth = Math.min(180, width / 2);
         int buttonHeight = 20;
 
@@ -183,20 +289,22 @@ public class PonyCustom implements TabContent {
                 Text.translatable("text.magicaland.config.eye_style.name"),
                 config.eyeStyle, EYE_STYLES, newStyle -> {
                     config.eyeStyle = newStyle;
-                    Config.save();
+                    ModelManager.saveActiveModel();
                 });
         this.listWidget.addWidget(eyeBtn, SettingsList.Alignment.RIGHT);
 
         ColorPicker nosePicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.nose_color.name"),
                 config.noseColor, config.noseColorLocked,
-                newColor -> { config.noseColor = newColor; Config.save(); },
-                locked -> { config.noseColorLocked = locked; Config.save(); });
+                newColor -> { config.noseColor = newColor; ModelManager.saveActiveModel(); },
+                locked -> { config.noseColorLocked = locked; ModelManager.saveActiveModel(); });
         this.listWidget.addWidget(nosePicker, SettingsList.Alignment.RIGHT);
     }
 
     private void initHornMenu(ConfigScreen screen, int x, int y, int width, int height) {
-        Config config = Config.getInstance();
+        ModelConfig config = ModelManager.getActiveModel();
+        if (config == null) return;
+
         int buttonWidth = Math.min(180, width / 2);
         int buttonHeight = 20;
 
@@ -214,7 +322,7 @@ public class PonyCustom implements TabContent {
                 Text.translatable("text.magicaland.config.show_horn.name"),
                 config.showHorn, toggle -> {
                     config.showHorn = toggle.getState();
-                    Config.save();
+                    ModelManager.saveActiveModel();
                 });
         this.listWidget.addWidget(hornToggle, SettingsList.Alignment.RIGHT);
 
@@ -222,13 +330,15 @@ public class PonyCustom implements TabContent {
         ColorPicker colorPicker = new ColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 colorLabel, config.hornColor, newColor -> {
                     config.hornColor = newColor;
-                    Config.save();
+                    ModelManager.saveActiveModel();
                 });
         this.listWidget.addWidget(colorPicker, SettingsList.Alignment.RIGHT);
     }
 
     private void initBodyMenu(ConfigScreen screen, int x, int y, int width, int height) {
-        Config config = Config.getInstance();
+        ModelConfig config = ModelManager.getActiveModel();
+        if (config == null) return;
+
         int buttonWidth = Math.min(180, width / 2);
         int buttonHeight = 20;
 
@@ -245,22 +355,22 @@ public class PonyCustom implements TabContent {
         ColorPicker bodyPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.body_color.name"),
                 config.bodyColor, config.bodyColorLocked,
-                newColor -> { config.bodyColor = newColor; Config.save(); },
-                locked -> { config.bodyColorLocked = locked; Config.save(); });
+                newColor -> { config.bodyColor = newColor; ModelManager.saveActiveModel(); },
+                locked -> { config.bodyColorLocked = locked; ModelManager.saveActiveModel(); });
         this.listWidget.addWidget(bodyPicker, SettingsList.Alignment.RIGHT);
 
         ColorPicker neckPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.neck_color.name"),
                 config.neckColor, config.neckColorLocked,
-                newColor -> { config.neckColor = newColor; Config.save(); },
-                locked -> { config.neckColorLocked = locked; Config.save(); });
+                newColor -> { config.neckColor = newColor; ModelManager.saveActiveModel(); },
+                locked -> { config.neckColorLocked = locked; ModelManager.saveActiveModel(); });
         this.listWidget.addWidget(neckPicker, SettingsList.Alignment.RIGHT);
 
         ColorPicker headPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.head_color.name"),
                 config.headColor, config.headColorLocked,
-                newColor -> { config.headColor = newColor; Config.save(); },
-                locked -> { config.headColorLocked = locked; Config.save(); });
+                newColor -> { config.headColor = newColor; ModelManager.saveActiveModel(); },
+                locked -> { config.headColorLocked = locked; ModelManager.saveActiveModel(); });
         this.listWidget.addWidget(headPicker, SettingsList.Alignment.RIGHT);
 
         SectionLabel earLabel = new SectionLabel(btnX, 0, buttonWidth, buttonHeight,
@@ -270,15 +380,15 @@ public class PonyCustom implements TabContent {
         ColorPicker leftEarPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.left_ear_color.name"),
                 config.leftEarColor, config.leftEarColorLocked,
-                newColor -> { config.leftEarColor = newColor; Config.save(); },
-                locked -> { config.leftEarColorLocked = locked; Config.save(); });
+                newColor -> { config.leftEarColor = newColor; ModelManager.saveActiveModel(); },
+                locked -> { config.leftEarColorLocked = locked; ModelManager.saveActiveModel(); });
         this.listWidget.addWidget(leftEarPicker, SettingsList.Alignment.RIGHT);
 
         ColorPicker rightEarPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.right_ear_color.name"),
                 config.rightEarColor, config.rightEarColorLocked,
-                newColor -> { config.rightEarColor = newColor; Config.save(); },
-                locked -> { config.rightEarColorLocked = locked; Config.save(); });
+                newColor -> { config.rightEarColor = newColor; ModelManager.saveActiveModel(); },
+                locked -> { config.rightEarColorLocked = locked; ModelManager.saveActiveModel(); });
         this.listWidget.addWidget(rightEarPicker, SettingsList.Alignment.RIGHT);
 
         SectionLabel limbLabel = new SectionLabel(btnX, 0, buttonWidth, buttonHeight,
@@ -288,29 +398,29 @@ public class PonyCustom implements TabContent {
         ColorPicker leftFrontLimbPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.left_front_limb_color.name"),
                 config.leftFrontLimbColor, config.leftFrontLimbColorLocked,
-                newColor -> { config.leftFrontLimbColor = newColor; Config.save(); },
-                locked -> { config.leftFrontLimbColorLocked = locked; Config.save(); });
+                newColor -> { config.leftFrontLimbColor = newColor; ModelManager.saveActiveModel(); },
+                locked -> { config.leftFrontLimbColorLocked = locked; ModelManager.saveActiveModel(); });
         this.listWidget.addWidget(leftFrontLimbPicker, SettingsList.Alignment.RIGHT);
 
         ColorPicker rightFrontLimbPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.right_front_limb_color.name"),
                 config.rightFrontLimbColor, config.rightFrontLimbColorLocked,
-                newColor -> { config.rightFrontLimbColor = newColor; Config.save(); },
-                locked -> { config.rightFrontLimbColorLocked = locked; Config.save(); });
+                newColor -> { config.rightFrontLimbColor = newColor; ModelManager.saveActiveModel(); },
+                locked -> { config.rightFrontLimbColorLocked = locked; ModelManager.saveActiveModel(); });
         this.listWidget.addWidget(rightFrontLimbPicker, SettingsList.Alignment.RIGHT);
 
         ColorPicker leftHindLimbPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.left_hind_limb_color.name"),
                 config.leftHindLimbColor, config.leftHindLimbColorLocked,
-                newColor -> { config.leftHindLimbColor = newColor; Config.save(); },
-                locked -> { config.leftHindLimbColorLocked = locked; Config.save(); });
+                newColor -> { config.leftHindLimbColor = newColor; ModelManager.saveActiveModel(); },
+                locked -> { config.leftHindLimbColorLocked = locked; ModelManager.saveActiveModel(); });
         this.listWidget.addWidget(leftHindLimbPicker, SettingsList.Alignment.RIGHT);
 
         ColorPicker rightHindLimbPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.right_hind_limb_color.name"),
                 config.rightHindLimbColor, config.rightHindLimbColorLocked,
-                newColor -> { config.rightHindLimbColor = newColor; Config.save(); },
-                locked -> { config.rightHindLimbColorLocked = locked; Config.save(); });
+                newColor -> { config.rightHindLimbColor = newColor; ModelManager.saveActiveModel(); },
+                locked -> { config.rightHindLimbColorLocked = locked; ModelManager.saveActiveModel(); });
         this.listWidget.addWidget(rightHindLimbPicker, SettingsList.Alignment.RIGHT);
     }
 
@@ -322,7 +432,7 @@ public class PonyCustom implements TabContent {
         picker.setLocked(initiallyLocked);
         picker.setOnLockChanged(locked -> {
             onLockChanged.accept(locked);
-            Config.save();
+            ModelManager.saveActiveModel();
         });
         return picker;
     }
@@ -366,6 +476,23 @@ public class PonyCustom implements TabContent {
     @Override
     public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta,
             float alpha) {
+        ModelConfig activeModel = ModelManager.getActiveModel();
+
+        if (activeModel == null) {
+            var textRenderer = MinecraftClient.getInstance().textRenderer;
+            int textAlpha = (int) (alpha * 255);
+            
+            if (createNewOpen) {
+                int labelY = y + height / 2 - 40;
+                context.drawCenteredTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.create_model.title"), x + width / 2, labelY, (textAlpha << 24) | 0xFFFFFF);
+                
+                if (newModelNameField != null) {
+                    newModelNameField.render(context, mouseX, mouseY, delta);
+                }
+            }
+            return;
+        }
+
         if (isTransitioning) {
             transitionAlpha += 0.1f;
             if (transitionAlpha >= 1.0f) {
@@ -476,7 +603,11 @@ public class PonyCustom implements TabContent {
             public void renderCubesOfBone(MatrixStack poseStack, GeoBone bone,
                     VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
                     float alpha) {
-                Config config = Config.getInstance();
+                ModelConfig config = ModelManager.getActiveModel();
+                if (config == null) {
+                    super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                    return;
+                }
 
                 if (!shouldRenderSelectedMane(bone.getName())) {
                     return;
@@ -549,7 +680,8 @@ public class PonyCustom implements TabContent {
             }
 
             private boolean shouldRenderSelectedMane(String boneName) {
-                Config config = Config.getInstance();
+                ModelConfig config = ModelManager.getActiveModel();
+                if (config == null) return true;
                 String lower = boneName.toLowerCase();
 
                 if (boneName.equals("Bun")) {
@@ -579,7 +711,8 @@ public class PonyCustom implements TabContent {
             }
 
             private boolean shouldRenderSelectedEye(String boneName) {
-                Config config = Config.getInstance();
+                ModelConfig config = ModelManager.getActiveModel();
+                if (config == null) return true;
                 String eyeStyle = config.eyeStyle;
 
                 boolean isEyeBone = boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye")

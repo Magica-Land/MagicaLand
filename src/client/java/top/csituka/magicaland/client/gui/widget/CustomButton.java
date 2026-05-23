@@ -76,8 +76,13 @@ public class CustomButton extends PressableWidget {
             currentAlpha = Math.max(targetAlpha, currentAlpha - 0.05f);
         }
 
-        int alpha = (int) (currentAlpha * this.alpha * 255);
-        int textAlpha = (int) (this.alpha * 255);
+        float buttonAlpha = this.alpha;
+        if (!this.active) {
+            buttonAlpha *= 0.4f;
+        }
+
+        int alpha = (int) (currentAlpha * buttonAlpha * 255);
+        int textAlpha = (int) (buttonAlpha * 255);
 
         if (!this.noBackground && alpha > 0) {
             fillRoundedRect(context, this.getX(), this.getY(), this.width, this.height, (alpha << 24) | 0xFFFFFF);

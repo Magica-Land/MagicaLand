@@ -30,5 +30,13 @@
   "text.magicaland.config.left_front_limb_color.name": "左前肢颜色",
   "text.magicaland.config.right_front_limb_color.name": "右前肢颜色",
   "text.magicaland.config.left_hind_limb_color.name": "左后肢颜色",
-  "text.magicaland.config.right_hind_limb_color.name": "右后肢颜色"
+  "text.magicaland.config.right_hind_limb_color.name": "右后肢颜色",
+  "text.magicaland.config.dropdown.select": "选择模型...",
+  "text.magicaland.config.create_model.title": "新建模型",
+  "text.magicaland.config.create_model.name_placeholder": "输入模型名称",
+  "text.magicaland.config.button.edit": "编辑",
+  "text.magicaland.config.button.new": "新建",
+  "text.magicaland.config.button.confirm": "确认",
+  "text.magicaland.config.button.cancel": "取消",
+  "text.magicaland.config.button.quit_edit": "保存并退出编辑"
 }

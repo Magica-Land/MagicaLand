@@ -11,41 +11,13 @@ import java.io.IOException;
 
 public class Config {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final File CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(),
-            "magicaland.json");
+    private static final File BASE_DIR = new File(FabricLoader.getInstance().getConfigDir().toFile(), "magicaland");
+    private static final File CONFIG_FILE = new File(BASE_DIR, "config.json");
 
     public boolean replacePlayerModel = true;
     public boolean firstPersonMagicGlow = true;
-
-    public String frontManeStyle = "TS";
-    public String backManeStyle = "TS";
-    public String eyeStyle = "TS";
-
-    public String hornColor = "#FFFFFFFF";
-    public String bodyColor = "#FFFFFFFF";
-    public String neckColor = "#FFFFFFFF";
-    public String headColor = "#FFFFFFFF";
-    public String leftEarColor = "#FFFFFFFF";
-    public String rightEarColor = "#FFFFFFFF";
-    public String limbColor = "#FFFFFFFF";
-    public String leftFrontLimbColor = "#FFFFFFFF";
-    public String rightFrontLimbColor = "#FFFFFFFF";
-    public String leftHindLimbColor = "#FFFFFFFF";
-    public String rightHindLimbColor = "#FFFFFFFF";
-    public String noseColor = "#FFFFFFFF";
-
-    public boolean showHorn = true;
-
-    public boolean bodyColorLocked = true;
-    public boolean noseColorLocked = true;
-    public boolean neckColorLocked = true;
-    public boolean headColorLocked = true;
-    public boolean leftEarColorLocked = true;
-    public boolean rightEarColorLocked = true;
-    public boolean leftFrontLimbColorLocked = true;
-    public boolean rightFrontLimbColorLocked = true;
-    public boolean leftHindLimbColorLocked = true;
-    public boolean rightHindLimbColorLocked = true;
+    
+    public String activeModelName = "";
 
     private static Config instance;
 
@@ -57,6 +29,9 @@ public class Config {
     }
 
     public static void load() {
+        if (!BASE_DIR.exists()) {
+            BASE_DIR.mkdirs();
+        }
         if (CONFIG_FILE.exists()) {
             try (FileReader reader = new FileReader(CONFIG_FILE)) {
                 instance = GSON.fromJson(reader, Config.class);
@@ -71,6 +46,9 @@ public class Config {
     }
 
     public static void save() {
+        if (!BASE_DIR.exists()) {
+            BASE_DIR.mkdirs();
+        }
         try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
             GSON.toJson(instance, writer);
         } catch (IOException e) {

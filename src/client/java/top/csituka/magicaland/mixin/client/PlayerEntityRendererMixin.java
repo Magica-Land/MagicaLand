@@ -71,7 +71,11 @@ public abstract class PlayerEntityRendererMixin
             public void renderCubesOfBone(MatrixStack poseStack, software.bernie.geckolib.cache.object.GeoBone bone,
                     VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
                     float alpha) {
-                Config config = Config.getInstance();
+                top.csituka.magicaland.client.config.ModelConfig config = top.csituka.magicaland.client.config.ModelManager.getActiveModel();
+                if (config == null) {
+                    super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+                    return;
+                }
 
                 if (!shouldRenderSelectedMane(bone.getName())) {
                     return;
@@ -140,7 +144,8 @@ public abstract class PlayerEntityRendererMixin
             }
 
             private boolean shouldRenderSelectedMane(String boneName) {
-                Config config = Config.getInstance();
+                top.csituka.magicaland.client.config.ModelConfig config = top.csituka.magicaland.client.config.ModelManager.getActiveModel();
+                if (config == null) return true;
                 String lower = boneName.toLowerCase();
 
                 if (boneName.equals("Bun")) {

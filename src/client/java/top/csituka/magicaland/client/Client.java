@@ -15,6 +15,7 @@ public class Client implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Config.load();
+        top.csituka.magicaland.client.config.ModelManager.init();
 
         configKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.magicaland.config",
