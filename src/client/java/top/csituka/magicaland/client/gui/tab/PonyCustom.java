@@ -50,6 +50,7 @@ public class PonyCustom implements TabContent {
     private boolean createNewOpen = false;
     private boolean deleteConfirmOpen = false;
     private String modelToDelete = null;
+    private boolean isEditing = false;
 
     @Override
     public void onEnter() {
@@ -60,7 +61,7 @@ public class PonyCustom implements TabContent {
         this.createNewOpen = false;
         this.deleteConfirmOpen = false;
         this.modelToDelete = null;
-        ModelManager.setActiveModel(null);
+        this.isEditing = false;
     }
 
     private GeckoPlayerAnimatable ponyAnimatable;
@@ -119,7 +120,7 @@ public class PonyCustom implements TabContent {
 
         ModelConfig activeModel = ModelManager.getActiveModel();
 
-        if (activeModel == null) {
+        if (!isEditing || activeModel == null) {
             initWelcomeScreen(screen, x, y, width, height);
         } else {
             if (hornMenuOpen) {
@@ -148,17 +149,25 @@ public class PonyCustom implements TabContent {
         int iconBtnWidth = 20;
 
         int totalWidth = dropdownWidth + iconBtnWidth * 3 + 15;
-        int startX = x + (width - totalWidth) / 2;
+        int startX = x + width - totalWidth - 20;
+        if (width < 250) {
+            startX = x + (width - totalWidth) / 2;
+        }
         int centerY = y + height / 2;
 
         if (createNewOpen) {
+            int fieldWidth = 150;
+            int createX = x + width - fieldWidth - 20;
+            if (width < 250) {
+                createX = x + (width - fieldWidth) / 2;
+            }
             var textRenderer = MinecraftClient.getInstance().textRenderer;
-            this.newModelNameField = new TextFieldWidget(textRenderer, x + (width - 150) / 2, centerY - 20, 150, 20, Text.translatable("text.magicaland.config.create_model.name_placeholder"));
+            this.newModelNameField = new TextFieldWidget(textRenderer, createX, centerY - 20, fieldWidth, 20, Text.translatable("text.magicaland.config.create_model.name_placeholder"));
             this.newModelNameField.setMaxLength(32);
             this.newModelNameField.setFocused(true);
             screen.addConsoleWidget(this.newModelNameField);
 
-            this.confirmCreateBtn = new CustomButton(x + (width - 150) / 2, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.confirm"), false, button -> {
+            this.confirmCreateBtn = new CustomButton(createX, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.confirm"), false, button -> {
                 String name = this.newModelNameField.getText();
                 if (ModelManager.createModel(name)) {
                     this.createNewOpen = false;
@@ -167,13 +176,18 @@ public class PonyCustom implements TabContent {
             });
             screen.addConsoleWidget(this.confirmCreateBtn);
 
-            this.cancelCreateBtn = new CustomButton(x + (width - 150) / 2 + 80, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.cancel"), false, button -> {
+            this.cancelCreateBtn = new CustomButton(createX + 80, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.cancel"), false, button -> {
                 this.createNewOpen = false;
                 reinit(screen);
             });
             screen.addConsoleWidget(this.cancelCreateBtn);
         } else if (deleteConfirmOpen) {
-            this.confirmCreateBtn = new CustomButton(x + (width - 150) / 2, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.confirm"), false, button -> {
+            int boxWidth = 150;
+            int deleteX = x + width - boxWidth - 20;
+            if (width < 250) {
+                deleteX = x + (width - boxWidth) / 2;
+            }
+            this.confirmCreateBtn = new CustomButton(deleteX, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.confirm"), false, button -> {
                 if (modelToDelete != null) {
                     if (ModelManager.deleteModel(modelToDelete)) {
                         this.deleteConfirmOpen = false;
@@ -184,7 +198,7 @@ public class PonyCustom implements TabContent {
             });
             screen.addConsoleWidget(this.confirmCreateBtn);
 
-            this.cancelCreateBtn = new CustomButton(x + (width - 150) / 2 + 80, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.cancel"), false, button -> {
+            this.cancelCreateBtn = new CustomButton(deleteX + 80, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.cancel"), false, button -> {
                 this.deleteConfirmOpen = false;
                 this.modelToDelete = null;
                 reinit(screen);
@@ -192,9 +206,15 @@ public class PonyCustom implements TabContent {
             screen.addConsoleWidget(this.cancelCreateBtn);
         } else {
             int initialSelect = -1;
+            ModelConfig activeModel = ModelManager.getActiveModel();
+            if (activeModel != null) {
+                initialSelect = models.indexOf(activeModel.name);
+            }
             this.modelDropdown = new DropdownBox(startX, centerY, dropdownWidth, dropdownHeight, models, initialSelect, index -> {
                 this.editBtn.active = true;
                 this.deleteBtn.active = models.size() > 1;
+                String selected = models.get(index);
+                ModelManager.loadModel(selected);
             });
             screen.addConsoleWidget(this.modelDropdown);
 
@@ -202,11 +222,12 @@ public class PonyCustom implements TabContent {
                 String selected = this.modelDropdown.getSelectedOption();
                 if (selected != null) {
                     if (ModelManager.loadModel(selected)) {
+                        this.isEditing = true;
                         reinit(screen);
                     }
                 }
             });
-            this.editBtn.active = false;
+            this.editBtn.active = activeModel != null;
             screen.addConsoleWidget(this.editBtn);
 
             this.deleteBtn = new CustomButton(startX + dropdownWidth + iconBtnWidth + 10, centerY, iconBtnWidth, dropdownHeight, Text.literal("✖"), Text.translatable("text.magicaland.config.tooltip.delete"), false, button -> {
@@ -217,7 +238,7 @@ public class PonyCustom implements TabContent {
                     reinit(screen);
                 }
             });
-            this.deleteBtn.active = false;
+            this.deleteBtn.active = models.size() > 1;
             screen.addConsoleWidget(this.deleteBtn);
 
             this.newBtn = new CustomButton(startX + dropdownWidth + iconBtnWidth * 2 + 15, centerY, iconBtnWidth, dropdownHeight, Text.literal("+"), Text.translatable("text.magicaland.config.tooltip.new"), false, button -> {
@@ -241,7 +262,7 @@ public class PonyCustom implements TabContent {
                 Text.literal("← " + Text.translatable("text.magicaland.config.button.quit_edit").getString()),
                 false, button -> {
                     ModelManager.saveActiveModel();
-                    ModelManager.setActiveModel(null);
+                    this.isEditing = false;
                     reinit(screen);
                 }, false, true);
         this.listWidget.addWidget(quitBtn, SettingsList.Alignment.RIGHT);
@@ -511,21 +532,38 @@ public class PonyCustom implements TabContent {
             float alpha) {
         ModelConfig activeModel = ModelManager.getActiveModel();
 
-        if (activeModel == null) {
+        if ((!isEditing && (createNewOpen || deleteConfirmOpen)) || activeModel == null) {
             var textRenderer = MinecraftClient.getInstance().textRenderer;
             int textAlpha = (int) (alpha * 255);
             
             if (createNewOpen) {
+                int fieldWidth = 150;
+                int textX = x + width - fieldWidth - 20;
+                int alignX = textX + fieldWidth;
                 int labelY = y + height / 2 - 40;
-                context.drawCenteredTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.create_model.title"), x + width / 2, labelY, (textAlpha << 24) | 0xFFFFFF);
+                
+                if (width < 250) {
+                    context.drawCenteredTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.create_model.title"), x + width / 2, labelY, (textAlpha << 24) | 0xFFFFFF);
+                } else {
+                    context.drawTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.create_model.title"), alignX - textRenderer.getWidth(Text.translatable("text.magicaland.config.create_model.title")), labelY, (textAlpha << 24) | 0xFFFFFF);
+                }
                 
                 if (newModelNameField != null) {
                     newModelNameField.render(context, mouseX, mouseY, delta);
                 }
             } else if (deleteConfirmOpen) {
+                int boxWidth = 150;
+                int textX = x + width - boxWidth - 20;
+                int alignX = textX + boxWidth;
                 int labelY = y + height / 2 - 40;
-                context.drawCenteredTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.title"), x + width / 2, labelY, (textAlpha << 24) | 0xFFFFFF);
-                context.drawCenteredTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.message"), x + width / 2, labelY + 15, (textAlpha << 24) | 0xE06060);
+                
+                if (width < 250) {
+                    context.drawCenteredTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.title"), x + width / 2, labelY, (textAlpha << 24) | 0xFFFFFF);
+                    context.drawCenteredTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.message"), x + width / 2, labelY + 15, (textAlpha << 24) | 0xE06060);
+                } else {
+                    context.drawTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.title"), alignX - textRenderer.getWidth(Text.translatable("text.magicaland.config.delete_confirm.title")), labelY, (textAlpha << 24) | 0xFFFFFF);
+                    context.drawTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.message"), alignX - textRenderer.getWidth(Text.translatable("text.magicaland.config.delete_confirm.message")), labelY + 15, (textAlpha << 24) | 0xE06060);
+                }
             }
             return;
         }
