@@ -25,6 +25,10 @@ public class ModelManager {
         }
         refreshModelList();
         
+        if (availableModels.isEmpty()) {
+            createModel("anon");
+        }
+        
         String lastActive = Config.getInstance().activeModelName;
         if (lastActive != null && !lastActive.isEmpty() && availableModels.contains(lastActive)) {
             loadModel(lastActive);
@@ -59,6 +63,9 @@ public class ModelManager {
                     availableModels.add(name.substring(0, name.length() - 5));
                 }
             }
+        }
+        if (availableModels.isEmpty()) {
+            createModel("anon");
         }
     }
 
@@ -145,6 +152,9 @@ public class ModelManager {
 
     public static boolean deleteModel(String name) {
         if (name == null || name.isEmpty()) {
+            return false;
+        }
+        if (availableModels.size() <= 1) {
             return false;
         }
         File file = new File(MODELS_DIR, name + ".json");

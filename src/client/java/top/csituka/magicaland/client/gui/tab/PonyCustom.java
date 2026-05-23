@@ -49,6 +49,16 @@ public class PonyCustom implements TabContent {
     private boolean bodyMenuOpen = false;
     private boolean createNewOpen = false;
 
+    @Override
+    public void onEnter() {
+        this.hornMenuOpen = false;
+        this.maneMenuOpen = false;
+        this.faceMenuOpen = false;
+        this.bodyMenuOpen = false;
+        this.createNewOpen = false;
+        ModelManager.setActiveModel(null);
+    }
+
     private GeckoPlayerAnimatable ponyAnimatable;
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
 

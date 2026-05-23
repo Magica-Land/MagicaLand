@@ -52,6 +52,7 @@ public class ConfigScreen extends Screen {
         FabricLoader.getInstance().getModContainer("magicaland").ifPresent(container -> {
             this.modVersion = container.getMetadata().getVersion().getFriendlyString();
         });
+        this.currentTab.getContent().onEnter();
     }
 
     public void addConsoleWidget(net.minecraft.client.gui.widget.ClickableWidget widget) {
@@ -102,6 +103,7 @@ public class ConfigScreen extends Screen {
 
                             this.tabAnimator.startTransition(this.currentTab, tab, this.height, oldWidgets);
                             this.currentTab = tab;
+                            this.currentTab.getContent().onEnter();
 
                             if (ColorPicker.openPicker != null) {
                                 ColorPicker.openPicker.open = false;

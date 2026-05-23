@@ -7,4 +7,6 @@ public interface TabContent {
     void init(ConfigScreen screen, int x, int y, int width, int height);
 
     void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta, float alpha);
+
+    default void onEnter() {}
 }
