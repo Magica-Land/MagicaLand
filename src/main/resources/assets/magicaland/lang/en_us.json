@@ -41,5 +41,7 @@
   "text.magicaland.config.button.quit_edit": "Save & Quit",
   "text.magicaland.config.tooltip.edit": "Continue editing the selected model",
   "text.magicaland.config.tooltip.delete": "Delete the selected model",
-  "text.magicaland.config.tooltip.new": "Create new model"
+  "text.magicaland.config.tooltip.new": "Create new model",
+  "text.magicaland.config.delete_confirm.title": "Are you sure you want to delete this model?",
+  "text.magicaland.config.delete_confirm.message": "This action cannot be undone!"
 }

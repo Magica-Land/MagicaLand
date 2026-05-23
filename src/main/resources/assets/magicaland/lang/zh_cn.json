@@ -41,5 +41,7 @@
   "text.magicaland.config.button.quit_edit": "保存并退出编辑",
   "text.magicaland.config.tooltip.edit": "继续编辑选中的模型",
   "text.magicaland.config.tooltip.delete": "删除选中的模型",
-  "text.magicaland.config.tooltip.new": "新建模型"
+  "text.magicaland.config.tooltip.new": "新建模型",
+  "text.magicaland.config.delete_confirm.title": "确定要删除该模型吗？",
+  "text.magicaland.config.delete_confirm.message": "删除后将无法恢复！"
 }

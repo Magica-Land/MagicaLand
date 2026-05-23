@@ -48,6 +48,8 @@ public class PonyCustom implements TabContent {
     private boolean faceMenuOpen = false;
     private boolean bodyMenuOpen = false;
     private boolean createNewOpen = false;
+    private boolean deleteConfirmOpen = false;
+    private String modelToDelete = null;
 
     @Override
     public void onEnter() {
@@ -56,6 +58,8 @@ public class PonyCustom implements TabContent {
         this.faceMenuOpen = false;
         this.bodyMenuOpen = false;
         this.createNewOpen = false;
+        this.deleteConfirmOpen = false;
+        this.modelToDelete = null;
         ModelManager.setActiveModel(null);
     }
 
@@ -168,11 +172,29 @@ public class PonyCustom implements TabContent {
                 reinit(screen);
             });
             screen.addConsoleWidget(this.cancelCreateBtn);
+        } else if (deleteConfirmOpen) {
+            this.confirmCreateBtn = new CustomButton(x + (width - 150) / 2, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.confirm"), false, button -> {
+                if (modelToDelete != null) {
+                    if (ModelManager.deleteModel(modelToDelete)) {
+                        this.deleteConfirmOpen = false;
+                        this.modelToDelete = null;
+                        reinit(screen);
+                    }
+                }
+            });
+            screen.addConsoleWidget(this.confirmCreateBtn);
+
+            this.cancelCreateBtn = new CustomButton(x + (width - 150) / 2 + 80, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.cancel"), false, button -> {
+                this.deleteConfirmOpen = false;
+                this.modelToDelete = null;
+                reinit(screen);
+            });
+            screen.addConsoleWidget(this.cancelCreateBtn);
         } else {
             int initialSelect = -1;
             this.modelDropdown = new DropdownBox(startX, centerY, dropdownWidth, dropdownHeight, models, initialSelect, index -> {
                 this.editBtn.active = true;
-                this.deleteBtn.active = true;
+                this.deleteBtn.active = models.size() > 1;
             });
             screen.addConsoleWidget(this.modelDropdown);
 
@@ -189,10 +211,10 @@ public class PonyCustom implements TabContent {
 
             this.deleteBtn = new CustomButton(startX + dropdownWidth + iconBtnWidth + 10, centerY, iconBtnWidth, dropdownHeight, Text.literal("✖"), Text.translatable("text.magicaland.config.tooltip.delete"), false, button -> {
                 String selected = this.modelDropdown.getSelectedOption();
-                if (selected != null) {
-                    if (ModelManager.deleteModel(selected)) {
-                        reinit(screen);
-                    }
+                if (selected != null && ModelManager.getAvailableModels().size() > 1) {
+                    this.deleteConfirmOpen = true;
+                    this.modelToDelete = selected;
+                    reinit(screen);
                 }
             });
             this.deleteBtn.active = false;
@@ -500,6 +522,10 @@ public class PonyCustom implements TabContent {
                 if (newModelNameField != null) {
                     newModelNameField.render(context, mouseX, mouseY, delta);
                 }
+            } else if (deleteConfirmOpen) {
+                int labelY = y + height / 2 - 40;
+                context.drawCenteredTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.title"), x + width / 2, labelY, (textAlpha << 24) | 0xFFFFFF);
+                context.drawCenteredTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.message"), x + width / 2, labelY + 15, (textAlpha << 24) | 0xE06060);
             }
             return;
         }
