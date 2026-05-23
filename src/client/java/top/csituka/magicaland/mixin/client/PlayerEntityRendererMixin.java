@@ -99,6 +99,8 @@ public abstract class PlayerEntityRendererMixin
                     colorField = config.neckColor;
                 } else if (boneName.equalsIgnoreCase("Head")) {
                     colorField = config.headColor;
+                } else if (boneName.equalsIgnoreCase("Nose")) {
+                    colorField = config.noseColor;
                 } else if (boneName.equalsIgnoreCase("LeftEar")) {
                     colorField = config.leftEarColor;
                 } else if (boneName.equalsIgnoreCase("RightEar")) {

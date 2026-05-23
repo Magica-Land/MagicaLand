@@ -32,10 +32,12 @@ public class Config {
     public String rightFrontLimbColor = "#FFFFFFFF";
     public String leftHindLimbColor = "#FFFFFFFF";
     public String rightHindLimbColor = "#FFFFFFFF";
+    public String noseColor = "#FFFFFFFF";
 
     public boolean showHorn = true;
 
     public boolean bodyColorLocked = true;
+    public boolean noseColorLocked = true;
     public boolean neckColorLocked = true;
     public boolean headColorLocked = true;
     public boolean leftEarColorLocked = true;

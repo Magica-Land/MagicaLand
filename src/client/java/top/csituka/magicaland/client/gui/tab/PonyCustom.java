@@ -186,6 +186,13 @@ public class PonyCustom implements TabContent {
                     Config.save();
                 });
         this.listWidget.addWidget(eyeBtn, SettingsList.Alignment.RIGHT);
+
+        ColorPicker nosePicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.nose_color.name"),
+                config.noseColor, config.noseColorLocked,
+                newColor -> { config.noseColor = newColor; Config.save(); },
+                locked -> { config.noseColorLocked = locked; Config.save(); });
+        this.listWidget.addWidget(nosePicker, SettingsList.Alignment.RIGHT);
     }
 
     private void initHornMenu(ConfigScreen screen, int x, int y, int width, int height) {
@@ -501,6 +508,8 @@ public class PonyCustom implements TabContent {
                     colorField = config.neckColor;
                 } else if (boneName.equalsIgnoreCase("Head")) {
                     colorField = config.headColor;
+                } else if (boneName.equalsIgnoreCase("Nose")) {
+                    colorField = config.noseColor;
                 } else if (boneName.equalsIgnoreCase("LeftEar")) {
                     colorField = config.leftEarColor;
                 } else if (boneName.equalsIgnoreCase("RightEar")) {
