@@ -104,12 +104,22 @@ public class DropdownBox extends ClickableWidget {
     public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         if (!this.visible) return;
 
-        int bgColor = this.isHovered() ? 0x55FFFFFF : 0x22FFFFFF;
+        float targetAlpha = this.isHovered() ? 0.35f : 0.15f;
+        if (animationProgress < targetAlpha) {
+            animationProgress = Math.min(targetAlpha, animationProgress + 0.05f);
+        } else if (animationProgress > targetAlpha) {
+            animationProgress = Math.max(targetAlpha, animationProgress - 0.05f);
+        }
+
+        int alpha = (int) (animationProgress * 255);
+        int bgColor = (alpha << 24) | 0xFFFFFF;
+
         fillRoundedRect(context, this.getX(), this.getY(), this.width, this.height, bgColor);
 
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         String text = selectedIndex >= 0 && selectedIndex < options.size() ? options.get(selectedIndex) : Text.translatable("text.magicaland.config.dropdown.select").getString();
         int textY = this.getY() + (this.height - 8) / 2;
+        
         context.drawTextWithShadow(textRenderer, Text.literal(text), this.getX() + 6, textY, 0xFFFFFF);
 
         String arrow = open ? "▲" : "▼";
@@ -120,15 +130,14 @@ public class DropdownBox extends ClickableWidget {
             int optionHeight = this.height;
             int totalListHeight = options.size() * optionHeight;
             
-            context.fill(this.getX(), this.getY() + this.height, this.getX() + this.width, this.getY() + this.height + totalListHeight, 0xE0101010);
-            context.drawBorder(this.getX(), this.getY() + this.height, this.width, totalListHeight, 0xFF444444);
+            fillRoundedRect(context, this.getX(), this.getY() + this.height + 2, this.width, totalListHeight, 0x22FFFFFF);
 
             for (int i = 0; i < options.size(); i++) {
-                int optY = this.getY() + this.height + i * optionHeight;
+                int optY = this.getY() + this.height + 2 + i * optionHeight;
                 boolean hovered = mouseX >= this.getX() && mouseX <= this.getX() + this.width && mouseY >= optY && mouseY <= optY + optionHeight;
                 
                 if (hovered) {
-                    context.fill(this.getX() + 1, optY, this.getX() + this.width - 1, optY + optionHeight, 0x44FFFFFF);
+                    fillRoundedRect(context, this.getX() + 2, optY + 1, this.width - 4, optionHeight - 2, 0x44FFFFFF);
                 }
                 
                 int itemColor = (i == selectedIndex) ? 0xFF55FF55 : 0xFFFFFFFF;

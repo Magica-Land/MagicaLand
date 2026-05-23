@@ -238,6 +238,16 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        for (net.minecraft.client.gui.Element element : this.children()) {
+            if (element instanceof net.minecraft.client.gui.widget.TextFieldWidget textField) {
+                textField.tick();
+            }
+        }
+    }
+
+    @Override
     public void close() {
         if (ColorPicker.openPicker != null) {
             ColorPicker.openPicker.open = false;

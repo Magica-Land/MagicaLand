@@ -38,5 +38,8 @@
   "text.magicaland.config.button.new": "New",
   "text.magicaland.config.button.confirm": "Confirm",
   "text.magicaland.config.button.cancel": "Cancel",
-  "text.magicaland.config.button.quit_edit": "Save & Quit"
+  "text.magicaland.config.button.quit_edit": "Save & Quit",
+  "text.magicaland.config.tooltip.edit": "Continue editing the selected model",
+  "text.magicaland.config.tooltip.delete": "Delete the selected model",
+  "text.magicaland.config.tooltip.new": "Create new model"
 }

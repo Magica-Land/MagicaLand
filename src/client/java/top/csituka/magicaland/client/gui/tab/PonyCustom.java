@@ -141,6 +141,7 @@ public class PonyCustom implements TabContent {
             var textRenderer = MinecraftClient.getInstance().textRenderer;
             this.newModelNameField = new TextFieldWidget(textRenderer, x + (width - 150) / 2, centerY - 20, 150, 20, Text.translatable("text.magicaland.config.create_model.name_placeholder"));
             this.newModelNameField.setMaxLength(32);
+            this.newModelNameField.setFocused(true);
             screen.addConsoleWidget(this.newModelNameField);
 
             this.confirmCreateBtn = new CustomButton(x + (width - 150) / 2, centerY + 10, 70, 20, Text.translatable("text.magicaland.config.button.confirm"), false, button -> {
@@ -165,7 +166,7 @@ public class PonyCustom implements TabContent {
             });
             screen.addConsoleWidget(this.modelDropdown);
 
-            this.editBtn = new CustomButton(startX + dropdownWidth + 5, centerY, iconBtnWidth, dropdownHeight, Text.literal("✎"), false, button -> {
+            this.editBtn = new CustomButton(startX + dropdownWidth + 5, centerY, iconBtnWidth, dropdownHeight, Text.literal("✎"), Text.translatable("text.magicaland.config.tooltip.edit"), false, button -> {
                 String selected = this.modelDropdown.getSelectedOption();
                 if (selected != null) {
                     if (ModelManager.loadModel(selected)) {
@@ -176,7 +177,7 @@ public class PonyCustom implements TabContent {
             this.editBtn.active = false;
             screen.addConsoleWidget(this.editBtn);
 
-            this.deleteBtn = new CustomButton(startX + dropdownWidth + iconBtnWidth + 10, centerY, iconBtnWidth, dropdownHeight, Text.literal("✖"), false, button -> {
+            this.deleteBtn = new CustomButton(startX + dropdownWidth + iconBtnWidth + 10, centerY, iconBtnWidth, dropdownHeight, Text.literal("✖"), Text.translatable("text.magicaland.config.tooltip.delete"), false, button -> {
                 String selected = this.modelDropdown.getSelectedOption();
                 if (selected != null) {
                     if (ModelManager.deleteModel(selected)) {
@@ -187,7 +188,7 @@ public class PonyCustom implements TabContent {
             this.deleteBtn.active = false;
             screen.addConsoleWidget(this.deleteBtn);
 
-            this.newBtn = new CustomButton(startX + dropdownWidth + iconBtnWidth * 2 + 15, centerY, iconBtnWidth, dropdownHeight, Text.literal("+"), false, button -> {
+            this.newBtn = new CustomButton(startX + dropdownWidth + iconBtnWidth * 2 + 15, centerY, iconBtnWidth, dropdownHeight, Text.literal("+"), Text.translatable("text.magicaland.config.tooltip.new"), false, button -> {
                 this.createNewOpen = true;
                 reinit(screen);
             });

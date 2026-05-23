@@ -8,6 +8,8 @@ import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
 
+import net.minecraft.client.gui.tooltip.Tooltip;
+
 public class CustomButton extends PressableWidget {
     private final Consumer<CustomButton> onPress;
     private float currentAlpha;
@@ -19,6 +21,14 @@ public class CustomButton extends PressableWidget {
     public CustomButton(int x, int y, int width, int height, Text message, boolean isSelected,
             Consumer<CustomButton> onPress) {
         this(x, y, width, height, message, isSelected, onPress, false, false);
+    }
+
+    public CustomButton(int x, int y, int width, int height, Text message, Text tooltipText, boolean isSelected,
+            Consumer<CustomButton> onPress) {
+        this(x, y, width, height, message, isSelected, onPress, false, false);
+        if (tooltipText != null) {
+            this.setTooltip(Tooltip.of(tooltipText));
+        }
     }
 
     public CustomButton(int x, int y, int width, int height, Text message, boolean isSelected,
