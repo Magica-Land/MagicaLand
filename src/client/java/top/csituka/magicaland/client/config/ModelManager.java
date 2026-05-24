@@ -160,12 +160,18 @@ public class ModelManager {
         File file = new File(MODELS_DIR, name + ".json");
         if (file.exists() && file.isFile()) {
             if (file.delete()) {
-                if (activeModel != null && activeModel.name.equals(name)) {
-                    activeModel = null;
-                    Config.getInstance().activeModelName = "";
-                    Config.save();
-                }
                 refreshModelList();
+                
+                if (activeModel != null && activeModel.name.equals(name)) {
+                    String newActiveModel = availableModels.isEmpty() ? null : availableModels.get(0);
+                    if (newActiveModel != null) {
+                        loadModel(newActiveModel);
+                    } else {
+                        activeModel = null;
+                        Config.getInstance().activeModelName = "";
+                        Config.save();
+                    }
+                }
                 return true;
             }
         }

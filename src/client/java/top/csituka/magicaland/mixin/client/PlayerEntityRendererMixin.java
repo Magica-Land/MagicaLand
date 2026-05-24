@@ -81,6 +81,10 @@ public abstract class PlayerEntityRendererMixin
                     return;
                 }
 
+                if (!shouldRenderSelectedEye(bone.getName())) {
+                    return;
+                }
+
                 if (!config.showHorn && bone.getName().equalsIgnoreCase("Horn")) {
                     return;
                 }
@@ -172,6 +176,31 @@ public abstract class PlayerEntityRendererMixin
                 }
 
                 return false;
+            }
+
+            private boolean shouldRenderSelectedEye(String boneName) {
+                top.csituka.magicaland.client.config.ModelConfig config = top.csituka.magicaland.client.config.ModelManager.getActiveModel();
+                if (config == null) return true;
+                String eyeStyle = config.eyeStyle;
+
+                boolean isEyeBone = boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye")
+                        || boneName.equals("FSCommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
+                        || boneName.equals("RRCommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
+
+                if (!isEyeBone) {
+                    return true;
+                }
+
+                switch (eyeStyle) {
+                    case "TS":
+                        return boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye");
+                    case "FS":
+                        return boneName.equals("FSCommonFace") || boneName.equals("leye2") || boneName.equals("reye2");
+                    case "RR":
+                        return boneName.equals("RRCommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
+                    default:
+                        return boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye");
+                }
             }
         };
     }
