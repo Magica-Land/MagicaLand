@@ -571,14 +571,13 @@ public class PonyCustom implements TabContent {
             
             if (createNewOpen) {
                 int fieldWidth = 150;
-                int textX = x + width - fieldWidth - 20;
-                int alignX = textX + fieldWidth;
+                int createX = x + width - fieldWidth - 20;
                 int labelY = y + height / 2 - 40;
                 
                 if (width < 250) {
                     context.drawCenteredTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.create_model.title"), x + width / 2, labelY, (textAlpha << 24) | 0xFFFFFF);
                 } else {
-                    context.drawTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.create_model.title"), alignX - textRenderer.getWidth(Text.translatable("text.magicaland.config.create_model.title")), labelY, (textAlpha << 24) | 0xFFFFFF);
+                    context.drawTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.create_model.title"), createX, labelY, (textAlpha << 24) | 0xFFFFFF);
                 }
                 
                 if (newModelNameField != null) {
@@ -586,16 +585,15 @@ public class PonyCustom implements TabContent {
                 }
             } else if (deleteConfirmOpen) {
                 int boxWidth = 150;
-                int textX = x + width - boxWidth - 20;
-                int alignX = textX + boxWidth;
+                int deleteX = x + width - boxWidth - 20;
                 int labelY = y + height / 2 - 40;
                 
                 if (width < 250) {
                     context.drawCenteredTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.title"), x + width / 2, labelY, (textAlpha << 24) | 0xFFFFFF);
                     context.drawCenteredTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.message"), x + width / 2, labelY + 15, (textAlpha << 24) | 0xE06060);
                 } else {
-                    context.drawTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.title"), alignX - textRenderer.getWidth(Text.translatable("text.magicaland.config.delete_confirm.title")), labelY, (textAlpha << 24) | 0xFFFFFF);
-                    context.drawTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.message"), alignX - textRenderer.getWidth(Text.translatable("text.magicaland.config.delete_confirm.message")), labelY + 15, (textAlpha << 24) | 0xE06060);
+                    context.drawTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.title"), deleteX, labelY, (textAlpha << 24) | 0xFFFFFF);
+                    context.drawTextWithShadow(textRenderer, Text.translatable("text.magicaland.config.delete_confirm.message"), deleteX, labelY + 15, (textAlpha << 24) | 0xE06060);
                 }
             }
             return;
