@@ -98,6 +98,7 @@ public class ModelManager {
         newModel.rightHindLimbColor = "#FFFFFFFF";
         newModel.noseColor = "#FFFFFFFF";
         newModel.showHorn = true;
+        newModel.hornColorLocked = true;
         newModel.bodyColorLocked = true;
         newModel.noseColorLocked = true;
         newModel.neckColorLocked = true;

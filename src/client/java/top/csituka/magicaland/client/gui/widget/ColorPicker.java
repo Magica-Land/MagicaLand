@@ -40,9 +40,11 @@ public class ColorPicker extends ClickableWidget {
     public static void addToBodyLinkGroup(ColorPicker picker, boolean initiallyLocked) {
         picker.locked = initiallyLocked;
         
-        if (initiallyLocked && !bodyLinkGroup.isEmpty()) {
+        bodyLinkGroup.add(picker);
+        
+        if (initiallyLocked && bodyLinkGroup.size() > 1) {
             for (ColorPicker other : bodyLinkGroup) {
-                if (other.locked && other != picker) {
+                if (other != picker && other.locked) {
                     picker.syncing = true;
                     picker.setColorSilent(other.currentColor);
                     if (picker.onColorChanged != null) {
@@ -53,8 +55,6 @@ public class ColorPicker extends ClickableWidget {
                 }
             }
         }
-        
-        bodyLinkGroup.add(picker);
     }
 
     public static void clearBodyLinkGroup() {

@@ -22,6 +22,7 @@ public class ModelConfig {
 
     public boolean showHorn = true;
 
+    public boolean hornColorLocked = true;
     public boolean bodyColorLocked = true;
     public boolean noseColorLocked = true;
     public boolean neckColorLocked = true;

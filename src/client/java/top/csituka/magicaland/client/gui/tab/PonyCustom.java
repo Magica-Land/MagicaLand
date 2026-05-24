@@ -91,8 +91,6 @@ public class PonyCustom implements TabContent {
         this.rightY = y;
         this.rightHeight = height;
 
-        ColorPicker.clearBodyLinkGroup();
-
         int topMargin = 40;
         int bottomMargin = 40;
         this.listWidget = new SettingsList(MinecraftClient.getInstance(), width, height, y + topMargin,
@@ -387,13 +385,12 @@ public class PonyCustom implements TabContent {
                 });
         this.listWidget.addWidget(hornToggle, SettingsList.Alignment.RIGHT);
 
-        Text colorLabel = Text.translatable("text.magicaland.config.horn_color.name");
-        ColorPicker colorPicker = new ColorPicker(btnX, 0, buttonWidth, buttonHeight,
-                colorLabel, config.hornColor, newColor -> {
-                    config.hornColor = newColor;
-                    ModelManager.saveActiveModel();
-                });
-        this.listWidget.addWidget(colorPicker, SettingsList.Alignment.RIGHT);
+        ColorPicker hornColorPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.horn_color.name"),
+                config.hornColor, config.hornColorLocked,
+                newColor -> { config.hornColor = newColor; ModelManager.saveActiveModel(); },
+                locked -> { config.hornColorLocked = locked; ModelManager.saveActiveModel(); });
+        this.listWidget.addWidget(hornColorPicker, SettingsList.Alignment.RIGHT);
     }
 
     private void initBodyMenu(ConfigScreen screen, int x, int y, int width, int height) {
@@ -512,6 +509,7 @@ public class PonyCustom implements TabContent {
         ModelConfig config = ModelManager.getActiveModel();
         if (config == null) return;
         
+        if (config.hornColorLocked) config.hornColor = color;
         if (config.bodyColorLocked) config.bodyColor = color;
         if (config.neckColorLocked) config.neckColor = color;
         if (config.headColorLocked) config.headColor = color;
