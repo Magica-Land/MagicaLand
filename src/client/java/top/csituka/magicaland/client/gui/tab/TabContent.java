@@ -9,4 +9,6 @@ public interface TabContent {
     void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta, float alpha);
 
     default void onEnter() {}
+
+    default void onExit() {}
 }

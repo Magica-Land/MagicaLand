@@ -91,7 +91,9 @@ public class ConfigScreen extends Screen {
             final int currentY = y;
             TabButton tabButton = new TabButton(padding, y, leftWidth - padding * 2, tabHeight,
                     tab.getText(), isSelected, button -> {
-                        if (this.currentTab != tab) {
+                    if (this.currentTab != tab) {
+                            this.currentTab.getContent().onExit();
+
                             List<net.minecraft.client.gui.widget.ClickableWidget> oldWidgets = new ArrayList<>();
                             for (net.minecraft.client.gui.Element element : this.children()) {
                                 if (element instanceof net.minecraft.client.gui.widget.ClickableWidget widget) {
@@ -255,6 +257,7 @@ public class ConfigScreen extends Screen {
             ColorPicker.openPicker.open = false;
             ColorPicker.openPicker = null;
         }
+        this.currentTab.getContent().onExit();
         this.client.setScreen(this.parent);
     }
 }

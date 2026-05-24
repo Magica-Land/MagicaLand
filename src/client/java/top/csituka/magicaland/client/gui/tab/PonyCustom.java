@@ -64,6 +64,11 @@ public class PonyCustom implements TabContent {
         this.isEditing = false;
     }
 
+    @Override
+    public void onExit() {
+        ColorPicker.clearBodyLinkGroup();
+    }
+
     private GeckoPlayerAnimatable ponyAnimatable;
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
 
@@ -85,6 +90,8 @@ public class PonyCustom implements TabContent {
         this.rightWidth = width;
         this.rightY = y;
         this.rightHeight = height;
+
+        ColorPicker.clearBodyLinkGroup();
 
         int topMargin = 40;
         int bottomMargin = 40;
@@ -481,7 +488,17 @@ public class PonyCustom implements TabContent {
     private ColorPicker createBodyColorPicker(int x, int y, int width, int height, Text label,
             String initialColor, boolean initiallyLocked,
             Consumer<String> onColorChanged, Consumer<Boolean> onLockChanged) {
-        ColorPicker picker = new ColorPicker(x, y, width, height, label, initialColor, onColorChanged);
+        final ColorPicker[] pickerHolder = new ColorPicker[1];
+        
+        ColorPicker picker = new ColorPicker(x, y, width, height, label, initialColor, newColor -> {
+            onColorChanged.accept(newColor);
+            if (pickerHolder[0] != null && pickerHolder[0].isLocked()) {
+                syncLockedBodyColors(newColor);
+            }
+            ModelManager.saveActiveModel();
+        });
+        
+        pickerHolder[0] = picker;
         ColorPicker.addToBodyLinkGroup(picker, initiallyLocked);
         picker.setLocked(initiallyLocked);
         picker.setOnLockChanged(locked -> {
@@ -489,6 +506,22 @@ public class PonyCustom implements TabContent {
             ModelManager.saveActiveModel();
         });
         return picker;
+    }
+
+    private void syncLockedBodyColors(String color) {
+        ModelConfig config = ModelManager.getActiveModel();
+        if (config == null) return;
+        
+        if (config.bodyColorLocked) config.bodyColor = color;
+        if (config.neckColorLocked) config.neckColor = color;
+        if (config.headColorLocked) config.headColor = color;
+        if (config.noseColorLocked) config.noseColor = color;
+        if (config.leftEarColorLocked) config.leftEarColor = color;
+        if (config.rightEarColorLocked) config.rightEarColor = color;
+        if (config.leftFrontLimbColorLocked) config.leftFrontLimbColor = color;
+        if (config.rightFrontLimbColorLocked) config.rightFrontLimbColor = color;
+        if (config.leftHindLimbColorLocked) config.leftHindLimbColor = color;
+        if (config.rightHindLimbColorLocked) config.rightHindLimbColor = color;
     }
 
     private void switchMenu(ConfigScreen screen, int direction, Runnable action) {
