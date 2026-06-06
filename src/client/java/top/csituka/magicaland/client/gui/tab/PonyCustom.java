@@ -86,6 +86,7 @@ public class PonyCustom implements TabContent {
 
     @Override
     public void init(ConfigScreen screen, int x, int y, int width, int height) {
+        ColorPicker.clearBodyLinkGroup();
         this.rightX = x;
         this.rightWidth = width;
         this.rightY = y;
