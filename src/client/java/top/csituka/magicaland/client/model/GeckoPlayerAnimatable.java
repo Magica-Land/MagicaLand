@@ -60,6 +60,9 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     }
 
     public void setPlayer(AbstractClientPlayerEntity player) {
+        if (this.player != null && player != null && !this.player.getUuid().equals(player.getUuid())) {
+            fallStates.remove(this.player.getUuid());
+        }
         this.player = player;
     }
 

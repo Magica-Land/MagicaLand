@@ -40,7 +40,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.world.World;
 
-import top.csituka.magicaland.client.util.RenderLayer;
+import top.csituka.magicaland.client.util.RenderLayerHelper;
 
 public class GlowingItem {
 
@@ -53,7 +53,7 @@ public class GlowingItem {
             }
             return originalContext.getBuffer(
                     MagicGlow.getColoured(
-                            RenderLayer.getTexture(layer)
+                            RenderLayerHelper.getTexture(layer)
                                     .orElse(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE),
                             glowColor));
         };
