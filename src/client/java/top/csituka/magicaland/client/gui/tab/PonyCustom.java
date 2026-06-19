@@ -153,12 +153,12 @@ public class PonyCustom implements TabContent {
         ModelManager.refreshModelList();
         List<String> models = ModelManager.getAvailableModels();
 
-        int dropdownWidth = Math.min(160, width / 2 - 30);
+        int dropdownWidth = Math.min(120, width / 2 - 30);
         int dropdownHeight = 20;
         int iconBtnWidth = 20;
 
         int totalWidth = dropdownWidth + iconBtnWidth * 3 + 15;
-        int startX = x + width - totalWidth - 20;
+        int startX = x + width - totalWidth - 10;
         if (width < 250) {
             startX = x + (width - totalWidth) / 2;
         }
