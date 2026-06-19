@@ -85,6 +85,7 @@ public class PonyCustom implements TabContent {
 
     private static final String[] FRONT_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
     private static final String[] BACK_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
+    private static final String[] TAIL_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
     private static final String[] EYE_STYLES = {"TS", "FS", "RR"};
 
     @Override
@@ -329,6 +330,14 @@ public class PonyCustom implements TabContent {
                     ModelManager.saveActiveModel();
                 });
         this.listWidget.addWidget(backManeBtn, SettingsList.Alignment.RIGHT);
+
+        CustomButton tailBtn = createStyleButton(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.tail_style.name"),
+                config.tailStyle, TAIL_STYLES, newStyle -> {
+                    config.tailStyle = newStyle;
+                    ModelManager.saveActiveModel();
+                });
+        this.listWidget.addWidget(tailBtn, SettingsList.Alignment.RIGHT);
     }
 
     private void initFaceMenu(ConfigScreen screen, int x, int y, int width, int height) {

@@ -5,6 +5,7 @@ public class ModelConfig {
     
     public String frontManeStyle = "TS";
     public String backManeStyle = "TS";
+    public String tailStyle = "TS";
     public String eyeStyle = "TS";
 
     public String hornColor = "#FFFFFFFF";

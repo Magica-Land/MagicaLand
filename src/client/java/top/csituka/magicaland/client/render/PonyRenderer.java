@@ -122,6 +122,11 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
 
         if (boneName.equals("Bun")) return false;
 
+        if (boneName.toLowerCase().contains("tail")) {
+            if (boneName.equalsIgnoreCase("Tail")) return true;
+            return boneName.startsWith(config.tailStyle + "Tail");
+        }
+
         if (!boneName.toLowerCase().contains("mane")) return true;
 
         if (boneName.equals("Mane") || boneName.equals("FrontMane") || boneName.equals("BackMane")) return true;
