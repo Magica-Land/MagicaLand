@@ -683,6 +683,8 @@ public class PonyCustom implements TabContent {
         return new PonyRenderer(new GeckoPlayerModel() {
             @Override
             public void applyMolangQueries(GeckoPlayerAnimatable animatable, double animTime) {
+                if (MinecraftClient.getInstance().world == null)
+                    return;
                 try {
                     super.applyMolangQueries(animatable, animTime);
                 } catch (Exception e) {
