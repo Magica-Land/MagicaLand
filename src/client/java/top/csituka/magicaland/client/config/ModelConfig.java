@@ -9,6 +9,7 @@ public class ModelConfig {
     public String eyeStyle = "TS";
 
     public String hornColor = "#FFFFFFFF";
+    public String wingColor = "#FFFFFFFF";
     public String bodyColor = "#FFFFFFFF";
     public String neckColor = "#FFFFFFFF";
     public String headColor = "#FFFFFFFF";
@@ -26,7 +27,6 @@ public class ModelConfig {
 
     public boolean showHorn = true;
     public boolean showWings = false;
-    public String wingColor = "#FFFFFFFF";
 
     public boolean hornColorLocked = true;
     public boolean wingColorLocked = true;
