@@ -57,6 +57,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         if (!shouldRenderSelectedEye(bone.getName())) return;
 
         if (!config.showHorn && bone.getName().equalsIgnoreCase("Horn")) return;
+        if (!config.showWings && bone.getName().toLowerCase().contains("wing")) return;
 
         if (config.showHorn && bone.getName().equalsIgnoreCase("Horn")) {
             int color = parseHexColor(config.hornColor);
@@ -100,6 +101,27 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             red *= cr;
             green *= cg;
             blue *= cb;
+        }
+
+        String boneLC = boneName.toLowerCase();
+        if (colorField == null && (boneLC.contains("mane") || boneLC.contains("tail") || boneLC.contains("wing"))) {
+            String maneColorField = null;
+            if (boneLC.contains("tail")) {
+                maneColorField = config.tailColor;
+            } else if (boneLC.contains("wing")) {
+                maneColorField = config.wingColor;
+            } else if (boneLC.contains("mane")) {
+                boolean isFrontMane = boneName.equals("Mane") || boneName.equals("FrontMane")
+                        || boneName.startsWith(config.frontManeStyle + "FrontMane")
+                        || (boneLC.contains("frontmane") && !boneName.startsWith(config.backManeStyle + "BackMane"));
+                maneColorField = isFrontMane ? config.frontManeColor : config.backManeColor;
+            }
+            if (maneColorField != null) {
+                int color = parseHexColor(maneColorField);
+                red *= ((color >> 16) & 0xFF) / 255.0f;
+                green *= ((color >> 8) & 0xFF) / 255.0f;
+                blue *= (color & 0xFF) / 255.0f;
+            }
         }
 
         super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);

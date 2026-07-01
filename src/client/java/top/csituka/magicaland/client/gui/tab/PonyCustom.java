@@ -315,6 +315,10 @@ public class PonyCustom implements TabContent {
                 false, button -> switchMenu(screen, -1, () -> maneMenuOpen = false), false, true);
         this.listWidget.addWidget(backBtn, SettingsList.Alignment.RIGHT);
 
+        SectionLabel maneStyleLabel = new SectionLabel(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.section.mane_styles.name"));
+        this.listWidget.addWidget(maneStyleLabel, SettingsList.Alignment.RIGHT);
+
         CustomButton frontBtn = createStyleButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.front_mane_style.name"),
                 config.frontManeStyle, FRONT_MANE_STYLES, newStyle -> {
@@ -338,6 +342,34 @@ public class PonyCustom implements TabContent {
                     ModelManager.saveActiveModel();
                 });
         this.listWidget.addWidget(tailBtn, SettingsList.Alignment.RIGHT);
+
+        SectionLabel maneColorLabel = new SectionLabel(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.section.mane_colors.name"));
+        this.listWidget.addWidget(maneColorLabel, SettingsList.Alignment.RIGHT);
+
+        ColorPicker frontManeColorPicker = new ColorPicker(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.front_mane_color.name"),
+                config.frontManeColor, newColor -> {
+                    config.frontManeColor = newColor;
+                    ModelManager.saveActiveModel();
+                });
+        this.listWidget.addWidget(frontManeColorPicker, SettingsList.Alignment.RIGHT);
+
+        ColorPicker backManeColorPicker = new ColorPicker(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.back_mane_color.name"),
+                config.backManeColor, newColor -> {
+                    config.backManeColor = newColor;
+                    ModelManager.saveActiveModel();
+                });
+        this.listWidget.addWidget(backManeColorPicker, SettingsList.Alignment.RIGHT);
+
+        ColorPicker tailColorPicker = new ColorPicker(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.tail_color.name"),
+                config.tailColor, newColor -> {
+                    config.tailColor = newColor;
+                    ModelManager.saveActiveModel();
+                });
+        this.listWidget.addWidget(tailColorPicker, SettingsList.Alignment.RIGHT);
     }
 
     private void initFaceMenu(ConfigScreen screen, int x, int y, int width, int height) {
@@ -357,6 +389,10 @@ public class PonyCustom implements TabContent {
                 false, button -> switchMenu(screen, -1, () -> faceMenuOpen = false), false, true);
         this.listWidget.addWidget(backBtn, SettingsList.Alignment.RIGHT);
 
+        SectionLabel faceStyleLabel = new SectionLabel(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.section.mane_styles.name"));
+        this.listWidget.addWidget(faceStyleLabel, SettingsList.Alignment.RIGHT);
+
         CustomButton eyeBtn = createStyleButton(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.eye_style.name"),
                 config.eyeStyle, EYE_STYLES, newStyle -> {
@@ -364,6 +400,10 @@ public class PonyCustom implements TabContent {
                     ModelManager.saveActiveModel();
                 });
         this.listWidget.addWidget(eyeBtn, SettingsList.Alignment.RIGHT);
+
+        SectionLabel faceColorLabel = new SectionLabel(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.section.mane_colors.name"));
+        this.listWidget.addWidget(faceColorLabel, SettingsList.Alignment.RIGHT);
 
         ColorPicker nosePicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.nose_color.name"),
@@ -390,6 +430,10 @@ public class PonyCustom implements TabContent {
                 false, button -> switchMenu(screen, -1, () -> hornMenuOpen = false), false, true);
         this.listWidget.addWidget(backBtn, SettingsList.Alignment.RIGHT);
 
+        SectionLabel hornStyleLabel = new SectionLabel(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.section.mane_styles.name"));
+        this.listWidget.addWidget(hornStyleLabel, SettingsList.Alignment.RIGHT);
+
         Toggle hornToggle = new Toggle(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.show_horn.name"),
                 config.showHorn, toggle -> {
@@ -398,12 +442,31 @@ public class PonyCustom implements TabContent {
                 });
         this.listWidget.addWidget(hornToggle, SettingsList.Alignment.RIGHT);
 
+        Toggle wingToggle = new Toggle(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.show_wings.name"),
+                config.showWings, toggle -> {
+                    config.showWings = toggle.getState();
+                    ModelManager.saveActiveModel();
+                });
+        this.listWidget.addWidget(wingToggle, SettingsList.Alignment.RIGHT);
+
+        SectionLabel hornColorLabel = new SectionLabel(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.section.mane_colors.name"));
+        this.listWidget.addWidget(hornColorLabel, SettingsList.Alignment.RIGHT);
+
         ColorPicker hornColorPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.horn_color.name"),
                 config.hornColor, config.hornColorLocked,
                 newColor -> { config.hornColor = newColor; ModelManager.saveActiveModel(); },
                 locked -> { config.hornColorLocked = locked; ModelManager.saveActiveModel(); });
         this.listWidget.addWidget(hornColorPicker, SettingsList.Alignment.RIGHT);
+
+        ColorPicker wingColorPicker = createBodyColorPicker(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.wing_color.name"),
+                config.wingColor, config.wingColorLocked,
+                newColor -> { config.wingColor = newColor; ModelManager.saveActiveModel(); },
+                locked -> { config.wingColorLocked = locked; ModelManager.saveActiveModel(); });
+        this.listWidget.addWidget(wingColorPicker, SettingsList.Alignment.RIGHT);
     }
 
     private void initBodyMenu(ConfigScreen screen, int x, int y, int width, int height) {

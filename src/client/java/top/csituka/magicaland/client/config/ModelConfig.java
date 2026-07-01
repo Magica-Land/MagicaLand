@@ -20,10 +20,16 @@ public class ModelConfig {
     public String leftHindLimbColor = "#FFFFFFFF";
     public String rightHindLimbColor = "#FFFFFFFF";
     public String noseColor = "#FFFFFFFF";
+    public String frontManeColor = "#FFFFFFFF";
+    public String backManeColor = "#FFFFFFFF";
+    public String tailColor = "#FFFFFFFF";
 
     public boolean showHorn = true;
+    public boolean showWings = false;
+    public String wingColor = "#FFFFFFFF";
 
     public boolean hornColorLocked = true;
+    public boolean wingColorLocked = true;
     public boolean bodyColorLocked = true;
     public boolean noseColorLocked = true;
     public boolean neckColorLocked = true;
