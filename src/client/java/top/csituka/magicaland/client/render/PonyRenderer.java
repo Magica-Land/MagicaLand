@@ -111,8 +111,10 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             } else if (boneLC.contains("wing")) {
                 maneColorField = config.wingColor;
             } else if (boneLC.contains("mane")) {
+                String frontStyle = config.frontManeStyle;
                 boolean isFrontMane = boneName.equals("Mane") || boneName.equals("FrontMane")
-                        || boneName.startsWith(config.frontManeStyle + "FrontMane")
+                        || boneName.startsWith(frontStyle + "FrontMane")
+                        || (boneName.startsWith("RD/AJFrontMane") && (frontStyle.equals("RD") || frontStyle.equals("AJ")))
                         || (boneLC.contains("frontmane") && !boneName.startsWith(config.backManeStyle + "BackMane"));
                 maneColorField = isFrontMane ? config.frontManeColor : config.backManeColor;
             }
@@ -155,6 +157,9 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
 
         String frontStyle = config.frontManeStyle;
         String backStyle = config.backManeStyle;
+
+        // RD and AJ share the combined "RD/AJFrontMane" bone in the geo
+        if ((frontStyle.equals("RD") || frontStyle.equals("AJ")) && boneName.startsWith("RD/AJFrontMane")) return true;
 
         if (boneName.startsWith(frontStyle + "FrontMane")) return true;
         return boneName.startsWith(backStyle + "BackMane");
