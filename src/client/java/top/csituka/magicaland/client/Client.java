@@ -8,6 +8,7 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.gui.ConfigScreen;
+import top.csituka.magicaland.client.network.ClientNetworkHandler;
 
 public class Client implements ClientModInitializer {
     private static KeyBinding configKeyBinding;
@@ -16,6 +17,9 @@ public class Client implements ClientModInitializer {
     public void onInitializeClient() {
         Config.load();
         top.csituka.magicaland.client.config.ModelManager.init();
+
+        // 注册客户端网络处理
+        ClientNetworkHandler.register();
 
         configKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.magicaland.config",

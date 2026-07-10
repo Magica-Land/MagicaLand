@@ -93,7 +93,8 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
 
         PlayerFallState fallState = fallStates.computeIfAbsent(player.getUuid(), k -> new PlayerFallState());
         boolean isOnGround = player.isOnGround();
-        boolean moving = state.isMoving() || player.forwardSpeed != 0 || player.sidewaysSpeed != 0;
+        float limbSpeed = player.limbAnimator.getSpeed();
+        boolean moving = state.isMoving() || player.forwardSpeed != 0 || player.sidewaysSpeed != 0 || limbSpeed > 0.01f;
 
         if (player.getAbilities().flying)
             return false;
@@ -107,7 +108,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             return false;
         if (player.isSprinting())
             return false;
-        if (player.forwardSpeed < 0)
+        if (player.forwardSpeed < 0 && limbSpeed < 0.01f)
             return false;
         if (moving)
             return false;
@@ -166,7 +167,8 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
 
         PlayerFallState fallState = fallStates.computeIfAbsent(player.getUuid(), k -> new PlayerFallState());
         boolean isOnGround = player.isOnGround();
-        boolean moving = state.isMoving() || player.forwardSpeed != 0 || player.sidewaysSpeed != 0;
+        float limbSpeed = player.limbAnimator.getSpeed();
+        boolean moving = state.isMoving() || player.forwardSpeed != 0 || player.sidewaysSpeed != 0 || limbSpeed > 0.01f;
 
         if (!isOnGround && !player.getAbilities().flying && !player.isTouchingWater()) {
             fallState.maxFallDistance = Math.max(fallState.maxFallDistance, player.fallDistance);

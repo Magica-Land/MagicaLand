@@ -1,5 +1,6 @@
 package top.csituka.magicaland.mixin.client;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -7,13 +8,18 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import software.bernie.geckolib.renderer.GeoObjectRenderer;
 import top.csituka.magicaland.client.config.Config;
+import top.csituka.magicaland.client.config.ModelConfig;
+import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
+import top.csituka.magicaland.client.network.ClientNetworkHandler;
 import top.csituka.magicaland.client.render.PonyRenderer;
+import top.csituka.magicaland.network.NetworkHandler;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.util.UUID;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,7 +37,7 @@ public abstract class PlayerEntityRendererMixin
     private GeckoPlayerAnimatable ponyAnimatable;
 
     @Unique
-    private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
+    private PonyRenderer ponyRenderer;
 
     @Unique
     private static final Map<UUID, Float> flightRolls = new HashMap<>();
@@ -47,81 +53,120 @@ public abstract class PlayerEntityRendererMixin
         this.ponyRenderer = new PonyRenderer();
     }
 
+    /**
+     * 核心渲染注入：决定使用 pony 模型还是原版模型。
+     * 
+     * 判定逻辑：
+     * 1. replacePlayerModel=false → 走原版渲染（不取消）
+     * 2. 渲染的是本地玩家 → 使用本地活跃模型
+     * 3. 渲染的是远程玩家：
+     *    a. 服务端有mod 且 该玩家有远程模型配置 → 使用远程模型
+     *    b. 服务端无mod 或 该玩家无模型 → 走原版渲染（不取消）
+     */
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     private void onRender(AbstractClientPlayerEntity player, float f, float g, MatrixStack matrixStack,
             VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        if (Config.getInstance().replacePlayerModel) {
-            this.ponyAnimatable.setPlayer(player);
+        if (!Config.getInstance().replacePlayerModel) {
+            return;
+        }
 
-            matrixStack.push();
+        MinecraftClient client = MinecraftClient.getInstance();
+        boolean isSelf = client.player != null && player.getUuid().equals(client.player.getUuid());
 
-            if (player.isSleeping()) {
-                net.minecraft.util.math.Direction direction = player.getSleepingDirection();
-                if (direction != null) {
-                    float sleepYaw = direction.asRotation();
-                    matrixStack.multiply(
-                            net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(270.0F - sleepYaw));
-                    matrixStack.translate(-1.7, -0.1, 0.0);
-                    matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(270.0F));
-                    matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(90.0F));
-                } else {
-                    float bodyYaw = net.minecraft.util.math.MathHelper.lerpAngleDegrees(g, player.prevBodyYaw,
-                            player.bodyYaw);
-                    matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - bodyYaw));
-                }
+        ModelConfig configToUse;
+        if (isSelf) {
+            configToUse = ModelManager.getActiveModel();
+            if (configToUse == null) {
+                return;
+            }
+            this.ponyRenderer.clearOverride();
+        } else {
+            if (NetworkHandler.serverHasMod && ClientNetworkHandler.remoteModels.containsKey(player.getUuid())) {
+                configToUse = ClientNetworkHandler.remoteModels.get(player.getUuid());
+                this.ponyRenderer.setOverrideConfig(configToUse);
+            } else {
+                return;
+            }
+        }
+
+        this.ponyAnimatable.setPlayer(player);
+
+        matrixStack.push();
+
+        if (player.isSleeping()) {
+            net.minecraft.util.math.Direction direction = player.getSleepingDirection();
+            if (direction != null) {
+                float sleepYaw = direction.asRotation();
+                matrixStack.multiply(
+                        net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(270.0F - sleepYaw));
+                matrixStack.translate(-1.7, -0.1, 0.0);
+                matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(270.0F));
+                matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(90.0F));
             } else {
                 float bodyYaw = net.minecraft.util.math.MathHelper.lerpAngleDegrees(g, player.prevBodyYaw,
                         player.bodyYaw);
-                matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - bodyYaw));
+                matrixStack
+                        .multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - bodyYaw));
+            }
+        } else {
+            float bodyYaw = net.minecraft.util.math.MathHelper.lerpAngleDegrees(g, player.prevBodyYaw,
+                    player.bodyYaw);
+            matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - bodyYaw));
 
-                if (player.getAbilities().flying && player.isSprinting()) {
-                    float yawDelta = net.minecraft.util.math.MathHelper
-                            .wrapDegrees(player.bodyYaw - player.prevBodyYaw);
-                    float targetRoll = net.minecraft.util.math.MathHelper.clamp(yawDelta * -2.5F, -30.0F, 30.0F);
-                    float currentRoll = flightRolls.getOrDefault(player.getUuid(), 0.0F);
-                    currentRoll = net.minecraft.util.math.MathHelper.lerp(0.15F, currentRoll, targetRoll);
+            if (player.getAbilities().flying && player.isSprinting()) {
+                float yawDelta = net.minecraft.util.math.MathHelper
+                        .wrapDegrees(player.bodyYaw - player.prevBodyYaw);
+                float targetRoll = net.minecraft.util.math.MathHelper.clamp(yawDelta * -2.5F, -30.0F, 30.0F);
+                float currentRoll = flightRolls.getOrDefault(player.getUuid(), 0.0F);
+                currentRoll = net.minecraft.util.math.MathHelper.lerp(0.15F, currentRoll, targetRoll);
+                flightRolls.put(player.getUuid(), currentRoll);
+
+                matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(currentRoll));
+            } else if (flightRolls.containsKey(player.getUuid())) {
+                float currentRoll = flightRolls.get(player.getUuid());
+                currentRoll = net.minecraft.util.math.MathHelper.lerp(0.15F, currentRoll, 0.0F);
+                if (Math.abs(currentRoll) < 0.1F) {
+                    flightRolls.remove(player.getUuid());
+                } else {
                     flightRolls.put(player.getUuid(), currentRoll);
-
-                    matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(currentRoll));
-                } else if (flightRolls.containsKey(player.getUuid())) {
-                    float currentRoll = flightRolls.get(player.getUuid());
-                    currentRoll = net.minecraft.util.math.MathHelper.lerp(0.15F, currentRoll, 0.0F);
-                    if (Math.abs(currentRoll) < 0.1F) {
-                        flightRolls.remove(player.getUuid());
-                    } else {
-                        flightRolls.put(player.getUuid(), currentRoll);
-                        matrixStack
-                                .multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(currentRoll));
-                    }
+                    matrixStack
+                            .multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees(currentRoll));
                 }
             }
-
-            double yOffset = -0.5;
-            if (player.hasVehicle()) {
-                net.minecraft.entity.Entity vehicle = player.getVehicle();
-                if (vehicle instanceof net.minecraft.entity.passive.PigEntity) {
-                    yOffset -= 0.08;
-                } else if (vehicle instanceof net.minecraft.entity.passive.AbstractHorseEntity) {
-                    yOffset -= 0.06;
-                } else if (vehicle instanceof net.minecraft.entity.vehicle.BoatEntity
-                        || vehicle instanceof net.minecraft.entity.vehicle.AbstractMinecartEntity) {
-                    yOffset += 0.4;
-                }
-            }
-
-            matrixStack.translate(-0.5, yOffset, -0.5);
-
-            RenderLayer renderLayer = this.ponyRenderer.getRenderType(this.ponyAnimatable,
-                    this.ponyRenderer.getTextureLocation(this.ponyAnimatable), vertexConsumerProvider, g);
-            VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(renderLayer);
-            this.ponyRenderer.render(matrixStack, this.ponyAnimatable, vertexConsumerProvider, renderLayer,
-                    vertexConsumer, i);
-
-            this.renderMagicHeldItem(player, matrixStack, vertexConsumerProvider, i, g);
-
-            matrixStack.pop();
-            ci.cancel();
         }
+
+        double yOffset = -0.5;
+        if (player.hasVehicle()) {
+            net.minecraft.entity.Entity vehicle = player.getVehicle();
+            if (vehicle instanceof net.minecraft.entity.passive.PigEntity) {
+                yOffset -= 0.08;
+            } else if (vehicle instanceof net.minecraft.entity.passive.AbstractHorseEntity) {
+                yOffset -= 0.06;
+            } else if (vehicle instanceof net.minecraft.entity.vehicle.BoatEntity
+                    || vehicle instanceof net.minecraft.entity.vehicle.AbstractMinecartEntity) {
+                yOffset += 0.4;
+            }
+        }
+
+        matrixStack.translate(-0.5, yOffset, -0.5);
+
+        RenderLayer renderLayer = this.ponyRenderer.getRenderType(this.ponyAnimatable,
+                this.ponyRenderer.getTextureLocation(this.ponyAnimatable), vertexConsumerProvider, g);
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(renderLayer);
+        this.ponyRenderer.render(matrixStack, this.ponyAnimatable, vertexConsumerProvider, renderLayer,
+                vertexConsumer, i);
+
+        this.renderMagicHeldItem(player, matrixStack, vertexConsumerProvider, i, g);
+
+        matrixStack.pop();
+
+        this.renderLabelIfPresent(player, player.getDisplayName(), matrixStack, vertexConsumerProvider, i);
+
+        if (!isSelf) {
+            this.ponyRenderer.clearOverride();
+        }
+
+        ci.cancel();
     }
 
     @Unique

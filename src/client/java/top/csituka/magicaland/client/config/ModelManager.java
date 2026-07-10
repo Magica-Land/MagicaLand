@@ -51,6 +51,7 @@ public class ModelManager {
             Config.getInstance().activeModelName = model.name;
             Config.save();
         }
+        syncToServer();
     }
 
     public static void refreshModelList() {
@@ -148,6 +149,14 @@ public class ModelManager {
             GSON.toJson(activeModel, writer);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        syncToServer();
+    }
+
+    private static void syncToServer() {
+        try {
+            top.csituka.magicaland.client.network.ClientNetworkHandler.sendModelToServer();
+        } catch (Exception ignored) {
         }
     }
 

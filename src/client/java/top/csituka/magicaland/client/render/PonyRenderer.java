@@ -17,6 +17,8 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
     private static final Identifier PONY_BASE = new Identifier("magicaland", "textures/entity/base.png");
     private static final Identifier PONY_TS = new Identifier("magicaland", "textures/entity/mane.png");
 
+    private ModelConfig overrideConfig = null;
+
     public PonyRenderer() {
         super(new GeckoPlayerModel());
     }
@@ -25,13 +27,28 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         super(model);
     }
 
+    public void setOverrideConfig(ModelConfig config) {
+        this.overrideConfig = config;
+    }
+
+    public void clearOverride() {
+        this.overrideConfig = null;
+    }
+
+    private ModelConfig getEffectiveConfig() {
+        if (overrideConfig != null) {
+            return overrideConfig;
+        }
+        return ModelManager.getActiveModel();
+    }
+
     @Override
     public void renderRecursively(MatrixStack poseStack, GeckoPlayerAnimatable animatable,
-                                   GeoBone bone, RenderLayer renderType,
-                                   VertexConsumerProvider bufferSource, VertexConsumer buffer,
-                                   boolean isReRender, float partialTick,
-                                   int packedLight, int packedOverlay,
-                                   float red, float green, float blue, float alpha) {
+            GeoBone bone, RenderLayer renderType,
+            VertexConsumerProvider bufferSource, VertexConsumer buffer,
+            boolean isReRender, float partialTick,
+            int packedLight, int packedOverlay,
+            float red, float green, float blue, float alpha) {
         String name = bone.getName().toLowerCase();
         boolean isOther = name.contains("mane") || name.contains("tail") || name.contains("wing");
         Identifier texture = isOther ? PONY_TS : PONY_BASE;
@@ -45,19 +62,23 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
 
     @Override
     public void renderCubesOfBone(MatrixStack poseStack, GeoBone bone,
-                                   VertexConsumer buffer, int packedLight, int packedOverlay,
-                                   float red, float green, float blue, float alpha) {
-        ModelConfig config = ModelManager.getActiveModel();
+            VertexConsumer buffer, int packedLight, int packedOverlay,
+            float red, float green, float blue, float alpha) {
+        ModelConfig config = getEffectiveConfig();
         if (config == null) {
             super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             return;
         }
 
-        if (!shouldRenderSelectedMane(bone.getName())) return;
-        if (!shouldRenderSelectedEye(bone.getName())) return;
+        if (!shouldRenderSelectedMane(bone.getName()))
+            return;
+        if (!shouldRenderSelectedEye(bone.getName()))
+            return;
 
-        if (!config.showHorn && bone.getName().equalsIgnoreCase("Horn")) return;
-        if (!config.showWings && bone.getName().toLowerCase().contains("wing")) return;
+        if (!config.showHorn && bone.getName().equalsIgnoreCase("Horn"))
+            return;
+        if (!config.showWings && bone.getName().toLowerCase().contains("wing"))
+            return;
 
         if (config.showHorn && bone.getName().equalsIgnoreCase("Horn")) {
             int color = parseHexColor(config.hornColor);
@@ -114,7 +135,8 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                 String frontStyle = config.frontManeStyle;
                 boolean isFrontMane = boneName.equals("Mane") || boneName.equals("FrontMane")
                         || boneName.startsWith(frontStyle + "FrontMane")
-                        || (boneName.startsWith("RD/AJFrontMane") && (frontStyle.equals("RD") || frontStyle.equals("AJ")))
+                        || (boneName.startsWith("RD/AJFrontMane")
+                                && (frontStyle.equals("RD") || frontStyle.equals("AJ")))
                         || (boneLC.contains("frontmane") && !boneName.startsWith(config.backManeStyle + "BackMane"));
                 maneColorField = isFrontMane ? config.frontManeColor : config.backManeColor;
             }
@@ -141,40 +163,49 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
     }
 
     private boolean shouldRenderSelectedMane(String boneName) {
-        ModelConfig config = ModelManager.getActiveModel();
-        if (config == null) return true;
+        ModelConfig config = getEffectiveConfig();
+        if (config == null)
+            return true;
 
-        if (boneName.equals("Bun")) return false;
+        if (boneName.equals("Bun"))
+            return false;
 
         if (boneName.toLowerCase().contains("tail")) {
-            if (boneName.equalsIgnoreCase("Tail")) return true;
+            if (boneName.equalsIgnoreCase("Tail"))
+                return true;
             return boneName.startsWith(config.tailStyle + "Tail");
         }
 
-        if (!boneName.toLowerCase().contains("mane")) return true;
+        if (!boneName.toLowerCase().contains("mane"))
+            return true;
 
-        if (boneName.equals("Mane") || boneName.equals("FrontMane") || boneName.equals("BackMane")) return true;
+        if (boneName.equals("Mane") || boneName.equals("FrontMane") || boneName.equals("BackMane"))
+            return true;
 
         String frontStyle = config.frontManeStyle;
         String backStyle = config.backManeStyle;
 
         // RD and AJ share the combined "RD/AJFrontMane" bone in the geo
-        if ((frontStyle.equals("RD") || frontStyle.equals("AJ")) && boneName.startsWith("RD/AJFrontMane")) return true;
+        if ((frontStyle.equals("RD") || frontStyle.equals("AJ")) && boneName.startsWith("RD/AJFrontMane"))
+            return true;
 
-        if (boneName.startsWith(frontStyle + "FrontMane")) return true;
+        if (boneName.startsWith(frontStyle + "FrontMane"))
+            return true;
         return boneName.startsWith(backStyle + "BackMane");
     }
 
     private boolean shouldRenderSelectedEye(String boneName) {
-        ModelConfig config = ModelManager.getActiveModel();
-        if (config == null) return true;
+        ModelConfig config = getEffectiveConfig();
+        if (config == null)
+            return true;
         String eyeStyle = config.eyeStyle;
 
         boolean isEyeBone = boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye")
                 || boneName.equals("FSCommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
                 || boneName.equals("RRCommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
 
-        if (!isEyeBone) return true;
+        if (!isEyeBone)
+            return true;
 
         return switch (eyeStyle) {
             case "FS" -> boneName.equals("FSCommonFace") || boneName.equals("leye2") || boneName.equals("reye2");
