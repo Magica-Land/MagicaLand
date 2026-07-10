@@ -49,6 +49,25 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             boolean isReRender, float partialTick,
             int packedLight, int packedOverlay,
             float red, float green, float blue, float alpha) {
+
+        if (animatable.getPlayer() != null) {
+            boolean sleepingOrSneaking = animatable.getPlayer().isSleeping()
+                    || animatable.getPlayer().isSneaking();
+            if (sleepingOrSneaking) {
+                String boneName = bone.getName();
+                if (boneName.equals("close")) {
+                    bone.setScaleX(1);
+                    bone.setScaleY(1);
+                    bone.setScaleZ(1);
+                } else if (boneName.equals("emot")
+                        || boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye")
+                        || boneName.equals("FSCommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
+                        || boneName.equals("RRCommonFace") || boneName.equals("leye3") || boneName.equals("reye3")) {
+                    return;
+                }
+            }
+        }
+
         String name = bone.getName().toLowerCase();
         boolean isOther = name.contains("mane") || name.contains("tail") || name.contains("wing");
         Identifier texture = isOther ? PONY_TS : PONY_BASE;

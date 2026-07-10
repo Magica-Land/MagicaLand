@@ -119,6 +119,8 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     private PlayState blinkPredicate(AnimationState<GeckoPlayerAnimatable> state) {
         if (player == null)
             return PlayState.STOP;
+        if (player.isSleeping() || player.isSneaking())
+            return PlayState.STOP;
         state.getController().setAnimation(BLINK_ANIM);
         return PlayState.CONTINUE;
     }
