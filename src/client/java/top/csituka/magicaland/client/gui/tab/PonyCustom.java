@@ -72,8 +72,41 @@ public class PonyCustom implements TabContent {
         ColorPicker.clearBodyLinkGroup();
     }
 
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && mouseX >= this.rightX && mouseX <= this.rightX + this.rightWidth) {
+            this.isDraggingModel = true;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (button == 0) {
+            this.isDraggingModel = false;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        if (button == 0 && this.isDraggingModel) {
+            this.previewYaw -= (float) deltaX * dragSensitivity;
+            this.previewPitch += (float) deltaY * dragSensitivity;
+            this.previewPitch = Math.max(-90.0f, Math.min(90.0f, this.previewPitch));
+            return true;
+        }
+        return false;
+    }
+
     private GeckoPlayerAnimatable ponyAnimatable;
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
+
+    private float previewYaw = 155.0f;
+    private float previewPitch = -10.0f;
+    private boolean isDraggingModel = false;
+    private float dragSensitivity = 0.5f;
 
     private DropdownBox modelDropdown;
     private CustomButton editBtn;
@@ -724,8 +757,8 @@ public class PonyCustom implements TabContent {
         matrices.scale(modelScale * alpha, modelScale * alpha, modelScale * alpha);
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
 
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(155.0f));
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-10.0f));
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(previewYaw));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(previewPitch));
 
         try {
             RenderLayer renderLayer = this.ponyRenderer.getRenderType(this.ponyAnimatable,
@@ -738,6 +771,16 @@ public class PonyCustom implements TabContent {
         } catch (Exception e) {
             LOGGER.warn("Failed to render pony model preview in GUI", e);
         }
+
+        VertexConsumer lines = context.getVertexConsumers().getBuffer(RenderLayer.getLines());
+        org.joml.Matrix4f mat = matrices.peek().getPositionMatrix();
+        float s = 0.6f;
+        lines.vertex(mat, -s, 0, 0).color(0, 255, 255, 255).normal(0, 1, 0).next();
+        lines.vertex(mat,  s, 0, 0).color(0, 255, 255, 255).normal(0, 1, 0).next();
+        lines.vertex(mat, 0, -s, 0).color(0, 255, 255, 255).normal(0, 1, 0).next();
+        lines.vertex(mat, 0,  s, 0).color(0, 255, 255, 255).normal(0, 1, 0).next();
+        lines.vertex(mat, 0, 0, -s).color(0, 255, 255, 255).normal(0, 1, 0).next();
+        lines.vertex(mat, 0, 0,  s).color(0, 255, 255, 255).normal(0, 1, 0).next();
 
         matrices.pop();
     }

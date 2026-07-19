@@ -11,4 +11,10 @@ public interface TabContent {
     default void onEnter() {}
 
     default void onExit() {}
+
+    default boolean mouseClicked(double mouseX, double mouseY, int button) { return false; }
+
+    default boolean mouseReleased(double mouseX, double mouseY, int button) { return false; }
+
+    default boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) { return false; }
 }

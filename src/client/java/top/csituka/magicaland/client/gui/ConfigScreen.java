@@ -228,7 +228,18 @@ public class ConfigScreen extends Screen {
                 ColorPicker.openPicker = null;
             }
         }
+        if (this.currentTab != null && this.currentTab.getContent().mouseClicked(mouseX, mouseY, button)) {
+            return true;
+        }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (this.currentTab != null && this.currentTab.getContent().mouseReleased(mouseX, mouseY, button)) {
+            return true;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
@@ -237,6 +248,9 @@ public class ConfigScreen extends Screen {
             if (ColorPicker.openPicker.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
                 return true;
             }
+        }
+        if (this.currentTab != null && this.currentTab.getContent().mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
+            return true;
         }
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
