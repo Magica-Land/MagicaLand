@@ -76,7 +76,8 @@ public class PonyCustom implements TabContent {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && mouseX >= this.rightX && mouseX <= this.rightX + this.rightWidth) {
+        if (button == 0 && mouseX >= this.rightX
+                && mouseX <= this.rightX + this.rightWidth * 0.55) {
             this.isDraggingModel = true;
             return true;
         }
