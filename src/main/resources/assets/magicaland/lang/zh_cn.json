@@ -53,6 +53,5 @@
   "text.magicaland.config.tooltip.delete": "删除",
   "text.magicaland.config.tooltip.new": "新建",
   "text.magicaland.config.delete_confirm.title": "确定要删除该模型吗？",
-  "text.magicaland.config.delete_confirm.message": "删除后将无法恢复！",
-  "text.magicaland.title.button.pony_custom": "捏马"
+  "text.magicaland.config.delete_confirm.message": "删除后将无法恢复！"
 }

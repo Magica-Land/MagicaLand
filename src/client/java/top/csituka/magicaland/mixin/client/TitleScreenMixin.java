@@ -110,7 +110,7 @@ public class TitleScreenMixin {
         int y = screenHeight - buttonHeight - padding - 25;
 
         ButtonWidget ponyButton = ButtonWidget.builder(
-                Text.translatable("text.magicaland.title.button.pony_custom"),
+                Text.translatable("text.magicaland.console.tab.pony_custom"),
                 button -> client.setScreen(
                         new ConfigScreen((Screen) (Object) this, ConfigScreen.Tab.PONY_CUSTOM)))
                 .dimensions(x, y, buttonWidth, buttonHeight)
