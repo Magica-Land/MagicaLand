@@ -753,12 +753,38 @@ public class PonyCustom implements TabContent {
 
         MatrixStack matrices = context.getMatrices();
         matrices.push();
+
+        // --- 轴心定位 ---
+        // translate 确定旋转轴心在屏幕上的位置
         matrices.translate(modelX, modelY, 100);
+
+        // scale 放大模型（不影响轴心位置）
         matrices.scale(modelScale * alpha, modelScale * alpha, modelScale * alpha);
+
+        // 180° Z 旋转使模型面朝观察者
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
 
+        // --- 鼠标拖动旋转（绕轴心） ---
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(previewYaw));
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(previewPitch));
+
+        // --- 轴心可视化：青色十字标记旋转原点（在模型偏移之前绘制） ---
+        VertexConsumer lines = context.getVertexConsumers().getBuffer(RenderLayer.getLines());
+        org.joml.Matrix4f pivotMat = matrices.peek().getPositionMatrix();
+        float s = 0.6f;
+        lines.vertex(pivotMat, -s, 0, 0).color(0, 255, 255, 255).normal(0, 1, 0).next();
+        lines.vertex(pivotMat,  s, 0, 0).color(0, 255, 255, 255).normal(0, 1, 0).next();
+        lines.vertex(pivotMat, 0, -s, 0).color(0, 255, 255, 255).normal(0, 1, 0).next();
+        lines.vertex(pivotMat, 0,  s, 0).color(0, 255, 255, 255).normal(0, 1, 0).next();
+        lines.vertex(pivotMat, 0, 0, -s).color(0, 255, 255, 255).normal(0, 1, 0).next();
+        lines.vertex(pivotMat, 0, 0,  s).color(0, 255, 255, 255).normal(0, 1, 0).next();
+
+        // --- 模型相对轴心的偏移：仅作用于模型渲染，不影响轴心标记 ---
+        matrices.push();
+        float pivotOffsetX = -0.5f;
+        float pivotOffsetY = -1.5f;
+        float pivotOffsetZ = -0.7f;
+        matrices.translate(pivotOffsetX, pivotOffsetY, pivotOffsetZ);
 
         try {
             RenderLayer renderLayer = this.ponyRenderer.getRenderType(this.ponyAnimatable,
@@ -772,15 +798,7 @@ public class PonyCustom implements TabContent {
             LOGGER.warn("Failed to render pony model preview in GUI", e);
         }
 
-        VertexConsumer lines = context.getVertexConsumers().getBuffer(RenderLayer.getLines());
-        org.joml.Matrix4f mat = matrices.peek().getPositionMatrix();
-        float s = 0.6f;
-        lines.vertex(mat, -s, 0, 0).color(0, 255, 255, 255).normal(0, 1, 0).next();
-        lines.vertex(mat,  s, 0, 0).color(0, 255, 255, 255).normal(0, 1, 0).next();
-        lines.vertex(mat, 0, -s, 0).color(0, 255, 255, 255).normal(0, 1, 0).next();
-        lines.vertex(mat, 0,  s, 0).color(0, 255, 255, 255).normal(0, 1, 0).next();
-        lines.vertex(mat, 0, 0, -s).color(0, 255, 255, 255).normal(0, 1, 0).next();
-        lines.vertex(mat, 0, 0,  s).color(0, 255, 255, 255).normal(0, 1, 0).next();
+        matrices.pop();
 
         matrices.pop();
     }
