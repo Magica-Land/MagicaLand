@@ -221,6 +221,12 @@ public class ConfigScreen extends Screen {
                 }
             }
         }
+        
+        context.getMatrices().push();
+        context.getMatrices().translate(0, this.tabAnimator.getContentOffset(), 0);
+        this.currentTab.getContent().postRender(context, rightX, 0, rightWidth - padding, this.height, mouseX, mouseY,
+                delta, currentAlpha);
+        context.getMatrices().pop();
     }
 
     @Override

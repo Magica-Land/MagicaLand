@@ -67,6 +67,7 @@ public class TabAnimator {
         context.getMatrices().translate(0, prevOffset, 0);
 
         this.previousTab.getContent().render(context, rightX, 0, rightWidth - padding, height, -1, -1, delta, alpha);
+        this.previousTab.getContent().postRender(context, rightX, 0, rightWidth - padding, height, -1, -1, delta, alpha);
 
         for (ClickableWidget widget : this.previousWidgets) {
             widget.setAlpha(1.0f);

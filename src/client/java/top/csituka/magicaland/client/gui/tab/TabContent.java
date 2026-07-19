@@ -17,4 +17,6 @@ public interface TabContent {
     default boolean mouseReleased(double mouseX, double mouseY, int button) { return false; }
 
     default boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) { return false; }
+
+    default void postRender(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta, float alpha) {}
 }

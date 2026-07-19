@@ -740,6 +740,14 @@ public class PonyCustom implements TabContent {
             this.listWidget.setBaseAlpha(alpha);
             this.listWidget.render(context, mouseX, mouseY, delta);
         }
+    }
+
+    @Override
+    public void postRender(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta,
+            float alpha) {
+        ModelConfig activeModel = ModelManager.getActiveModel();
+        if ((!isEditing && (createNewOpen || deleteConfirmOpen)) || activeModel == null)
+            return;
 
         if (this.ponyAnimatable == null)
             return;
@@ -755,7 +763,6 @@ public class PonyCustom implements TabContent {
         int modelY = y + height / 2 + (int)(height * 0.1f);
 
         MatrixStack matrices = context.getMatrices();
-        context.disableScissor();
         matrices.push();
 
         matrices.translate(modelX, modelY, 100);
@@ -783,10 +790,7 @@ public class PonyCustom implements TabContent {
         }
 
         matrices.pop();
-
         matrices.pop();
-
-        context.enableScissor(this.rightX, 0, this.rightWidth + 120, this.rightHeight);
     }
 
     private GeoObjectRenderer<GeckoPlayerAnimatable> createPonyRenderer() {
