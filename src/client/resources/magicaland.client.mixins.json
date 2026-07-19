@@ -6,7 +6,9 @@
   "client": [
     "HeldItemRendererMixin",
     "LivingEntityRendererAccessor",
-    "PlayerEntityRendererMixin"
+    "PlayerEntityRendererMixin",
+    "ScreenAccessor",
+    "TitleScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

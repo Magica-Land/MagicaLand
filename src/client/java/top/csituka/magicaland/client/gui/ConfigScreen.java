@@ -47,8 +47,15 @@ public class ConfigScreen extends Screen {
     }
 
     public ConfigScreen(Screen parent) {
+        this(parent, null);
+    }
+
+    public ConfigScreen(Screen parent, Tab initialTab) {
         super(Text.translatable("text.magicaland.console.title"));
         this.parent = parent;
+        if (initialTab != null) {
+            this.currentTab = initialTab;
+        }
         FabricLoader.getInstance().getModContainer("magicaland").ifPresent(container -> {
             this.modVersion = container.getMetadata().getVersion().getFriendlyString();
         });
