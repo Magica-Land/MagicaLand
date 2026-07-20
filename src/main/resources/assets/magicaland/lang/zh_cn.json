@@ -53,5 +53,8 @@
   "text.magicaland.config.tooltip.delete": "删除",
   "text.magicaland.config.tooltip.new": "新建",
   "text.magicaland.config.delete_confirm.title": "确定要删除该模型吗？",
-  "text.magicaland.config.delete_confirm.message": "删除后将无法恢复！"
+  "text.magicaland.config.delete_confirm.message": "删除后将无法恢复！",
+  "text.magicaland.config.tab.general": "通用",
+  "text.magicaland.config.tab.game": "游戏",
+  "text.magicaland.config.tab.network": "网络"
 }
