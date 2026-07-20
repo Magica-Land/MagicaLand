@@ -52,7 +52,6 @@ public class Settings implements TabContent {
         int bottomMargin = 40;
         tabBarY = y + topMargin;
 
-        // 配置列表从分页栏 + 间隙之后开始
         int listTop = y + topMargin + TAB_BAR_HEIGHT + TAB_BAR_GAP;
         int listBottom = y + height - bottomMargin;
 
@@ -60,7 +59,6 @@ public class Settings implements TabContent {
                 listTop, listBottom, 24);
         listWidget.setLeftPos(x);
 
-        // 计算分页布局，更新指示器目标位置
         int tabWidth = buttonWidth / TAB_KEYS.length;
         int totalWidth = tabWidth * TAB_KEYS.length;
         int startX = buttonX + (buttonWidth - totalWidth) / 2;
@@ -70,7 +68,6 @@ public class Settings implements TabContent {
             indicatorX = newTarget;
         }
 
-        // 委托当前分页构建配置项
         PAGES[selectedTab].build(listWidget, buttonX, buttonWidth);
 
         screen.addConsoleElement(listWidget);
@@ -79,7 +76,6 @@ public class Settings implements TabContent {
     @Override
     public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta,
             float alpha) {
-        // 动画更新指示器位置
         if (targetIndicatorX >= 0) {
             float diff = targetIndicatorX - indicatorX;
             if (Math.abs(diff) > 0.5f) {
@@ -125,7 +121,6 @@ public class Settings implements TabContent {
                     textX, tabBarY + 6, textColor, false);
         }
 
-        // 选中分页下方的短指示线，长度与文字宽度匹配，紧靠文字下方
         int lineY = tabBarY + 20;
         Text selLabel = Text.translatable(TAB_KEYS[selectedTab]);
         int selTextWidth = textRenderer.getWidth(selLabel);
@@ -133,7 +128,6 @@ public class Settings implements TabContent {
         int selLeft = startX + tabWidth * selectedTab;
         int indCenter = selLeft + tabWidth / 2;
         if (indicatorX >= 0) {
-            // 以 indicatorX 为分页中心，绘制定宽的指示线
             int indCenterX = Math.round(indicatorX) + tabWidth / 2;
             context.fill(indCenterX - indWidth / 2, lineY,
                     indCenterX + indWidth / 2, lineY + 2, 0xFFFFFFFF);
