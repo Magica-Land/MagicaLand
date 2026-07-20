@@ -16,6 +16,7 @@ public class CustomButton extends PressableWidget {
     private final boolean showArrow;
     private final boolean noBackground;
     private final boolean textAlignLeft;
+    private String valueText;
     private static final String ARROW = "  →";
 
     public CustomButton(int x, int y, int width, int height, Text message, boolean isSelected,
@@ -44,6 +45,21 @@ public class CustomButton extends PressableWidget {
         this.showArrow = showArrow;
         this.noBackground = noBackground;
         this.textAlignLeft = showArrow || noBackground;
+    }
+
+    public CustomButton(int x, int y, int width, int height, Text label, String value, boolean isSelected,
+            Consumer<CustomButton> onPress) {
+        super(x, y, width, height, label);
+        this.onPress = onPress;
+        this.currentAlpha = isSelected ? 0.35f : 0.15f;
+        this.showArrow = false;
+        this.noBackground = false;
+        this.textAlignLeft = false;
+        this.valueText = value;
+    }
+
+    public void setValue(String value) {
+        this.valueText = value;
     }
 
     @Override
@@ -99,10 +115,18 @@ public class CustomButton extends PressableWidget {
         }
 
         if (textAlpha > 0) {
-            if (this.textAlignLeft) {
-                var textRenderer = MinecraftClient.getInstance().textRenderer;
+            var textRenderer = MinecraftClient.getInstance().textRenderer;
+            int textY = this.getY() + (this.height - 8) / 2;
+
+            if (valueText != null) {
+                context.drawTextWithShadow(textRenderer, this.getMessage(),
+                        this.getX() + 6, textY, (textAlpha << 24) | 0xFFFFFF);
+                int valueWidth = textRenderer.getWidth(valueText);
+                context.drawTextWithShadow(textRenderer, valueText,
+                        this.getX() + this.width - 6 - valueWidth, textY,
+                        (textAlpha << 24) | 0xFFFFFF);
+            } else if (this.textAlignLeft) {
                 int textX = this.getX() + 6;
-                int textY = this.getY() + (this.height - 8) / 2;
                 context.drawTextWithShadow(textRenderer, this.getMessage(),
                         textX, textY, (textAlpha << 24) | 0xFFFFFF);
                 if (this.showArrow) {
@@ -111,8 +135,8 @@ public class CustomButton extends PressableWidget {
                             arrowX, textY, (textAlpha << 24) | 0xFFFFFF);
                 }
             } else {
-                context.drawCenteredTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
-                        this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
+                context.drawCenteredTextWithShadow(textRenderer, this.getMessage(),
+                        this.getX() + this.width / 2, textY, (textAlpha << 24) | 0xFFFFFF);
             }
         }
     }

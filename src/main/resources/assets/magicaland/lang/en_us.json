@@ -56,5 +56,9 @@
   "text.magicaland.config.delete_confirm.message": "This action cannot be undone!",
   "text.magicaland.config.tab.general": "General",
   "text.magicaland.config.tab.game": "Game",
-  "text.magicaland.config.tab.network": "Network"
+  "text.magicaland.config.tab.network": "Network",
+  "text.magicaland.config.main_menu_pony_button.name": "Main Menu Pony Button",
+  "text.magicaland.config.main_menu_pony_button.all": "All",
+  "text.magicaland.config.main_menu_pony_button.button_only": "Button Only",
+  "text.magicaland.config.main_menu_pony_button.hidden": "Hidden"
 }

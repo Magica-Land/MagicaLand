@@ -16,6 +16,7 @@ public class Config {
 
     public boolean replacePlayerModel = true;
     public boolean firstPersonMagicGlow = true;
+    public String mainMenuPonyButton = "all";
     
     public String activeModelName = "";
 

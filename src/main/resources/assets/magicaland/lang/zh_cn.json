@@ -56,5 +56,9 @@
   "text.magicaland.config.delete_confirm.message": "删除后将无法恢复！",
   "text.magicaland.config.tab.general": "通用",
   "text.magicaland.config.tab.game": "游戏",
-  "text.magicaland.config.tab.network": "网络"
+  "text.magicaland.config.tab.network": "网络",
+  "text.magicaland.config.main_menu_pony_button.name": "主菜单捏马按钮",
+  "text.magicaland.config.main_menu_pony_button.all": "全部",
+  "text.magicaland.config.main_menu_pony_button.button_only": "仅按钮",
+  "text.magicaland.config.main_menu_pony_button.hidden": "隐藏"
 }

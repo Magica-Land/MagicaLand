@@ -1,20 +1,31 @@
 package top.csituka.magicaland.client.gui.tab.settings;
 
 import net.minecraft.text.Text;
+import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 
+import java.util.List;
+
 public class GeneralPage implements SettingsPage {
+    private static final List<String> BUTTON_MODES = List.of("all", "button_only", "hidden");
+
     @Override
     public void build(SettingsList list, int buttonX, int buttonWidth) {
+        Config config = Config.getInstance();
+
+        String modeKey = "text.magicaland.config.main_menu_pony_button." + config.mainMenuPonyButton;
         list.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("通用设置占位"),
-                false, button -> {}));
-        list.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("通用设置占位"),
-                false, button -> {}));
-        list.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("通用设置占位"),
-                false, button -> {}));
+                Text.translatable("text.magicaland.config.main_menu_pony_button.name"),
+                Text.translatable(modeKey).getString(),
+                false, button -> {
+                    int idx = BUTTON_MODES.indexOf(config.mainMenuPonyButton);
+                    if (idx < 0) idx = 0;
+                    String next = BUTTON_MODES.get((idx + 1) % BUTTON_MODES.size());
+                    String nextKey = "text.magicaland.config.main_menu_pony_button." + next;
+                    ((CustomButton) button).setValue(Text.translatable(nextKey).getString());
+                    config.mainMenuPonyButton = next;
+                    Config.save();
+                }));
     }
 }
