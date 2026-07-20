@@ -195,6 +195,8 @@ public class ConfigScreen extends Screen {
 
         context.getMatrices().pop();
 
+        boolean suppressRightChildren = this.currentTab.getContent().suppressChildRendering();
+
         for (net.minecraft.client.gui.Element element : this.children()) {
             if (element instanceof net.minecraft.client.gui.widget.ClickableWidget widget) {
                 if (widget.getX() >= leftWidth) {
@@ -204,6 +206,8 @@ public class ConfigScreen extends Screen {
                         widget.setAlpha(1.0f);
                         widget.render(context, -1, -1, delta);
                         context.getMatrices().pop();
+                    } else if (suppressRightChildren) {
+                        continue;
                     } else {
                         widget.setAlpha(1.0f);
                         widget.render(context, mouseX, mouseY, delta);

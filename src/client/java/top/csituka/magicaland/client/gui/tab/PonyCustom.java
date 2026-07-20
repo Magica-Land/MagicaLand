@@ -643,6 +643,11 @@ public class PonyCustom implements TabContent {
         screen.reinitScreen();
     }
 
+    @Override
+    public boolean suppressChildRendering() {
+        return isTransitioning;
+    }
+
     private void reinit(ConfigScreen screen) {
         screen.reinitScreen();
     }
@@ -710,7 +715,7 @@ public class PonyCustom implements TabContent {
         }
 
         if (isTransitioning) {
-            transitionAlpha += 0.1f;
+            transitionAlpha += 0.08f;
             if (transitionAlpha >= 1.0f) {
                 transitionAlpha = 1.0f;
                 isTransitioning = false;
@@ -719,9 +724,10 @@ public class PonyCustom implements TabContent {
         }
 
         if (isTransitioning && previousListWidget != null) {
-            float progress = transitionAlpha;
+            float t = transitionAlpha;
+            float progress = 1.0f - (1.0f - t) * (1.0f - t);
 
-            float oldAlpha = (1.0f - progress) * alpha;
+            float oldAlpha = (1.0f - t) * alpha;
             float oldOffset = -progress * 60 * transitionDirection;
             previousListWidget.setBaseAlpha(oldAlpha);
             context.getMatrices().push();
@@ -729,7 +735,7 @@ public class PonyCustom implements TabContent {
             previousListWidget.render(context, -1, -1, delta);
             context.getMatrices().pop();
 
-            float newAlpha = progress * alpha;
+            float newAlpha = t * alpha;
             float newOffset = (1.0f - progress) * 60 * transitionDirection;
             listWidget.setBaseAlpha(newAlpha);
             context.getMatrices().push();
