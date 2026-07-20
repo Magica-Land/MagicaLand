@@ -18,6 +18,7 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
+import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.gui.ConfigScreen;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.model.GeckoPlayerModel;
@@ -98,6 +99,9 @@ public class TitleScreenMixin {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void magicaland$onInit(CallbackInfo ci) {
+        String mode = Config.getInstance().mainMenuPonyButton;
+        if ("hidden".equals(mode)) return;
+
         MinecraftClient client = MinecraftClient.getInstance();
         int screenWidth = client.getWindow().getScaledWidth();
         int screenHeight = client.getWindow().getScaledHeight();
@@ -122,6 +126,9 @@ public class TitleScreenMixin {
     @Inject(method = "render", at = @At("TAIL"))
     private void magicaland$onRender(DrawContext context, int mouseX, int mouseY, float delta,
             CallbackInfo ci) {
+        String mode = Config.getInstance().mainMenuPonyButton;
+        if (!"all".equals(mode)) return;
+
         initTitlePonyResources();
 
         if (titlePonyAnimatable == null || titlePonyRenderer == null)
