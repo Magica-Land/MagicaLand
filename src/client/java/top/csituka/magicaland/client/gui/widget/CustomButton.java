@@ -17,6 +17,8 @@ public class CustomButton extends PressableWidget {
     private final boolean noBackground;
     private final boolean textAlignLeft;
     private String valueText;
+    private int segmentCount;
+    private int activeSegment;
     private static final String ARROW = "  →";
 
     public CustomButton(int x, int y, int width, int height, Text message, boolean isSelected,
@@ -60,6 +62,11 @@ public class CustomButton extends PressableWidget {
 
     public void setValue(String value) {
         this.valueText = value;
+    }
+
+    public void setSegments(int count, int active) {
+        this.segmentCount = count;
+        this.activeSegment = active;
     }
 
     @Override
@@ -119,12 +126,32 @@ public class CustomButton extends PressableWidget {
             int textY = this.getY() + (this.height - 8) / 2;
 
             if (valueText != null) {
-                context.drawTextWithShadow(textRenderer, this.getMessage(),
-                        this.getX() + 6, textY, (textAlpha << 24) | 0xFFFFFF);
+                int labelX = this.getX() + 6;
+                int btnRight = this.getX() + this.width;
                 int valueWidth = textRenderer.getWidth(valueText);
+
+                int valueRight;
+                if (segmentCount > 0) {
+                    int SEG_SIZE = 8;
+                    int SEG_GAP = 2;
+                    int segBlock = segmentCount * SEG_SIZE + (segmentCount - 1) * SEG_GAP;
+                    int segLeft = btnRight - 6 - segBlock;
+                    int segTop = this.getY() + (this.height - SEG_SIZE) / 2;
+                    valueRight = segLeft - 4;
+
+                    for (int i = 0; i < segmentCount; i++) {
+                        int sx = segLeft + i * (SEG_SIZE + SEG_GAP);
+                        int segColor = (i == activeSegment) ? 0xFF3388FF : 0xFF777777;
+                        fillRoundedRect(context, sx, segTop, SEG_SIZE, SEG_SIZE, segColor);
+                    }
+                } else {
+                    valueRight = btnRight - 6;
+                }
+
+                context.drawTextWithShadow(textRenderer, this.getMessage(),
+                        labelX, textY, (textAlpha << 24) | 0xFFFFFF);
                 context.drawTextWithShadow(textRenderer, valueText,
-                        this.getX() + this.width - 6 - valueWidth, textY,
-                        (textAlpha << 24) | 0xFFFFFF);
+                        valueRight - valueWidth, textY, (textAlpha << 24) | 0xFFFFFF);
             } else if (this.textAlignLeft) {
                 int textX = this.getX() + 6;
                 context.drawTextWithShadow(textRenderer, this.getMessage(),
