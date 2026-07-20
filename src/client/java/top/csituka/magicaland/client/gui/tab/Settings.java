@@ -26,7 +26,7 @@ public class Settings implements TabContent {
             new GamePage(),
             new NetworkPage()
     };
-    private int selectedTab = 1;
+    private int selectedTab = 0;
 
     private int buttonX;
     private int buttonWidth;
@@ -37,7 +37,7 @@ public class Settings implements TabContent {
 
     @Override
     public void onEnter() {
-        selectedTab = 1;
+        selectedTab = 0;
         indicatorX = -1;
         targetIndicatorX = -1;
     }
