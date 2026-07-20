@@ -3,11 +3,12 @@ package top.csituka.magicaland.client.gui.tab;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
-import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.gui.ConfigScreen;
-import top.csituka.magicaland.client.gui.widget.CustomButton;
+import top.csituka.magicaland.client.gui.tab.settings.GeneralPage;
+import top.csituka.magicaland.client.gui.tab.settings.GamePage;
+import top.csituka.magicaland.client.gui.tab.settings.NetworkPage;
+import top.csituka.magicaland.client.gui.tab.settings.SettingsPage;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
-import top.csituka.magicaland.client.gui.widget.Toggle;
 
 public class Settings implements TabContent {
     private SettingsList listWidget;
@@ -19,6 +20,11 @@ public class Settings implements TabContent {
             "text.magicaland.config.tab.general",
             "text.magicaland.config.tab.game",
             "text.magicaland.config.tab.network"
+    };
+    private static final SettingsPage[] PAGES = {
+            new GeneralPage(),
+            new GamePage(),
+            new NetworkPage()
     };
     private int selectedTab = 1;
 
@@ -39,7 +45,6 @@ public class Settings implements TabContent {
     @Override
     public void init(ConfigScreen screen, int x, int y, int width, int height) {
         this.screenRef = screen;
-        Config config = Config.getInstance();
         buttonWidth = Math.min(250, width - 20);
         buttonX = x + (width - buttonWidth) / 2;
 
@@ -65,55 +70,10 @@ public class Settings implements TabContent {
             indicatorX = newTarget;
         }
 
-        switch (selectedTab) {
-            case 0 -> addGeneralItems();
-            case 1 -> addGameItems(config);
-            case 2 -> addNetworkItems();
-        }
+        // 委托当前分页构建配置项
+        PAGES[selectedTab].build(listWidget, buttonX, buttonWidth);
 
         screen.addConsoleElement(listWidget);
-    }
-
-    private void addGeneralItems() {
-        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("通用设置占位"),
-                false, button -> {}));
-        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("通用设置占位"),
-                false, button -> {}));
-        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("通用设置占位"),
-                false, button -> {}));
-    }
-
-    private void addGameItems(Config config) {
-        listWidget.addWidget(new Toggle(buttonX, 0, buttonWidth, 20,
-                Text.translatable("text.magicaland.config.replace_model.name"),
-                config.replacePlayerModel,
-                toggle -> {
-                    config.replacePlayerModel = toggle.getState();
-                    Config.save();
-                }));
-
-        listWidget.addWidget(new Toggle(buttonX, 0, buttonWidth, 20,
-                Text.translatable("text.magicaland.config.first_person_magic_glow.name"),
-                config.firstPersonMagicGlow,
-                toggle -> {
-                    config.firstPersonMagicGlow = toggle.getState();
-                    Config.save();
-                }));
-    }
-
-    private void addNetworkItems() {
-        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("网络设置占位"),
-                false, button -> {}));
-        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("网络设置占位"),
-                false, button -> {}));
-        listWidget.addWidget(new CustomButton(buttonX, 0, buttonWidth, 20,
-                Text.literal("网络设置占位"),
-                false, button -> {}));
     }
 
     @Override
