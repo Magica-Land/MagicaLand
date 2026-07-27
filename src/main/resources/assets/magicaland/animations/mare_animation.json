@@ -5330,7 +5330,7 @@
 					}
 				},
 				"molang": {
-					"rotation": ["v.s=32", "v.f=32/72", 0]
+					"rotation": [32, "32/72", 0]
 				},
 				"Bun": {
 					"scale": 0
@@ -6918,7 +6918,7 @@
 					"rotation": [25, 0, 0]
 				},
 				"molang": {
-					"rotation": ["90+v.bv=math.sin(query.life_time*2000)*3", 0, 0],
+					"rotation": ["90+math.sin(query.life_time*2000)*3", 0, 0],
 					"position": [0, 0, 16.5]
 				}
 			},

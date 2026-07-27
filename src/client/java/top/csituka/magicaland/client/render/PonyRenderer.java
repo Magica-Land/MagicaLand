@@ -69,7 +69,10 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         }
 
         String name = bone.getName().toLowerCase();
-        boolean isOther = name.contains("mane") || name.contains("tail") || name.contains("wing");
+        // The wing UVs are part of the base skin atlas.  Rendering them with
+        // mane.png makes the wing faces sample transparent/incorrect pixels,
+        // so only mane and tail bones use the secondary texture.
+        boolean isOther = name.contains("mane") || name.contains("tail");
         Identifier texture = isOther ? PONY_TS : PONY_BASE;
 
         RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
