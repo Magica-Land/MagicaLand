@@ -273,7 +273,7 @@ public abstract class PlayerEntityRendererMixin
             matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
         }
 
-        int glowColor = 0x8844AAFF;
+        int glowColor = GlowingItem.getCurrentGlowColor();
         net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance()
                 .getItemRenderer();
 

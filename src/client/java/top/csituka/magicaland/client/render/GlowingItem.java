@@ -40,9 +40,27 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.world.World;
 
+import top.csituka.magicaland.client.config.ModelConfig;
+import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.util.RenderLayerHelper;
 
 public class GlowingItem {
+
+    /**
+     * 从当前活跃模型中读取魔法光颜色
+     */
+    public static int getCurrentGlowColor() {
+        ModelConfig config = ModelManager.getActiveModel();
+        if (config == null) return 0xAA00FF;
+        String hex = config.magicGlowColor;
+        if (hex.startsWith("#")) hex = hex.substring(1);
+        if (hex.length() > 6) hex = hex.substring(hex.length() - 6);
+        try {
+            return Integer.parseInt(hex, 16);
+        } catch (Exception e) {
+            return 0xAA00FF;
+        }
+    }
 
     private VertexConsumerProvider createGlowProvider(
             int glowColor,
@@ -78,7 +96,6 @@ public class GlowingItem {
                 || mode == ModelTransformationMode.THIRD_PERSON_RIGHT_HAND);
 
         if (shouldRenderGlow) {
-            int fixedGlowColor = 0xAA00FF;
             matrices.push();
 
             itemRenderer.renderItem(
@@ -86,7 +103,7 @@ public class GlowingItem {
                     matrices, renderContext, world,
                     lightUv, OverlayTexture.DEFAULT_UV, seed);
 
-            VertexConsumerProvider glowContext = createGlowProvider(fixedGlowColor, renderContext);
+            VertexConsumerProvider glowContext = createGlowProvider(glowColor, renderContext);
 
             matrices.scale(1.1F, 1.1F, 1.1F);
             matrices.translate(0.015F, 0.01F, 0.01F);

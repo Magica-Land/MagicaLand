@@ -53,7 +53,7 @@ public class HeldItemRendererMixin {
                 }
                 magicItemRenderer.renderItemWithGlow(
                         instance, entity, item, renderMode, leftHanded, matrices, vertexConsumers, world, light, seed,
-                        0x8844AAFF, true);
+                        GlowingItem.getCurrentGlowColor(), true);
                 matrices.pop();
             }
         } else {
