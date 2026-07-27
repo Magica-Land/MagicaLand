@@ -32,6 +32,7 @@
   "text.magicaland.config.horn_color.name": "独角颜色",
   "text.magicaland.config.wing_color.name": "翅膀颜色",
   "text.magicaland.config.body_menu.name": "身体",
+  "text.magicaland.config.glow_menu.name": "魔法光",
   "text.magicaland.config.body_color.name": "躯干颜色",
   "text.magicaland.config.neck_color.name": "脖子颜色",
   "text.magicaland.config.head_color.name": "头部颜色",
@@ -60,5 +61,6 @@
   "text.magicaland.config.main_menu_pony_button.name": "主菜单捏马按钮",
   "text.magicaland.config.main_menu_pony_button.all": "全部",
   "text.magicaland.config.main_menu_pony_button.button_only": "仅按钮",
-  "text.magicaland.config.main_menu_pony_button.hidden": "隐藏"
+  "text.magicaland.config.main_menu_pony_button.hidden": "隐藏",
+  "text.magicaland.config.glow_color.name": "光芒颜色"
 }

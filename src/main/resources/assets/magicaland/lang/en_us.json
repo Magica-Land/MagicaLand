@@ -32,6 +32,7 @@
   "text.magicaland.config.horn_color.name": "Horn Color",
   "text.magicaland.config.wing_color.name": "Wing Color",
   "text.magicaland.config.body_menu.name": "Body",
+  "text.magicaland.config.glow_menu.name": "Magic Glow",
   "text.magicaland.config.body_color.name": "Body Color",
   "text.magicaland.config.neck_color.name": "Neck Color",
   "text.magicaland.config.head_color.name": "Head Color",
@@ -60,5 +61,6 @@
   "text.magicaland.config.main_menu_pony_button.name": "Main Menu Pony Button",
   "text.magicaland.config.main_menu_pony_button.all": "All",
   "text.magicaland.config.main_menu_pony_button.button_only": "Button Only",
-  "text.magicaland.config.main_menu_pony_button.hidden": "Hidden"
+  "text.magicaland.config.main_menu_pony_button.hidden": "Hidden",
+  "text.magicaland.config.glow_color.name": "Glow Color"
 }

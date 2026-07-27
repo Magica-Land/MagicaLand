@@ -1,12 +1,18 @@
 package top.csituka.magicaland.client.gui.tab;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemStack;
+import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
@@ -28,7 +34,9 @@ import top.csituka.magicaland.client.gui.widget.SettingsList;
 import top.csituka.magicaland.client.gui.widget.Toggle;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.model.GeckoPlayerModel;
+import top.csituka.magicaland.client.render.MagicGlow;
 import top.csituka.magicaland.client.render.PonyRenderer;
+import top.csituka.magicaland.client.util.RenderLayerHelper;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -50,6 +58,7 @@ public class PonyCustom implements TabContent {
     private boolean maneMenuOpen = false;
     private boolean faceMenuOpen = false;
     private boolean bodyMenuOpen = false;
+    private boolean glowMenuOpen = false;
     private boolean createNewOpen = false;
     private boolean deleteConfirmOpen = false;
     private String modelToDelete = null;
@@ -61,6 +70,7 @@ public class PonyCustom implements TabContent {
         this.maneMenuOpen = false;
         this.faceMenuOpen = false;
         this.bodyMenuOpen = false;
+        this.glowMenuOpen = false;
         this.createNewOpen = false;
         this.deleteConfirmOpen = false;
         this.modelToDelete = null;
@@ -177,6 +187,8 @@ public class PonyCustom implements TabContent {
                 initFaceMenu(screen, x, y, width, height);
             } else if (bodyMenuOpen) {
                 initBodyMenu(screen, x, y, width, height);
+            } else if (glowMenuOpen) {
+                initGlowMenu(screen, x, y, width, height);
             } else {
                 initMainMenu(screen, x, y, width, height);
             }
@@ -332,6 +344,11 @@ public class PonyCustom implements TabContent {
                 Text.translatable("text.magicaland.config.body_menu.name"),
                 false, button -> switchMenu(screen, 1, () -> bodyMenuOpen = true), true);
         this.listWidget.addWidget(bodyBtn, SettingsList.Alignment.RIGHT);
+
+        CustomButton glowBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.glow_menu.name"),
+                false, button -> switchMenu(screen, 1, () -> glowMenuOpen = true), true);
+        this.listWidget.addWidget(glowBtn, SettingsList.Alignment.RIGHT);
     }
 
     private void initManeMenu(ConfigScreen screen, int x, int y, int width, int height) {
@@ -594,6 +611,36 @@ public class PonyCustom implements TabContent {
         this.listWidget.addWidget(rightHindLimbPicker, SettingsList.Alignment.RIGHT);
     }
 
+    private void initGlowMenu(ConfigScreen screen, int x, int y, int width, int height) {
+        ModelConfig config = ModelManager.getActiveModel();
+        if (config == null) return;
+
+        int buttonWidth = Math.min(180, width / 2);
+        int buttonHeight = 20;
+
+        int btnX = x + width - buttonWidth - 20;
+        if (width < 250) {
+            btnX = x + (width - buttonWidth) / 2;
+        }
+
+        CustomButton backBtn = new CustomButton(btnX, 0, buttonWidth, buttonHeight,
+                Text.literal("← " + Text.translatable("text.magicaland.config.glow_menu.name").getString()),
+                false, button -> switchMenu(screen, -1, () -> glowMenuOpen = false), false, true);
+        this.listWidget.addWidget(backBtn, SettingsList.Alignment.RIGHT);
+
+        SectionLabel glowColorLabel = new SectionLabel(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.section.mane_colors.name"));
+        this.listWidget.addWidget(glowColorLabel, SettingsList.Alignment.RIGHT);
+
+        ColorPicker glowColorPicker = new ColorPicker(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.glow_color.name"),
+                config.magicGlowColor, newColor -> {
+                    config.magicGlowColor = newColor;
+                    ModelManager.saveActiveModel();
+                });
+        this.listWidget.addWidget(glowColorPicker, SettingsList.Alignment.RIGHT);
+    }
+
     private ColorPicker createBodyColorPicker(int x, int y, int width, int height, Text label,
             String initialColor, boolean initiallyLocked,
             Consumer<String> onColorChanged, Consumer<Boolean> onLockChanged) {
@@ -758,6 +805,11 @@ public class PonyCustom implements TabContent {
         if (this.ponyAnimatable == null)
             return;
 
+        if (glowMenuOpen) {
+            renderGrassBlockPreview(context, x, y, width, height, alpha, activeModel);
+            return;
+        }
+
         this.ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
 
         float baseScale = Math.min(width / 6.0f, height / 4.0f);
@@ -818,5 +870,67 @@ public class PonyCustom implements TabContent {
                 return RenderLayer.getEntityTranslucent(texture);
             }
         };
+    }
+
+    private void renderGrassBlockPreview(DrawContext context, int x, int y, int width, int height, float alpha,
+            ModelConfig config) {
+        if (alpha <= 0) return;
+
+        int btnWidth = Math.min(180, this.rightWidth / 2);
+        int btnX = this.rightX + this.rightWidth - btnWidth - 20;
+        int cx = (this.rightX * 3 + btnX) / 4;
+        int cy = y + height / 2 + (int)(height * 0.1f);
+
+        String hex = config.magicGlowColor;
+        if (hex.startsWith("#")) hex = hex.substring(1);
+        if (hex.length() > 6) hex = hex.substring(hex.length() - 6);
+        int glowColorParsed;
+        try {
+            glowColorParsed = Integer.parseInt(hex, 16);
+        } catch (Exception e) {
+            glowColorParsed = 0xAA00FF;
+        }
+        final int glowColor = glowColorParsed;
+
+        MinecraftClient client = MinecraftClient.getInstance();
+        ItemStack grassStack = new ItemStack(Blocks.GRASS_BLOCK);
+        VertexConsumerProvider vcp = context.getVertexConsumers();
+
+        float baseScale = Math.min(width / 8.0f, height / 6.0f);
+        float modelScale = Math.max(20.0f, Math.min(baseScale, 80.0f));
+
+        MatrixStack matrices = context.getMatrices();
+        matrices.push();
+
+        matrices.translate(cx, cy, 150);
+        matrices.scale(modelScale * alpha, modelScale * alpha, modelScale * alpha);
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(previewYaw));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(previewPitch));
+
+        client.getItemRenderer().renderItem(grassStack, ModelTransformationMode.NONE,
+                0xF000F0, OverlayTexture.DEFAULT_UV, matrices, vcp, client.world, 0);
+
+        VertexConsumerProvider glowProvider = layer -> {
+            if (layer.getVertexFormat() != VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL) {
+                return vcp.getBuffer(layer);
+            }
+            return vcp.getBuffer(
+                    MagicGlow.getColoured(
+                            RenderLayerHelper.getTexture(layer)
+                                    .orElse(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE),
+                            glowColor));
+        };
+
+        matrices.scale(1.1F, 1.1F, 1.1F);
+        matrices.translate(0.015F, 0.01F, 0.01F);
+        client.getItemRenderer().renderItem(grassStack, ModelTransformationMode.NONE,
+                0xF000F0, OverlayTexture.DEFAULT_UV, matrices, glowProvider, client.world, 0);
+
+        matrices.translate(-0.03F, -0.02F, -0.02F);
+        client.getItemRenderer().renderItem(grassStack, ModelTransformationMode.NONE,
+                0xF000F0, OverlayTexture.DEFAULT_UV, matrices, glowProvider, client.world, 0);
+
+        matrices.pop();
     }
 }

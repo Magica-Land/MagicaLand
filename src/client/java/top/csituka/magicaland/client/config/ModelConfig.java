@@ -25,6 +25,8 @@ public class ModelConfig {
     public String backManeColor = "#FFFFFFFF";
     public String tailColor = "#FFFFFFFF";
 
+    public String magicGlowColor = "#AA00FF";
+
     public boolean showHorn = true;
     public boolean showWings = false;
 
