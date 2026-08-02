@@ -46,6 +46,8 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     private static final Logger LOGGER = LoggerFactory.getLogger(PonyCustom.class);
     private SettingsList listWidget;
     private SettingsList previousListWidget;
+    private Toggle hornToggle;
+    private Toggle wingToggle;
     private float transitionAlpha = 1.0f;
     private boolean isTransitioning = false;
     private int transitionDirection = 1;
@@ -513,21 +515,32 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
                 Text.translatable("text.magicaland.config.section.mane_styles.name"));
         this.listWidget.addWidget(hornStyleLabel, SettingsList.Alignment.RIGHT);
 
-        Toggle hornToggle = new Toggle(btnX, 0, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.show_horn.name"),
-                config.showHorn, toggle -> {
-                    config.showHorn = toggle.getState();
-                    ModelManager.saveActiveModel();
-                });
-        this.listWidget.addWidget(hornToggle, SettingsList.Alignment.RIGHT);
-
-        Toggle wingToggle = new Toggle(btnX, 0, buttonWidth, buttonHeight,
+        // 先创建 wingToggle，再创建 hornToggle（这样 hornToggle 回调中可以引用 wingToggle）
+        wingToggle = new Toggle(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.show_wings.name"),
                 config.showWings, toggle -> {
                     config.showWings = toggle.getState();
+                    // 开启 wing 时自动关闭 horn
+                    if (config.showWings) {
+                        config.showHorn = false;
+                        hornToggle.setState(false);
+                    }
                     ModelManager.saveActiveModel();
                 });
         this.listWidget.addWidget(wingToggle, SettingsList.Alignment.RIGHT);
+
+        hornToggle = new Toggle(btnX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.show_horn.name"),
+                config.showHorn, toggle -> {
+                    config.showHorn = toggle.getState();
+                    // 开启 horn 时自动关闭 wing
+                    if (config.showHorn) {
+                        config.showWings = false;
+                        wingToggle.setState(false);
+                    }
+                    ModelManager.saveActiveModel();
+                });
+        this.listWidget.addWidget(hornToggle, SettingsList.Alignment.RIGHT);
 
         SectionLabel hornColorLabel = new SectionLabel(btnX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.section.mane_colors.name"));
