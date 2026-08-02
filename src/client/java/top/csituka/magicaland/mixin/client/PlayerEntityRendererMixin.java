@@ -175,6 +175,15 @@ public abstract class PlayerEntityRendererMixin
     @Unique
     private void renderMagicHeldItem(AbstractClientPlayerEntity player, MatrixStack matrices,
             VertexConsumerProvider vertexConsumers, int light, float tickDelta) {
+        // 获取当前模型配置，检查 showHorn 设置
+        ModelConfig modelConfig = ModelManager.getActiveModel();
+        boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
+
+        // 如果 showHorn 为 false，不渲染发光手持物品
+        if (!enableHornEffect) {
+            return;
+        }
+
         net.minecraft.item.ItemStack mainHandStack = player.getMainHandStack();
         net.minecraft.item.ItemStack offHandStack = player.getOffHandStack();
 
@@ -293,7 +302,12 @@ public abstract class PlayerEntityRendererMixin
     @Inject(method = "renderRightArm", at = @At("HEAD"), cancellable = true)
     private void onRenderRightArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
             AbstractClientPlayerEntity player, CallbackInfo ci) {
-        if (Config.getInstance().replacePlayerModel) {
+        // 获取当前模型配置，检查 showHorn 设置
+        ModelConfig modelConfig = ModelManager.getActiveModel();
+        boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
+
+        // 当 replacePlayerModel=true 且 showHorn=true 时才隐藏手臂
+        if (Config.getInstance().replacePlayerModel && enableHornEffect) {
             ci.cancel();
         }
     }
@@ -301,7 +315,12 @@ public abstract class PlayerEntityRendererMixin
     @Inject(method = "renderLeftArm", at = @At("HEAD"), cancellable = true)
     private void onRenderLeftArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
             AbstractClientPlayerEntity player, CallbackInfo ci) {
-        if (Config.getInstance().replacePlayerModel) {
+        // 获取当前模型配置，检查 showHorn 设置
+        ModelConfig modelConfig = ModelManager.getActiveModel();
+        boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
+
+        // 当 replacePlayerModel=true 且 showHorn=true 时才隐藏手臂
+        if (Config.getInstance().replacePlayerModel && enableHornEffect) {
             ci.cancel();
         }
     }

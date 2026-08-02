@@ -16,6 +16,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import top.csituka.magicaland.client.config.Config;
+import top.csituka.magicaland.client.config.ModelConfig;
+import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.render.GlowingItem;
 
 @Mixin(HeldItemRenderer.class)
@@ -39,7 +41,13 @@ public class HeldItemRendererMixin {
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
         }
 
-        if (entity instanceof AbstractClientPlayerEntity && Config.getInstance().replacePlayerModel) {
+        // 获取当前模型配置，检查 showHorn 设置
+        ModelConfig modelConfig = ModelManager.getActiveModel();
+        // 当 showHorn 为 true 时才启用手持物品发光和不渲染手臂功能
+        // 如果没有活跃模型，默认启用（保持向后兼容）
+        boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
+
+        if (entity instanceof AbstractClientPlayerEntity && Config.getInstance().replacePlayerModel && enableHornEffect) {
             boolean isFirstPerson = renderMode.isFirstPerson();
 
             if (isFirstPerson && !Config.getInstance().firstPersonMagicGlow) {
