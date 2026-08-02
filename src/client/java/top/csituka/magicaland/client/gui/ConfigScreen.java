@@ -6,6 +6,7 @@ import net.minecraft.text.Text;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
 import top.csituka.magicaland.client.gui.widget.TabButton;
 import top.csituka.magicaland.client.gui.widget.ColorPicker;
+import top.csituka.magicaland.client.gui.widget.ViewCube;
 import top.csituka.magicaland.client.gui.tab.TabContent;
 import top.csituka.magicaland.client.gui.tab.TabAnimator;
 import top.csituka.magicaland.client.gui.tab.Settings;
@@ -138,6 +139,18 @@ public class ConfigScreen extends Screen {
         this.addDrawableChild(new CustomButton(padding, this.height - 30, leftWidth - padding * 2, 20,
                 Text.translatable("text.magicaland.config.button.done"), false,
                 button -> this.client.setScreen(this.parent)));
+
+        if (this.currentTab.getContent() instanceof ViewCube.RotationTarget rotationTarget) {
+            int cubeTop = y + 8;
+            int cubeBottom = this.height - 30 - 8;
+            int cubeSize = Math.min(leftWidth - padding * 2, cubeBottom - cubeTop);
+            if (cubeSize >= 40) {
+                cubeSize = Math.min(cubeSize, 72);
+                int cubeX = padding + (leftWidth - padding * 2 - cubeSize) / 2;
+                this.addDrawableChild(
+                        new ViewCube(cubeX, cubeBottom - cubeSize, cubeSize, cubeSize, rotationTarget));
+            }
+        }
 
         int rightX = leftWidth + padding;
         int rightWidth = this.width - leftWidth - padding * 2;

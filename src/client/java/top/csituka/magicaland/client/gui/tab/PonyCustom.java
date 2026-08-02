@@ -32,6 +32,7 @@ import top.csituka.magicaland.client.gui.widget.DropdownBox;
 import top.csituka.magicaland.client.gui.widget.SectionLabel;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 import top.csituka.magicaland.client.gui.widget.Toggle;
+import top.csituka.magicaland.client.gui.widget.ViewCube;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.model.GeckoPlayerModel;
 import top.csituka.magicaland.client.render.MagicGlow;
@@ -41,7 +42,7 @@ import top.csituka.magicaland.client.util.RenderLayerHelper;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class PonyCustom implements TabContent {
+public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     private static final Logger LOGGER = LoggerFactory.getLogger(PonyCustom.class);
     private SettingsList listWidget;
     private SettingsList previousListWidget;
@@ -111,6 +112,31 @@ public class PonyCustom implements TabContent {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public float getPreviewYaw() {
+        return this.previewYaw;
+    }
+
+    @Override
+    public float getPreviewPitch() {
+        return this.previewPitch;
+    }
+
+    @Override
+    public void setPreviewRotation(float yaw, float pitch) {
+        this.previewYaw = yaw;
+        this.previewPitch = Math.max(-90.0f, Math.min(90.0f, pitch));
+    }
+
+    /** 预览模型正在显示时视图立方体才有意义 */
+    @Override
+    public boolean isPreviewActive() {
+        if (ModelManager.getActiveModel() == null) {
+            return false;
+        }
+        return this.isEditing || (!this.createNewOpen && !this.deleteConfirmOpen);
     }
 
     private GeckoPlayerAnimatable ponyAnimatable;

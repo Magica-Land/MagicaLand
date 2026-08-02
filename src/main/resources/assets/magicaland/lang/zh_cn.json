@@ -62,5 +62,13 @@
   "text.magicaland.config.main_menu_pony_button.all": "全部",
   "text.magicaland.config.main_menu_pony_button.button_only": "仅按钮",
   "text.magicaland.config.main_menu_pony_button.hidden": "隐藏",
-  "text.magicaland.config.glow_color.name": "光芒颜色"
+  "text.magicaland.config.glow_color.name": "光芒颜色",
+  "text.magicaland.config.view_cube.name": "视图立方体",
+  "text.magicaland.config.view_cube.tooltip": "拖动旋转视角，点击一个面切换到对应视角",
+  "text.magicaland.config.view_cube.up": "上",
+  "text.magicaland.config.view_cube.down": "下",
+  "text.magicaland.config.view_cube.front": "前",
+  "text.magicaland.config.view_cube.back": "后",
+  "text.magicaland.config.view_cube.left": "左",
+  "text.magicaland.config.view_cube.right": "右"
 }

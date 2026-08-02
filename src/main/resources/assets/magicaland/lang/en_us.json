@@ -62,5 +62,13 @@
   "text.magicaland.config.main_menu_pony_button.all": "All",
   "text.magicaland.config.main_menu_pony_button.button_only": "Button Only",
   "text.magicaland.config.main_menu_pony_button.hidden": "Hidden",
-  "text.magicaland.config.glow_color.name": "Glow Color"
+  "text.magicaland.config.glow_color.name": "Glow Color",
+  "text.magicaland.config.view_cube.name": "View Cube",
+  "text.magicaland.config.view_cube.tooltip": "Drag to rotate, click a face to snap to that view",
+  "text.magicaland.config.view_cube.up": "Top",
+  "text.magicaland.config.view_cube.down": "Bottom",
+  "text.magicaland.config.view_cube.front": "Front",
+  "text.magicaland.config.view_cube.back": "Back",
+  "text.magicaland.config.view_cube.left": "Left",
+  "text.magicaland.config.view_cube.right": "Right"
 }
