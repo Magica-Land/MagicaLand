@@ -11,13 +11,16 @@ public class GamePage implements SettingsPage {
     public void build(SettingsList list, int buttonX, int buttonWidth) {
         Config config = Config.getInstance();
 
-        list.addWidget(new Toggle(buttonX, 0, buttonWidth, 20,
+        Toggle replaceModelToggle = new Toggle(buttonX, 0, buttonWidth, 20,
                 Text.translatable("text.magicaland.config.replace_model.name"),
                 config.replacePlayerModel,
                 toggle -> {
                     config.replacePlayerModel = toggle.getState();
                     Config.save();
-                }));
+                });
+        replaceModelToggle.setTooltip(Tooltip.of(
+                Text.translatable("text.magicaland.config.replace_model.tooltip")));
+        list.addWidget(replaceModelToggle);
 
         Toggle magicGlowToggle = new Toggle(buttonX, 0, buttonWidth, 20,
                 Text.translatable("text.magicaland.config.first_person_magic_glow.name"),

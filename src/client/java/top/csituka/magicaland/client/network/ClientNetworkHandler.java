@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
@@ -33,12 +34,14 @@ public class ClientNetworkHandler {
     private static final long ANIMATION_SEND_INTERVAL_NANOS = 50_000_000L;
     private static String lastSentModelJson;
     private static String pendingModelJson;
+    private static boolean pendingModelRemoval;
     private static long lastModelSendNanos;
     private static long lastAnimationSendNanos;
 
     public static void register() {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            flushPendingModelRemoval();
             flushPendingModel();
             flushPendingAnimations();
 
@@ -48,7 +51,7 @@ public class ClientNetworkHandler {
                     ticksSinceJoin = -1;
                 }
             }
-            if (NetworkHandler.serverHasMod && client.player != null) {
+            if (NetworkHandler.serverHasMod && Config.getInstance().broadcastOwnModel && client.player != null) {
                 localAnimationTracker.syncLocalAnimationState(client.player);
             }
         });
@@ -62,6 +65,7 @@ public class ClientNetworkHandler {
             pendingAnimations.clear();
             lastSentModelJson = null;
             pendingModelJson = null;
+            pendingModelRemoval = false;
             lastModelSendNanos = 0L;
             lastAnimationSendNanos = 0L;
         });
@@ -75,6 +79,7 @@ public class ClientNetworkHandler {
             pendingAnimations.clear();
             lastSentModelJson = null;
             pendingModelJson = null;
+            pendingModelRemoval = false;
             lastModelSendNanos = 0L;
             lastAnimationSendNanos = 0L;
             localAnimationTracker.setPlayer(null);
@@ -105,7 +110,8 @@ public class ClientNetworkHandler {
     }
 
     public static void sendModelToServer() {
-        if (!NetworkHandler.serverHasMod || !ClientPlayNetworking.canSend(NetworkHandler.CHANNEL)) {
+        if (!Config.getInstance().broadcastOwnModel || !NetworkHandler.serverHasMod
+                || !ClientPlayNetworking.canSend(NetworkHandler.CHANNEL)) {
             return;
         }
 
@@ -132,7 +138,8 @@ public class ClientNetworkHandler {
     }
 
     public static void sendAnimation(String controller, String animation) {
-        if (!NetworkHandler.serverHasMod || !NetworkHandler.isAllowedAnimation(controller, animation)
+        if (!Config.getInstance().broadcastOwnModel || !NetworkHandler.serverHasMod
+                || !NetworkHandler.isAllowedAnimation(controller, animation)
                 || !ClientPlayNetworking.canSend(NetworkHandler.CHANNEL)) {
             return;
         }
@@ -144,6 +151,25 @@ public class ClientNetworkHandler {
         localAnimations.put(controller, animation);
         pendingAnimations.put(controller, animation);
         flushPendingAnimations();
+    }
+
+    public static void setBroadcastOwnModel(boolean broadcast) {
+        localAnimations.clear();
+        pendingAnimations.clear();
+        pendingModelJson = null;
+        pendingModelRemoval = false;
+        lastSentModelJson = null;
+
+        if (!NetworkHandler.serverHasMod || !ClientPlayNetworking.canSend(NetworkHandler.CHANNEL)) {
+            return;
+        }
+
+        if (broadcast) {
+            sendModelToServer();
+        } else {
+            pendingModelRemoval = true;
+            flushPendingModelRemoval();
+        }
     }
 
     public static boolean hasRemoteAnimation(UUID uuid, String controller) {
@@ -239,7 +265,8 @@ public class ClientNetworkHandler {
     }
 
     private static void flushPendingModel() {
-        if (pendingModelJson == null || !NetworkHandler.serverHasMod
+        if (pendingModelJson == null || !Config.getInstance().broadcastOwnModel
+                || !NetworkHandler.serverHasMod
                 || !ClientPlayNetworking.canSend(NetworkHandler.CHANNEL)) {
             return;
         }
@@ -252,6 +279,22 @@ public class ClientNetworkHandler {
         pendingModelJson = null;
         if (!modelJson.equals(lastSentModelJson)) {
             sendModelPacket(modelJson);
+        }
+    }
+
+    private static void flushPendingModelRemoval() {
+        if (!pendingModelRemoval || !NetworkHandler.serverHasMod
+                || !ClientPlayNetworking.canSend(NetworkHandler.CHANNEL)) {
+            return;
+        }
+
+        JsonObject msg = new JsonObject();
+        msg.addProperty("type", "model_remove");
+        try {
+            ClientPlayNetworking.send(NetworkHandler.CHANNEL,
+                    PacketByteBufs.create().writeString(GSON.toJson(msg), NetworkHandler.MAX_MESSAGE_LENGTH));
+            pendingModelRemoval = false;
+        } catch (RuntimeException ignored) {
         }
     }
 
@@ -271,7 +314,8 @@ public class ClientNetworkHandler {
     }
 
     private static void flushPendingAnimations() {
-        if (pendingAnimations.isEmpty() || !NetworkHandler.serverHasMod
+        if (pendingAnimations.isEmpty() || !Config.getInstance().broadcastOwnModel
+                || !NetworkHandler.serverHasMod
                 || !ClientPlayNetworking.canSend(NetworkHandler.CHANNEL)) {
             return;
         }

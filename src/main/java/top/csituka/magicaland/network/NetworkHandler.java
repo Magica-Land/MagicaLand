@@ -134,10 +134,28 @@ public class NetworkHandler {
                 }
 
                 sendAnimationStates(player, uuid);
+            } else if ("model_remove".equals(type)) {
+                boolean removedModel = playerModels.remove(uuid) != null;
+                boolean removedAnimations = playerAnimations.remove(uuid) != null;
+                lastModelUpdates.remove(uuid);
+                lastAnimationUpdates.remove(uuid);
+                if (!removedModel && !removedAnimations) {
+                    return;
+                }
+
+                JsonObject remove = new JsonObject();
+                remove.addProperty("type", "player_remove");
+                remove.addProperty("uuid", uuid.toString());
+                String removeJson = GSON.toJson(remove);
+                for (ServerPlayerEntity other : server.getPlayerManager().getPlayerList()) {
+                    if (!other.getUuid().equals(uuid)) {
+                        send(other, removeJson);
+                    }
+                }
             } else if ("animation_update".equals(type)) {
                 String controller = readString(msg, "controller", 32);
                 String animation = msg.has("animation") ? readString(msg, "animation", MAX_ANIMATION_LENGTH) : "";
-                if (!isAllowedAnimation(controller, animation)
+                if (!playerModels.containsKey(uuid) || !isAllowedAnimation(controller, animation)
                         || isRateLimited(lastAnimationUpdates, uuid, ANIMATION_UPDATE_INTERVAL_NANOS)) {
                     return;
                 }
