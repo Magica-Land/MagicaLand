@@ -1,5 +1,6 @@
 package top.csituka.magicaland.client.model;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -9,6 +10,7 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
+import top.csituka.magicaland.client.network.ClientNetworkHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +46,8 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     private static final RawAnimation LAND_ONLY_ANIM = RawAnimation.begin().thenPlay("land");
     private static final RawAnimation LARGER_LAND_ONLY_ANIM = RawAnimation.begin().thenPlay("larger_land");
 
+    private record AnimationSelection(String name, RawAnimation animation) {}
+
     private static class PlayerFallState {
         float maxFallDistance = 0;
         int fallStartTime = -1;
@@ -60,7 +64,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     }
 
     public void setPlayer(AbstractClientPlayerEntity player) {
-        if (this.player != null && player != null && !this.player.getUuid().equals(player.getUuid())) {
+        if (this.player != null && (player == null || !this.player.getUuid().equals(player.getUuid()))) {
             fallStates.remove(this.player.getUuid());
         }
         this.player = player;
@@ -78,7 +82,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         controllers.add(new AnimationController<>(this, "tail_controller", 3, this::tailPredicate));
     }
 
-    private boolean isIdle(AnimationState<GeckoPlayerAnimatable> state) {
+    private boolean isIdle() {
         if (player == null)
             return false;
 
@@ -117,53 +121,90 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
 
     private PlayState blinkPredicate(AnimationState<GeckoPlayerAnimatable> state) {
         if (player == null)
-            return PlayState.STOP;
+            return stopAnimation(state);
+
+        PlayState remoteState = applyRemoteAnimation(state);
+        if (remoteState != null)
+            return remoteState;
         if (player.isSleeping() || player.isSneaking())
-            return PlayState.STOP;
-        state.getController().setAnimation(BLINK_ANIM);
-        return PlayState.CONTINUE;
+            return stopAnimation(state);
+        return playAnimation(state, new AnimationSelection("blink_parallel", BLINK_ANIM));
     }
 
     private PlayState earPredicate(AnimationState<GeckoPlayerAnimatable> state) {
-        if (!isIdle(state))
-            return PlayState.STOP;
-        state.getController().setAnimation(EAR_ANIM);
-        return PlayState.CONTINUE;
+        if (player == null)
+            return stopAnimation(state);
+
+        PlayState remoteState = applyRemoteAnimation(state);
+        if (remoteState != null)
+            return remoteState;
+        if (!isIdle())
+            return stopAnimation(state);
+        return playAnimation(state, new AnimationSelection("ear_parallel", EAR_ANIM));
     }
 
     private PlayState tailPredicate(AnimationState<GeckoPlayerAnimatable> state) {
-        if (!isIdle(state))
-            return PlayState.STOP;
-        state.getController().setAnimation(TAIL_ANIM);
-        return PlayState.CONTINUE;
+        if (player == null)
+            return stopAnimation(state);
+
+        PlayState remoteState = applyRemoteAnimation(state);
+        if (remoteState != null)
+            return remoteState;
+        if (!isIdle())
+            return stopAnimation(state);
+        return playAnimation(state, new AnimationSelection("tail_parallel", TAIL_ANIM));
     }
 
     private PlayState predicate(AnimationState<GeckoPlayerAnimatable> state) {
         if (player == null)
-            return PlayState.STOP;
+            return stopAnimation(state);
 
-        if (player.hurtTime > 0) {
-            state.getController().setAnimation(ATTACKED_ANIM);
-            return PlayState.CONTINUE;
-        }
+        PlayState remoteState = applyRemoteAnimation(state);
+        if (remoteState != null)
+            return remoteState;
 
-        if (player.isSleeping()) {
-            state.getController().setAnimation(SLEEP_ANIM);
-            return PlayState.CONTINUE;
-        }
+        AnimationSelection selection = resolveMainAnimation();
+        return selection == null ? stopAnimation(state) : playAnimation(state, selection);
+    }
+
+    public void syncLocalAnimationState(AbstractClientPlayerEntity localPlayer) {
+        setPlayer(localPlayer);
+        if (player == null || !isLocalPlayer())
+            return;
+
+        AnimationSelection main = resolveMainAnimation();
+        ClientNetworkHandler.sendAnimation("controller", main == null ? "" : main.name());
+        ClientNetworkHandler.sendAnimation("blink_controller",
+                player.isSleeping() || player.isSneaking() ? "" : "blink_parallel");
+
+        boolean idle = isIdle();
+        ClientNetworkHandler.sendAnimation("ear_controller", idle ? "ear_parallel" : "");
+        ClientNetworkHandler.sendAnimation("tail_controller", idle ? "tail_parallel" : "");
+    }
+
+    private AnimationSelection resolveMainAnimation() {
+        if (player == null)
+            return null;
+
+        if (player.hurtTime > 0)
+            return new AnimationSelection("attacked", ATTACKED_ANIM);
+
+        if (player.isSleeping())
+            return new AnimationSelection("sleep", SLEEP_ANIM);
 
         if (player.hasVehicle()) {
             net.minecraft.entity.Entity vehicle = player.getVehicle();
             if (vehicle instanceof net.minecraft.entity.passive.PigEntity) {
-                state.getController().setAnimation(RIDE_PIG_ANIM);
-            } else if (vehicle instanceof net.minecraft.entity.vehicle.BoatEntity || vehicle instanceof net.minecraft.entity.vehicle.AbstractMinecartEntity) {
-                state.getController().setAnimation(BOAT_ANIM);
-            } else if (vehicle instanceof net.minecraft.entity.passive.AbstractHorseEntity) {
-                state.getController().setAnimation(RIDE_ANIM);
-            } else {
-                state.getController().setAnimation(SIT_ANIM);
+                return new AnimationSelection("ride_pig", RIDE_PIG_ANIM);
             }
-            return PlayState.CONTINUE;
+            if (vehicle instanceof net.minecraft.entity.vehicle.BoatEntity
+                    || vehicle instanceof net.minecraft.entity.vehicle.AbstractMinecartEntity) {
+                return new AnimationSelection("boat", BOAT_ANIM);
+            }
+            if (vehicle instanceof net.minecraft.entity.passive.AbstractHorseEntity) {
+                return new AnimationSelection("ride", RIDE_ANIM);
+            }
+            return new AnimationSelection("sit", SIT_ANIM);
         }
 
         PlayerFallState fallState = fallStates.computeIfAbsent(player.getUuid(), k -> new PlayerFallState());
@@ -199,76 +240,138 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         }
 
         if (player.getAbilities().flying) {
-            if (player.isSprinting()) {
-                state.getController().setAnimation(ELYTRA_FLY_ANIM);
-            } else {
-                state.getController().setAnimation(FLY_ANIM);
-            }
-            return PlayState.CONTINUE;
+            return player.isSprinting()
+                    ? new AnimationSelection("elytra_fly", ELYTRA_FLY_ANIM)
+                    : new AnimationSelection("fly", FLY_ANIM);
         }
 
         if (player.isTouchingWater() && moving) {
-            if (player.isSprinting()) {
-                state.getController().setAnimation(SWIM_ANIM);
-            } else {
-                state.getController().setAnimation(SWIM_HOLD_ANIM);
-            }
-            return PlayState.CONTINUE;
+            return player.isSprinting()
+                    ? new AnimationSelection("swim", SWIM_ANIM)
+                    : new AnimationSelection("swim_hold", SWIM_HOLD_ANIM);
         }
 
         if (!isOnGround && !player.isTouchingWater() && !player.getAbilities().flying) {
-            if (player.getVelocity().y > 0) {
-                state.getController().setAnimation(JUMP_ANIM);
-                return PlayState.CONTINUE;
-            } else if (fallState.jumpStartTime != -1) {
-                state.getController().setAnimation(JUMP_ANIM);
-                return PlayState.CONTINUE;
-            } else if (player.fallDistance > 0.1f && fallState.fallStartTime != -1) {
-                state.getController().setAnimation(FALL_TRANSFER_ANIM);
-                return PlayState.CONTINUE;
+            if (player.getVelocity().y > 0 || fallState.jumpStartTime != -1) {
+                return new AnimationSelection("jump1", JUMP_ANIM);
+            }
+            if (player.fallDistance > 0.1f && fallState.fallStartTime != -1) {
+                return new AnimationSelection("fall_transfer", FALL_TRANSFER_ANIM);
             }
         }
 
         if (fallState.landed) {
             int landDuration = fallState.isLarge ? 20 : 10;
             if (player.age - fallState.landStartTime < landDuration) {
-                if (fallState.isLarge) {
-                    state.getController().setAnimation(LARGER_LAND_ONLY_ANIM);
-                } else {
-                    state.getController().setAnimation(LAND_ONLY_ANIM);
-                }
-                return PlayState.CONTINUE;
-            } else {
-                fallState.landed = false;
+                return fallState.isLarge
+                        ? new AnimationSelection("larger_land", LARGER_LAND_ONLY_ANIM)
+                        : new AnimationSelection("land", LAND_ONLY_ANIM);
             }
+            fallState.landed = false;
         }
 
         if (player.isSneaking()) {
-            if (moving) {
-                state.getController().setAnimation(SNEAK_ANIM);
-            } else {
-                state.getController().setAnimation(SNEAKING_ANIM);
-            }
-            return PlayState.CONTINUE;
+            return moving
+                    ? new AnimationSelection("sneak", SNEAK_ANIM)
+                    : new AnimationSelection("sneaking", SNEAKING_ANIM);
         }
 
-        if (player.isSprinting()) {
-            state.getController().setAnimation(RUN_ANIM);
-            return PlayState.CONTINUE;
+        if (player.isSprinting())
+            return new AnimationSelection("run", RUN_ANIM);
+        if (player.forwardSpeed < 0)
+            return new AnimationSelection("backward_walk", BACKWARD_WALK_ANIM);
+        if (moving)
+            return new AnimationSelection("walk", WALK_ANIM);
+        return new AnimationSelection("idle", IDLE_ANIM);
+    }
+
+    private PlayState applyRemoteAnimation(AnimationState<GeckoPlayerAnimatable> state) {
+        if (player == null || isLocalPlayer())
+            return null;
+
+        String controller = state.getController().getName();
+        if (!ClientNetworkHandler.hasRemoteAnimation(player.getUuid(), controller))
+            return null;
+
+        String name = ClientNetworkHandler.getRemoteAnimation(player.getUuid(), controller);
+        if (name == null || name.isEmpty()) {
+            state.getController().stop();
+            return PlayState.STOP;
         }
 
-        if (player.forwardSpeed < 0) {
-            state.getController().setAnimation(BACKWARD_WALK_ANIM);
-            return PlayState.CONTINUE;
+        RawAnimation animation = getAnimation(controller, name);
+        if (animation == null)
+            return null;
+
+        if (isOneShot(controller, name) && state.getController().getCurrentRawAnimation() == animation
+                && state.getController().hasAnimationFinished()) {
+            state.getController().stop();
+            return PlayState.STOP;
         }
 
-        if (moving) {
-            state.getController().setAnimation(WALK_ANIM);
-            return PlayState.CONTINUE;
-        }
-
-        state.getController().setAnimation(IDLE_ANIM);
+        state.getController().setAnimation(animation);
         return PlayState.CONTINUE;
+    }
+
+    private RawAnimation getAnimation(String controller, String name) {
+        if ("blink_controller".equals(controller))
+            return "blink_parallel".equals(name) ? BLINK_ANIM : null;
+        if ("ear_controller".equals(controller))
+            return "ear_parallel".equals(name) ? EAR_ANIM : null;
+        if ("tail_controller".equals(controller))
+            return "tail_parallel".equals(name) ? TAIL_ANIM : null;
+        if (!"controller".equals(controller))
+            return null;
+
+        return switch (name) {
+            case "fly" -> FLY_ANIM;
+            case "elytra_fly" -> ELYTRA_FLY_ANIM;
+            case "swim" -> SWIM_ANIM;
+            case "swim_hold" -> SWIM_HOLD_ANIM;
+            case "sneak" -> SNEAK_ANIM;
+            case "sneaking" -> SNEAKING_ANIM;
+            case "run" -> RUN_ANIM;
+            case "backward_walk" -> BACKWARD_WALK_ANIM;
+            case "walk" -> WALK_ANIM;
+            case "idle" -> IDLE_ANIM;
+            case "attacked" -> ATTACKED_ANIM;
+            case "jump1" -> JUMP_ANIM;
+            case "sleep" -> SLEEP_ANIM;
+            case "boat" -> BOAT_ANIM;
+            case "ride" -> RIDE_ANIM;
+            case "ride_pig" -> RIDE_PIG_ANIM;
+            case "sit" -> SIT_ANIM;
+            case "fall_transfer" -> FALL_TRANSFER_ANIM;
+            case "land" -> LAND_ONLY_ANIM;
+            case "larger_land" -> LARGER_LAND_ONLY_ANIM;
+            default -> null;
+        };
+    }
+
+    private boolean isOneShot(String controller, String name) {
+        return "controller".equals(controller)
+                && ("attacked".equals(name) || "land".equals(name) || "larger_land".equals(name));
+    }
+
+    private PlayState playAnimation(AnimationState<GeckoPlayerAnimatable> state, AnimationSelection selection) {
+        state.getController().setAnimation(selection.animation());
+        if (isLocalPlayer()) {
+            ClientNetworkHandler.sendAnimation(state.getController().getName(), selection.name());
+        }
+        return PlayState.CONTINUE;
+    }
+
+    private PlayState stopAnimation(AnimationState<GeckoPlayerAnimatable> state) {
+        state.getController().stop();
+        if (isLocalPlayer()) {
+            ClientNetworkHandler.sendAnimation(state.getController().getName(), "");
+        }
+        return PlayState.STOP;
+    }
+
+    private boolean isLocalPlayer() {
+        AbstractClientPlayerEntity localPlayer = MinecraftClient.getInstance().player;
+        return localPlayer != null && player != null && localPlayer.getUuid().equals(player.getUuid());
     }
 
     @Override

@@ -19,6 +19,7 @@ public class NetworkHandler {
     private static final Gson GSON = new Gson();
 
     public static final Map<UUID, String> playerModels = new ConcurrentHashMap<>();
+    public static final Map<UUID, Map<String, String>> playerAnimations = new ConcurrentHashMap<>();
     public static volatile boolean serverHasMod = false;
 
     public static void registerServer() {
@@ -58,6 +59,28 @@ public class NetworkHandler {
                                             PacketByteBufs.create().writeString(GSON.toJson(existing)));
                                 }
                             }
+
+                            sendAnimationStates(player, uuid);
+                        } else if ("animation_update".equals(type)) {
+                            String controller = msg.get("controller").getAsString();
+                            String animation = msg.has("animation") ? msg.get("animation").getAsString() : "";
+                            if (controller.isEmpty() || controller.length() > 32 || animation.length() > 64) {
+                                return;
+                            }
+
+                            UUID uuid = player.getUuid();
+                            Map<String, String> animations = playerAnimations.computeIfAbsent(uuid,
+                                    ignored -> new ConcurrentHashMap<>());
+                            String previous = animations.put(controller, animation);
+                            if (animation.equals(previous)) {
+                                return;
+                            }
+
+                            for (ServerPlayerEntity other : server.getPlayerManager().getPlayerList()) {
+                                if (!other.getUuid().equals(uuid)) {
+                                    sendAnimationState(other, uuid, controller, animation);
+                                }
+                            }
                         }
                     });
                 });
@@ -72,6 +95,7 @@ public class NetworkHandler {
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             UUID uuid = handler.getPlayer().getUuid();
             playerModels.remove(uuid);
+            playerAnimations.remove(uuid);
 
             JsonObject remove = new JsonObject();
             remove.addProperty("type", "player_remove");
@@ -83,5 +107,26 @@ public class NetworkHandler {
                         PacketByteBufs.create().writeString(removeJson));
             }
         });
+    }
+
+    private static void sendAnimationStates(ServerPlayerEntity player, UUID excludedUuid) {
+        for (Map.Entry<UUID, Map<String, String>> entry : playerAnimations.entrySet()) {
+            if (entry.getKey().equals(excludedUuid)) {
+                continue;
+            }
+            for (Map.Entry<String, String> animation : entry.getValue().entrySet()) {
+                sendAnimationState(player, entry.getKey(), animation.getKey(), animation.getValue());
+            }
+        }
+    }
+
+    private static void sendAnimationState(ServerPlayerEntity player, UUID uuid, String controller, String animation) {
+        JsonObject message = new JsonObject();
+        message.addProperty("type", "animation_update");
+        message.addProperty("uuid", uuid.toString());
+        message.addProperty("controller", controller);
+        message.addProperty("animation", animation);
+        ServerPlayNetworking.send(player, CHANNEL,
+                PacketByteBufs.create().writeString(GSON.toJson(message)));
     }
 }
