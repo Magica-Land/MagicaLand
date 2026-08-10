@@ -16,12 +16,17 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public class ModelManager {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File BASE_DIR = new File(FabricLoader.getInstance().getConfigDir().toFile(), "magicaland");
     private static final File MODELS_DIR = new File(BASE_DIR, "ponies");
     private static final long SAVE_DEBOUNCE_NANOS = 200_000_000L;
+    private static final Set<String> RESERVED_MODEL_NAMES = Set.of(
+            "CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8",
+            "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9");
 
     private static ModelConfig activeModel;
     private static List<String> availableModels = new ArrayList<>();
@@ -85,7 +90,10 @@ public class ModelManager {
             if (files != null) {
                 for (File file : files) {
                     String name = file.getName();
-                    availableModels.add(name.substring(0, name.length() - 5));
+                    name = name.substring(0, name.length() - 5);
+                    if (isValidModelName(name)) {
+                        availableModels.add(name);
+                    }
                 }
             }
         }
@@ -99,7 +107,13 @@ public class ModelManager {
             return false;
         }
         name = name.trim();
-        File file = new File(MODELS_DIR, name + ".json");
+        if (!isValidModelName(name)) {
+            return false;
+        }
+        File file = resolveModelFile(name);
+        if (file == null) {
+            return false;
+        }
         if (file.exists()) {
             return false;
         }
@@ -147,8 +161,8 @@ public class ModelManager {
     }
 
     public static boolean loadModel(String name) {
-        File file = new File(MODELS_DIR, name + ".json");
-        if (!file.exists()) {
+        File file = resolveModelFile(name);
+        if (file == null || !file.exists()) {
             return false;
         }
         try (FileReader reader = new FileReader(file)) {
@@ -171,7 +185,10 @@ public class ModelManager {
             return;
         }
         ModelConfig.sanitize(activeModel);
-        File file = new File(MODELS_DIR, activeModel.name + ".json");
+        File file = resolveModelFile(activeModel.name);
+        if (file == null) {
+            return;
+        }
         try {
             writeAtomically(file, writer -> GSON.toJson(activeModel, writer));
         } catch (IOException | RuntimeException e) {
@@ -203,7 +220,10 @@ public class ModelManager {
         if (availableModels.size() <= 1) {
             return false;
         }
-        File file = new File(MODELS_DIR, name + ".json");
+        File file = resolveModelFile(name);
+        if (file == null) {
+            return false;
+        }
         if (file.exists() && file.isFile()) {
             if (file.delete()) {
                 refreshModelList();
@@ -222,6 +242,46 @@ public class ModelManager {
             }
         }
         return false;
+    }
+
+    private static File resolveModelFile(String name) {
+        if (!isValidModelName(name)) {
+            return null;
+        }
+        Path base = MODELS_DIR.toPath().toAbsolutePath().normalize();
+        Path target = base.resolve(name + ".json").normalize();
+        if (!base.equals(target.getParent())) {
+            return null;
+        }
+        try {
+            File canonicalBase = MODELS_DIR.getCanonicalFile();
+            File canonicalTarget = target.toFile().getCanonicalFile();
+            return canonicalBase.equals(canonicalTarget.getParentFile()) ? target.toFile() : null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private static boolean isValidModelName(String name) {
+        if (name == null || name.isEmpty() || name.length() > 32
+                || !name.equals(name.trim()) || name.equals(".") || name.equals("..")
+                || name.endsWith(".") || name.endsWith(" ")) {
+            return false;
+        }
+
+        for (int i = 0; i < name.length(); i++) {
+            char character = name.charAt(i);
+            if (Character.isISOControl(character) || "/\\:*?\"<>|".indexOf(character) >= 0) {
+                return false;
+            }
+        }
+
+        String deviceName = name;
+        int extensionSeparator = name.indexOf('.');
+        if (extensionSeparator >= 0) {
+            deviceName = name.substring(0, extensionSeparator);
+        }
+        return !RESERVED_MODEL_NAMES.contains(deviceName.toUpperCase(Locale.ROOT));
     }
 
     private static void registerSaveTick() {

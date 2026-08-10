@@ -7,6 +7,7 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.client.util.math.MatrixStack;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.config.ModelConfig;
@@ -18,6 +19,8 @@ import top.csituka.magicaland.network.NetworkHandler;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,13 +34,19 @@ import top.csituka.magicaland.client.render.GlowingItem;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class PlayerEntityRendererMixin
-        extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
+    extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
 
     @Unique
-    private GeckoPlayerAnimatable ponyAnimatable;
+    private final Map<UUID, GeckoPlayerAnimatable> ponyAnimatables = new HashMap<>();
 
     @Unique
-    private PonyRenderer ponyRenderer;
+    private final Map<UUID, PonyRenderer> ponyRenderers = new HashMap<>();
+
+    @Unique
+    private ClientWorld trackedWorld;
+
+    @Unique
+    private int playerStateCleanupTimer;
 
     @Unique
     private static final Map<UUID, Float> flightRolls = new HashMap<>();
@@ -45,12 +54,6 @@ public abstract class PlayerEntityRendererMixin
     public PlayerEntityRendererMixin(EntityRendererFactory.Context ctx,
             PlayerEntityModel<AbstractClientPlayerEntity> model, float shadowRadius) {
         super(ctx, model, shadowRadius);
-    }
-
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
-        this.ponyAnimatable = new GeckoPlayerAnimatable();
-        this.ponyRenderer = new PonyRenderer();
     }
 
     /**
@@ -66,12 +69,16 @@ public abstract class PlayerEntityRendererMixin
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     private void onRender(AbstractClientPlayerEntity player, float f, float g, MatrixStack matrixStack,
             VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
+        cleanupPlayerStates();
         if (!Config.getInstance().replacePlayerModel) {
             return;
         }
 
         MinecraftClient client = MinecraftClient.getInstance();
         boolean isSelf = client.player != null && player.getUuid().equals(client.player.getUuid());
+        GeckoPlayerAnimatable ponyAnimatable = ponyAnimatables.computeIfAbsent(player.getUuid(),
+                ignored -> new GeckoPlayerAnimatable());
+        PonyRenderer ponyRenderer = ponyRenderers.computeIfAbsent(player.getUuid(), ignored -> new PonyRenderer());
 
         ModelConfig configToUse;
         if (isSelf) {
@@ -79,17 +86,17 @@ public abstract class PlayerEntityRendererMixin
             if (configToUse == null) {
                 return;
             }
-            this.ponyRenderer.clearOverride();
+            ponyRenderer.clearOverride();
         } else {
             if (NetworkHandler.serverHasMod && ClientNetworkHandler.remoteModels.containsKey(player.getUuid())) {
                 configToUse = ClientNetworkHandler.remoteModels.get(player.getUuid());
-                this.ponyRenderer.setOverrideConfig(configToUse);
+                ponyRenderer.setOverrideConfig(configToUse);
             } else {
                 return;
             }
         }
 
-        this.ponyAnimatable.setPlayer(player);
+        ponyAnimatable.setPlayer(player);
 
         matrixStack.push();
 
@@ -150,10 +157,10 @@ public abstract class PlayerEntityRendererMixin
 
         matrixStack.translate(-0.5, yOffset, -0.5);
 
-        RenderLayer renderLayer = this.ponyRenderer.getRenderType(this.ponyAnimatable,
-                this.ponyRenderer.getTextureLocation(this.ponyAnimatable), vertexConsumerProvider, g);
+        RenderLayer renderLayer = ponyRenderer.getRenderType(ponyAnimatable,
+                ponyRenderer.getTextureLocation(ponyAnimatable), vertexConsumerProvider, g);
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(renderLayer);
-        this.ponyRenderer.render(matrixStack, this.ponyAnimatable, vertexConsumerProvider, renderLayer,
+        ponyRenderer.render(matrixStack, ponyAnimatable, vertexConsumerProvider, renderLayer,
                 vertexConsumer, i);
 
         this.renderMagicHeldItem(player, configToUse, matrixStack, vertexConsumerProvider, i, g);
@@ -162,11 +169,34 @@ public abstract class PlayerEntityRendererMixin
 
         this.renderLabelIfPresent(player, player.getDisplayName(), matrixStack, vertexConsumerProvider, i);
 
-        if (!isSelf) {
-            this.ponyRenderer.clearOverride();
-        }
+        ponyRenderer.clearOverride();
 
         ci.cancel();
+    }
+
+    @Unique
+    private void cleanupPlayerStates() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.world != trackedWorld) {
+            ponyAnimatables.clear();
+            ponyRenderers.clear();
+            flightRolls.clear();
+            trackedWorld = client.world;
+            playerStateCleanupTimer = 0;
+            return;
+        }
+        if (client.world == null || ++playerStateCleanupTimer < 100) {
+            return;
+        }
+        playerStateCleanupTimer = 0;
+
+        Set<UUID> loadedPlayers = new HashSet<>();
+        for (AbstractClientPlayerEntity loadedPlayer : client.world.getPlayers()) {
+            loadedPlayers.add(loadedPlayer.getUuid());
+        }
+        ponyAnimatables.keySet().removeIf(uuid -> !loadedPlayers.contains(uuid));
+        ponyRenderers.keySet().removeIf(uuid -> !loadedPlayers.contains(uuid));
+        flightRolls.keySet().removeIf(uuid -> !loadedPlayers.contains(uuid));
     }
 
     @Unique
