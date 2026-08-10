@@ -344,8 +344,8 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         matrices.translate(centerX, centerY, 150);
         matrices.scale(modelScale * alpha, modelScale * alpha, modelScale * alpha);
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(previewYaw));
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(previewPitch));
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-previewYaw));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-previewPitch));
 
         client.getItemRenderer().renderItem(grassStack, ModelTransformationMode.NONE,
                 0xF000F0, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, client.world, 0);

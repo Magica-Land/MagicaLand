@@ -24,6 +24,7 @@ public class ConfigScreen extends Screen {
     private float targetIndicatorY = -1;
 
     private final TabAnimator tabAnimator = new TabAnimator();
+    private ViewCube viewCube;
 
     public enum Tab {
         SETTINGS("text.magicaland.console.tab.settings", new Settings()),
@@ -101,6 +102,7 @@ public class ConfigScreen extends Screen {
                     tab.getText(), isSelected, button -> {
                     if (this.currentTab != tab) {
                             this.currentTab.getContent().onExit();
+                            this.viewCube = null;
 
                             List<net.minecraft.client.gui.widget.ClickableWidget> oldWidgets = new ArrayList<>();
                             for (net.minecraft.client.gui.Element element : this.children()) {
@@ -147,8 +149,10 @@ public class ConfigScreen extends Screen {
             if (cubeSize >= 40) {
                 cubeSize = Math.min(cubeSize, 72);
                 int cubeX = padding + (leftWidth - padding * 2 - cubeSize) / 2;
-                this.addDrawableChild(
-                        new ViewCube(cubeX, cubeBottom - cubeSize, cubeSize, cubeSize, rotationTarget));
+                if (this.viewCube == null) {
+                    this.viewCube = new ViewCube(cubeX, cubeBottom - cubeSize, cubeSize, cubeSize, rotationTarget);
+                }
+                this.addDrawableChild(this.viewCube);
             }
         }
 
