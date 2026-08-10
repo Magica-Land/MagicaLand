@@ -111,7 +111,7 @@ public class TitleScreenMixin {
         int padding = 15;
 
         int x = screenWidth - buttonWidth - padding;
-        int y = screenHeight - buttonHeight - padding - 25;
+        int y = screenHeight - buttonHeight - padding - 20;
 
         ButtonWidget ponyButton = ButtonWidget.builder(
                 Text.translatable("text.magicaland.console.tab.pony_custom"),
