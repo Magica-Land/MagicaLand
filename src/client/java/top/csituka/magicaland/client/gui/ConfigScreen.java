@@ -262,10 +262,10 @@ public class ConfigScreen extends Screen {
                 ColorPicker.openPicker = null;
             }
         }
-        if (this.currentTab != null && this.currentTab.getContent().mouseClicked(mouseX, mouseY, button)) {
+        if (super.mouseClicked(mouseX, mouseY, button)) {
             return true;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return this.currentTab != null && this.currentTab.getContent().mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
