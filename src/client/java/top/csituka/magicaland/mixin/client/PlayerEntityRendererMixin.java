@@ -156,7 +156,7 @@ public abstract class PlayerEntityRendererMixin
         this.ponyRenderer.render(matrixStack, this.ponyAnimatable, vertexConsumerProvider, renderLayer,
                 vertexConsumer, i);
 
-        this.renderMagicHeldItem(player, matrixStack, vertexConsumerProvider, i, g);
+        this.renderMagicHeldItem(player, configToUse, matrixStack, vertexConsumerProvider, i, g);
 
         matrixStack.pop();
 
@@ -173,10 +173,8 @@ public abstract class PlayerEntityRendererMixin
     private final GlowingItem magicItemRenderer = new GlowingItem();
 
     @Unique
-    private void renderMagicHeldItem(AbstractClientPlayerEntity player, MatrixStack matrices,
+    private void renderMagicHeldItem(AbstractClientPlayerEntity player, ModelConfig modelConfig, MatrixStack matrices,
             VertexConsumerProvider vertexConsumers, int light, float tickDelta) {
-        // 获取当前模型配置，检查 showHorn 设置
-        ModelConfig modelConfig = ModelManager.getActiveModel();
         boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
 
         // 如果 showHorn 为 false，不渲染发光手持物品
@@ -205,19 +203,20 @@ public abstract class PlayerEntityRendererMixin
 
         if (!mainHandStack.isEmpty()) {
             boolean isRightArm = mainArm == net.minecraft.util.Arm.RIGHT;
-            renderHandItem(player, mainHandStack, matrices, vertexConsumers, light, tickDelta, true, isRightArm,
-                    isSneaking, limbPos, limbSpeed, swingProgress, pitch);
+            renderHandItem(player, modelConfig, mainHandStack, matrices, vertexConsumers, light, tickDelta, true,
+                    isRightArm, isSneaking, limbPos, limbSpeed, swingProgress, pitch);
         }
 
         if (!offHandStack.isEmpty()) {
             boolean isRightArm = mainArm == net.minecraft.util.Arm.LEFT;
-            renderHandItem(player, offHandStack, matrices, vertexConsumers, light, tickDelta, false, isRightArm,
-                    isSneaking, limbPos, limbSpeed, swingProgress, pitch);
+            renderHandItem(player, modelConfig, offHandStack, matrices, vertexConsumers, light, tickDelta, false,
+                    isRightArm, isSneaking, limbPos, limbSpeed, swingProgress, pitch);
         }
     }
 
     @Unique
-    private void renderHandItem(AbstractClientPlayerEntity player, net.minecraft.item.ItemStack stack,
+    private void renderHandItem(AbstractClientPlayerEntity player, ModelConfig modelConfig,
+            net.minecraft.item.ItemStack stack,
             MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta,
             boolean isMainHand, boolean isRightArm, boolean isSneaking, float limbPos, float limbSpeed,
             float swingProgress, float pitch) {
@@ -282,7 +281,7 @@ public abstract class PlayerEntityRendererMixin
             matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
         }
 
-        int glowColor = GlowingItem.getCurrentGlowColor();
+        int glowColor = GlowingItem.getGlowColor(modelConfig);
         net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance()
                 .getItemRenderer();
 

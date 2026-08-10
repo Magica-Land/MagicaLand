@@ -52,19 +52,19 @@ public class ManePage implements PonyCustomPage {
                 Text.translatable("text.magicaland.config.front_mane_color.name"), config.frontManeColor,
                 color -> {
                     config.frontManeColor = color;
-                    ModelManager.saveActiveModel();
+                    ModelManager.requestSaveActiveModel();
                 }), SettingsList.Alignment.RIGHT);
         list.addWidget(new ColorPicker(buttonX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.back_mane_color.name"), config.backManeColor,
                 color -> {
                     config.backManeColor = color;
-                    ModelManager.saveActiveModel();
+                    ModelManager.requestSaveActiveModel();
                 }), SettingsList.Alignment.RIGHT);
         list.addWidget(new ColorPicker(buttonX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.tail_color.name"), config.tailColor,
                 color -> {
                     config.tailColor = color;
-                    ModelManager.saveActiveModel();
+                    ModelManager.requestSaveActiveModel();
                 }), SettingsList.Alignment.RIGHT);
     }
 

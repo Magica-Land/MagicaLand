@@ -28,7 +28,7 @@ public class GlowPage implements PonyCustomPage {
                 Text.translatable("text.magicaland.config.glow_color.name"), config.magicGlowColor,
                 color -> {
                     config.magicGlowColor = color;
-                    ModelManager.saveActiveModel();
+                    ModelManager.requestSaveActiveModel();
                 }), SettingsList.Alignment.RIGHT);
     }
 

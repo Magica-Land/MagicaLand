@@ -35,7 +35,7 @@ public final class PonyCustomPageHelper {
             if (pickerHolder[0] != null && pickerHolder[0].isLocked()) {
                 syncLockedBodyColors(newColor);
             }
-            ModelManager.saveActiveModel();
+            ModelManager.requestSaveActiveModel();
         });
 
         pickerHolder[0] = picker;

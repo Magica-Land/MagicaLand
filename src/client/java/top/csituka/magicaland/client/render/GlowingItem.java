@@ -50,9 +50,13 @@ public class GlowingItem {
      * 从当前活跃模型中读取魔法光颜色
      */
     public static int getCurrentGlowColor() {
-        ModelConfig config = ModelManager.getActiveModel();
+        return getGlowColor(ModelManager.getActiveModel());
+    }
+
+    public static int getGlowColor(ModelConfig config) {
         if (config == null) return 0xAA00FF;
         String hex = config.magicGlowColor;
+        if (hex == null) return 0xAA00FF;
         if (hex.startsWith("#")) hex = hex.substring(1);
         if (hex.length() > 6) hex = hex.substring(hex.length() - 6);
         try {

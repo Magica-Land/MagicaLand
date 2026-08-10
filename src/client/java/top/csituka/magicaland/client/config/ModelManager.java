@@ -2,12 +2,18 @@ package top.csituka.magicaland.client.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +21,16 @@ public class ModelManager {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File BASE_DIR = new File(FabricLoader.getInstance().getConfigDir().toFile(), "magicaland");
     private static final File MODELS_DIR = new File(BASE_DIR, "ponies");
-    
+    private static final long SAVE_DEBOUNCE_NANOS = 200_000_000L;
+
     private static ModelConfig activeModel;
     private static List<String> availableModels = new ArrayList<>();
+    private static boolean savePending;
+    private static long saveRequestedAt;
+    private static boolean saveTickRegistered;
 
     public static void init() {
+        registerSaveTick();
         if (!MODELS_DIR.exists()) {
             MODELS_DIR.mkdirs();
         }
@@ -30,11 +41,20 @@ public class ModelManager {
         }
         
         String lastActive = Config.getInstance().activeModelName;
-        if (lastActive != null && !lastActive.isEmpty() && availableModels.contains(lastActive)) {
-            loadModel(lastActive);
-        } else {
-            activeModel = null;
+        if (lastActive != null && !lastActive.isEmpty() && availableModels.contains(lastActive)
+                && loadModel(lastActive)) {
+            return;
         }
+
+        for (String modelName : new ArrayList<>(availableModels)) {
+            if (loadModel(modelName)) {
+                return;
+            }
+        }
+
+        activeModel = null;
+        Config.getInstance().activeModelName = "";
+        Config.save();
     }
 
     public static List<String> getAvailableModels() {
@@ -46,6 +66,10 @@ public class ModelManager {
     }
 
     public static void setActiveModel(ModelConfig model) {
+        if (activeModel != model) {
+            flushPendingSaveImmediately();
+        }
+        savePending = false;
         activeModel = model;
         if (model != null) {
             Config.getInstance().activeModelName = model.name;
@@ -111,12 +135,12 @@ public class ModelManager {
         newModel.leftHindLimbColorLocked = true;
         newModel.rightHindLimbColorLocked = true;
 
-        try (FileWriter writer = new FileWriter(file)) {
-            GSON.toJson(newModel, writer);
+        try {
+            writeAtomically(file, writer -> GSON.toJson(newModel, writer));
             refreshModelList();
             setActiveModel(newModel);
             return true;
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             e.printStackTrace();
             return false;
         }
@@ -130,27 +154,38 @@ public class ModelManager {
         try (FileReader reader = new FileReader(file)) {
             ModelConfig model = GSON.fromJson(reader, ModelConfig.class);
             if (model != null) {
+                ModelConfig.sanitize(model);
                 model.name = name;
                 setActiveModel(model);
                 return true;
             }
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             e.printStackTrace();
         }
         return false;
     }
 
     public static void saveActiveModel() {
+        savePending = false;
         if (activeModel == null) {
             return;
         }
+        ModelConfig.sanitize(activeModel);
         File file = new File(MODELS_DIR, activeModel.name + ".json");
-        try (FileWriter writer = new FileWriter(file)) {
-            GSON.toJson(activeModel, writer);
-        } catch (IOException e) {
+        try {
+            writeAtomically(file, writer -> GSON.toJson(activeModel, writer));
+        } catch (IOException | RuntimeException e) {
             e.printStackTrace();
         }
         syncToServer();
+    }
+
+    public static void requestSaveActiveModel() {
+        if (activeModel == null) {
+            return;
+        }
+        savePending = true;
+        saveRequestedAt = System.nanoTime();
     }
 
     private static void syncToServer() {
@@ -161,6 +196,7 @@ public class ModelManager {
     }
 
     public static boolean deleteModel(String name) {
+        flushPendingSaveImmediately();
         if (name == null || name.isEmpty()) {
             return false;
         }
@@ -186,5 +222,48 @@ public class ModelManager {
             }
         }
         return false;
+    }
+
+    private static void registerSaveTick() {
+        if (saveTickRegistered) {
+            return;
+        }
+        saveTickRegistered = true;
+        ClientTickEvents.END_CLIENT_TICK.register(client -> flushPendingSave());
+    }
+
+    private static void flushPendingSave() {
+        if (savePending && activeModel != null
+                && System.nanoTime() - saveRequestedAt >= SAVE_DEBOUNCE_NANOS) {
+            saveActiveModel();
+        }
+    }
+
+    private static void flushPendingSaveImmediately() {
+        if (savePending) {
+            saveActiveModel();
+        }
+    }
+
+    private static void writeAtomically(File file, WriterConsumer writerConsumer) throws IOException {
+        Path target = file.toPath();
+        Path temporary = target.resolveSibling(file.getName() + ".tmp");
+        try {
+            try (Writer writer = Files.newBufferedWriter(temporary, StandardCharsets.UTF_8)) {
+                writerConsumer.write(writer);
+            }
+            try {
+                Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } finally {
+            Files.deleteIfExists(temporary);
+        }
+    }
+
+    @FunctionalInterface
+    private interface WriterConsumer {
+        void write(Writer writer);
     }
 }
