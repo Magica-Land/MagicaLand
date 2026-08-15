@@ -1,15 +1,17 @@
 package top.csituka.magicaland.client.config;
 
 import java.util.Locale;
-import java.util.Set;
+
+import top.csituka.magicaland.client.config.style.PonyStylePart;
+import top.csituka.magicaland.client.config.style.PonyStyleRegistry;
 
 public class ModelConfig {
     public String name = "default";
-    
-    public String frontManeStyle = "TS";
-    public String backManeStyle = "TS";
-    public String tailStyle = "TS";
-    public String eyeStyle = "TS";
+
+    public String frontManeStyle = PonyStyleRegistry.DEFAULT_ID;
+    public String backManeStyle = PonyStyleRegistry.DEFAULT_ID;
+    public String tailStyle = PonyStyleRegistry.DEFAULT_ID;
+    public String eyeStyle = PonyStyleRegistry.DEFAULT_ID;
 
     public String hornColor = "#FFFFFFFF";
     public String wingColor = "#FFFFFFFF";
@@ -46,19 +48,16 @@ public class ModelConfig {
     public boolean leftHindLimbColorLocked = true;
     public boolean rightHindLimbColorLocked = true;
 
-    private static final Set<String> MANE_STYLES = Set.of("TS", "RD", "RR", "PP", "AJ", "FS");
-    private static final Set<String> EYE_STYLES = Set.of("TS", "FS", "RR");
-
     public static ModelConfig sanitize(ModelConfig config) {
         if (config == null) {
             return null;
         }
 
         config.name = sanitizeText(config.name, "remote", 32);
-        config.frontManeStyle = sanitizeStyle(config.frontManeStyle, MANE_STYLES, "TS");
-        config.backManeStyle = sanitizeStyle(config.backManeStyle, MANE_STYLES, "TS");
-        config.tailStyle = sanitizeStyle(config.tailStyle, MANE_STYLES, "TS");
-        config.eyeStyle = sanitizeStyle(config.eyeStyle, EYE_STYLES, "TS");
+        config.frontManeStyle = sanitizeStyle(config.frontManeStyle, PonyStylePart.FRONT_MANE);
+        config.backManeStyle = sanitizeStyle(config.backManeStyle, PonyStylePart.BACK_MANE);
+        config.tailStyle = sanitizeStyle(config.tailStyle, PonyStylePart.TAIL);
+        config.eyeStyle = sanitizeStyle(config.eyeStyle, PonyStylePart.EYE);
 
         config.hornColor = sanitizeColor(config.hornColor, "#FFFFFFFF");
         config.wingColor = sanitizeColor(config.wingColor, "#FFFFFFFF");
@@ -87,8 +86,16 @@ public class ModelConfig {
         return value;
     }
 
-    private static String sanitizeStyle(String value, Set<String> allowed, String fallback) {
-        return value != null && allowed.contains(value) ? value : fallback;
+    /**
+     * Validates a style field, transparently upgrading old character-abbreviation
+     * save values (e.g. "RD") to the new numeric id along the way. Old and new
+     * values never overlap ("RD" vs "02"), so this is safe to run unconditionally
+     * on every load/sync, with no separate one-time migration step or version flag.
+     */
+    private static String sanitizeStyle(String value, PonyStylePart part) {
+        String legacyMapped = PonyStyleRegistry.legacyCodeToId(part, value);
+        String id = legacyMapped != null ? legacyMapped : value;
+        return PonyStyleRegistry.isValidStyleId(part, id) ? id : PonyStyleRegistry.DEFAULT_ID;
     }
 
     private static String sanitizeColor(String value, String fallback) {

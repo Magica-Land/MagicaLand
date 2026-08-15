@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 
+import top.csituka.magicaland.client.config.style.PonyStyleRegistry;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -121,9 +123,9 @@ public class ModelManager {
         ModelConfig newModel = new ModelConfig();
         newModel.name = name;
         
-        newModel.frontManeStyle = "TS";
-        newModel.backManeStyle = "TS";
-        newModel.eyeStyle = "TS";
+        newModel.frontManeStyle = PonyStyleRegistry.DEFAULT_ID;
+        newModel.backManeStyle = PonyStyleRegistry.DEFAULT_ID;
+        newModel.eyeStyle = PonyStyleRegistry.DEFAULT_ID;
         newModel.hornColor = "#FFFFFFFF";
         newModel.bodyColor = "#FFFFFFFF";
         newModel.neckColor = "#FFFFFFFF";

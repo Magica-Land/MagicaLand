@@ -2404,7 +2404,7 @@
 				"ROpendWing": {
 					"scale": 0
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": {
 						"0.0": {
 							"post": [-17.5, 0, 0],
@@ -2420,7 +2420,7 @@
 						}
 					}
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": {
 						"0.0": {
 							"post": [25, 0, 0],
@@ -2436,7 +2436,7 @@
 						}
 					}
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": {
 						"0.0": {
 							"post": [-15, 0, 0],
@@ -2680,7 +2680,7 @@
 						"1.2917": [0, 0, 0]
 					}
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": {
 						"0.0": [-15, 0, 0],
 						"0.4583": [22.5, 0, 0],
@@ -2700,7 +2700,7 @@
 						"1.5": [1, 1, 1]
 					}
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": {
 						"0.4583": [0, 0, 0],
 						"0.5833": [17.5, 0, 0],
@@ -3976,13 +3976,13 @@
 				"ROpendWing": {
 					"scale": 0
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": [30, 0, 0]
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": [17.5, 0, 0]
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": [27.5, 0, 0]
 				},
 				"Bun": {
@@ -4222,7 +4222,7 @@
 				"ROpendWing": {
 					"scale": 0
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": [-15, 0, 0]
 				},
 				"Bun": {
@@ -4860,7 +4860,7 @@
 				"ROpendWing": {
 					"scale": 0
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": [-22.5, 0, 0]
 				},
 				"Root": {
@@ -5307,17 +5307,17 @@
 					"position": [0, -1, 0],
 					"scale": [1, 1.1, 1]
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": [37.5, 0, 0]
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.25": [-7.5, 0, 0],
 						"0.5833": [0, 0, 0]
 					}
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": {
 						"0.0": [42.5, 0, 0],
 						"0.25": [47.5, 0, 0],
@@ -6908,13 +6908,13 @@
 						}
 					}
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": [-2.5, 0, 0]
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": [47.5, 0, 0]
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": [25, 0, 0]
 				},
 				"molang": {
@@ -7427,7 +7427,7 @@
 						}
 					}
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": {
 						"0.0": {
 							"post": [-31.07765, 17.49972, -30.72917],
@@ -7439,7 +7439,7 @@
 						}
 					}
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": {
 						"0.0": {
 							"post": [-9.11316, 9.79781, -42.15258],
@@ -7451,7 +7451,7 @@
 						}
 					}
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": {
 						"0.0": {
 							"post": [-6.97488, 0.14366, -19.75377],
@@ -7526,13 +7526,13 @@
 				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": [80, 0, 0]
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": [32.5, 0, 0]
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": [5, 0, 0]
 				}
 			}
@@ -7595,13 +7595,13 @@
 				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": [75, 0, 0]
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": [37.5, 0, 0]
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": [7.5, 0, 0]
 				}
 			}
@@ -7736,13 +7736,13 @@
 				"close": {
 					"scale": 0
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": [39.89531, -28.28858, 29.54836]
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": [0, 0, 20]
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": [0, 0, 30]
 				}
 			}
@@ -8030,7 +8030,7 @@
 						"0.375": [0, 0, 0]
 					}
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": {
 						"0.1667": {
 							"pre": [0, 0, 0],
@@ -8059,7 +8059,7 @@
 						}
 					}
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": {
 						"0.1667": {
 							"pre": [0, 0, 0],
@@ -8088,7 +8088,7 @@
 						}
 					}
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": {
 						"0.1667": {
 							"pre": [0, 0, 0],
@@ -8173,7 +8173,7 @@
 			"loop": true,
 			"animation_length": 4.0417,
 			"bones": {
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 12.5, 0],
@@ -8189,7 +8189,7 @@
 						}
 					}
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, -12.5],
@@ -8205,7 +8205,7 @@
 						}
 					}
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, -5],
@@ -8650,7 +8650,7 @@
 				"Neck": {
 					"rotation": [17.5, 0, 0]
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": [15, 0, 0]
 				}
 			}
@@ -8949,7 +8949,7 @@
 				"Neck": {
 					"rotation": [17.5, 0, 0]
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": [15, 0, 0]
 				}
 			}
@@ -9160,13 +9160,13 @@
 				"Angry": {
 					"scale": 0
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": {
 						"0.0": [15, 0, 0],
 						"0.75": [-90, 35, -90]
 					}
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": {
 						"0.75": {
 							"pre": [0, 0, 0],
@@ -9175,7 +9175,7 @@
 						}
 					}
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": {
 						"0.75": {
 							"pre": [7.43656, 0.9762, -7.43656],
@@ -9672,10 +9672,10 @@
 						}
 					}
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": [-90, 35, -90]
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": {
 						"0.0": {
 							"post": [0, 0, 0],
@@ -9691,7 +9691,7 @@
 						}
 					}
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": {
 						"0.0": {
 							"post": [7.43656, 0.9762, -7.43656],
@@ -10379,7 +10379,7 @@
 						"0.375": [0, 0, 0]
 					}
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": {
 						"0.1667": {
 							"pre": [0, 0, 0],
@@ -10408,7 +10408,7 @@
 						}
 					}
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": {
 						"0.1667": {
 							"pre": [0, 0, 0],
@@ -10437,7 +10437,7 @@
 						}
 					}
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": {
 						"0.1667": {
 							"pre": [0, 0, 0],
@@ -10872,7 +10872,7 @@
 						"5.5833": [0, 0, 0]
 					}
 				},
-				"RRTail01": {
+				"Style03Tail01": {
 					"rotation": {
 						"0.0": {
 							"post": [42.5, 0, 0],
@@ -10896,7 +10896,7 @@
 						}
 					}
 				},
-				"PPTail01": {
+				"Style04Tail01": {
 					"rotation": {
 						"0.0": {
 							"post": [9.25249, -3.81024, 22.19157],
@@ -10958,7 +10958,7 @@
 						}
 					}
 				},
-				"PPTail02": {
+				"Style04Tail02": {
 					"rotation": {
 						"0.0": {
 							"post": [12.2127, -2.68507, 12.2127],
@@ -10998,7 +10998,7 @@
 						}
 					}
 				},
-				"AJBackMane01": {
+				"Style05BackMane01": {
 					"scale": {
 						"0.0": [0, 0, 0],
 						"4.0": [0, 0, 0]

@@ -3,15 +3,13 @@ package top.csituka.magicaland.client.gui.tab.ponycustom;
 import net.minecraft.text.Text;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
+import top.csituka.magicaland.client.config.style.PonyStylePart;
 import top.csituka.magicaland.client.gui.widget.ColorPicker;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
 import top.csituka.magicaland.client.gui.widget.SectionLabel;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 
 public class ManePage implements PonyCustomPage {
-    private static final String[] FRONT_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
-    private static final String[] BACK_MANE_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
-    private static final String[] TAIL_STYLES = {"TS", "RD", "RR", "PP", "AJ", "FS"};
 
     @Override
     public void build(PonyCustomPageContext context, SettingsList list) {
@@ -28,20 +26,20 @@ public class ManePage implements PonyCustomPage {
                 Text.translatable("text.magicaland.config.section.mane_styles.name")), SettingsList.Alignment.RIGHT);
 
         list.addWidget(PonyCustomPageHelper.createStyleButton(buttonX, 0, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.front_mane_style.name"), config.frontManeStyle,
-                FRONT_MANE_STYLES, style -> {
+                Text.translatable("text.magicaland.config.front_mane_style.name"),
+                PonyStylePart.FRONT_MANE, config.frontManeStyle, style -> {
                     config.frontManeStyle = style;
                     ModelManager.saveActiveModel();
                 }), SettingsList.Alignment.RIGHT);
         list.addWidget(PonyCustomPageHelper.createStyleButton(buttonX, 0, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.back_mane_style.name"), config.backManeStyle,
-                BACK_MANE_STYLES, style -> {
+                Text.translatable("text.magicaland.config.back_mane_style.name"),
+                PonyStylePart.BACK_MANE, config.backManeStyle, style -> {
                     config.backManeStyle = style;
                     ModelManager.saveActiveModel();
                 }), SettingsList.Alignment.RIGHT);
         list.addWidget(PonyCustomPageHelper.createStyleButton(buttonX, 0, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.tail_style.name"), config.tailStyle,
-                TAIL_STYLES, style -> {
+                Text.translatable("text.magicaland.config.tail_style.name"),
+                PonyStylePart.TAIL, config.tailStyle, style -> {
                     config.tailStyle = style;
                     ModelManager.saveActiveModel();
                 }), SettingsList.Alignment.RIGHT);

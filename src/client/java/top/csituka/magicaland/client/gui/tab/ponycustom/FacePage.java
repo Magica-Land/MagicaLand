@@ -3,13 +3,13 @@ package top.csituka.magicaland.client.gui.tab.ponycustom;
 import net.minecraft.text.Text;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
+import top.csituka.magicaland.client.config.style.PonyStylePart;
 import top.csituka.magicaland.client.gui.widget.ColorPicker;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
 import top.csituka.magicaland.client.gui.widget.SectionLabel;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 
 public class FacePage implements PonyCustomPage {
-    private static final String[] EYE_STYLES = {"TS", "FS", "RR"};
 
     @Override
     public void build(PonyCustomPageContext context, SettingsList list) {
@@ -27,8 +27,8 @@ public class FacePage implements PonyCustomPage {
         list.addWidget(new SectionLabel(buttonX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.section.mane_styles.name")), SettingsList.Alignment.RIGHT);
         list.addWidget(PonyCustomPageHelper.createStyleButton(buttonX, 0, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.eye_style.name"), config.eyeStyle, EYE_STYLES,
-                style -> {
+                Text.translatable("text.magicaland.config.eye_style.name"),
+                PonyStylePart.EYE, config.eyeStyle, style -> {
                     config.eyeStyle = style;
                     ModelManager.saveActiveModel();
                 }), SettingsList.Alignment.RIGHT);
