@@ -65,6 +65,7 @@
   "text.magicaland.config.tab.network": "Network",
   "text.magicaland.config.broadcast_own_model.name": "Broadcast Own Model",
   "text.magicaland.config.main_menu_pony_button.name": "Main Menu Pony Button",
+  "text.magicaland.config.main_menu_pony_button.tooltip": "Display preference for the pony button in the bottom-right corner of the main menu",
   "text.magicaland.config.main_menu_pony_button.all": "All",
   "text.magicaland.config.main_menu_pony_button.button_only": "Button Only",
   "text.magicaland.config.main_menu_pony_button.hidden": "Hidden",

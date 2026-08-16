@@ -1,5 +1,6 @@
 package top.csituka.magicaland.client.gui.tab.settings;
 
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
@@ -32,6 +33,7 @@ public class GeneralPage implements SettingsPage {
                     config.mainMenuPonyButton = next;
                     Config.save();
                 });
+        btn.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.main_menu_pony_button.tooltip")));
         btn.setSegments(BUTTON_MODES.size(), activeIdx);
         list.addWidget(btn);
     }
