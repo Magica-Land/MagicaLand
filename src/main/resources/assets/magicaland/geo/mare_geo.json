@@ -39,7 +39,7 @@
 					"pivot": [0, 16, 8]
 				},
 				{
-					"name": "TSTail",
+					"name": "Style01Tail",
 					"parent": "Tail",
 					"pivot": [0, 16, 8],
 					"cubes": [
@@ -102,8 +102,8 @@
 					]
 				},
 				{
-					"name": "TSTail01",
-					"parent": "TSTail",
+					"name": "Style01Tail01",
+					"parent": "Style01Tail",
 					"pivot": [0, 18, 12],
 					"cubes": [
 						{
@@ -221,8 +221,8 @@
 					]
 				},
 				{
-					"name": "TSTail02",
-					"parent": "TSTail01",
+					"name": "Style01Tail02",
+					"parent": "Style01Tail01",
 					"pivot": [0, 16, 15],
 					"cubes": [
 						{
@@ -466,7 +466,7 @@
 					]
 				},
 				{
-					"name": "FSTail",
+					"name": "Style06Tail",
 					"parent": "Tail",
 					"pivot": [0, 16, 8],
 					"cubes": [
@@ -501,8 +501,8 @@
 					]
 				},
 				{
-					"name": "FSTail01",
-					"parent": "FSTail",
+					"name": "Style06Tail01",
+					"parent": "Style06Tail",
 					"pivot": [0, 16.7, 12.7],
 					"cubes": [
 						{
@@ -550,8 +550,8 @@
 					]
 				},
 				{
-					"name": "FSTail02",
-					"parent": "FSTail01",
+					"name": "Style06Tail02",
+					"parent": "Style06Tail01",
 					"pivot": [0, 15, 20.1],
 					"cubes": [
 						{
@@ -599,8 +599,8 @@
 					]
 				},
 				{
-					"name": "FSTail03",
-					"parent": "FSTail02",
+					"name": "Style06Tail03",
+					"parent": "Style06Tail02",
 					"pivot": [0, 2.3, 19.6],
 					"cubes": [
 						{
@@ -634,7 +634,7 @@
 					]
 				},
 				{
-					"name": "PPTail",
+					"name": "Style04Tail",
 					"parent": "Tail",
 					"pivot": [0, 16, 8],
 					"cubes": [
@@ -669,8 +669,8 @@
 					]
 				},
 				{
-					"name": "PPTail01",
-					"parent": "PPTail",
+					"name": "Style04Tail01",
+					"parent": "Style04Tail",
 					"pivot": [0, 19, 11],
 					"rotation": [10, 0, 0],
 					"cubes": [
@@ -761,8 +761,8 @@
 					]
 				},
 				{
-					"name": "PPTail02",
-					"parent": "PPTail01",
+					"name": "Style04Tail02",
+					"parent": "Style04Tail01",
 					"pivot": [0, 17, 14],
 					"cubes": [
 						{
@@ -838,7 +838,7 @@
 					]
 				},
 				{
-					"name": "AJTail",
+					"name": "Style05Tail",
 					"parent": "Tail",
 					"pivot": [0, 16, 8],
 					"cubes": [
@@ -887,8 +887,8 @@
 					]
 				},
 				{
-					"name": "AJTail01",
-					"parent": "AJTail",
+					"name": "Style05Tail01",
+					"parent": "Style05Tail",
 					"pivot": [0, 18, 11],
 					"cubes": [
 						{
@@ -936,8 +936,8 @@
 					]
 				},
 				{
-					"name": "AJTail02",
-					"parent": "AJTail01",
+					"name": "Style05Tail02",
+					"parent": "Style05Tail01",
 					"pivot": [0, 16, 15],
 					"cubes": [
 						{
@@ -1153,7 +1153,7 @@
 					]
 				},
 				{
-					"name": "RRTail",
+					"name": "Style03Tail",
 					"parent": "Tail",
 					"pivot": [0, 16, 8],
 					"cubes": [
@@ -1188,8 +1188,8 @@
 					]
 				},
 				{
-					"name": "RRTail01",
-					"parent": "RRTail",
+					"name": "Style03Tail01",
+					"parent": "Style03Tail",
 					"pivot": [0, 16.7, 12.7],
 					"cubes": [
 						{
@@ -1209,8 +1209,8 @@
 					]
 				},
 				{
-					"name": "RRTail02",
-					"parent": "RRTail01",
+					"name": "Style03Tail02",
+					"parent": "Style03Tail01",
 					"pivot": [0, 15, 23.1],
 					"cubes": [
 						{
@@ -1244,8 +1244,8 @@
 					]
 				},
 				{
-					"name": "RRTail03",
-					"parent": "RRTail02",
+					"name": "Style03Tail03",
+					"parent": "Style03Tail02",
 					"pivot": [0, 1.3, 17.6],
 					"cubes": [
 						{
@@ -1279,7 +1279,7 @@
 					]
 				},
 				{
-					"name": "RDTail",
+					"name": "Style02Tail",
 					"parent": "Tail",
 					"pivot": [0, 16, 8],
 					"cubes": [
@@ -1300,8 +1300,8 @@
 					]
 				},
 				{
-					"name": "RDTail01",
-					"parent": "RDTail",
+					"name": "Style02Tail01",
+					"parent": "Style02Tail",
 					"pivot": [0, 18, 11],
 					"cubes": [
 						{
@@ -1489,8 +1489,8 @@
 					]
 				},
 				{
-					"name": "RDTail02",
-					"parent": "RDTail01",
+					"name": "Style02Tail02",
+					"parent": "Style02Tail01",
 					"pivot": [0, 16, 14],
 					"cubes": [
 						{
@@ -2536,7 +2536,7 @@
 					"pivot": [0, 21, -3]
 				},
 				{
-					"name": "FSFrontMane",
+					"name": "Style06FrontMane",
 					"parent": "FrontMane",
 					"pivot": [0, 21, -3],
 					"cubes": [
@@ -2600,8 +2600,8 @@
 					]
 				},
 				{
-					"name": "FSFrontMane01",
-					"parent": "FSFrontMane",
+					"name": "Style06FrontMane01",
+					"parent": "Style06FrontMane",
 					"pivot": [-4.9, 33, -6.7],
 					"cubes": [
 						{
@@ -2621,8 +2621,8 @@
 					]
 				},
 				{
-					"name": "FSFrontMane02",
-					"parent": "FSFrontMane01",
+					"name": "Style06FrontMane02",
+					"parent": "Style06FrontMane01",
 					"pivot": [-5.9, 29, -7],
 					"cubes": [
 						{
@@ -2656,8 +2656,8 @@
 					]
 				},
 				{
-					"name": "FSFrontMane03",
-					"parent": "FSFrontMane02",
+					"name": "Style06FrontMane03",
+					"parent": "Style06FrontMane02",
 					"pivot": [-4.9, 20.6, -3.4],
 					"cubes": [
 						{
@@ -2691,7 +2691,7 @@
 					]
 				},
 				{
-					"name": "PPFrontMane",
+					"name": "Style04FrontMane",
 					"parent": "FrontMane",
 					"pivot": [0, 21, -3],
 					"cubes": [
@@ -2726,8 +2726,8 @@
 					]
 				},
 				{
-					"name": "PPFrontMane01",
-					"parent": "PPFrontMane",
+					"name": "Style04FrontMane01",
+					"parent": "Style04FrontMane",
 					"pivot": [-1.6, 31.4, -9.8],
 					"cubes": [
 						{
@@ -2748,13 +2748,13 @@
 					]
 				},
 				{
-					"name": "RRFrontMane",
+					"name": "Style03FrontMane",
 					"parent": "FrontMane",
 					"pivot": [0, 21, -3]
 				},
 				{
-					"name": "RRFrontMane01",
-					"parent": "RRFrontMane",
+					"name": "Style03FrontMane01",
+					"parent": "Style03FrontMane",
 					"pivot": [0, 21, -3],
 					"cubes": [
 						{
@@ -2778,8 +2778,8 @@
 					]
 				},
 				{
-					"name": "RRFrontMane02",
-					"parent": "RRFrontMane01",
+					"name": "Style03FrontMane02",
+					"parent": "Style03FrontMane01",
 					"pivot": [-4.9, 33, -6.7],
 					"cubes": [
 						{
@@ -2799,8 +2799,8 @@
 					]
 				},
 				{
-					"name": "RRFrontMane03",
-					"parent": "RRFrontMane02",
+					"name": "Style03FrontMane03",
+					"parent": "Style03FrontMane02",
 					"pivot": [-5.9, 29, -7],
 					"cubes": [
 						{
@@ -2834,7 +2834,7 @@
 					]
 				},
 				{
-					"name": "TSFrontMane",
+					"name": "Style01FrontMane",
 					"parent": "FrontMane",
 					"pivot": [0, 21, -3],
 					"cubes": [
@@ -2895,8 +2895,8 @@
 					]
 				},
 				{
-					"name": "TSFrontManeHighlight",
-					"parent": "TSFrontMane",
+					"name": "Style01FrontManeHighlight",
+					"parent": "Style01FrontMane",
 					"pivot": [0, 31.9, -7.6],
 					"cubes": [
 						{
@@ -2930,7 +2930,7 @@
 					]
 				},
 				{
-					"name": "RD/AJFrontMane",
+					"name": "Style02FrontMane",
 					"parent": "FrontMane",
 					"pivot": [1.4, 27.6, -11.7],
 					"cubes": [
@@ -3784,7 +3784,7 @@
 					]
 				},
 				{
-					"name": "TSBackMane",
+					"name": "Style01BackMane",
 					"parent": "BackMane",
 					"pivot": [-3.5, 18.8, -1.2],
 					"cubes": [
@@ -3903,7 +3903,7 @@
 					]
 				},
 				{
-					"name": "RDBackMane",
+					"name": "Style02BackMane",
 					"parent": "BackMane",
 					"pivot": [-1, 26, -1],
 					"cubes": [
@@ -3924,8 +3924,8 @@
 					]
 				},
 				{
-					"name": "RDBackMane01",
-					"parent": "RDBackMane",
+					"name": "Style02BackMane01",
+					"parent": "Style02BackMane",
 					"pivot": [-2.5, 27.3, -0.3],
 					"cubes": [
 						{
@@ -4113,7 +4113,7 @@
 					]
 				},
 				{
-					"name": "RRBackMane",
+					"name": "Style03BackMane",
 					"parent": "BackMane",
 					"pivot": [3.4, 26.35, -0.1],
 					"cubes": [
@@ -4162,8 +4162,8 @@
 					]
 				},
 				{
-					"name": "RRBackMane01",
-					"parent": "RRBackMane",
+					"name": "Style03BackMane01",
+					"parent": "Style03BackMane",
 					"pivot": [4.8, 17.35, -1.1],
 					"cubes": [
 						{
@@ -4211,7 +4211,7 @@
 					]
 				},
 				{
-					"name": "PPBackMane",
+					"name": "Style04BackMane",
 					"parent": "BackMane",
 					"pivot": [0, 26, 0],
 					"cubes": [
@@ -4330,7 +4330,7 @@
 					]
 				},
 				{
-					"name": "AJBackMane",
+					"name": "Style05BackMane",
 					"parent": "BackMane",
 					"pivot": [0, 21, -3],
 					"cubes": [
@@ -4351,8 +4351,8 @@
 					]
 				},
 				{
-					"name": "AJBackMane01",
-					"parent": "AJBackMane",
+					"name": "Style05BackMane01",
+					"parent": "Style05BackMane",
 					"pivot": [-3.7, 26.4, -0.3],
 					"cubes": [
 						{
@@ -4512,7 +4512,7 @@
 					]
 				},
 				{
-					"name": "FSBackMane",
+					"name": "Style06BackMane",
 					"parent": "BackMane",
 					"pivot": [3.4, 26.35, -0.1],
 					"cubes": [
@@ -4533,8 +4533,8 @@
 					]
 				},
 				{
-					"name": "FSBackMane01",
-					"parent": "FSBackMane",
+					"name": "Style06BackMane01",
+					"parent": "Style06BackMane",
 					"pivot": [4.8, 17.35, -1.1],
 					"cubes": [
 						{
@@ -4568,8 +4568,8 @@
 					]
 				},
 				{
-					"name": "FSBackMane02",
-					"parent": "FSBackMane01",
+					"name": "Style06BackMane02",
+					"parent": "Style06BackMane01",
 					"pivot": [4.8, 17.35, -1.1],
 					"cubes": [
 						{
@@ -4617,8 +4617,8 @@
 					]
 				},
 				{
-					"name": "FSBackMane03",
-					"parent": "FSBackMane02",
+					"name": "Style06BackMane03",
+					"parent": "Style06BackMane02",
 					"pivot": [5.6, 8.75, -2.7],
 					"cubes": [
 						{
@@ -4658,7 +4658,7 @@
 					"rotation": [-12, 0, 0]
 				},
 				{
-					"name": "AJHat",
+					"name": "Style05Hat",
 					"parent": "Hat",
 					"pivot": [0, 29.4, -4],
 					"cubes": [
@@ -5685,13 +5685,13 @@
 					"pivot": [0, 21, -3]
 				},
 				{
-					"name": "FS",
+					"name": "Style06",
 					"parent": "SpecialFaces",
 					"pivot": [0, 21, -3]
 				},
 				{
-					"name": "FSCommonFace",
-					"parent": "FS",
+					"name": "Style06CommonFace",
+					"parent": "Style06",
 					"pivot": [0, 21, -3],
 					"cubes": [
 						{
@@ -5970,7 +5970,7 @@
 				},
 				{
 					"name": "leye2",
-					"parent": "FSCommonFace",
+					"parent": "Style06CommonFace",
 					"pivot": [0, 0, 0],
 					"cubes": [
 						{"origin": [0.7, 24, -9.53], "size": [2, 3, 2], "uv": [0, 62]},
@@ -6015,7 +6015,7 @@
 				},
 				{
 					"name": "reye2",
-					"parent": "FSCommonFace",
+					"parent": "Style06CommonFace",
 					"pivot": [0, 0, 0],
 					"cubes": [
 						{"origin": [-2.6, 24, -9.53], "size": [2, 3, 2], "uv": [0, 62], "mirror": true},
@@ -6059,8 +6059,8 @@
 					]
 				},
 				{
-					"name": "FSSmile",
-					"parent": "FS",
+					"name": "Style06Smile",
+					"parent": "Style06",
 					"pivot": [0, 21, -3],
 					"cubes": [
 						{
@@ -6178,13 +6178,13 @@
 					]
 				},
 				{
-					"name": "RR",
+					"name": "Style03",
 					"parent": "SpecialFaces",
 					"pivot": [0, 21, -3]
 				},
 				{
-					"name": "RRCommonFace",
-					"parent": "RR",
+					"name": "Style03CommonFace",
+					"parent": "Style03",
 					"pivot": [0, 21, -3],
 					"cubes": [
 						{
@@ -6371,7 +6371,7 @@
 				},
 				{
 					"name": "leye3",
-					"parent": "RRCommonFace",
+					"parent": "Style03CommonFace",
 					"pivot": [0, 0, 0],
 					"cubes": [
 						{
@@ -6416,7 +6416,7 @@
 				},
 				{
 					"name": "reye3",
-					"parent": "RRCommonFace",
+					"parent": "Style03CommonFace",
 					"pivot": [0, 0, 0],
 					"cubes": [
 						{"origin": [-2.5, 24, -9.53], "size": [2, 2.5, 2], "uv": [0, 62], "mirror": true},

@@ -9,6 +9,7 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
+import top.csituka.magicaland.client.config.style.PonyStylePart;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.model.GeckoPlayerModel;
 
@@ -61,8 +62,8 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                     bone.setScaleZ(1);
                 } else if (boneName.equals("emot")
                         || boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye")
-                        || boneName.equals("FSCommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
-                        || boneName.equals("RRCommonFace") || boneName.equals("leye3") || boneName.equals("reye3")) {
+                        || boneName.equals("Style06CommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
+                        || boneName.equals("Style03CommonFace") || boneName.equals("leye3") || boneName.equals("reye3")) {
                     return;
                 }
             }
@@ -154,12 +155,10 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             } else if (boneLC.contains("wing")) {
                 maneColorField = config.wingColor;
             } else if (boneLC.contains("mane")) {
-                String frontStyle = config.frontManeStyle;
                 boolean isFrontMane = boneName.equals("Mane") || boneName.equals("FrontMane")
-                        || boneName.startsWith(frontStyle + "FrontMane")
-                        || (boneName.startsWith("RD/AJFrontMane")
-                                && (frontStyle.equals("RD") || frontStyle.equals("AJ")))
-                        || (boneLC.contains("frontmane") && !boneName.startsWith(config.backManeStyle + "BackMane"));
+                        || boneName.startsWith(bonePrefix(config.frontManeStyle, PonyStylePart.FRONT_MANE))
+                        || (boneLC.contains("frontmane")
+                                && !boneName.startsWith(bonePrefix(config.backManeStyle, PonyStylePart.BACK_MANE)));
                 maneColorField = isFrontMane ? config.frontManeColor : config.backManeColor;
             }
             if (maneColorField != null) {
@@ -195,7 +194,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         if (boneName.toLowerCase().contains("tail")) {
             if (boneName.equalsIgnoreCase("Tail"))
                 return true;
-            return boneName.startsWith(config.tailStyle + "Tail");
+            return boneName.startsWith(bonePrefix(config.tailStyle, PonyStylePart.TAIL));
         }
 
         if (!boneName.toLowerCase().contains("mane"))
@@ -204,16 +203,17 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         if (boneName.equals("Mane") || boneName.equals("FrontMane") || boneName.equals("BackMane"))
             return true;
 
-        String frontStyle = config.frontManeStyle;
-        String backStyle = config.backManeStyle;
-
-        // RD and AJ share the combined "RD/AJFrontMane" bone in the geo
-        if ((frontStyle.equals("RD") || frontStyle.equals("AJ")) && boneName.startsWith("RD/AJFrontMane"))
+        // AJ has no front-mane bone of its own (its frontManeStyle value never
+        // resolves to anything but Style02, RD's shared bone), so no special
+        // case is needed here for the old RD/AJ shared-bone quirk.
+        if (boneName.startsWith(bonePrefix(config.frontManeStyle, PonyStylePart.FRONT_MANE)))
             return true;
+        return boneName.startsWith(bonePrefix(config.backManeStyle, PonyStylePart.BACK_MANE));
+    }
 
-        if (boneName.startsWith(frontStyle + "FrontMane"))
-            return true;
-        return boneName.startsWith(backStyle + "BackMane");
+    /** Builds the "Style{id}{PartSuffix}" bone-name prefix, e.g. "Style02FrontMane". */
+    private static String bonePrefix(String styleId, PonyStylePart part) {
+        return "Style" + styleId + part.boneSuffix;
     }
 
     private boolean shouldRenderSelectedEye(String boneName) {
@@ -222,16 +222,19 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             return true;
         String eyeStyle = config.eyeStyle;
 
+        // leye2/reye2 belong to Style06 (formerly FS); leye3/reye3 belong to Style03 (formerly RR).
+        // These two never got a "Style0X" bone-name prefix of their own since they're not shared
+        // across styles the way mane/tail bones are, so they're left as-is.
         boolean isEyeBone = boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye")
-                || boneName.equals("FSCommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
-                || boneName.equals("RRCommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
+                || boneName.equals("Style06CommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
+                || boneName.equals("Style03CommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
 
         if (!isEyeBone)
             return true;
 
         return switch (eyeStyle) {
-            case "FS" -> boneName.equals("FSCommonFace") || boneName.equals("leye2") || boneName.equals("reye2");
-            case "RR" -> boneName.equals("RRCommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
+            case "06" -> boneName.equals("Style06CommonFace") || boneName.equals("leye2") || boneName.equals("reye2");
+            case "03" -> boneName.equals("Style03CommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
             default -> boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye");
         };
     }
