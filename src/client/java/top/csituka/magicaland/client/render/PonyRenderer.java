@@ -62,8 +62,8 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                     bone.setScaleZ(1);
                 } else if (boneName.equals("emot")
                         || boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye")
-                        || boneName.equals("Style06CommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
-                        || boneName.equals("Style03CommonFace") || boneName.equals("leye3") || boneName.equals("reye3")) {
+                        || boneName.equals("Style03CommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
+                        || boneName.equals("Style02CommonFace") || boneName.equals("leye3") || boneName.equals("reye3")) {
                     return;
                 }
             }
@@ -188,9 +188,6 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         if (config == null)
             return true;
 
-        if (boneName.equals("Bun"))
-            return false;
-
         if (boneName.toLowerCase().contains("tail")) {
             if (boneName.equalsIgnoreCase("Tail"))
                 return true;
@@ -222,19 +219,19 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             return true;
         String eyeStyle = config.eyeStyle;
 
-        // leye2/reye2 belong to Style06 (formerly FS); leye3/reye3 belong to Style03 (formerly RR).
+        // leye2/reye2 belong to Style03 (formerly FS); leye3/reye3 belong to Style02 (formerly RR).
         // These two never got a "Style0X" bone-name prefix of their own since they're not shared
         // across styles the way mane/tail bones are, so they're left as-is.
         boolean isEyeBone = boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye")
-                || boneName.equals("Style06CommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
-                || boneName.equals("Style03CommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
+                || boneName.equals("Style03CommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
+                || boneName.equals("Style02CommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
 
         if (!isEyeBone)
             return true;
 
         return switch (eyeStyle) {
-            case "06" -> boneName.equals("Style06CommonFace") || boneName.equals("leye2") || boneName.equals("reye2");
-            case "03" -> boneName.equals("Style03CommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
+            case "03" -> boneName.equals("Style03CommonFace") || boneName.equals("leye2") || boneName.equals("reye2");
+            case "02" -> boneName.equals("Style02CommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
             default -> boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye");
         };
     }

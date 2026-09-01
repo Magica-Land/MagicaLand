@@ -306,7 +306,7 @@
 				"ROpendWing": {
 					"scale": 0
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
@@ -907,7 +907,7 @@
 				"close": {
 					"scale": 0
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
@@ -1514,7 +1514,7 @@
 				"close": {
 					"scale": 0
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
@@ -2452,7 +2452,7 @@
 						}
 					}
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
@@ -2723,7 +2723,7 @@
 				"close": {
 					"scale": 0
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
@@ -3250,7 +3250,7 @@
 						}
 					}
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
@@ -3985,7 +3985,7 @@
 				"Style04Tail02": {
 					"rotation": [27.5, 0, 0]
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
@@ -4148,7 +4148,7 @@
 				"ScrunchedEyes": {
 					"scale": 0
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
@@ -4225,7 +4225,7 @@
 				"Style03Tail01": {
 					"rotation": [-15, 0, 0]
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
@@ -4866,7 +4866,7 @@
 				"Root": {
 					"position": [0, 1, 0]
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
@@ -5332,7 +5332,7 @@
 				"molang": {
 					"rotation": ["v.s=32", "v.f=32/72", 0]
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
@@ -5855,7 +5855,7 @@
 				"ROpendWing": {
 					"scale": 0
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
@@ -6126,7 +6126,7 @@
 				"shut": {
 					"scale": 0
 				},
-				"Bun": {
+				"Style07BackMane": {
 					"scale": 0
 				}
 			}
