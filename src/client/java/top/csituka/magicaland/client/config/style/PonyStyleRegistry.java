@@ -21,12 +21,13 @@ public final class PonyStyleRegistry {
         }
 
         register(PonyStylePart.FRONT_MANE, "01", "TS");
-        register(PonyStylePart.FRONT_MANE, "02", "RD", "AJ");
+        register(PonyStylePart.FRONT_MANE, "02", "RD");
         register(PonyStylePart.FRONT_MANE, "03", "RR");
         register(PonyStylePart.FRONT_MANE, "04", "PP");
-        register(PonyStylePart.FRONT_MANE, "05", "FS");
-        register(PonyStylePart.FRONT_MANE, "06");
+        register(PonyStylePart.FRONT_MANE, "05", "AJ");
+        register(PonyStylePart.FRONT_MANE, "06", "FS");
         register(PonyStylePart.FRONT_MANE, "07");
+        register(PonyStylePart.FRONT_MANE, "08");
 
         register(PonyStylePart.BACK_MANE, "01", "TS");
         register(PonyStylePart.BACK_MANE, "02", "RD");
@@ -34,7 +35,8 @@ public final class PonyStyleRegistry {
         register(PonyStylePart.BACK_MANE, "04", "PP");
         register(PonyStylePart.BACK_MANE, "05", "AJ");
         register(PonyStylePart.BACK_MANE, "06", "FS");
-        register(PonyStylePart.BACK_MANE, "07");
+        // 07 后发暂缓制作，保留编号；08 丸子头不再改号。
+        register(PonyStylePart.BACK_MANE, "08");
 
         register(PonyStylePart.TAIL, "01", "TS");
         register(PonyStylePart.TAIL, "02", "RD");

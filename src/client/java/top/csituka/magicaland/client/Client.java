@@ -10,6 +10,7 @@ import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.gui.ConfigScreen;
 import top.csituka.magicaland.client.network.ClientNetworkHandler;
 import top.csituka.magicaland.client.render.BodyTintTextures;
+import top.csituka.magicaland.client.render.ManeTintTextures;
 
 public class Client implements ClientModInitializer {
     private static KeyBinding configKeyBinding;
@@ -18,6 +19,7 @@ public class Client implements ClientModInitializer {
     public void onInitializeClient() {
         Config.load();
         BodyTintTextures.init();
+        ManeTintTextures.init();
         top.csituka.magicaland.client.config.ModelManager.init();
 
         // 注册客户端网络处理

@@ -34,6 +34,22 @@ public class ModelConfig {
     public String frontManeColor = "#FFFFFFFF";
     public String backManeColor = "#FFFFFFFF";
     public String tailColor = "#FFFFFFFF";
+    public String maneShadingMode = "soft";
+    public int maneColorLinkVersion = 0;
+    public boolean backManeColorLocked = true;
+    public boolean tailColorLocked = true;
+    public String frontManeShadowColor = "#E3E3E3";
+    public String frontManeHighlightColor = "#FFFFFF";
+    public String backManeShadowColor = "#E3E3E3";
+    public String backManeHighlightColor = "#FFFFFF";
+    public String tailShadowColor = "#E3E3E3";
+    public String tailHighlightColor = "#FFFFFF";
+    public boolean frontManeShadowColorLocked = true;
+    public boolean frontManeHighlightColorLocked = true;
+    public boolean backManeShadowColorLocked = true;
+    public boolean backManeHighlightColorLocked = true;
+    public boolean tailShadowColorLocked = true;
+    public boolean tailHighlightColorLocked = true;
 
     public String magicGlowColor = "#AA00FF";
 
@@ -89,6 +105,21 @@ public class ModelConfig {
         config.frontManeColor = sanitizeColor(config.frontManeColor, "#FFFFFFFF");
         config.backManeColor = sanitizeColor(config.backManeColor, "#FFFFFFFF");
         config.tailColor = sanitizeColor(config.tailColor, "#FFFFFFFF");
+        if (!"legacy".equals(config.maneShadingMode)) config.maneShadingMode = "soft";
+        if (config.maneColorLinkVersion <= 0) {
+            // 旧配置已有异色时保留独立颜色，只迁移一次。
+            config.backManeColorLocked = sameRgb(config.frontManeColor, config.backManeColor);
+            config.tailColorLocked = sameRgb(config.frontManeColor, config.tailColor);
+        }
+        config.maneColorLinkVersion = 1;
+        if (config.backManeColorLocked) config.backManeColor = config.frontManeColor;
+        if (config.tailColorLocked) config.tailColor = config.frontManeColor;
+        config.frontManeShadowColor = sanitizeColor(config.frontManeShadowColor, "#E3E3E3");
+        config.frontManeHighlightColor = sanitizeColor(config.frontManeHighlightColor, "#FFFFFF");
+        config.backManeShadowColor = sanitizeColor(config.backManeShadowColor, "#E3E3E3");
+        config.backManeHighlightColor = sanitizeColor(config.backManeHighlightColor, "#FFFFFF");
+        config.tailShadowColor = sanitizeColor(config.tailShadowColor, "#E3E3E3");
+        config.tailHighlightColor = sanitizeColor(config.tailHighlightColor, "#FFFFFF");
         config.magicGlowColor = sanitizeColor(config.magicGlowColor, "#AA00FF");
         return config;
     }
@@ -130,5 +161,9 @@ public class ModelConfig {
             }
         }
         return true;
+    }
+
+    private static boolean sameRgb(String a, String b) {
+        return a.substring(a.length() - 6).equals(b.substring(b.length() - 6));
     }
 }

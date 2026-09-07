@@ -19,7 +19,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
     private static final Identifier PONY_TS = new Identifier("magicaland", "textures/entity/mane.png");
 
     private ModelConfig overrideConfig = null;
-    private boolean usingBodyPalette;
+    private boolean usingPalette;
 
     public PonyRenderer() {
         super(new GeckoPlayerModel());
@@ -78,19 +78,20 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         Identifier texture = isOther ? PONY_TS : PONY_BASE;
 
         ModelConfig config = getEffectiveConfig();
-        Identifier palette = isOther ? null : BodyTintTextures.get(config, BodyTintTextures.colorForBone(config, bone.getName()));
+        Identifier palette = isOther ? ManeTintTextures.get(config, bone.getName())
+                : BodyTintTextures.get(config, BodyTintTextures.colorForBone(config, bone.getName()));
         if (palette != null) texture = palette;
 
         RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
         VertexConsumer newBuffer = bufferSource.getBuffer(newRenderType);
 
-        boolean previousPalette = usingBodyPalette;
-        usingBodyPalette = palette != null;
+        boolean previousPalette = usingPalette;
+        usingPalette = palette != null;
         try {
             super.renderRecursively(poseStack, animatable, bone, newRenderType, bufferSource, newBuffer, isReRender,
                     partialTick, packedLight, packedOverlay, red, green, blue, alpha);
         } finally {
-            usingBodyPalette = previousPalette;
+            usingPalette = previousPalette;
         }
     }
 
@@ -116,8 +117,9 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
 
         String boneName = bone.getName();
         String colorField = BodyTintTextures.colorForBone(config, boneName);
+        if (colorField == null) colorField = ManePalette.colorForBone(config, boneName);
 
-        if (colorField != null && !usingBodyPalette) {
+        if (colorField != null && !usingPalette) {
             int color = parseHexColor(colorField);
             float cr = ((color >> 16) & 0xFF) / 255.0f;
             float cg = ((color >> 8) & 0xFF) / 255.0f;
@@ -125,28 +127,6 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             red *= cr;
             green *= cg;
             blue *= cb;
-        }
-
-        String boneLC = boneName.toLowerCase();
-        if (colorField == null && (boneLC.contains("mane") || boneLC.contains("tail") || boneLC.contains("wing"))) {
-            String maneColorField = null;
-            if (boneLC.contains("tail")) {
-                maneColorField = config.tailColor;
-            } else if (boneLC.contains("wing")) {
-                maneColorField = config.wingColor;
-            } else if (boneLC.contains("mane")) {
-                boolean isFrontMane = boneName.equals("Mane") || boneName.equals("FrontMane")
-                        || boneName.startsWith(bonePrefix(config.frontManeStyle, PonyStylePart.FRONT_MANE))
-                        || (boneLC.contains("frontmane")
-                                && !boneName.startsWith(bonePrefix(config.backManeStyle, PonyStylePart.BACK_MANE)));
-                maneColorField = isFrontMane ? config.frontManeColor : config.backManeColor;
-            }
-            if (maneColorField != null) {
-                int color = parseHexColor(maneColorField);
-                red *= ((color >> 16) & 0xFF) / 255.0f;
-                green *= ((color >> 8) & 0xFF) / 255.0f;
-                blue *= (color & 0xFF) / 255.0f;
-            }
         }
 
         super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
@@ -180,9 +160,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         if (boneName.equals("Mane") || boneName.equals("FrontMane") || boneName.equals("BackMane"))
             return true;
 
-        // AJ has no front-mane bone of its own (its frontManeStyle value never
-        // resolves to anything but Style02, RD's shared bone), so no special
-        // case is needed here for the old RD/AJ shared-bone quirk.
+        // 前发、后发独立选择；AJ 前发已使用自己的 Style05 骨骼。
         if (boneName.startsWith(bonePrefix(config.frontManeStyle, PonyStylePart.FRONT_MANE)))
             return true;
         return boneName.startsWith(bonePrefix(config.backManeStyle, PonyStylePart.BACK_MANE));

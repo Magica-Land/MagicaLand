@@ -1,6 +1,7 @@
 package top.csituka.magicaland.client.gui.tab.ponycustom;
 
 import net.minecraft.text.Text;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
@@ -8,6 +9,9 @@ import top.csituka.magicaland.client.gui.widget.ColorPicker;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
 import top.csituka.magicaland.client.gui.widget.SectionLabel;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
+import top.csituka.magicaland.client.render.BodyPalette;
+import top.csituka.magicaland.client.render.ManePalette;
+import top.csituka.magicaland.client.render.ManePalette.Part;
 
 public class ManePage implements PonyCustomPage {
 
@@ -15,6 +19,7 @@ public class ManePage implements PonyCustomPage {
     public void build(PonyCustomPageContext context, SettingsList list) {
         ModelConfig config = ModelManager.getActiveModel();
         if (config == null) return;
+        ModelConfig.sanitize(config);
 
         int buttonWidth = Math.min(180, context.getWidth() / 2);
         int buttonHeight = 20;
@@ -46,24 +51,74 @@ public class ManePage implements PonyCustomPage {
 
         list.addWidget(new SectionLabel(buttonX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.section.mane_colors.name")), SettingsList.Alignment.RIGHT);
-        list.addWidget(new ColorPicker(buttonX, 0, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.front_mane_color.name"), config.frontManeColor,
-                color -> {
-                    config.frontManeColor = color;
+        boolean soft = !"legacy".equals(config.maneShadingMode);
+        CustomButton shading = new CustomButton(buttonX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.config.mane_shading.name"),
+                Text.translatable("text.magicaland.config.body_shading." + (soft ? "soft" : "legacy")).getString(), false,
+                button -> {
+                    config.maneShadingMode = soft ? "legacy" : "soft";
+                    ModelManager.saveActiveModel();
+                    context.reinit();
+                });
+        shading.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.mane_shading.tooltip")));
+        list.addWidget(shading, SettingsList.Alignment.RIGHT);
+        addPart(context, list, config, Part.FRONT, "front_mane_color", buttonX, buttonWidth, buttonHeight, soft);
+        addPart(context, list, config, Part.BACK, "back_mane_color", buttonX, buttonWidth, buttonHeight, soft);
+        addPart(context, list, config, Part.TAIL, "tail_color", buttonX, buttonWidth, buttonHeight, soft);
+        if (soft) {
+            list.addWidget(new CustomButton(buttonX, 0, buttonWidth, buttonHeight,
+                    Text.translatable("text.magicaland.config.mane_shading.reset"), false,
+                    button -> {
+                        ManePalette.resetAutomatic(config);
+                        ModelManager.saveActiveModel();
+                        context.reinit();
+                    }, false, true), SettingsList.Alignment.RIGHT);
+        }
+    }
+
+    private void addPart(PonyCustomPageContext context, SettingsList list, ModelConfig config,
+            Part part, String label, int x, int width, int height, boolean soft) {
+        ColorPicker base = new ColorPicker(x, 0, width, height,
+                Text.translatable("text.magicaland.config." + label + ".name"),
+                BodyPalette.hex(ManePalette.base(config, part)), color -> {
+                    ManePalette.setBase(config, part, color);
                     ModelManager.requestSaveActiveModel();
-                }), SettingsList.Alignment.RIGHT);
-        list.addWidget(new ColorPicker(buttonX, 0, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.back_mane_color.name"), config.backManeColor,
-                color -> {
-                    config.backManeColor = color;
+                });
+        if (part != Part.FRONT) {
+            base.setAutomaticColor(() -> BodyPalette.hex(ManePalette.base(config, Part.FRONT)));
+            base.setLocked(ManePalette.linked(config, part));
+            base.setOnLockChanged(locked -> {
+                ManePalette.setLinked(config, part, locked);
+                ModelManager.saveActiveModel();
+                context.reinit();
+            });
+            base.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.mane_link.tooltip")));
+        }
+        list.addWidget(base, SettingsList.Alignment.RIGHT);
+        if (soft && !ManePalette.linked(config, part)) {
+            addStop(context, list, config, part, false, x, width, height);
+            addStop(context, list, config, part, true, x, width, height);
+        }
+    }
+
+    private void addStop(PonyCustomPageContext context, SettingsList list, ModelConfig config,
+            Part part, boolean highlight, int x, int width, int height) {
+        String key = highlight ? "body_highlight" : "body_shadow";
+        ColorPicker picker = new ColorPicker(x, 0, width, height,
+                Text.translatable("text.magicaland.config." + key + ".name"),
+                BodyPalette.hex(ManePalette.stop(config, part, highlight)), color -> {
+                    ManePalette.setStop(config, part, highlight, color);
                     ModelManager.requestSaveActiveModel();
-                }), SettingsList.Alignment.RIGHT);
-        list.addWidget(new ColorPicker(buttonX, 0, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.tail_color.name"), config.tailColor,
-                color -> {
-                    config.tailColor = color;
-                    ModelManager.requestSaveActiveModel();
-                }), SettingsList.Alignment.RIGHT);
+                });
+        picker.setAutomaticColor(() -> BodyPalette.hex(ManePalette.automatic(ManePalette.base(config, part), highlight)));
+        picker.setLocked(ManePalette.stopLocked(config, part, highlight));
+        picker.setOnLockChanged(locked -> {
+            ManePalette.setStopLocked(config, part, highlight, locked);
+            ModelManager.saveActiveModel();
+            context.reinit();
+        });
+        picker.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.mane_stop.tooltip")));
+        list.addWidget(picker, SettingsList.Alignment.RIGHT);
     }
 
     private CustomButton createBackButton(PonyCustomPageContext context, int x, int width, int height,

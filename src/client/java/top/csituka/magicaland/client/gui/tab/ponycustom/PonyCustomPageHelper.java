@@ -15,13 +15,7 @@ import top.csituka.magicaland.client.gui.widget.CustomButton;
 public final class PonyCustomPageHelper {
     private PonyCustomPageHelper() {}
 
-    /**
-     * A style-cycling button for the given body part. The value shown (e.g.
-     * "发型01") is the part's generic name plus the style's 1-based position
-     * among that part's own candidates — never the internal style id and
-     * never a character name — so switching parts/styles never leaks any of
-     * that internal detail to the player.
-     */
+    /** 显示稳定的款式编号，暂缺款式不会使后续款式重新编号。 */
     public static CustomButton createStyleButton(int x, int y, int width, int height, Text label,
             PonyStylePart part, String currentId, Consumer<String> onStyleChanged) {
         List<PonyStyleDefinition> styles = PonyStyleRegistry.stylesFor(part);
@@ -38,8 +32,7 @@ public final class PonyCustomPageHelper {
 
     private static String styleValueText(PonyStylePart part, String id) {
         String noun = Text.translatable(part.genericNameLangKey).getString();
-        int ordinal = Math.max(1, PonyStyleRegistry.displayOrdinal(part, id));
-        return noun + String.format("%02d", ordinal);
+        return noun + id;
     }
 
     private static int indexOf(List<PonyStyleDefinition> styles, String id) {
