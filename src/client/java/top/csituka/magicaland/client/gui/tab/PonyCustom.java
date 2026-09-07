@@ -61,6 +61,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     private float transitionAlpha = 1.0f;
     private boolean isTransitioning;
     private int transitionDirection = 1;
+    private boolean refreshRequested;
 
     private int rightX;
     private int rightWidth;
@@ -75,6 +76,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
 
     @Override
     public void onEnter() {
+        refreshRequested = false;
         selectedPage = PonyCustomPageContext.Page.MODEL.ordinal();
         transitionAlpha = 1.0f;
         isTransitioning = false;
@@ -86,6 +88,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
 
     @Override
     public void onExit() {
+        refreshRequested = false;
         ColorPicker.clearBodyLinkGroup();
     }
 
@@ -170,7 +173,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         }
         ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
 
-        pageContext = new PonyCustomPageContext(screen, x, y, width, height, this::switchPage);
+        pageContext = new PonyCustomPageContext(screen, x, y, width, height, this::switchPage, this::refreshCurrentPage);
         listWidget = new SettingsList(MinecraftClient.getInstance(), width, height, y + 40,
                 y + height - 40, 24);
         listWidget.setLeftPos(x);
@@ -179,8 +182,28 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         screen.addConsoleElement(listWidget);
     }
 
+    private void refreshCurrentPage() {
+        refreshRequested = true;
+    }
+
+    private void applyPendingRefresh() {
+        if (!refreshRequested) return;
+        refreshRequested = false;
+        double scroll = listWidget.getScrollAmount();
+        int focusedIndex = listWidget.children().indexOf(listWidget.getFocused());
+        pageContext.reinit();
+        if (focusedIndex >= 0 && focusedIndex < listWidget.children().size()) {
+            SettingsList.Entry entry = listWidget.children().get(focusedIndex);
+            listWidget.setFocused(entry);
+            entry.setFocused(entry.widget);
+            pageContext.getScreen().setFocused(listWidget);
+        }
+        listWidget.restoreScrollAmount(scroll);
+    }
+
     private void switchPage(PonyCustomPageContext.Page page, int direction) {
         if (pageContext == null || page.ordinal() == selectedPage) return;
+        refreshRequested = false;
 
         if (direction == 0) {
             previousListWidget = null;
@@ -210,6 +233,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY,
             float delta, float alpha) {
         if (pageContext == null) return;
+        applyPendingRefresh();
         currentPage().render(pageContext, context, mouseX, mouseY, delta, alpha);
 
         if (isTransitioning) {

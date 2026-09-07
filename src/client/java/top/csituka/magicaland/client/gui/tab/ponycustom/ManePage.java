@@ -2,6 +2,7 @@ package top.csituka.magicaland.client.gui.tab.ponycustom;
 
 import net.minecraft.text.Text;
 import net.minecraft.client.gui.tooltip.Tooltip;
+import java.util.EnumSet;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
@@ -14,6 +15,12 @@ import top.csituka.magicaland.client.render.ManePalette;
 import top.csituka.magicaland.client.render.ManePalette.Part;
 
 public class ManePage implements PonyCustomPage {
+    private final EnumSet<Part> expandedParts = EnumSet.noneOf(Part.class);
+
+    @Override
+    public void onEnter() {
+        expandedParts.clear();
+    }
 
     @Override
     public void build(PonyCustomPageContext context, SettingsList list) {
@@ -58,7 +65,7 @@ public class ManePage implements PonyCustomPage {
                 button -> {
                     config.maneShadingMode = soft ? "legacy" : "soft";
                     ModelManager.saveActiveModel();
-                    context.reinit();
+                    context.refreshKeepingScroll();
                 });
         shading.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.mane_shading.tooltip")));
         list.addWidget(shading, SettingsList.Alignment.RIGHT);
@@ -71,7 +78,7 @@ public class ManePage implements PonyCustomPage {
                     button -> {
                         ManePalette.resetAutomatic(config);
                         ModelManager.saveActiveModel();
-                        context.reinit();
+                        context.refreshKeepingScroll();
                     }, false, true), SettingsList.Alignment.RIGHT);
         }
     }
@@ -90,14 +97,27 @@ public class ManePage implements PonyCustomPage {
             base.setOnLockChanged(locked -> {
                 ManePalette.setLinked(config, part, locked);
                 ModelManager.saveActiveModel();
-                context.reinit();
+                context.refreshKeepingScroll();
             });
             base.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.mane_link.tooltip")));
         }
+        boolean hasDetails = soft && !ManePalette.linked(config, part);
+        if (hasDetails) {
+            boolean expanded = expandedParts.contains(part);
+            base.setDisclosure(expanded, value -> {
+                if (value) expandedParts.add(part);
+                else expandedParts.remove(part);
+                context.refreshKeepingScroll();
+            });
+            base.setTooltip(Tooltip.of(Text.translatable(part == Part.FRONT
+                    ? "text.magicaland.config.color_details.tooltip"
+                    : "text.magicaland.config.mane_link.tooltip").copy().append("\n")
+                    .append(Text.translatable("text.magicaland.config.color_details." + (expanded ? "collapse" : "expand")))));
+        }
         list.addWidget(base, SettingsList.Alignment.RIGHT);
-        if (soft && !ManePalette.linked(config, part)) {
-            addStop(context, list, config, part, false, x, width, height);
-            addStop(context, list, config, part, true, x, width, height);
+        if (hasDetails && expandedParts.contains(part)) {
+            addStop(context, list, config, part, false, x + 12, width - 12, height);
+            addStop(context, list, config, part, true, x + 12, width - 12, height);
         }
     }
 
@@ -115,7 +135,7 @@ public class ManePage implements PonyCustomPage {
         picker.setOnLockChanged(locked -> {
             ManePalette.setStopLocked(config, part, highlight, locked);
             ModelManager.saveActiveModel();
-            context.reinit();
+            context.refreshKeepingScroll();
         });
         picker.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.mane_stop.tooltip")));
         list.addWidget(picker, SettingsList.Alignment.RIGHT);

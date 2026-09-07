@@ -21,15 +21,17 @@ public final class PonyCustomPageContext {
     private final int width;
     private final int height;
     private final BiConsumer<Page, Integer> pageSwitcher;
+    private final Runnable pageRefresher;
 
     public PonyCustomPageContext(ConfigScreen screen, int x, int y, int width, int height,
-            BiConsumer<Page, Integer> pageSwitcher) {
+            BiConsumer<Page, Integer> pageSwitcher, Runnable pageRefresher) {
         this.screen = screen;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.pageSwitcher = pageSwitcher;
+        this.pageRefresher = pageRefresher;
     }
 
     public ConfigScreen getScreen() {
@@ -58,5 +60,9 @@ public final class PonyCustomPageContext {
 
     public void reinit() {
         screen.reinitScreen();
+    }
+
+    public void refreshKeepingScroll() {
+        pageRefresher.run();
     }
 }

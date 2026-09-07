@@ -12,6 +12,13 @@ import top.csituka.magicaland.client.gui.widget.SectionLabel;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 
 public class BodyPage implements PonyCustomPage {
+    private boolean shadingExpanded;
+
+    @Override
+    public void onEnter() {
+        shadingExpanded = false;
+    }
+
     @Override
     public void build(PonyCustomPageContext context, SettingsList list) {
         ModelConfig config = ModelManager.getActiveModel();
@@ -26,10 +33,20 @@ public class BodyPage implements PonyCustomPage {
                 false, button -> context.openPage(PonyCustomPageContext.Page.MAIN, -1), false, true),
                 SettingsList.Alignment.RIGHT);
 
-        addColorPicker(list, buttonX, buttonWidth, buttonHeight,
+        addShadingMode(context, list, config, buttonX, buttonWidth, buttonHeight);
+        ColorPicker body = addColorPicker(list, buttonX, buttonWidth, buttonHeight,
                 "text.magicaland.config.body_color.name", config.bodyColor, config.bodyColorLocked,
                 color -> config.bodyColor = color, locked -> config.bodyColorLocked = locked);
-        addShadingControls(context, list, config, buttonX, buttonWidth, buttonHeight);
+        if (!"legacy".equals(config.bodyShadingMode)) {
+            body.setDisclosure(shadingExpanded, expanded -> {
+                shadingExpanded = expanded;
+                context.refreshKeepingScroll();
+            });
+            body.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.color_details.tooltip")));
+            if (shadingExpanded) {
+                addShadingControls(context, list, config, buttonX + 12, buttonWidth - 12, buttonHeight);
+            }
+        }
         addColorPicker(list, buttonX, buttonWidth, buttonHeight,
                 "text.magicaland.config.neck_color.name", config.neckColor, config.neckColorLocked,
                 color -> config.neckColor = color, locked -> config.neckColorLocked = locked);
@@ -66,15 +83,16 @@ public class BodyPage implements PonyCustomPage {
                 color -> config.rightHindLimbColor = color, locked -> config.rightHindLimbColorLocked = locked);
     }
 
-    private void addColorPicker(SettingsList list, int x, int width, int height, String labelKey,
+    private ColorPicker addColorPicker(SettingsList list, int x, int width, int height, String labelKey,
             String color, boolean locked, java.util.function.Consumer<String> onColorChanged,
             java.util.function.Consumer<Boolean> onLockChanged) {
-        list.addWidget(PonyCustomPageHelper.createBodyColorPicker(x, 0, width, height,
-                Text.translatable(labelKey), color, locked, onColorChanged, onLockChanged),
-                SettingsList.Alignment.RIGHT);
+        ColorPicker picker = PonyCustomPageHelper.createBodyColorPicker(x, 0, width, height,
+                Text.translatable(labelKey), color, locked, onColorChanged, onLockChanged);
+        list.addWidget(picker, SettingsList.Alignment.RIGHT);
+        return picker;
     }
 
-    private void addShadingControls(PonyCustomPageContext context, SettingsList list, ModelConfig config,
+    private void addShadingMode(PonyCustomPageContext context, SettingsList list, ModelConfig config,
             int x, int width, int height) {
         CustomButton mode = new CustomButton(x, 0, width, height,
                 Text.translatable("text.magicaland.config.body_shading.name"),
@@ -82,11 +100,14 @@ public class BodyPage implements PonyCustomPage {
                 button -> {
                     config.bodyShadingMode = "legacy".equals(config.bodyShadingMode) ? "soft" : "legacy";
                     ModelManager.saveActiveModel();
-                    context.reinit();
+                    context.refreshKeepingScroll();
                 });
         mode.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.body_shading.tooltip")));
         list.addWidget(mode, SettingsList.Alignment.RIGHT);
-        if ("legacy".equals(config.bodyShadingMode)) return;
+    }
+
+    private void addShadingControls(PonyCustomPageContext context, SettingsList list, ModelConfig config,
+            int x, int width, int height) {
         int base = BodyColorRamp.rgb(config.bodyColor);
         ColorPicker shadow = new ColorPicker(x, 0, width, height,
                 Text.translatable("text.magicaland.config.body_shadow.name"), BodyPalette.hex(BodyPalette.shadow(config, base)),
@@ -98,7 +119,7 @@ public class BodyPage implements PonyCustomPage {
         shadow.setOnLockChanged(locked -> {
             BodyPalette.setShadowLocked(config, locked);
             ModelManager.saveActiveModel();
-            context.reinit();
+            context.refreshKeepingScroll();
         });
         shadow.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.body_shading.custom.tooltip")));
         list.addWidget(shadow, SettingsList.Alignment.RIGHT);
@@ -112,7 +133,7 @@ public class BodyPage implements PonyCustomPage {
         highlight.setOnLockChanged(locked -> {
             BodyPalette.setHighlightLocked(config, locked);
             ModelManager.saveActiveModel();
-            context.reinit();
+            context.refreshKeepingScroll();
         });
         highlight.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.body_shading.custom.tooltip")));
         list.addWidget(highlight, SettingsList.Alignment.RIGHT);
@@ -120,7 +141,7 @@ public class BodyPage implements PonyCustomPage {
                 Text.translatable("text.magicaland.config.body_shading.reset"), false, button -> {
                     BodyPalette.resetAutomatic(config);
                     ModelManager.saveActiveModel();
-                    context.reinit();
+                    context.refreshKeepingScroll();
                 }), SettingsList.Alignment.RIGHT);
     }
 

@@ -19,6 +19,8 @@ public class ColorPicker extends ClickableWidget {
 
     private final Consumer<String> onColorChanged;
     private Consumer<Boolean> onLockChanged;
+    private Consumer<Boolean> onExpandedChanged;
+    private boolean expanded;
     private Supplier<String> automaticColor;
     private String currentColor;
     public boolean open = false;
@@ -30,6 +32,7 @@ public class ColorPicker extends ClickableWidget {
     private static final int PADDING = 4;
     private static final int INPUT_HEIGHT = 12;
     private static final int LOCK_SIZE = 12;
+    private static final int DISCLOSURE_WIDTH = 18;
 
     private float h, s, v;
     private String hexInput = "";
@@ -101,6 +104,22 @@ public class ColorPicker extends ClickableWidget {
 
     public void setOnLockChanged(Consumer<Boolean> onLockChanged) {
         this.onLockChanged = onLockChanged;
+    }
+
+    public void setDisclosure(boolean expanded, Consumer<Boolean> onExpandedChanged) {
+        this.expanded = expanded;
+        this.onExpandedChanged = onExpandedChanged;
+    }
+
+    private void changeExpanded(boolean expanded) {
+        if (this.expanded == expanded) return;
+        this.expanded = expanded;
+        open = false;
+        inputFocused = false;
+        dragMode = DragMode.NONE;
+        if (openPicker == this) openPicker = null;
+        this.playDownSound(MinecraftClient.getInstance().getSoundManager());
+        onExpandedChanged.accept(expanded);
     }
 
     public void setLocked(boolean locked) {
@@ -194,6 +213,12 @@ public class ColorPicker extends ClickableWidget {
         this.dragMode = DragMode.NONE;
         this.inputFocused = false;
 
+        if (onExpandedChanged != null && mouseX >= getX() && mouseX < getX() + DISCLOSURE_WIDTH
+                && mouseY >= getY() && mouseY < getY() + height) {
+            changeExpanded(!expanded);
+            return true;
+        }
+
         if ((bodyLinkGroup.contains(this) || automaticColor != null) && mouseX >= this.getX() + this.width - 50 && mouseX < this.getX() + this.width - 30 && mouseY >= this.getY() + (this.height - 8) / 2 && mouseY < this.getY() + (this.height - 8) / 2 + 10) {
             setLocked(!this.locked);
             if (this.onLockChanged != null) {
@@ -275,6 +300,16 @@ public class ColorPicker extends ClickableWidget {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (visible && active && isFocused() && !open && onExpandedChanged != null) {
+            if (keyCode == 262 || keyCode == 263) {
+                changeExpanded(keyCode == 262);
+                return true;
+            }
+            if (keyCode == 257 || keyCode == 335 || keyCode == 32) {
+                changeExpanded(!expanded);
+                return true;
+            }
+        }
         if (open && inputFocused) {
             if (keyCode == 259) {
                 if (!hexInput.isEmpty()) {
@@ -382,8 +417,14 @@ public class ColorPicker extends ClickableWidget {
         }
 
         if (textAlpha > 0) {
-            context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(),
-                    this.getX() + 6, this.getY() + (this.height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
+            int labelX = getX() + (onExpandedChanged == null ? 6 : DISCLOSURE_WIDTH);
+            int labelRight = getX() + width - (bodyLinkGroup.contains(this) || automaticColor != null ? 54 : 38);
+            var textRenderer = MinecraftClient.getInstance().textRenderer;
+            context.drawTextWithShadow(textRenderer, textRenderer.trimToWidth(getMessage().getString(), Math.max(0, labelRight - labelX)),
+                    labelX, getY() + (height - 8) / 2, (textAlpha << 24) | 0xFFFFFF);
+            if (onExpandedChanged != null) {
+                drawDisclosure(context, mouseX, mouseY, (textAlpha << 24) | 0xFFFFFF);
+            }
         }
 
         drawLockIcon(context, this.alpha);
@@ -403,6 +444,20 @@ public class ColorPicker extends ClickableWidget {
             } catch (Exception e) {
                 fillRoundedRect(context, previewX, previewY, previewWidth, previewHeight, (combinedAlpha << 24) | 0xFFFFFF);
             }
+        }
+    }
+
+    private void drawDisclosure(DrawContext context, int mouseX, int mouseY, int color) {
+        int x = getX() + 6;
+        int y = getY() + height / 2;
+        if (mouseX >= getX() && mouseX < getX() + DISCLOSURE_WIDTH
+                && mouseY >= getY() && mouseY < getY() + height) {
+            context.fill(getX() + 2, getY() + 2, getX() + DISCLOSURE_WIDTH - 2, getY() + height - 2,
+                    ((int) (alpha * 40) << 24) | 0xFFFFFF);
+        }
+        for (int i = 0; i < 4; i++) {
+            if (expanded) context.fill(x + i, y - 2 + i, x + 7 - i, y - 1 + i, color);
+            else context.fill(x + i, y - 3 + i, x + i + 1, y + 4 - i, color);
         }
     }
 
@@ -498,5 +553,9 @@ public class ColorPicker extends ClickableWidget {
     @Override
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {
         this.appendDefaultNarrations(builder);
+        if (onExpandedChanged != null) {
+            builder.put(net.minecraft.client.gui.screen.narration.NarrationPart.USAGE,
+                    Text.translatable("text.magicaland.config.color_details." + (expanded ? "collapse" : "expand")));
+        }
     }
 }

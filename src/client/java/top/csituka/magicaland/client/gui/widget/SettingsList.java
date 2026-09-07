@@ -65,6 +65,12 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
         this.baseAlpha = alpha;
     }
 
+    public void restoreScrollAmount(double amount) {
+        this.setScrollAmount(amount);
+        this.targetScrollAmount = this.getScrollAmount();
+        this.lastScrollAmount = this.targetScrollAmount;
+    }
+
     @Override
     public int getRowWidth() {
         return this.width - 20;
