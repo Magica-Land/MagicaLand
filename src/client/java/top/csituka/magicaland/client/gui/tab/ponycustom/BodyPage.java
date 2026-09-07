@@ -1,9 +1,13 @@
 package top.csituka.magicaland.client.gui.tab.ponycustom;
 
 import net.minecraft.text.Text;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
+import top.csituka.magicaland.client.gui.widget.ColorPicker;
+import top.csituka.magicaland.client.render.BodyColorRamp;
+import top.csituka.magicaland.client.render.BodyPalette;
 import top.csituka.magicaland.client.gui.widget.SectionLabel;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 
@@ -25,6 +29,7 @@ public class BodyPage implements PonyCustomPage {
         addColorPicker(list, buttonX, buttonWidth, buttonHeight,
                 "text.magicaland.config.body_color.name", config.bodyColor, config.bodyColorLocked,
                 color -> config.bodyColor = color, locked -> config.bodyColorLocked = locked);
+        addShadingControls(context, list, config, buttonX, buttonWidth, buttonHeight);
         addColorPicker(list, buttonX, buttonWidth, buttonHeight,
                 "text.magicaland.config.neck_color.name", config.neckColor, config.neckColorLocked,
                 color -> config.neckColor = color, locked -> config.neckColorLocked = locked);
@@ -67,6 +72,56 @@ public class BodyPage implements PonyCustomPage {
         list.addWidget(PonyCustomPageHelper.createBodyColorPicker(x, 0, width, height,
                 Text.translatable(labelKey), color, locked, onColorChanged, onLockChanged),
                 SettingsList.Alignment.RIGHT);
+    }
+
+    private void addShadingControls(PonyCustomPageContext context, SettingsList list, ModelConfig config,
+            int x, int width, int height) {
+        CustomButton mode = new CustomButton(x, 0, width, height,
+                Text.translatable("text.magicaland.config.body_shading.name"),
+                Text.translatable("text.magicaland.config.body_shading." + config.bodyShadingMode).getString(), false,
+                button -> {
+                    config.bodyShadingMode = "legacy".equals(config.bodyShadingMode) ? "soft" : "legacy";
+                    ModelManager.saveActiveModel();
+                    context.reinit();
+                });
+        mode.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.body_shading.tooltip")));
+        list.addWidget(mode, SettingsList.Alignment.RIGHT);
+        if ("legacy".equals(config.bodyShadingMode)) return;
+        int base = BodyColorRamp.rgb(config.bodyColor);
+        ColorPicker shadow = new ColorPicker(x, 0, width, height,
+                Text.translatable("text.magicaland.config.body_shadow.name"), BodyPalette.hex(BodyPalette.shadow(config, base)),
+                color -> {
+                    if (!config.bodyShadowColorLocked) { config.bodyShadowColor = color; ModelManager.requestSaveActiveModel(); }
+                });
+        shadow.setAutomaticColor(() -> BodyPalette.hex(BodyColorRamp.automaticShadow(BodyColorRamp.rgb(config.bodyColor))));
+        shadow.setLocked(config.bodyShadowColorLocked);
+        shadow.setOnLockChanged(locked -> {
+            BodyPalette.setShadowLocked(config, locked);
+            ModelManager.saveActiveModel();
+            context.reinit();
+        });
+        shadow.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.body_shading.custom.tooltip")));
+        list.addWidget(shadow, SettingsList.Alignment.RIGHT);
+        ColorPicker highlight = new ColorPicker(x, 0, width, height,
+                Text.translatable("text.magicaland.config.body_highlight.name"), BodyPalette.hex(BodyPalette.highlight(config, base)),
+                color -> {
+                    if (!config.bodyHighlightColorLocked) { config.bodyHighlightColor = color; ModelManager.requestSaveActiveModel(); }
+                });
+        highlight.setAutomaticColor(() -> BodyPalette.hex(BodyColorRamp.automaticHighlight(BodyColorRamp.rgb(config.bodyColor))));
+        highlight.setLocked(config.bodyHighlightColorLocked);
+        highlight.setOnLockChanged(locked -> {
+            BodyPalette.setHighlightLocked(config, locked);
+            ModelManager.saveActiveModel();
+            context.reinit();
+        });
+        highlight.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.body_shading.custom.tooltip")));
+        list.addWidget(highlight, SettingsList.Alignment.RIGHT);
+        list.addWidget(new CustomButton(x, 0, width, height,
+                Text.translatable("text.magicaland.config.body_shading.reset"), false, button -> {
+                    BodyPalette.resetAutomatic(config);
+                    ModelManager.saveActiveModel();
+                    context.reinit();
+                }), SettingsList.Alignment.RIGHT);
     }
 
     private int getButtonX(PonyCustomPageContext context, int buttonWidth) {

@@ -248,6 +248,9 @@ public class ConfigScreen extends Screen {
         this.currentTab.getContent().postRender(context, rightX, 0, rightWidth - padding, this.height, mouseX, mouseY,
                 delta, currentAlpha);
         context.getMatrices().pop();
+        if (ColorPicker.openPicker != null && ColorPicker.openPicker.open) {
+            setTooltip(java.util.List.of());
+        }
     }
 
     @Override

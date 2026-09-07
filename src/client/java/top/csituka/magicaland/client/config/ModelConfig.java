@@ -16,6 +16,11 @@ public class ModelConfig {
     public String hornColor = "#FFFFFFFF";
     public String wingColor = "#FFFFFFFF";
     public String bodyColor = "#FFFFFFFF";
+    public String bodyShadingMode = "soft";
+    public String bodyShadowColor = "#E3E3E3";
+    public String bodyHighlightColor = "#FFFFFF";
+    public boolean bodyShadowColorLocked = true;
+    public boolean bodyHighlightColorLocked = true;
     public String neckColor = "#FFFFFFFF";
     public String headColor = "#FFFFFFFF";
     public String leftEarColor = "#FFFFFFFF";
@@ -62,6 +67,15 @@ public class ModelConfig {
         config.hornColor = sanitizeColor(config.hornColor, "#FFFFFFFF");
         config.wingColor = sanitizeColor(config.wingColor, "#FFFFFFFF");
         config.bodyColor = sanitizeColor(config.bodyColor, "#FFFFFFFF");
+        if ("custom".equals(config.bodyShadingMode)) {
+            config.bodyShadowColorLocked = false;
+            config.bodyHighlightColorLocked = false;
+        }
+        if (!"legacy".equals(config.bodyShadingMode)) {
+            config.bodyShadingMode = "soft";
+        }
+        config.bodyShadowColor = sanitizeColor(config.bodyShadowColor, "#E3E3E3");
+        config.bodyHighlightColor = sanitizeColor(config.bodyHighlightColor, "#FFFFFF");
         config.neckColor = sanitizeColor(config.neckColor, "#FFFFFFFF");
         config.headColor = sanitizeColor(config.headColor, "#FFFFFFFF");
         config.leftEarColor = sanitizeColor(config.leftEarColor, "#FFFFFFFF");
