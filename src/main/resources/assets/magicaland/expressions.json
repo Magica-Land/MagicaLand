@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "expressions": {
+    "neutral": {"name": "普通", "animation": "face.neutral"},
+    "happy": {"name": "笑眼", "animation": "face.happy"},
+    "angry": {"name": "生气", "animation": "face.angry"},
+    "closed": {"name": "闭眼", "animation": "face.closed"},
+    "scrunched": {"name": "挤眼", "animation": "face.scrunched"},
+    "look_back": {"name": "向后看", "animation": "face.look_back"},
+    "look_down": {"name": "向下看", "animation": "face.look_down"},
+    "fall_transition": {"name": "下落过渡", "animation": "face.fall_transition"},
+    "wave": {"name": "挥手表情演出", "animation": "face.wave"},
+    "ballet": {"name": "芭蕾表情演出", "animation": "face.ballet"}
+  },
+  "actions": {
+    "idle": "neutral",
+    "slow_walk": "neutral",
+    "slow_walk_earsdown": "neutral",
+    "walk": "neutral",
+    "pp_walk": "happy",
+    "backward_walk": "look_back",
+    "run": "neutral",
+    "break": "neutral",
+    "sneaking": "closed",
+    "sneak": "closed",
+    "swim": "neutral",
+    "swim_hold": "happy",
+    "attacked": "scrunched",
+    "fly": "neutral",
+    "elytra_fly": "angry",
+    "stop_fly": "scrunched",
+    "sleep": "closed",
+    "ride": "neutral",
+    "ride_pig": "neutral",
+    "boat": "neutral",
+    "sit": "neutral",
+    "wave_hand": "wave",
+    "jump1": "neutral",
+    "jump2": "neutral",
+    "fall_transfer": {"expression": "fall_transition", "then_loop": "neutral"},
+    "fall": "neutral",
+    "land": "neutral",
+    "larger_land": "neutral",
+    "wave_hand2": "wave",
+    "Ballet": "ballet",
+    "empty": "neutral"
+  },
+  "eye_styles": {
+    "01": {"normal": "CommonFace", "left_pupil": "leye", "right_pupil": "reye"},
+    "02": {"normal": "Style02CommonFace", "left_pupil": "leye3", "right_pupil": "reye3"},
+    "03": {"normal": "Style03CommonFace", "left_pupil": "leye2", "right_pupil": "reye2", "happy": "Style03Smile"}
+  }
+}

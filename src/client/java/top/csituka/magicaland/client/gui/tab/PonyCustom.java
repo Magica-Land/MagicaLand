@@ -40,6 +40,7 @@ import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.model.GeckoPlayerModel;
 import top.csituka.magicaland.client.render.MagicGlow;
 import top.csituka.magicaland.client.render.PonyRenderer;
+import top.csituka.magicaland.client.animation.PonyExpressions;
 import top.csituka.magicaland.client.util.RenderLayerHelper;
 
 public class PonyCustom implements TabContent, ViewCube.RotationTarget {
@@ -161,6 +162,10 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
                     }));
                     controllers.add(new AnimationController<>(this, "ear_controller", 0, state -> {
                         state.getController().setAnimation(RawAnimation.begin().thenLoop("ear_parallel"));
+                        return PlayState.CONTINUE;
+                    }));
+                    controllers.add(new AnimationController<>(this, "expression_controller", 0, state -> {
+                        state.getController().setAnimation(PonyExpressions.forAction("idle"));
                         return PlayState.CONTINUE;
                     }));
                     controllers.add(new AnimationController<>(this, "tail_controller", 0, state -> {

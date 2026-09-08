@@ -23,6 +23,7 @@ import top.csituka.magicaland.client.gui.ConfigScreen;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.model.GeckoPlayerModel;
 import top.csituka.magicaland.client.render.PonyRenderer;
+import top.csituka.magicaland.client.animation.PonyExpressions;
 
 /**
  * 主菜单右下角小马模型 + 捏马按钮
@@ -65,6 +66,10 @@ public class TitleScreenMixin {
                 }));
                 controllers.add(new AnimationController<>(this, "ear_controller", 0, state -> {
                     state.getController().setAnimation(RawAnimation.begin().thenLoop("ear_parallel"));
+                    return PlayState.CONTINUE;
+                }));
+                controllers.add(new AnimationController<>(this, "expression_controller", 0, state -> {
+                    state.getController().setAnimation(PonyExpressions.forAction("idle"));
                     return PlayState.CONTINUE;
                 }));
                 controllers.add(new AnimationController<>(this, "tail_controller", 0, state -> {

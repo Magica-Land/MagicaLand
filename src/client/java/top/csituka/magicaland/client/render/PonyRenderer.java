@@ -52,46 +52,30 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             int packedLight, int packedOverlay,
             float red, float green, float blue, float alpha) {
 
-        if (animatable.getPlayer() != null) {
-            boolean sleepingOrSneaking = animatable.getPlayer().isSleeping()
-                    || animatable.getPlayer().isSneaking();
-            if (sleepingOrSneaking) {
-                String boneName = bone.getName();
-                if (boneName.equals("close")) {
-                    bone.setScaleX(1);
-                    bone.setScaleY(1);
-                    bone.setScaleZ(1);
-                } else if (boneName.equals("emot")
-                        || boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye")
-                        || boneName.equals("Style03CommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
-                        || boneName.equals("Style02CommonFace") || boneName.equals("leye3") || boneName.equals("reye3")) {
-                    return;
-                }
-            }
-        }
-
-        String name = bone.getName().toLowerCase();
-        // The wing UVs are part of the base skin atlas.  Rendering them with
-        // mane.png makes the wing faces sample transparent/incorrect pixels,
-        // so only mane and tail bones use the secondary texture.
-        boolean isOther = name.contains("mane") || name.contains("tail");
-        Identifier texture = isOther ? PONY_TS : PONY_BASE;
-
         ModelConfig config = getEffectiveConfig();
-        Identifier palette = isOther ? ManeTintTextures.get(config, bone.getName())
-                : BodyTintTextures.get(config, BodyTintTextures.colorForBone(config, bone.getName()));
-        if (palette != null) texture = palette;
+        if (!PonyFacePose.shouldRender(bone.getName(), config == null ? "01" : config.eyeStyle))
+            return;
 
-        RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
-        VertexConsumer newBuffer = bufferSource.getBuffer(newRenderType);
+        try (PonyFacePose ignored = "Emotions".equals(bone.getName())
+                ? PonyFacePose.apply(bone) : null) {
+            String name = bone.getName().toLowerCase();
+            // 翅膀使用身体图集，只有鬃毛和尾巴使用第二张贴图。
+            boolean isOther = name.contains("mane") || name.contains("tail");
+            Identifier texture = isOther ? PONY_TS : PONY_BASE;
+            Identifier palette = isOther ? ManeTintTextures.get(config, bone.getName())
+                    : BodyTintTextures.get(config, BodyTintTextures.colorForBone(config, bone.getName()));
+            if (palette != null) texture = palette;
 
-        boolean previousPalette = usingPalette;
-        usingPalette = palette != null;
-        try {
-            super.renderRecursively(poseStack, animatable, bone, newRenderType, bufferSource, newBuffer, isReRender,
-                    partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-        } finally {
-            usingPalette = previousPalette;
+            RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
+            VertexConsumer newBuffer = bufferSource.getBuffer(newRenderType);
+            boolean previousPalette = usingPalette;
+            usingPalette = palette != null;
+            try {
+                super.renderRecursively(poseStack, animatable, bone, newRenderType, bufferSource, newBuffer, isReRender,
+                        partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+            } finally {
+                usingPalette = previousPalette;
+            }
         }
     }
 
@@ -106,8 +90,6 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         }
 
         if (!shouldRenderSelectedMane(bone.getName()))
-            return;
-        if (!shouldRenderSelectedEye(bone.getName()))
             return;
 
         if (!config.showHorn && bone.getName().equalsIgnoreCase("Horn"))
@@ -171,26 +153,4 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         return "Style" + styleId + part.boneSuffix;
     }
 
-    private boolean shouldRenderSelectedEye(String boneName) {
-        ModelConfig config = getEffectiveConfig();
-        if (config == null)
-            return true;
-        String eyeStyle = config.eyeStyle;
-
-        // leye2/reye2 belong to Style03 (formerly FS); leye3/reye3 belong to Style02 (formerly RR).
-        // These two never got a "Style0X" bone-name prefix of their own since they're not shared
-        // across styles the way mane/tail bones are, so they're left as-is.
-        boolean isEyeBone = boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye")
-                || boneName.equals("Style03CommonFace") || boneName.equals("leye2") || boneName.equals("reye2")
-                || boneName.equals("Style02CommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
-
-        if (!isEyeBone)
-            return true;
-
-        return switch (eyeStyle) {
-            case "03" -> boneName.equals("Style03CommonFace") || boneName.equals("leye2") || boneName.equals("reye2");
-            case "02" -> boneName.equals("Style02CommonFace") || boneName.equals("leye3") || boneName.equals("reye3");
-            default -> boneName.equals("CommonFace") || boneName.equals("leye") || boneName.equals("reye");
-        };
-    }
 }
