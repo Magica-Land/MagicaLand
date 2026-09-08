@@ -1,4 +1,11 @@
 {
+  "text.magicaland.config.mane_dye.name": "遮罩分区调色",
+  "text.magicaland.config.mane_dye.tooltip": "目前支持 01 前发、后发和尾巴。每个部件覆盖 6 个独立色区，无需额外挑染模型。其他编号不受影响。",
+  "text.magicaland.config.mane_dye.stripe01": "01 · 全区域分色（每部件 6 区）",
+  "text.magicaland.config.mane_dye.color": "挑染颜色",
+  "text.magicaland.config.mane_dye.accent": "后发副挑染色",
+  "text.magicaland.config.mane_dye.accent.tooltip": "01 后发的相邻第二条色带，默认紫色。独立于主挑染色，不影响前发和尾巴；自动计算高光与阴影。",
+  "text.magicaland.config.mane_dye.color.tooltip": "三处支持挑染的 01 部件共用此颜色，独立于鬃毛主色。保留原纹理明暗，并自动计算挑染高光和阴影；不是给亮部整体换色。",
   "key.magicaland.config": "打开配置菜单",
   "category.magicaland.keys": "Magical Land",
   "text.magicaland.config.button.done": "完成",
@@ -96,5 +103,11 @@
   "text.magicaland.config.view_cube.left": "左",
   "text.magicaland.config.view_cube.right": "右",
   "text.magicaland.config.automatic_gaze.name": "眼仁自动注视",
-  "text.magicaland.config.automatic_gaze.tooltip": "本客户端的小马会注视 8 格内可见的玩家或生物，优先最近攻击者和敌对目标。只移动眼仁，尊重动作眼神；关闭不改变其他玩家的显示设置。"
+  "text.magicaland.config.automatic_gaze.tooltip": "本客户端的小马会注视 8 格内可见的玩家或生物，优先最近攻击者和敌对目标。只移动眼仁，尊重动作眼神；关闭不改变其他玩家的显示设置。",
+  "text.magicaland.config.mane_dye.regions.front": "前发分色 · 6 区",
+  "text.magicaland.config.mane_dye.regions.back": "后发分色 · 6 区",
+  "text.magicaland.config.mane_dye.regions.tail": "尾巴分色 · 6 区",
+  "text.magicaland.config.mane_dye.region": "色区 %s",
+  "text.magicaland.config.mane_dye.region.tooltip": "锁定：跟随本部件主色及高光/阴影。解锁：独立调色，自动计算明暗。相邻 4、5 区可组合为双带挑染。各部件的色区独立保存。",
+  "text.magicaland.config.mane_dye.regions.reset": "全部色区跟随本部件主色"
 }

@@ -66,6 +66,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             int packedLight, int packedOverlay,
             float red, float green, float blue, float alpha) {
 
+        if (ManeDye.retiredOverlay(bone.getName())) return;
         ModelConfig config = getEffectiveConfig();
         if (!PonyFacePose.shouldRender(bone.getName(), config == null ? "01" : config.eyeStyle))
             return;

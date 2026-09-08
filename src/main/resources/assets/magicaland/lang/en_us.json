@@ -1,4 +1,11 @@
 {
+  "text.magicaland.config.mane_dye.name": "Masked region colors",
+  "text.magicaland.config.mane_dye.tooltip": "Six fully covering regions for style 01 front mane, back mane and tail. No extra dye geometry; other styles are unaffected.",
+  "text.magicaland.config.mane_dye.stripe01": "01 · Full coverage (6 regions per part)",
+  "text.magicaland.config.mane_dye.color": "Streak color",
+  "text.magicaland.config.mane_dye.accent": "Back mane accent streak",
+  "text.magicaland.config.mane_dye.accent.tooltip": "The adjacent second stripe on back mane 01, purple by default. Independent of the main streak; leaves the front mane and tail unchanged. Automatic shading.",
+  "text.magicaland.config.mane_dye.color.tooltip": "Shared by supported style 01 parts, independently of their base colors. Retains painted shading with automatic streak highlights and shadows; not a global highlight tint.",
   "key.magicaland.config": "Open Config Menu",
   "category.magicaland.keys": "Magical Land",
   "text.magicaland.config.button.done": "Done",
@@ -96,5 +103,11 @@
   "text.magicaland.config.view_cube.left": "Left",
   "text.magicaland.config.view_cube.right": "Right",
   "text.magicaland.config.automatic_gaze.name": "Automatic pupil gaze",
-  "text.magicaland.config.automatic_gaze.tooltip": "Ponies on this client look at visible players or creatures within 8 blocks, prioritizing recent attackers and hostile targets. Moves only pupils and respects authored eye acting. This display setting does not change other clients."
+  "text.magicaland.config.automatic_gaze.tooltip": "Ponies on this client look at visible players or creatures within 8 blocks, prioritizing recent attackers and hostile targets. Moves only pupils and respects authored eye acting. This display setting does not change other clients.",
+  "text.magicaland.config.mane_dye.regions.front": "Front mane · 6 regions",
+  "text.magicaland.config.mane_dye.regions.back": "Back mane · 6 regions",
+  "text.magicaland.config.mane_dye.regions.tail": "Tail · 6 regions",
+  "text.magicaland.config.mane_dye.region": "Region %s",
+  "text.magicaland.config.mane_dye.region.tooltip": "Locked: follow this part's base and shading. Unlocked: independent color with automatic shading. Adjacent regions 4 and 5 form a two-color stripe. Each part is saved separately.",
+  "text.magicaland.config.mane_dye.regions.reset": "Link all regions to this part's base"
 }

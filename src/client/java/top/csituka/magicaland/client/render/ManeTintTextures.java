@@ -1,9 +1,12 @@
 package top.csituka.magicaland.client.render;
 
 import java.io.InputStream;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.List;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -22,13 +25,16 @@ import top.csituka.magicaland.client.config.ModelConfig;
 
 public final class ManeTintTextures {
     private static final Identifier SOURCE = new Identifier("magicaland", "textures/entity/mane.png");
+    private static final Identifier DYE_MASK = new Identifier("magicaland", "mane_dyes/stripe01.json");
     private static final Logger LOGGER = LoggerFactory.getLogger("magicaland/mane-shading");
     private static final int MAX_ENTRIES = 128;
     private static final long MAX_BYTES = 64L * 1024 * 1024;
-    private static final Map<ManePalette.Colors, Entry> CACHE = new LinkedHashMap<>(16, 0.75f, true);
+    private static final Map<TextureKey, Entry> CACHE = new LinkedHashMap<>(16, 0.75f, true);
     private static NativeImage source;
+    private static ManeDyeMask dyeMask;
     private static long tick, bytes;
     private static boolean initialized, failed;
+    private static boolean dyeFailed;
 
     private ManeTintTextures() {}
 
@@ -57,10 +63,9 @@ public final class ManeTintTextures {
 
     public static Identifier get(ModelConfig config, String boneName) {
         ManePalette.Part part = ManePalette.partForBone(boneName);
-        if (config == null || part == null || "legacy".equals(config.maneShadingMode) || failed) return null;
-        ManePalette.Colors key = ManePalette.colors(config, part);
-        Entry existing = CACHE.get(key);
-        if (existing != null) { existing.used = tick; return existing.id; }
+        if (config == null || part == null || failed) return null;
+        boolean legacy = "legacy".equals(config.maneShadingMode), requested = ManeDye.enabled(config, part);
+        if (legacy && !requested) return null;
         NativeImage image = null;
         NativeImageBackedTexture texture = null;
         Identifier registered = null;
@@ -75,13 +80,21 @@ public final class ManeTintTextures {
                     throw new IllegalArgumentException("Mane shading supports textures up to 1 megapixel");
                 }
             }
+            ManeDyeMask mask = requested ? mask(client, source.getWidth(), source.getHeight()) : null;
+            if (legacy && mask == null) return null;
+            List<ManePalette.Colors> colors = ManeDye.palette(config, part, mask != null, legacy);
+            TextureKey key = new TextureKey(colors, legacy, mask == null ? null : part);
+            Entry existing = CACHE.get(key);
+            if (existing != null) { existing.used = tick; return existing.id; }
             long cost = (long) source.getWidth() * source.getHeight() * 8;
             // 本帧已进入顶点缓冲的纹理不能立即淘汰。
             if (CACHE.size() >= MAX_ENTRIES || bytes + cost > MAX_BYTES) return null;
-            int[] ramp = BodyColorRamp.lookup(key.base(), key.shadow(), key.highlight());
+            int[] bases = colors.stream().mapToInt(ManePalette.Colors::base).toArray();
+            int[][] ramps = colors.stream().map(c -> BodyColorRamp.lookup(c.base(), c.shadow(), c.highlight())).toArray(int[][]::new);
             image = new NativeImage(NativeImage.Format.RGBA, source.getWidth(), source.getHeight(), false);
             for (int y = 0; y < source.getHeight(); y++) for (int x = 0; x < source.getWidth(); x++) {
-                image.setColor(x, y, BodyColorRamp.recolorAbgr(source.getColor(x, y), ramp));
+                int channel = mask == null ? 0 : mask.channel(part, x, y, source.getWidth(), source.getHeight());
+                image.setColor(x, y, ManeDye.recolor(source.getColor(x, y), channel, legacy, bases, ramps));
             }
             texture = new NativeImageBackedTexture(image);
             image = null;
@@ -101,11 +114,33 @@ public final class ManeTintTextures {
         }
     }
 
+    private static ManeDyeMask mask(MinecraftClient client, int width, int height) {
+        if (dyeFailed) return null;
+        try {
+            if (dyeMask == null) {
+                try (InputStream input = client.getResourceManager().getResourceOrThrow(DYE_MASK).getInputStream()) {
+                    byte[] data = input.readNBytes(262145);
+                    if (data.length > 262144) throw new IllegalArgumentException("Mane dye mask exceeds 256 KiB");
+                    dyeMask = ManeDyeMask.read(new StringReader(new String(data, StandardCharsets.UTF_8)));
+                }
+            }
+            if (!dyeMask.compatible(width, height)) throw new IllegalArgumentException("Mane dye mask aspect ratio mismatch");
+            return dyeMask;
+        } catch (Exception exception) {
+            dyeFailed = true; dyeMask = null;
+            LOGGER.warn("Mane dye mask unavailable; using plain hair until resources reload", exception);
+            return null;
+        }
+    }
+
     private static void clear() {
         for (Entry entry : CACHE.values()) MinecraftClient.getInstance().getTextureManager().destroyTexture(entry.id);
         CACHE.clear(); bytes = 0; failed = false;
+        dyeMask = null; dyeFailed = false;
         if (source != null) { source.close(); source = null; }
     }
+
+    private record TextureKey(List<ManePalette.Colors> colors, boolean legacy, ManePalette.Part dyePart) {}
 
     private static final class Entry {
         final Identifier id; final long bytes; long used;

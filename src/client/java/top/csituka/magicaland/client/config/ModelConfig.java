@@ -51,6 +51,14 @@ public class ModelConfig {
     public boolean tailShadowColorLocked = true;
     public boolean tailHighlightColorLocked = true;
 
+    public boolean maneDyeEnabled = false;
+    public String maneDyePreset = "stripe01";
+    public String maneDyeColor = "#E45AA5";
+    public String maneDyeAccentColor = "#71318F";
+    public String[] frontManeDyeColors;
+    public String[] backManeDyeColors;
+    public String[] tailDyeColors;
+
     public String magicGlowColor = "#AA00FF";
 
     public boolean showHorn = true;
@@ -120,6 +128,12 @@ public class ModelConfig {
         config.backManeHighlightColor = sanitizeColor(config.backManeHighlightColor, "#FFFFFF");
         config.tailShadowColor = sanitizeColor(config.tailShadowColor, "#E3E3E3");
         config.tailHighlightColor = sanitizeColor(config.tailHighlightColor, "#FFFFFF");
+        if (!"stripe01".equals(config.maneDyePreset)) config.maneDyePreset = "stripe01";
+        config.maneDyeColor = sanitizeColor(config.maneDyeColor, "#E45AA5");
+        config.maneDyeAccentColor = sanitizeColor(config.maneDyeAccentColor, "#71318F");
+        config.frontManeDyeColors = sanitizeDyeColors(config.frontManeDyeColors, config.maneDyeColor, config.maneDyeColor);
+        config.backManeDyeColors = sanitizeDyeColors(config.backManeDyeColors, config.maneDyeColor, config.maneDyeAccentColor);
+        config.tailDyeColors = sanitizeDyeColors(config.tailDyeColors, config.maneDyeColor, config.maneDyeColor);
         config.magicGlowColor = sanitizeColor(config.magicGlowColor, "#AA00FF");
         return config;
     }
@@ -161,6 +175,15 @@ public class ModelConfig {
             }
         }
         return true;
+    }
+
+    private static String[] sanitizeDyeColors(String[] value, String oldDye, String oldAccent) {
+        // null 色槽跟随部件主色；缺少数组的旧配置保留原挑染色。
+        if (value == null) return new String[] {null, null, null, oldDye, oldAccent, null};
+        if (value.length != 6) value = java.util.Arrays.copyOf(value, 6);
+        for (int i = 0; i < value.length; i++)
+            if (value[i] != null) value[i] = sanitizeColor(value[i], null);
+        return value;
     }
 
     private static boolean sameRgb(String a, String b) {
