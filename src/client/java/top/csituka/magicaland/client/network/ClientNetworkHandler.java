@@ -12,6 +12,7 @@ import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
+import top.csituka.magicaland.client.animation.ClientGaze;
 import top.csituka.magicaland.network.NetworkHandler;
 
 import java.util.Map;
@@ -39,6 +40,7 @@ public class ClientNetworkHandler {
     private static long lastAnimationSendNanos;
 
     public static void register() {
+        ClientGaze.register();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             flushPendingModelRemoval();
@@ -192,6 +194,7 @@ public class ClientNetworkHandler {
             switch (type) {
                 case "handshake" -> {
                     NetworkHandler.serverHasMod = true;
+                    ClientGaze.setServerSupported(msg.has("gaze_version") && msg.get("gaze_version").getAsInt() == 1);
                     ticksSinceJoin = -1;
                     sendModelToServer();
                 }

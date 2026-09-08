@@ -94,5 +94,7 @@
   "text.magicaland.config.view_cube.front": "Front",
   "text.magicaland.config.view_cube.back": "Back",
   "text.magicaland.config.view_cube.left": "Left",
-  "text.magicaland.config.view_cube.right": "Right"
+  "text.magicaland.config.view_cube.right": "Right",
+  "text.magicaland.config.automatic_gaze.name": "Automatic pupil gaze",
+  "text.magicaland.config.automatic_gaze.tooltip": "Ponies on this client look at visible players or creatures within 8 blocks, prioritizing recent attackers and hostile targets. Moves only pupils and respects authored eye acting. This display setting does not change other clients."
 }

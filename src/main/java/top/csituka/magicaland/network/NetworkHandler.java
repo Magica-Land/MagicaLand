@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import top.csituka.magicaland.gaze.ServerGaze;
 
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +42,7 @@ public class NetworkHandler {
     public static volatile boolean serverHasMod = false;
 
     public static void registerServer() {
+        ServerGaze.register();
 
         ServerPlayNetworking.registerGlobalReceiver(CHANNEL,
                 (server, player, handler, buf, responseSender) -> {
@@ -56,6 +58,7 @@ public class NetworkHandler {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             JsonObject handshake = new JsonObject();
             handshake.addProperty("type", "handshake");
+            handshake.addProperty("gaze_version", 1);
             send(handler.getPlayer(), GSON.toJson(handshake));
         });
 

@@ -21,6 +21,7 @@ public class Config {
 
     public boolean replacePlayerModel = true;
     public boolean firstPersonMagicGlow = true;
+    public boolean automaticGaze = true;
     public boolean broadcastOwnModel = true;
     public String mainMenuPonyButton = "all";
     

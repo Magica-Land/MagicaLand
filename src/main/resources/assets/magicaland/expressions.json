@@ -1,16 +1,16 @@
 {
   "version": 1,
   "expressions": {
-    "neutral": {"name": "普通", "animation": "face.neutral"},
-    "happy": {"name": "笑眼", "animation": "face.happy"},
-    "angry": {"name": "生气", "animation": "face.angry"},
-    "closed": {"name": "闭眼", "animation": "face.closed"},
-    "scrunched": {"name": "挤眼", "animation": "face.scrunched"},
-    "look_back": {"name": "向后看", "animation": "face.look_back"},
-    "look_down": {"name": "向下看", "animation": "face.look_down"},
-    "fall_transition": {"name": "下落过渡", "animation": "face.fall_transition"},
-    "wave": {"name": "挥手表情演出", "animation": "face.wave"},
-    "ballet": {"name": "芭蕾表情演出", "animation": "face.ballet"}
+    "neutral": {"name": "普通", "animation": "face.neutral", "gaze": "auto"},
+    "happy": {"name": "笑眼", "animation": "face.happy", "gaze": "off"},
+    "angry": {"name": "生气", "animation": "face.angry", "gaze": "off"},
+    "closed": {"name": "闭眼", "animation": "face.closed", "gaze": "off"},
+    "scrunched": {"name": "挤眼", "animation": "face.scrunched", "gaze": "off"},
+    "look_back": {"name": "向后看", "animation": "face.look_back", "gaze": "locked"},
+    "look_down": {"name": "向下看", "animation": "face.look_down", "gaze": "locked"},
+    "fall_transition": {"name": "下落过渡", "animation": "face.fall_transition", "gaze": "locked"},
+    "wave": {"name": "挥手表情演出", "animation": "face.wave", "gaze": "locked"},
+    "ballet": {"name": "芭蕾表情演出", "animation": "face.ballet", "gaze": "locked"}
   },
   "actions": {
     "idle": "neutral",
@@ -46,8 +46,8 @@
     "empty": "neutral"
   },
   "eye_styles": {
-    "01": {"normal": "CommonFace", "left_pupil": "leye", "right_pupil": "reye"},
-    "02": {"normal": "Style02CommonFace", "left_pupil": "leye3", "right_pupil": "reye3"},
-    "03": {"normal": "Style03CommonFace", "left_pupil": "leye2", "right_pupil": "reye2", "happy": "Style03Smile"}
+    "01": {"normal": "CommonFace", "left_pupil": "leye", "right_pupil": "reye", "gaze_limits": {"horizontal": 0.94, "up": 0.18, "down": 0.46}},
+    "02": {"normal": "Style02CommonFace", "left_pupil": "leye3", "right_pupil": "reye3", "gaze_limits": {"horizontal": 0.94, "up": 0.42, "down": 0.46}},
+    "03": {"normal": "Style03CommonFace", "left_pupil": "leye2", "right_pupil": "reye2", "happy": "Style03Smile", "gaze_limits": {"horizontal": 0.78, "up": 0.24, "down": 0.46, "left": {"outward": 0.68, "up": 0.24, "down": 0.46}, "right": {"outward": 0.78, "up": 0.24, "down": 0.46}}}
   }
 }

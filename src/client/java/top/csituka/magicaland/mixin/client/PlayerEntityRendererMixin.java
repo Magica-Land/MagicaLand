@@ -100,6 +100,8 @@ public abstract class PlayerEntityRendererMixin
 
         matrixStack.push();
 
+        org.joml.Matrix4f gazeFrame = new org.joml.Matrix4f(matrixStack.peek().getPositionMatrix());
+
         if (player.isSleeping()) {
             net.minecraft.util.math.Direction direction = player.getSleepingDirection();
             if (direction != null) {
@@ -160,8 +162,13 @@ public abstract class PlayerEntityRendererMixin
         RenderLayer renderLayer = ponyRenderer.getRenderType(ponyAnimatable,
                 ponyRenderer.getTextureLocation(ponyAnimatable), vertexConsumerProvider, g);
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(renderLayer);
-        ponyRenderer.render(matrixStack, ponyAnimatable, vertexConsumerProvider, renderLayer,
-                vertexConsumer, i);
+        ponyRenderer.setGazeFrame(gazeFrame, g);
+        try {
+            ponyRenderer.render(matrixStack, ponyAnimatable, vertexConsumerProvider, renderLayer,
+                    vertexConsumer, i);
+        } finally {
+            ponyRenderer.setGazeFrame(null, 0);
+        }
 
         this.renderMagicHeldItem(player, configToUse, matrixStack, vertexConsumerProvider, i, g);
 

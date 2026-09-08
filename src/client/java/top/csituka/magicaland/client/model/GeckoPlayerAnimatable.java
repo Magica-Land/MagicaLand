@@ -79,6 +79,10 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         return player;
     }
 
+    public boolean allowsAutomaticGaze() {
+        return player != null && PonyExpressions.allowsAutomaticGaze(mainAnimationName);
+    }
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 3, this::predicate));

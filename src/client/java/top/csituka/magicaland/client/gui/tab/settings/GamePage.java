@@ -32,5 +32,14 @@ public class GamePage implements SettingsPage {
         magicGlowToggle.setTooltip(Tooltip.of(
                 Text.translatable("text.magicaland.config.first_person_magic_glow.tooltip")));
         list.addWidget(magicGlowToggle);
+
+        Toggle gazeToggle = new Toggle(buttonX, 0, buttonWidth, 20,
+                Text.translatable("text.magicaland.config.automatic_gaze.name"), config.automaticGaze,
+                toggle -> {
+                    config.automaticGaze = toggle.getState();
+                    Config.save();
+                });
+        gazeToggle.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.automatic_gaze.tooltip")));
+        list.addWidget(gazeToggle);
     }
 }

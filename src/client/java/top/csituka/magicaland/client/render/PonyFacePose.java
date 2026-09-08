@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-/** 只适配已有表情轨道；所有临时修改在本次面部渲染后恢复。 */
+/** 适配表情轨道与眼仁注视；所有临时修改在本次面部渲染后恢复。 */
 final class PonyFacePose implements AutoCloseable {
     private final Map<String, GeoBone> bones = new HashMap<>();
     private final Map<GeoBone, SavedPose> saved = new IdentityHashMap<>();
@@ -33,6 +33,56 @@ final class PonyFacePose implements AutoCloseable {
 
     static boolean shouldRender(String boneName, String eyeStyle) {
         return PonyExpressions.shouldRender(boneName, eyeStyle);
+    }
+
+    boolean allowsGaze() {
+        return isVisible("CommonFace") && !isVisible("Smeile") && !isVisible("close")
+                && !isVisible("ScrunchedEyes") && !isVisible("Angry");
+    }
+
+    GeoBone pupil(String styleId, boolean left) {
+        var styles = PonyExpressions.eyeStyles();
+        var style = styleId == null ? styles.get("01") : styles.getOrDefault(styleId, styles.get("01"));
+        return bones.get(style.bones().get(left ? "left_pupil" : "right_pupil"));
+    }
+
+    void gaze(String styleId, float x, float y) {
+        if (!allowsGaze() || !Float.isFinite(x) || !Float.isFinite(y)) return;
+        var limits = PonyExpressions.gazeLimits(styleId);
+        var bounded = PonyGazeMath.bounded(x, y);
+        for (boolean left : new boolean[] {true, false}) {
+            GeoBone pupil = pupil(styleId, left);
+            if (pupil == null) continue;
+            var eye = limits.eye(left);
+            // 默认眼仁已靠鼻梁；水平只让目标侧眼仁向外移动。
+            float horizontal = left ? Math.max(0, bounded.x()) : Math.min(0, bounded.x());
+            float[] growth = growth(pupil, left);
+            float dx = horizontal * Math.max(0, eye.outward() - growth[0]);
+            float vertical = bounded.y() >= 0 ? eye.up() - growth[1] : eye.down() - growth[2];
+            float dy = bounded.y() * Math.max(0, vertical);
+            save(pupil);
+            pupil.updatePosition(pupil.getPosX() + dx, pupil.getPosY() + dy, pupil.getPosZ());
+        }
+    }
+
+    private static float[] growth(GeoBone pupil, boolean left) {
+        float outward = 0, up = 0, down = 0;
+        float sx = Math.max(0, pupil.getScaleX() - 1), sy = Math.max(0, pupil.getScaleY() - 1);
+        if (sx == 0 && sy == 0) return new float[3];
+        for (var cube : pupil.getCubes()) {
+            for (var quad : cube.quads()) {
+                if (quad == null) continue;
+                for (var vertex : quad.vertices()) {
+                    var point = vertex.position();
+                    float x = point.x() * 16 - pupil.getPivotX();
+                    float y = point.y() * 16 - pupil.getPivotY();
+                    outward = Math.max(outward, (left ? -x : x) * sx);
+                    up = Math.max(up, y * sy);
+                    down = Math.max(down, -y * sy);
+                }
+            }
+        }
+        return new float[] {outward, up, down};
     }
 
     private void collect(GeoBone bone) {

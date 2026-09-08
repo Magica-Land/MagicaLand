@@ -5,8 +5,14 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
+import software.bernie.geckolib.util.RenderUtils;
+import top.csituka.magicaland.client.animation.ClientGaze;
+import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
@@ -20,6 +26,14 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
 
     private ModelConfig overrideConfig = null;
     private boolean usingPalette;
+    private Matrix4f gazeFrame;
+    private float gazePartialTick;
+    private final PonyGazeMath.Smoother gazeSmoother = new PonyGazeMath.Smoother();
+
+    public void setGazeFrame(Matrix4f frame, float partialTick) {
+        gazeFrame = frame == null ? null : new Matrix4f(frame);
+        gazePartialTick = partialTick;
+    }
 
     public PonyRenderer() {
         super(new GeckoPlayerModel());
@@ -56,8 +70,9 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         if (!PonyFacePose.shouldRender(bone.getName(), config == null ? "01" : config.eyeStyle))
             return;
 
-        try (PonyFacePose ignored = "Emotions".equals(bone.getName())
+        try (PonyFacePose face = "Emotions".equals(bone.getName())
                 ? PonyFacePose.apply(bone) : null) {
+            if (face != null) applyGaze(poseStack, bone, face, animatable, config == null ? "01" : config.eyeStyle);
             String name = bone.getName().toLowerCase();
             // 翅膀使用身体图集，只有鬃毛和尾巴使用第二张贴图。
             boolean isOther = name.contains("mane") || name.contains("tail");
@@ -77,6 +92,51 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                 usingPalette = previousPalette;
             }
         }
+    }
+
+    private void applyGaze(MatrixStack stack, GeoBone root, PonyFacePose face, GeckoPlayerAnimatable animatable, String style) {
+        var player = animatable.getPlayer();
+        if (gazeFrame == null || !Config.getInstance().automaticGaze || !animatable.allowsAutomaticGaze()
+                || player == null || !player.isAlive() || player.isSleeping() || !face.allowsGaze()) {
+            gazeSmoother.reset();
+            return;
+        }
+        GeoBone left = face.pupil(style, true);
+        GeoBone right = face.pupil(style, false);
+        if (left == null || right == null || left.getParent() != right.getParent()) {
+            gazeSmoother.reset();
+            return;
+        }
+        PonyGazeMath.Offset desired = PonyGazeMath.Offset.ZERO;
+        var target = ClientGaze.targetFor(player);
+        if (target != null) {
+            Vec3d relative = target.getLerpedPos(gazePartialTick).add(0, target.getEyeHeight(target.getPose()), 0)
+                    .subtract(player.getLerpedPos(gazePartialTick));
+            Vector3f targetInRender = gazeFrame.transformPosition(new Vector3f((float) relative.x, (float) relative.y, (float) relative.z));
+            var path = new java.util.ArrayDeque<GeoBone>();
+            for (GeoBone bone = left.getParent(); bone != null; bone = bone.getParent()) {
+                path.addFirst(bone);
+                if (bone == root) break;
+            }
+            if (path.peekFirst() != root) return;
+            stack.push();
+            try {
+                for (GeoBone bone : path) {
+                    // 眨眼隐藏父骨骼时保留已平滑的注视，不求逆退化矩阵。
+                    if (Math.abs(bone.getScaleX() * bone.getScaleY() * bone.getScaleZ()) < 0.001f) return;
+                    RenderUtils.prepMatrixForBone(stack, bone);
+                }
+                Vector3f center = new Vector3f(
+                        (left.getPivotX() + right.getPivotX() - left.getPosX() - right.getPosX()) / 32f,
+                        (left.getPivotY() + right.getPivotY() + left.getPosY() + right.getPosY()) / 32f,
+                        (left.getPivotZ() + right.getPivotZ() + left.getPosZ() + right.getPosZ()) / 32f);
+                desired = PonyGazeMath.project(stack.peek().getPositionMatrix(), targetInRender, center);
+            } finally {
+                stack.pop();
+            }
+        }
+        var offset = gazeSmoother.step(desired, player.age + gazePartialTick);
+        face.gaze(style, offset.x(), offset.y());
     }
 
     @Override

@@ -94,5 +94,7 @@
   "text.magicaland.config.view_cube.front": "前",
   "text.magicaland.config.view_cube.back": "后",
   "text.magicaland.config.view_cube.left": "左",
-  "text.magicaland.config.view_cube.right": "右"
+  "text.magicaland.config.view_cube.right": "右",
+  "text.magicaland.config.automatic_gaze.name": "眼仁自动注视",
+  "text.magicaland.config.automatic_gaze.tooltip": "本客户端的小马会注视 8 格内可见的玩家或生物，优先最近攻击者和敌对目标。只移动眼仁，尊重动作眼神；关闭不改变其他玩家的显示设置。"
 }

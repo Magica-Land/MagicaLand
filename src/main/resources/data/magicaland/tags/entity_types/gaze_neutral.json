@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:bee", "minecraft:wolf", "minecraft:polar_bear", "minecraft:iron_golem",
+    "minecraft:enderman", "minecraft:zombified_piglin", "minecraft:piglin",
+    "minecraft:goat", "minecraft:llama", "minecraft:trader_llama", "minecraft:panda", "minecraft:dolphin"
+  ]
+}
