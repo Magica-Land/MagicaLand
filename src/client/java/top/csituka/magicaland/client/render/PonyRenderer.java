@@ -26,9 +26,38 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
 
     private ModelConfig overrideConfig = null;
     private boolean usingPalette;
+    private VertexConsumerProvider eyeBuffers;
+    private RenderLayer eyeLayer, pupilLayer;
     private Matrix4f gazeFrame;
     private float gazePartialTick;
     private final PonyGazeMath.Smoother gazeSmoother = new PonyGazeMath.Smoother();
+    private final HornGlowGeometry hornGlow = new HornGlowGeometry();
+    private AuraCapture auraCapture;
+    private boolean headLookActive;
+
+    private static final class AuraCapture {
+        final java.util.Set<RenderLayer> layers = new java.util.LinkedHashSet<>();
+        final java.util.List<java.util.function.Consumer<VertexConsumer>> draws = new java.util.ArrayList<>();
+    }
+
+    @Override
+    public void defaultRender(MatrixStack stack, GeckoPlayerAnimatable animatable, VertexConsumerProvider buffers,
+            RenderLayer renderType, VertexConsumer buffer, float yaw, float partialTick, int light) {
+        AuraCapture previous = auraCapture;
+        AuraCapture capture = new AuraCapture();
+        auraCapture = capture;
+        try {
+            super.defaultRender(stack, animatable, buffers, renderType, buffer, yaw, partialTick, light);
+            if (!capture.draws.isEmpty()) {
+                // 预览先提交整只小马；世界光晕另等全部实体与透明层完成。
+                if (!HornAuraPass.isWorld() && buffers instanceof VertexConsumerProvider.Immediate immediate)
+                    capture.layers.forEach(immediate::draw);
+                HornAuraPass.submit(glow -> capture.draws.forEach(draw -> draw.accept(glow)));
+            }
+        } finally {
+            auraCapture = previous;
+        }
+    }
 
     public void setGazeFrame(Matrix4f frame, float partialTick) {
         gazeFrame = frame == null ? null : new Matrix4f(frame);
@@ -55,7 +84,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         if (overrideConfig != null) {
             return overrideConfig;
         }
-        return ModelManager.getActiveModel();
+        return ModelManager.getAppliedModel();
     }
 
     @Override
@@ -71,7 +100,8 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         if (!PonyFacePose.shouldRender(bone.getName(), config == null ? "01" : config.eyeStyle))
             return;
 
-        try (PonyFacePose face = "Emotions".equals(bone.getName())
+        try (HeadPose head = applyHeadLook(bone, animatable);
+                PonyFacePose face = "Emotions".equals(bone.getName())
                 ? PonyFacePose.apply(bone) : null) {
             if (face != null) applyGaze(poseStack, bone, face, animatable, config == null ? "01" : config.eyeStyle);
             String name = bone.getName().toLowerCase();
@@ -79,18 +109,83 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             boolean isOther = name.contains("mane") || name.contains("tail");
             Identifier texture = isOther ? PONY_TS : PONY_BASE;
             Identifier palette = isOther ? ManeTintTextures.get(config, bone.getName())
-                    : BodyTintTextures.get(config, BodyTintTextures.colorForBone(config, bone.getName()));
+                    : EyeMaterials.isEyeBone(bone.getName()) ? EyeTintTextures.get(config, false) : null;
+            if (palette == null && !isOther)
+                palette = BodyTintTextures.get(config, BodyTintTextures.colorForBone(config, bone.getName()));
             if (palette != null) texture = palette;
 
             RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
+            if (auraCapture != null) auraCapture.layers.add(newRenderType);
             VertexConsumer newBuffer = bufferSource.getBuffer(newRenderType);
             boolean previousPalette = usingPalette;
+            VertexConsumerProvider previousBuffers = eyeBuffers;
+            RenderLayer previousEye = eyeLayer, previousPupil = pupilLayer;
+            eyeBuffers = null;
+            if (EyeMaterials.isEyeBone(bone.getName())) {
+                Identifier pupil = EyeTintTextures.get(config, true);
+                eyeBuffers = bufferSource;
+                eyeLayer = newRenderType;
+                pupilLayer = getRenderType(animatable, pupil == null ? PONY_BASE : pupil, bufferSource, partialTick);
+                if (auraCapture != null) auraCapture.layers.add(pupilLayer);
+            }
             usingPalette = palette != null;
             try {
                 super.renderRecursively(poseStack, animatable, bone, newRenderType, bufferSource, newBuffer, isReRender,
                         partialTick, packedLight, packedOverlay, red, green, blue, alpha);
             } finally {
                 usingPalette = previousPalette;
+                eyeBuffers = previousBuffers;
+                eyeLayer = previousEye;
+                pupilLayer = previousPupil;
+            }
+        }
+    }
+
+    private HeadPose applyHeadLook(GeoBone bone, GeckoPlayerAnimatable animatable) {
+        // 仅世界渲染注入设置此frame，主预览和静态缩略图都不跟随玩家视角。
+        if (!PonyHeadLookMath.shouldApply(gazeFrame != null, headLookActive, bone.getName())) return null;
+        var player = animatable.getPlayer();
+        if (player == null || !player.isAlive()) return null;
+        PonyHeadLookMath.Pose pose = player.isSleeping() ? PonyHeadLookMath.Pose.SLEEPING
+                : player.isFallFlying() || player.isUsingRiptide()
+                        || (player.getAbilities().flying && player.isSprinting()) ? PonyHeadLookMath.Pose.FLYING
+                : player.isSwimming() || player.getLeaningPitch(gazePartialTick) > .01f
+                        ? PonyHeadLookMath.Pose.SWIMMING : PonyHeadLookMath.Pose.NORMAL;
+        var rotation = PonyHeadLookMath.sample(player.prevBodyYaw, player.bodyYaw, player.prevHeadYaw, player.headYaw,
+                player.prevPitch, player.getPitch(), gazePartialTick, pose);
+        if (rotation.pitch() == 0 && rotation.yaw() == 0) return null;
+        return new HeadPose(this, bone, rotation);
+    }
+
+    static final class HeadPose implements AutoCloseable {
+        private final PonyRenderer renderer;
+        private final GeoBone bone;
+        private final float x, y, z;
+        private final boolean rotationChanged, positionChanged, scaleChanged;
+        private boolean closed;
+
+        HeadPose(PonyRenderer renderer, GeoBone bone, PonyHeadLookMath.Rotation rotation) {
+            this.renderer = renderer;
+            this.bone = bone;
+            x = bone.getRotX(); y = bone.getRotY(); z = bone.getRotZ();
+            rotationChanged = bone.hasRotationChanged();
+            positionChanged = bone.hasPositionChanged();
+            scaleChanged = bone.hasScaleChanged();
+            bone.updateRotation(x + rotation.pitch(), y + rotation.yaw(), z);
+            if (renderer != null) renderer.headLookActive = true;
+        }
+
+        @Override public void close() {
+            if (closed) return;
+            closed = true;
+            try {
+                bone.updateRotation(x, y, z);
+                bone.resetStateChanges();
+                if (rotationChanged) bone.markRotationAsChanged();
+                if (positionChanged) bone.markPositionAsChanged();
+                if (scaleChanged) bone.markScaleAsChanged();
+            } finally {
+                if (renderer != null) renderer.headLookActive = false;
             }
         }
     }
@@ -141,6 +236,73 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
     }
 
     @Override
+    public void applyRenderLayersForBone(MatrixStack stack, GeckoPlayerAnimatable animatable, GeoBone bone,
+            RenderLayer renderType, VertexConsumerProvider buffers, VertexConsumer buffer,
+            float partialTick, int light, int overlay) {
+        super.applyRenderLayersForBone(stack, animatable, bone, renderType, buffers, buffer, partialTick, light, overlay);
+        if (!"Horn".equalsIgnoreCase(bone.getName()) || bone.isHidden() || auraCapture == null) return;
+        ModelConfig config = getEffectiveConfig();
+        var player = animatable.getPlayer();
+        if ((config != null && !config.showHorn) || player == null || player.isInvisible() || player.isSpectator()
+                || (player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty())) return;
+
+        int color = GlowingItem.getGlowColor(config);
+        float cr = (color >>> 16 & 255) / 255f, cg = (color >>> 8 & 255) / 255f, cb = (color & 255) / 255f;
+        int clock = Math.round((Math.floorMod(player.age, 240) + partialTick) * 50);
+        double ticks = (double) player.age + partialTick;
+        int seed = player.getUuid().hashCode();
+        MatrixStack pose = new MatrixStack();
+        pose.peek().getPositionMatrix().set(stack.peek().getPositionMatrix());
+        pose.peek().getNormalMatrix().set(stack.peek().getNormalMatrix());
+        var cubes = java.util.List.copyOf(bone.getCubes());
+        auraCapture.draws.add(glow -> {
+            for (var cube : cubes) {
+                int layer = 0;
+                for (var shell : hornGlow.shells(cube)) {
+                    pose.push();
+                    try {
+                        renderCube(pose, shell, glow, 0xF000F0, clock, cr, cg, cb, 0.26f - layer++ * 0.09f);
+                    } finally {
+                        pose.pop();
+                    }
+                }
+                renderMagicStars(pose, cube, glow, ticks, seed, cr, cg, cb, clock);
+            }
+        });
+    }
+
+    private void renderMagicStars(MatrixStack stack, software.bernie.geckolib.cache.object.GeoCube cube,
+            VertexConsumer buffer, double ticks, int seed, float red, float green, float blue, int clock) {
+        stack.push();
+        try {
+            RenderUtils.translateToPivotPoint(stack, cube);
+            RenderUtils.rotateMatrixAroundCube(stack, cube);
+            RenderUtils.translateAwayFromPivotPoint(stack, cube);
+            Vector3f[] bounds = HornGlowGeometry.bounds(cube);
+            Vector3f center = bounds[0].lerp(bounds[1], 0.5f, new Vector3f());
+            center.y = bounds[0].y * 0.25f + bounds[1].y * 0.75f;
+            Matrix4f inverseView = new Matrix4f(com.mojang.blaze3d.systems.RenderSystem.getModelViewMatrix()).invert();
+            Vector3f right = inverseView.transformDirection(new Vector3f(1, 0, 0)).normalize();
+            Vector3f up = inverseView.transformDirection(new Vector3f(0, 1, 0)).normalize();
+            Vector3f normal = inverseView.transformDirection(new Vector3f(0, 0, 1)).normalize();
+            for (int slot = 0; slot < 4; slot++) {
+                var star = MagicSparkles.sample(ticks, seed, slot);
+                if (star == null) continue;
+                Vector3f position = stack.peek().getPositionMatrix().transformPosition(new Vector3f(center).add(star.x(), star.y(), star.z()));
+                for (int corner = 0; corner < 4; corner++) {
+                    float x = corner == 0 || corner == 3 ? -1 : 1, y = corner < 2 ? -1 : 1;
+                    Vector3f point = new Vector3f(position).fma(x * star.radius(), right).fma(y * star.radius(), up);
+                    buffer.vertex(point.x, point.y, point.z).color(red, green, blue, star.alpha())
+                            .texture((x + 1) * 0.5f, (y + 1) * 0.5f).overlay(clock, 1).light(0xF000F0)
+                            .normal(normal.x, normal.y, normal.z).next();
+                }
+            }
+        } finally {
+            stack.pop();
+        }
+    }
+
+    @Override
     public void renderCubesOfBone(MatrixStack poseStack, GeoBone bone,
             VertexConsumer buffer, int packedLight, int packedOverlay,
             float red, float green, float blue, float alpha) {
@@ -172,7 +334,24 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             blue *= cb;
         }
 
-        super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        if (eyeBuffers != null && EyeMaterials.isEyeBone(boneName)) {
+            if (bone.isHidden()) return;
+            try {
+                for (var cube : bone.getCubes()) {
+                    VertexConsumer eyeBuffer = eyeBuffers.getBuffer(EyeMaterials.isPupil(cube) ? pupilLayer : eyeLayer);
+                    poseStack.push();
+                    try {
+                        renderCube(poseStack, cube, eyeBuffer, packedLight, packedOverlay, red, green, blue, alpha);
+                    } finally {
+                        poseStack.pop();
+                    }
+                }
+            } finally {
+                eyeBuffers.getBuffer(eyeLayer);
+            }
+        } else {
+            super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        }
     }
 
     protected int parseHexColor(String hex) {

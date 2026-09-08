@@ -373,7 +373,7 @@ public class ViewCube extends ClickableWidget {
         if (this.dragging) {
             this.target.setPreviewRotation(
                     this.target.getPreviewYaw() - (float) deltaX * DRAG_SENSITIVITY,
-                    this.target.getPreviewPitch() + (float) deltaY * DRAG_SENSITIVITY);
+                    this.target.getPreviewPitch() - (float) deltaY * DRAG_SENSITIVITY);
         }
         return true;
     }

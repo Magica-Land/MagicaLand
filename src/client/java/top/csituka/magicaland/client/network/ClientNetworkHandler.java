@@ -8,12 +8,15 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.client.MinecraftClient;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.animation.ClientGaze;
 import top.csituka.magicaland.network.NetworkHandler;
+import top.csituka.magicaland.network.TransformationMessage;
+import top.csituka.magicaland.client.render.TransformationParticles;
 
 import java.util.Map;
 import java.util.UUID;
@@ -34,7 +37,9 @@ public class ClientNetworkHandler {
     private static final long MODEL_SEND_INTERVAL_NANOS = 100_000_000L;
     private static final long ANIMATION_SEND_INTERVAL_NANOS = 50_000_000L;
     private static String lastSentModelJson;
+    private static String lastAppliedAppearance;
     private static String pendingModelJson;
+    private static boolean pendingModelTransformation;
     private static boolean pendingModelRemoval;
     private static long lastModelSendNanos;
     private static long lastAnimationSendNanos;
@@ -66,7 +71,9 @@ public class ClientNetworkHandler {
             localAnimations.clear();
             pendingAnimations.clear();
             lastSentModelJson = null;
+            lastAppliedAppearance = GSON.toJson(ModelManager.getAppliedModel());
             pendingModelJson = null;
+            pendingModelTransformation = false;
             pendingModelRemoval = false;
             lastModelSendNanos = 0L;
             lastAnimationSendNanos = 0L;
@@ -80,7 +87,9 @@ public class ClientNetworkHandler {
             localAnimations.clear();
             pendingAnimations.clear();
             lastSentModelJson = null;
+            lastAppliedAppearance = null;
             pendingModelJson = null;
+            pendingModelTransformation = false;
             pendingModelRemoval = false;
             lastModelSendNanos = 0L;
             lastAnimationSendNanos = 0L;
@@ -112,12 +121,33 @@ public class ClientNetworkHandler {
     }
 
     public static void sendModelToServer() {
+        queueAppliedModel(false);
+    }
+
+    public static void publishSavedModel() {
+        ModelConfig config = ModelManager.getAppliedModel();
+        MinecraftClient client = MinecraftClient.getInstance();
+        String appearance = config == null ? null : GSON.toJson(config);
+        try {
+            if (config != null && client.player != null
+                    && TransformationMessage.modelChanged(lastAppliedAppearance, appearance)) {
+                TransformationParticles.play(client.player, config);
+            }
+        } catch (RuntimeException failure) {
+            org.slf4j.LoggerFactory.getLogger("magicaland").warn("无法播放换装光尘，模型仍正常应用", failure);
+        } finally {
+            lastAppliedAppearance = appearance;
+            queueAppliedModel(true);
+        }
+    }
+
+    private static void queueAppliedModel(boolean transformation) {
         if (!Config.getInstance().broadcastOwnModel || !NetworkHandler.serverHasMod
                 || !ClientPlayNetworking.canSend(NetworkHandler.CHANNEL)) {
             return;
         }
 
-        ModelConfig config = ModelManager.getActiveModel();
+        ModelConfig config = ModelManager.getAppliedModel();
         if (config == null)
             return;
 
@@ -127,16 +157,22 @@ public class ClientNetworkHandler {
         }
         if (modelJson.equals(lastSentModelJson)) {
             pendingModelJson = null;
+            pendingModelTransformation = false;
             return;
         }
 
         long now = System.nanoTime();
         if (now - lastModelSendNanos < MODEL_SEND_INTERVAL_NANOS) {
+            pendingModelTransformation = transformation
+                    || (modelJson.equals(pendingModelJson) && pendingModelTransformation);
             pendingModelJson = modelJson;
             return;
         }
 
-        sendModelPacket(modelJson);
+        transformation |= modelJson.equals(pendingModelJson) && pendingModelTransformation;
+        pendingModelJson = null;
+        pendingModelTransformation = false;
+        sendModelPacket(modelJson, transformation);
     }
 
     public static void sendAnimation(String controller, String animation) {
@@ -159,6 +195,7 @@ public class ClientNetworkHandler {
         localAnimations.clear();
         pendingAnimations.clear();
         pendingModelJson = null;
+        pendingModelTransformation = false;
         pendingModelRemoval = false;
         lastSentModelJson = null;
 
@@ -203,7 +240,15 @@ public class ClientNetworkHandler {
                     String modelData = readString(msg, "data", NetworkHandler.MAX_MODEL_DATA_LENGTH);
                     ModelConfig config = parseRemoteModel(modelData);
                     if (uuid != null && config != null) {
-                        remoteModels.put(uuid, config);
+                        ModelConfig previous = remoteModels.put(uuid, config);
+                        MinecraftClient client = MinecraftClient.getInstance();
+                        if (client.player != null && !uuid.equals(client.player.getUuid())
+                                && TransformationMessage.requested(msg)
+                                && TransformationMessage.modelChanged(
+                                        previous == null ? null : GSON.toJson(previous), GSON.toJson(config))) {
+                            TransformationParticles.play(client.world == null ? null
+                                    : client.world.getPlayerByUuid(uuid), config);
+                        }
                     }
                 }
                 case "animation_update" -> {
@@ -279,9 +324,11 @@ public class ClientNetworkHandler {
         }
 
         String modelJson = pendingModelJson;
+        boolean transformation = pendingModelTransformation;
         pendingModelJson = null;
+        pendingModelTransformation = false;
         if (!modelJson.equals(lastSentModelJson)) {
-            sendModelPacket(modelJson);
+            sendModelPacket(modelJson, transformation);
         }
     }
 
@@ -301,10 +348,11 @@ public class ClientNetworkHandler {
         }
     }
 
-    private static void sendModelPacket(String modelJson) {
+    private static void sendModelPacket(String modelJson, boolean transformation) {
         JsonObject msg = new JsonObject();
         msg.addProperty("type", "model_update");
         msg.addProperty("data", modelJson);
+        if (transformation) msg.addProperty("transform", true);
 
         try {
             ClientPlayNetworking.send(NetworkHandler.CHANNEL,
@@ -313,6 +361,7 @@ public class ClientNetworkHandler {
             lastModelSendNanos = System.nanoTime();
         } catch (RuntimeException ignored) {
             pendingModelJson = modelJson;
+            pendingModelTransformation = transformation;
         }
     }
 

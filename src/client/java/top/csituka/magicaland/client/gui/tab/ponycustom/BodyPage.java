@@ -24,14 +24,10 @@ public class BodyPage implements PonyCustomPage {
         ModelConfig config = ModelManager.getActiveModel();
         if (config == null) return;
 
-        int buttonWidth = Math.min(180, context.getWidth() / 2);
+        int buttonWidth = context.getControlWidth();
         int buttonHeight = 20;
         int buttonX = getButtonX(context, buttonWidth);
 
-        list.addWidget(new CustomButton(buttonX, 0, buttonWidth, buttonHeight,
-                Text.literal("\u2190 " + Text.translatable("text.magicaland.config.body_menu.name").getString()),
-                false, button -> context.openPage(PonyCustomPageContext.Page.MAIN, -1), false, true),
-                SettingsList.Alignment.RIGHT);
 
         addShadingMode(context, list, config, buttonX, buttonWidth, buttonHeight);
         ColorPicker body = addColorPicker(list, buttonX, buttonWidth, buttonHeight,

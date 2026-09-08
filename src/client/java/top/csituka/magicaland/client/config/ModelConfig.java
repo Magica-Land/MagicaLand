@@ -12,6 +12,12 @@ public class ModelConfig {
     public String backManeStyle = PonyStyleRegistry.DEFAULT_ID;
     public String tailStyle = PonyStyleRegistry.DEFAULT_ID;
     public String eyeStyle = PonyStyleRegistry.DEFAULT_ID;
+    public String irisColor = "#516BD1";
+    public String irisLightColor = "#7BA1D2";
+    public boolean irisLightColorLocked = true;
+    public String eyelashColor = "#000000";
+    public String scleraColor = "#FFFFFF";
+    public String pupilColor = "#000000";
 
     public String hornColor = "#FFFFFFFF";
     public String wingColor = "#FFFFFFFF";
@@ -87,6 +93,11 @@ public class ModelConfig {
         config.backManeStyle = sanitizeStyle(config.backManeStyle, PonyStylePart.BACK_MANE);
         config.tailStyle = sanitizeStyle(config.tailStyle, PonyStylePart.TAIL);
         config.eyeStyle = sanitizeStyle(config.eyeStyle, PonyStylePart.EYE);
+        config.irisColor = sanitizeColor(config.irisColor, "#516BD1");
+        config.irisLightColor = sanitizeColor(config.irisLightColor, "#7BA1D2");
+        config.eyelashColor = sanitizeColor(config.eyelashColor, "#000000");
+        config.scleraColor = sanitizeColor(config.scleraColor, "#FFFFFF");
+        config.pupilColor = sanitizeColor(config.pupilColor, "#000000");
 
         config.hornColor = sanitizeColor(config.hornColor, "#FFFFFFFF");
         config.wingColor = sanitizeColor(config.wingColor, "#FFFFFFFF");

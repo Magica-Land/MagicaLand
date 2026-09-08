@@ -31,7 +31,7 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
     }
 
     public void centerIfShort() {
-        int totalHeight = this.getEntryCount() * this.itemHeight;
+        int totalHeight = this.getMaxPosition();
         int availableHeight = this.originalBottom - this.originalTop;
         if (totalHeight < availableHeight) {
             int padding = (availableHeight - totalHeight) / 2;
@@ -59,6 +59,59 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
 
     public void addWidget(ClickableWidget widget, Alignment alignment) {
         this.addEntry(new Entry(widget, this, alignment));
+    }
+
+    private int rowHeight(int index) {
+        return Math.max(itemHeight, children().get(index).widget.getHeight() + 4);
+    }
+
+    private int rowOffset(int index) {
+        int offset = headerHeight;
+        for (int i = 0; i < index; i++) offset += rowHeight(i);
+        return offset;
+    }
+
+    @Override
+    protected int getMaxPosition() { return rowOffset(children().size()); }
+
+    @Override
+    protected int getRowTop(int index) { return top + 4 - (int) getScrollAmount() + rowOffset(index); }
+
+    @Override
+    protected int getRowBottom(int index) { return getRowTop(index) + rowHeight(index); }
+
+    public void ensureWidgetAreaVisible(ClickableWidget widget, int localTop, int localBottom) {
+        for (int i = 0; i < children().size(); i++) if (children().get(i).widget == widget) {
+            int rowY = getRowTop(i);
+            double target = getScrollAmount();
+            if (rowY + localTop < top + 4) target += rowY + localTop - top - 4;
+            else if (rowY + localBottom > bottom - 4) target += rowY + localBottom - bottom + 4;
+            restoreScrollAmount(target);
+            return;
+        }
+    }
+
+    @Override
+    protected void ensureVisible(Entry entry) {
+        // 大型缩略图池自行定位选中卡片，不把整池反复拉回顶部。
+        if (entry.widget.getHeight() <= itemHeight)
+            ensureWidgetAreaVisible(entry.widget, 0, entry.widget.getHeight());
+    }
+
+    @Override
+    protected void centerScrollOn(Entry entry) {
+        int index = children().indexOf(entry);
+        if (index >= 0) restoreScrollAmount(rowOffset(index) - (bottom - top - rowHeight(index)) / 2.0);
+    }
+
+    @Override
+    protected void renderList(DrawContext context, int mouseX, int mouseY, float delta) {
+        for (int i = 0; i < children().size(); i++) {
+            int rowY = getRowTop(i);
+            if (rowY >= bottom || rowY + rowHeight(i) <= top) continue;
+            children().get(i).render(context, i, rowY, getRowLeft(), getRowWidth(), rowHeight(i) - 4,
+                    mouseX, mouseY, isMouseOver(mouseX, mouseY) && mouseY >= rowY && mouseY < rowY + rowHeight(i), delta);
+        }
     }
 
     public void setBaseAlpha(float alpha) {
@@ -161,20 +214,34 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
                 return true;
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        if (!isMouseOver(mouseX, mouseY)) return false;
+        for (int index = 0; index < children().size(); index++) {
+            Entry entry = children().get(index);
+            int rowY = getRowTop(index);
+            if (mouseY < rowY || mouseY >= rowY + rowHeight(index)) continue;
+            entry.position(getRowLeft(), rowY, getRowWidth());
+            if (entry.mouseClicked(mouseX, mouseY, button)) {
+                setFocused(entry);
+                if (button == 0) setDragging(true);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (button == 0) {
             this.isDraggingScrollbar = false;
+            setDragging(false);
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        Entry entry = getFocused();
+        return entry != null && entry.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        if (this.getMaxScroll() <= 0) {
+        if (!isMouseOver(mouseX, mouseY) || this.getMaxScroll() <= 0) {
             return false;
         }
         this.targetScrollAmount = net.minecraft.util.math.MathHelper
@@ -237,15 +304,21 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
             return Collections.singletonList(this.widget);
         }
 
+        private void position(int x, int y, int entryWidth) {
+            widget.setX(alignment == Alignment.RIGHT ? x + entryWidth - widget.getWidth()
+                    : x + (entryWidth - widget.getWidth()) / 2);
+            widget.setY(y);
+        }
+
+        @Override
+        public boolean isMouseOver(double x, double y) {
+            return parent.isMouseOver(x, y) && widget.isMouseOver(x, y);
+        }
+
         @Override
         public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX,
                 int mouseY, boolean hovered, float tickDelta) {
-            if (this.alignment == Alignment.RIGHT) {
-                this.widget.setX(x + entryWidth - this.widget.getWidth());
-            } else {
-                this.widget.setX(x + (entryWidth - this.widget.getWidth()) / 2);
-            }
-            this.widget.setY(y);
+            position(x, y, entryWidth);
 
             int widgetTop = y;
             int widgetBottom = y + this.widget.getHeight();
@@ -253,7 +326,9 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
             int fadeDistance = 15;
             float alpha = 1.0f;
 
-            if (widgetTop < this.parent.top) {
+            if (widget.getHeight() > parent.itemHeight) {
+                alpha = 1;
+            } else if (widgetTop < this.parent.top) {
                 alpha = Math.max(0.0f, 1.0f - (float) (this.parent.top - widgetTop) / fadeDistance);
             } else if (widgetBottom > this.parent.bottom) {
                 alpha = Math.max(0.0f, 1.0f - (float) (widgetBottom - this.parent.bottom) / fadeDistance);

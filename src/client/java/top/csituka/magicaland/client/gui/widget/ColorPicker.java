@@ -21,6 +21,7 @@ public class ColorPicker extends ClickableWidget {
     private Consumer<Boolean> onLockChanged;
     private Consumer<Boolean> onExpandedChanged;
     private boolean expanded;
+    private String disclosureNarrationKey = "text.magicaland.config.color_details";
     private Supplier<String> automaticColor;
     private String currentColor;
     public boolean open = false;
@@ -107,8 +108,13 @@ public class ColorPicker extends ClickableWidget {
     }
 
     public void setDisclosure(boolean expanded, Consumer<Boolean> onExpandedChanged) {
+        setDisclosure(expanded, onExpandedChanged, "text.magicaland.config.color_details");
+    }
+
+    public void setDisclosure(boolean expanded, Consumer<Boolean> onExpandedChanged, String narrationKey) {
         this.expanded = expanded;
         this.onExpandedChanged = onExpandedChanged;
+        this.disclosureNarrationKey = narrationKey;
     }
 
     private void changeExpanded(boolean expanded) {
@@ -394,7 +400,7 @@ public class ColorPicker extends ClickableWidget {
         if (this.alpha <= 0.0f) return;
         refreshAutomaticColor();
         renderMainButton(context, mouseX, mouseY);
-        if (open) {
+        if (open && !externalOverlay) {
             renderPicker(context, mouseX, mouseY);
         }
     }
@@ -478,6 +484,16 @@ public class ColorPicker extends ClickableWidget {
                 lx, ly, color, false);
     }
 
+    private boolean externalOverlay;
+
+    public void setExternalOverlay(boolean externalOverlay) {
+        this.externalOverlay = externalOverlay;
+    }
+
+    public void renderOverlay(DrawContext context, int mouseX, int mouseY) {
+        if (open) renderPicker(context, mouseX, mouseY);
+    }
+
     private void renderPicker(DrawContext context, int mouseX, int mouseY) {
         int px = getPickerX();
         int py = getPickerY();
@@ -555,7 +571,7 @@ public class ColorPicker extends ClickableWidget {
         this.appendDefaultNarrations(builder);
         if (onExpandedChanged != null) {
             builder.put(net.minecraft.client.gui.screen.narration.NarrationPart.USAGE,
-                    Text.translatable("text.magicaland.config.color_details." + (expanded ? "collapse" : "expand")));
+                    Text.translatable(disclosureNarrationKey + (expanded ? ".collapse" : ".expand")));
         }
     }
 }

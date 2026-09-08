@@ -31,6 +31,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import top.csituka.magicaland.client.render.GlowingItem;
+import top.csituka.magicaland.client.render.ItemLevitation;
+import top.csituka.magicaland.client.render.LevitationTrail;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class PlayerEntityRendererMixin
@@ -82,7 +84,7 @@ public abstract class PlayerEntityRendererMixin
 
         ModelConfig configToUse;
         if (isSelf) {
-            configToUse = ModelManager.getActiveModel();
+            configToUse = ModelManager.getAppliedModel();
             if (configToUse == null) {
                 return;
             }
@@ -170,7 +172,7 @@ public abstract class PlayerEntityRendererMixin
             ponyRenderer.setGazeFrame(null, 0);
         }
 
-        this.renderMagicHeldItem(player, configToUse, matrixStack, vertexConsumerProvider, i, g);
+        this.renderMagicHeldItem(player, configToUse, matrixStack, vertexConsumerProvider, i, g, gazeFrame);
 
         matrixStack.pop();
 
@@ -211,11 +213,13 @@ public abstract class PlayerEntityRendererMixin
 
     @Unique
     private void renderMagicHeldItem(AbstractClientPlayerEntity player, ModelConfig modelConfig, MatrixStack matrices,
-            VertexConsumerProvider vertexConsumers, int light, float tickDelta) {
+            VertexConsumerProvider vertexConsumers, int light, float tickDelta, org.joml.Matrix4f entityFrame) {
         boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
 
         // 如果 showHorn 为 false，不渲染发光手持物品
         if (!enableHornEffect) {
+            ItemLevitation.forget(player, true, false);
+            ItemLevitation.forget(player, false, false);
             return;
         }
 
@@ -225,29 +229,22 @@ public abstract class PlayerEntityRendererMixin
         if (mainHandStack.isEmpty() && offHandStack.isEmpty())
             return;
 
-        float limbPos = 0.0F;
-        float limbSpeed = 0.0F;
-        if (player.isAlive()) {
-            limbPos = player.limbAnimator.getPos(tickDelta);
-            limbSpeed = player.limbAnimator.getSpeed(tickDelta);
-        }
-
         float swingProgress = player.getHandSwingProgress(tickDelta);
         net.minecraft.util.Arm mainArm = player.getMainArm();
 
         boolean isSneaking = player.isSneaking();
-        float pitch = player.getPitch();
+        float pitch = player.getPitch(tickDelta);
 
         if (!mainHandStack.isEmpty()) {
             boolean isRightArm = mainArm == net.minecraft.util.Arm.RIGHT;
             renderHandItem(player, modelConfig, mainHandStack, matrices, vertexConsumers, light, tickDelta, true,
-                    isRightArm, isSneaking, limbPos, limbSpeed, swingProgress, pitch);
+                    isRightArm, isSneaking, swingProgress, pitch, entityFrame);
         }
 
         if (!offHandStack.isEmpty()) {
             boolean isRightArm = mainArm == net.minecraft.util.Arm.LEFT;
             renderHandItem(player, modelConfig, offHandStack, matrices, vertexConsumers, light, tickDelta, false,
-                    isRightArm, isSneaking, limbPos, limbSpeed, swingProgress, pitch);
+                    isRightArm, isSneaking, swingProgress, pitch, entityFrame);
         }
     }
 
@@ -255,8 +252,8 @@ public abstract class PlayerEntityRendererMixin
     private void renderHandItem(AbstractClientPlayerEntity player, ModelConfig modelConfig,
             net.minecraft.item.ItemStack stack,
             MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta,
-            boolean isMainHand, boolean isRightArm, boolean isSneaking, float limbPos, float limbSpeed,
-            float swingProgress, float pitch) {
+            boolean isMainHand, boolean isRightArm, boolean isSneaking,
+            float swingProgress, float pitch, org.joml.Matrix4f entityFrame) {
         matrices.push();
 
         if (isSneaking) {
@@ -270,6 +267,8 @@ public abstract class PlayerEntityRendererMixin
         float pivotY = 1.4F;
         float pivotZ = 0.0F;
         matrices.translate(pivotX, pivotY, pivotZ);
+        org.joml.Matrix4f anchorFrame = new org.joml.Matrix4f(matrices.peek().getPositionMatrix())
+                .translate(isRightArm ? .2f : -.2f, 0, -.4f);
 
         float armPitch = 0.0F;
         float armYaw = 0.0F;
@@ -308,15 +307,14 @@ public abstract class PlayerEntityRendererMixin
         float offsetZ = -0.4F;
         matrices.translate(offsetX, offsetY, offsetZ);
 
-        float time = player.age + tickDelta;
-        matrices.translate(0.0, net.minecraft.util.math.MathHelper.sin(time * 0.1F) * 0.05F, 0.0);
-
         boolean isTridentUsing = stack.isOf(net.minecraft.item.Items.TRIDENT) && player.isUsingItem()
                 && player.getActiveItem() == stack;
         if (isTridentUsing && Config.getInstance().replacePlayerModel) {
             matrices.translate(0.0, 1.0, 0.0);
             matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
         }
+        LevitationTrail trail = ItemLevitation.applyWorld(player, stack, isMainHand, !isRightArm,
+                matrices, entityFrame, anchorFrame, tickDelta);
 
         int glowColor = GlowingItem.getGlowColor(modelConfig);
         net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance()
@@ -330,7 +328,7 @@ public abstract class PlayerEntityRendererMixin
                 itemRenderer, player, stack,
                 mode,
                 !isRightArm, matrices, vertexConsumers, player.getWorld(),
-                light, net.minecraft.client.render.OverlayTexture.DEFAULT_UV, glowColor, true);
+                light, net.minecraft.client.render.OverlayTexture.DEFAULT_UV, glowColor, true, trail);
 
         matrices.pop();
     }
@@ -339,7 +337,7 @@ public abstract class PlayerEntityRendererMixin
     private void onRenderRightArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
             AbstractClientPlayerEntity player, CallbackInfo ci) {
         // 获取当前模型配置，检查 showHorn 设置
-        ModelConfig modelConfig = ModelManager.getActiveModel();
+        ModelConfig modelConfig = ModelManager.getAppliedModel();
         boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
 
         // 当 replacePlayerModel=true 且 showHorn=true 时才隐藏手臂
@@ -352,7 +350,7 @@ public abstract class PlayerEntityRendererMixin
     private void onRenderLeftArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
             AbstractClientPlayerEntity player, CallbackInfo ci) {
         // 获取当前模型配置，检查 showHorn 设置
-        ModelConfig modelConfig = ModelManager.getActiveModel();
+        ModelConfig modelConfig = ModelManager.getAppliedModel();
         boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
 
         // 当 replacePlayerModel=true 且 showHorn=true 时才隐藏手臂

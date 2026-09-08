@@ -1,0 +1,76 @@
+[
+  {
+    "source": "Magic spell cast 1.wav",
+    "source_sha256": "d1efa26ed389984926821d179e3fe136e7b5e5e458d4752d3186025020ae00a2",
+    "output": "cast_1.ogg",
+    "output_sha256": "f0bba01be6fff451a3c0b24074cf81960b73535388c328a7c2aa2243e4b106f2",
+    "source_mono": {
+      "seconds": 1.7240625,
+      "peak_dbfs": -0.10486079803502923,
+      "rms_dbfs": -19.249737038679513
+    },
+    "processed": {
+      "seconds": 1.7240625,
+      "peak_dbfs": -7.331430837784936,
+      "rms_dbfs": -26.324616523534146
+    },
+    "gain_db": -6.895139066966051,
+    "bytes": 20222
+  },
+  {
+    "source": "Magic spell cast 2.wav",
+    "source_sha256": "f4aa2f2b2d98278d1ac6591e028afd98a0960a258ed52300ac1bb1d0132a0abc",
+    "output": "cast_2.ogg",
+    "output_sha256": "3be5ed43c5e1f4adb82d612e425b59799db063042628c011b65e95f62a1e4660",
+    "source_mono": {
+      "seconds": 0.36570833333333336,
+      "peak_dbfs": -0.10486184604996682,
+      "rms_dbfs": -16.33694222468414
+    },
+    "processed": {
+      "seconds": 0.36304166666666665,
+      "peak_dbfs": -7.523883851602511,
+      "rms_dbfs": -23.589190444502623
+    },
+    "gain_db": -6.895138494405588,
+    "bytes": 7556
+  },
+  {
+    "source": "Magic spell aura.wav",
+    "source_sha256": "ef4c97f31b90f94850dd36e17e2e934fab1beb6986ea87af02dc985534142a96",
+    "output": "aura.ogg",
+    "output_sha256": "22e202df4ed017857e570777103a97c600371ae244de3b1a3e7b7df04261b532",
+    "source_mono": {
+      "seconds": 3.4481458333333332,
+      "peak_dbfs": -0.10486184604996682,
+      "rms_dbfs": -16.40267591582157
+    },
+    "processed": {
+      "seconds": 2.72,
+      "peak_dbfs": -7.105618761505902,
+      "rms_dbfs": -23.09906978942093
+    },
+    "gain_db": -5.99086911968983,
+    "bytes": 34257,
+    "loop_seam_delta": 0.03299978468567133,
+    "internal_delta_p99": 0.17267119884490967
+  },
+  {
+    "source": "Magic spell end.wav",
+    "source_sha256": "a1fbebe9f9780699b1eabb645347d67dbc2f27bb0b0c0a5f456c397ad94d064e",
+    "output": "end.ogg",
+    "output_sha256": "7e6a7306503b9104e164842ec11c8784aa1f538329c4562d244d94afe879d8bd",
+    "source_mono": {
+      "seconds": 0.8097916666666667,
+      "peak_dbfs": -0.10486184604996682,
+      "rms_dbfs": -17.44701187620146
+    },
+    "processed": {
+      "seconds": 0.807125,
+      "peak_dbfs": -6.929154413474654,
+      "rms_dbfs": -24.668925128895204
+    },
+    "gain_db": -6.895138494405588,
+    "bytes": 11482
+  }
+]

@@ -2,6 +2,7 @@ package top.csituka.magicaland.mixin.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.HeldItemRenderer;
@@ -17,15 +18,18 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.render.GlowingItem;
+import top.csituka.magicaland.client.render.ItemLevitation;
+import top.csituka.magicaland.client.render.LevitationTrail;
 
 /**
  * 第一人称手持物品渲染
- * 包含魔法悬浮效果：轻度上下漂浮
- * （之前还做过视角转动时的滞后跟随，试下来手感不对，先去掉，只保留漂浮）
+ * 原版物品动作上叠加受限魔法惯性；不改变实际物品使用。
  */
 @Mixin(HeldItemRenderer.class)
 public class HeldItemRendererMixin {
@@ -33,17 +37,17 @@ public class HeldItemRendererMixin {
     @Unique
     private final GlowingItem magicItemRenderer = new GlowingItem();
 
-    // Y轴偏移（上下漂浮）
-    @Unique
-    private float magicalOffsetY = 0.0f;
+    @Inject(method = "renderItem(FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;Lnet/minecraft/client/network/ClientPlayerEntity;I)V", at = @At("HEAD"))
+    private void magicaland$beginHandAura(float delta, MatrixStack matrices, VertexConsumerProvider.Immediate buffers,
+            ClientPlayerEntity player, int light, CallbackInfo ci) {
+        GlowingItem.beginFirstPersonPass();
+    }
 
-    // 上一次更新的真实时间（纳秒），用于计算 dt，做到帧率无关
-    @Unique
-    private long lastUpdateNanos = 0L;
-
-    // 上下漂浮用的真实时间累加器（避免用 entity.age 导致高帧率下的阶梯感）
-    @Unique
-    private float floatTime = 0.0f;
+    @Inject(method = "renderItem(FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;Lnet/minecraft/client/network/ClientPlayerEntity;I)V", at = @At("TAIL"))
+    private void magicaland$endHandAura(float delta, MatrixStack matrices, VertexConsumerProvider.Immediate buffers,
+            ClientPlayerEntity player, int light, CallbackInfo ci) {
+        GlowingItem.endFirstPersonPass(buffers);
+    }
 
     @Redirect(method = "renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/world/World;III)V"))
     private void redirectRenderItem(ItemRenderer instance, LivingEntity entity, ItemStack item,
@@ -61,31 +65,32 @@ public class HeldItemRendererMixin {
         }
 
         // 获取当前模型配置，检查 showHorn 设置
-        ModelConfig modelConfig = ModelManager.getActiveModel();
+        ModelConfig modelConfig = ModelManager.getAppliedModel();
         boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
 
         if (entity instanceof AbstractClientPlayerEntity && Config.getInstance().replacePlayerModel && enableHornEffect) {
             boolean isFirstPerson = renderMode.isFirstPerson();
 
             if (isFirstPerson && !Config.getInstance().firstPersonMagicGlow) {
+                ItemLevitation.forget(entity, magicaland$isMainHand(entity, leftHanded), true);
                 instance.renderItem(entity, item, renderMode, leftHanded, matrices, vertexConsumers, world, light,
                         overlay, seed);
             } else {
                 matrices.push();
+                LevitationTrail trail = LevitationTrail.EMPTY;
                 if (isFirstPerson) {
-                    // 计算魔法悬浮效果
-                    this.updateMagicalEffect(entity);
-
                     double xOffset = leftHanded ? -0.15 : 0.15;
-                    // 应用魔法悬浮偏移
-                    matrices.translate(xOffset, 0.2 + magicalOffsetY, -0.4);
+                    matrices.translate(xOffset, 0.2, -0.4);
+                    trail = ItemLevitation.applyFirstPerson(entity, item, magicaland$isMainHand(entity, leftHanded),
+                            leftHanded, matrices, MinecraftClient.getInstance().getTickDelta());
                 }
                 magicItemRenderer.renderItemWithGlow(
                         instance, entity, item, renderMode, leftHanded, matrices, vertexConsumers, world, light, seed,
-                        GlowingItem.getCurrentGlowColor(), true);
+                        GlowingItem.getCurrentGlowColor(), true, trail);
                 matrices.pop();
             }
         } else {
+            if (renderMode.isFirstPerson()) ItemLevitation.forget(entity, magicaland$isMainHand(entity, leftHanded), true);
             instance.renderItem(entity, item, renderMode, leftHanded, matrices, vertexConsumers, world, light, overlay,
                     seed);
         }
@@ -93,25 +98,8 @@ public class HeldItemRendererMixin {
         matrices.pop();
     }
 
-    /**
-     * 更新魔法悬浮效果：只做轻微上下漂浮（正弦波），按真实时间推进，
-     * 避免用 entity.age（整数 tick）导致高帧率下的阶梯感。
-     */
     @Unique
-    private void updateMagicalEffect(LivingEntity entity) {
-        long now = System.nanoTime();
-        if (lastUpdateNanos == 0L) {
-            lastUpdateNanos = now;
-            return;
-        }
-
-        // clamp 防止切后台/卡顿恢复后 dt 过大导致跳变
-        float dt = Math.min(0.05f, (now - lastUpdateNanos) / 1_000_000_000.0f);
-        lastUpdateNanos = now;
-
-        floatTime += dt;
-        float floatSpeed = 2.4f;
-        float floatAmplitude = 0.05f;
-        magicalOffsetY = (float) Math.sin(floatTime * floatSpeed) * floatAmplitude;
+    private static boolean magicaland$isMainHand(LivingEntity entity, boolean left) {
+        return left == (entity.getMainArm() == net.minecraft.util.Arm.LEFT);
     }
 }

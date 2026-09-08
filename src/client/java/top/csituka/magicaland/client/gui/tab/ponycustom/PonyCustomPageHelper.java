@@ -15,6 +15,14 @@ import top.csituka.magicaland.client.gui.widget.CustomButton;
 public final class PonyCustomPageHelper {
     private PonyCustomPageHelper() {}
 
+    public static void drawWrapped(net.minecraft.client.gui.DrawContext context, Text text, int x, int y, int width, int color) {
+        var font = net.minecraft.client.MinecraftClient.getInstance().textRenderer;
+        for (var line : font.wrapLines(text, width)) {
+            context.drawTextWithShadow(font, line, x, y, color);
+            y += font.fontHeight + 2;
+        }
+    }
+
     /** 显示稳定的款式编号，暂缺款式不会使后续款式重新编号。 */
     public static CustomButton createStyleButton(int x, int y, int width, int height, Text label,
             PonyStylePart part, String currentId, Consumer<String> onStyleChanged) {

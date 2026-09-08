@@ -17,11 +17,13 @@ import top.csituka.magicaland.client.render.ManePalette;
 import top.csituka.magicaland.client.render.ManePalette.Part;
 
 public class ManePage implements PonyCustomPage {
+    private Part selectedPart = Part.FRONT;
     private final EnumSet<Part> expandedParts = EnumSet.noneOf(Part.class);
     private final EnumSet<Part> expandedDyes = EnumSet.noneOf(Part.class);
 
     @Override
     public void onEnter() {
+        selectedPart = Part.FRONT;
         expandedParts.clear();
         expandedDyes.clear();
     }
@@ -32,36 +34,31 @@ public class ManePage implements PonyCustomPage {
         if (config == null) return;
         ModelConfig.sanitize(config);
 
-        int buttonWidth = Math.min(180, context.getWidth() / 2);
+        int buttonWidth = context.getControlWidth();
         int buttonHeight = 20;
         int buttonX = getButtonX(context, buttonWidth);
 
-        list.addWidget(createBackButton(context, buttonX, buttonWidth, buttonHeight,
-                "text.magicaland.config.mane_menu.name"), SettingsList.Alignment.RIGHT);
-        list.addWidget(new SectionLabel(buttonX, 0, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.section.mane_styles.name")), SettingsList.Alignment.RIGHT);
-
-        list.addWidget(PonyCustomPageHelper.createStyleButton(buttonX, 0, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.front_mane_style.name"),
-                PonyStylePart.FRONT_MANE, config.frontManeStyle, style -> {
-                    config.frontManeStyle = style;
+        Part part = selectedPart;
+        PonyStylePart stylePart = stylePart(part);
+        list.addWidget(new ManePartTabs(buttonX, buttonWidth, part, next -> {
+            context.focusPart(stylePart(next));
+            if (selectedPart == next) return;
+            selectedPart = next;
+            context.resetScroll();
+            context.refreshKeepingScroll();
+        }), SettingsList.Alignment.RIGHT);
+        list.addWidget(new StyleGridWidget(buttonX, buttonWidth, config, stylePart,
+                () -> styleId(config, part), style -> {
+                    context.focusPart(stylePart);
+                    if (styleId(config, part).equals(style)) return;
+                    switch (part) {
+                        case FRONT -> config.frontManeStyle = style;
+                        case BACK -> config.backManeStyle = style;
+                        case TAIL -> config.tailStyle = style;
+                    }
                     ModelManager.saveActiveModel();
                     context.refreshKeepingScroll();
-                }), SettingsList.Alignment.RIGHT);
-        list.addWidget(PonyCustomPageHelper.createStyleButton(buttonX, 0, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.back_mane_style.name"),
-                PonyStylePart.BACK_MANE, config.backManeStyle, style -> {
-                    config.backManeStyle = style;
-                    ModelManager.saveActiveModel();
-                    context.refreshKeepingScroll();
-                }), SettingsList.Alignment.RIGHT);
-        list.addWidget(PonyCustomPageHelper.createStyleButton(buttonX, 0, buttonWidth, buttonHeight,
-                Text.translatable("text.magicaland.config.tail_style.name"),
-                PonyStylePart.TAIL, config.tailStyle, style -> {
-                    config.tailStyle = style;
-                    ModelManager.saveActiveModel();
-                    context.refreshKeepingScroll();
-                }), SettingsList.Alignment.RIGHT);
+                }, list), SettingsList.Alignment.RIGHT);
 
         list.addWidget(new SectionLabel(buttonX, 0, buttonWidth, buttonHeight,
                 Text.translatable("text.magicaland.config.section.mane_colors.name")), SettingsList.Alignment.RIGHT);
@@ -70,38 +67,42 @@ public class ManePage implements PonyCustomPage {
                 Text.translatable("text.magicaland.config.mane_shading.name"),
                 Text.translatable("text.magicaland.config.body_shading." + (soft ? "soft" : "legacy")).getString(), false,
                 button -> {
+                    context.focusPart(stylePart);
                     config.maneShadingMode = soft ? "legacy" : "soft";
                     ModelManager.saveActiveModel();
                     context.refreshKeepingScroll();
                 });
         shading.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.mane_shading.tooltip")));
         list.addWidget(shading, SettingsList.Alignment.RIGHT);
-        addDye(context, list, config, buttonX, buttonWidth, buttonHeight);
-        addPart(context, list, config, Part.FRONT, "front_mane_color", buttonX, buttonWidth, buttonHeight, soft);
-        addPart(context, list, config, Part.BACK, "back_mane_color", buttonX, buttonWidth, buttonHeight, soft);
-        addPart(context, list, config, Part.TAIL, "tail_color", buttonX, buttonWidth, buttonHeight, soft);
-        if (soft) {
+        addDye(context, list, config, part, buttonX, buttonWidth, buttonHeight);
+        String label = switch (part) { case FRONT -> "front_mane_color"; case BACK -> "back_mane_color"; case TAIL -> "tail_color"; };
+        addPart(context, list, config, part, label, buttonX, buttonWidth, buttonHeight, soft);
+        if (soft && !ManePalette.linked(config, part)) {
             list.addWidget(new CustomButton(buttonX, 0, buttonWidth, buttonHeight,
-                    Text.translatable("text.magicaland.config.mane_shading.reset"), false,
+                    Text.translatable("text.magicaland.customize.styles.reset_part_shading"), false,
                     button -> {
-                        ManePalette.resetAutomatic(config);
+                        context.focusPart(stylePart);
+                        ManePalette.setStopLocked(config, part, false, true);
+                        ManePalette.setStopLocked(config, part, true, true);
                         ModelManager.saveActiveModel();
                         context.refreshKeepingScroll();
                     }, false, true), SettingsList.Alignment.RIGHT);
         }
     }
 
-    private void addDye(PonyCustomPageContext context, SettingsList list, ModelConfig config,
+    private void addDye(PonyCustomPageContext context, SettingsList list, ModelConfig config, Part part,
             int x, int width, int height) {
-        boolean supported = ManeDye.supports(config, Part.FRONT) || ManeDye.supports(config, Part.BACK) || ManeDye.supports(config, Part.TAIL);
+        boolean supported = ManeDye.supports(config, part);
         Toggle toggle = new Toggle(x, 0, width, height,
                 Text.translatable("text.magicaland.config.mane_dye.name"), config.maneDyeEnabled, button -> {
+                    context.focusPart(stylePart(part));
                     config.maneDyeEnabled = button.getState();
                     ModelManager.saveActiveModel();
                     context.refreshKeepingScroll();
                 });
         toggle.active = supported;
-        toggle.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.mane_dye.tooltip")));
+        toggle.setTooltip(Tooltip.of(Text.translatable(supported ? "text.magicaland.customize.styles.dye_shared_hint"
+                : "text.magicaland.customize.styles.dye_unavailable")));
         list.addWidget(toggle, SettingsList.Alignment.RIGHT);
         if (!supported || !config.maneDyeEnabled) return;
         list.addWidget(new SectionLabel(x + 12, 0, width - 12, height,
@@ -116,13 +117,14 @@ public class ManePage implements PonyCustomPage {
         list.addWidget(new CustomButton(x, 0, width, height,
                 Text.literal(expanded ? "\u25bc " : "\u25b6 ").append(Text.translatable("text.magicaland.config.mane_dye.regions." + partKey)),
                 false, button -> {
+                    context.focusPart(stylePart(part));
                     if (expanded) expandedDyes.remove(part); else expandedDyes.add(part);
                     context.refreshKeepingScroll();
                 }, false, true), SettingsList.Alignment.RIGHT);
         if (!expanded) return;
         for (int i = 0; i < ManeDye.REGION_COUNT; i++) {
             final int region = i;
-            ColorPicker picker = new ColorPicker(x + 12, 0, width - 12, height,
+            ColorPicker picker = new PartColorPicker(context, stylePart(part), x + 12, 0, width - 12, height,
                     Text.translatable("text.magicaland.config.mane_dye.region", region + 1),
                     BodyPalette.hex(ManeDye.colors(config, part, region).base()), color -> {
                         ManeDye.setColor(config, part, region, color);
@@ -140,6 +142,7 @@ public class ManePage implements PonyCustomPage {
         }
         list.addWidget(new CustomButton(x + 12, 0, width - 12, height,
                 Text.translatable("text.magicaland.config.mane_dye.regions.reset"), false, button -> {
+                    context.focusPart(stylePart(part));
                     ManeDye.resetRegions(config, part);
                     ModelManager.saveActiveModel();
                     context.refreshKeepingScroll();
@@ -148,7 +151,7 @@ public class ManePage implements PonyCustomPage {
 
     private void addPart(PonyCustomPageContext context, SettingsList list, ModelConfig config,
             Part part, String label, int x, int width, int height, boolean soft) {
-        ColorPicker base = new ColorPicker(x, 0, width, height,
+        ColorPicker base = new PartColorPicker(context, stylePart(part), x, 0, width, height,
                 Text.translatable("text.magicaland.config." + label + ".name"),
                 BodyPalette.hex(ManePalette.base(config, part)), color -> {
                     ManePalette.setBase(config, part, color);
@@ -188,7 +191,7 @@ public class ManePage implements PonyCustomPage {
     private void addStop(PonyCustomPageContext context, SettingsList list, ModelConfig config,
             Part part, boolean highlight, int x, int width, int height) {
         String key = highlight ? "body_highlight" : "body_shadow";
-        ColorPicker picker = new ColorPicker(x, 0, width, height,
+        ColorPicker picker = new PartColorPicker(context, stylePart(part), x, 0, width, height,
                 Text.translatable("text.magicaland.config." + key + ".name"),
                 BodyPalette.hex(ManePalette.stop(config, part, highlight)), color -> {
                     ManePalette.setStop(config, part, highlight, color);
@@ -205,11 +208,14 @@ public class ManePage implements PonyCustomPage {
         list.addWidget(picker, SettingsList.Alignment.RIGHT);
     }
 
-    private CustomButton createBackButton(PonyCustomPageContext context, int x, int width, int height,
-            String labelKey) {
-        return new CustomButton(x, 0, width, height,
-                Text.literal("\u2190 " + Text.translatable(labelKey).getString()), false,
-                button -> context.openPage(PonyCustomPageContext.Page.MAIN, -1), false, true);
+    public PonyStylePart selectedStylePart() { return stylePart(selectedPart); }
+
+    private static PonyStylePart stylePart(Part part) {
+        return switch (part) { case FRONT -> PonyStylePart.FRONT_MANE; case BACK -> PonyStylePart.BACK_MANE; case TAIL -> PonyStylePart.TAIL; };
+    }
+
+    private static String styleId(ModelConfig config, Part part) {
+        return switch (part) { case FRONT -> config.frontManeStyle; case BACK -> config.backManeStyle; case TAIL -> config.tailStyle; };
     }
 
     private int getButtonX(PonyCustomPageContext context, int buttonWidth) {

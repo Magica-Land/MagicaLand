@@ -4,6 +4,8 @@ import net.minecraft.client.gui.DrawContext;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 
 public interface PonyCustomPage {
+    default boolean keyPressed(int key) { return false; }
+    default boolean isEditingPreset() { return false; }
     void build(PonyCustomPageContext context, SettingsList list);
 
     default void onEnter() {}

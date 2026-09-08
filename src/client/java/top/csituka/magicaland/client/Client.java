@@ -16,7 +16,12 @@ import top.csituka.magicaland.client.gui.ConfigScreen;
 import top.csituka.magicaland.client.network.ClientNetworkHandler;
 import top.csituka.magicaland.client.render.BodyTintTextures;
 import top.csituka.magicaland.client.render.ManeTintTextures;
+import top.csituka.magicaland.client.render.MagicGlow;
+import top.csituka.magicaland.client.render.GlowingItem;
+import top.csituka.magicaland.client.render.EyeTintTextures;
+import top.csituka.magicaland.client.render.TransformationParticles;
 import top.csituka.magicaland.client.animation.PonyExpressions;
+import top.csituka.magicaland.client.sound.MagicHeldItemSounds;
 
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +34,10 @@ public class Client implements ClientModInitializer {
         Config.load();
         BodyTintTextures.init();
         ManeTintTextures.init();
+        MagicGlow.init();
+        GlowingItem.initLevitation();
+        EyeTintTextures.init();
+        TransformationParticles.init();
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
             @Override public Identifier getFabricId() { return new Identifier("magicaland", "expressions"); }
             @Override public void reload(ResourceManager manager) {
@@ -41,6 +50,7 @@ public class Client implements ClientModInitializer {
             }
         });
         top.csituka.magicaland.client.config.ModelManager.init();
+        MagicHeldItemSounds.init();
 
         // 注册客户端网络处理
         ClientNetworkHandler.register();
@@ -53,7 +63,9 @@ public class Client implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (configKeyBinding.wasPressed()) {
-                client.setScreen(new ConfigScreen(client.currentScreen));
+                if (!(client.currentScreen instanceof ConfigScreen)
+                        && !top.csituka.magicaland.client.config.ModelManager.isEditing())
+                    client.setScreen(new ConfigScreen(client.currentScreen));
             }
         });
     }

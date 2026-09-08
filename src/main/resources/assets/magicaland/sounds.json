@@ -1,0 +1,21 @@
+{
+  "magic.cast": {
+    "subtitle": "subtitles.magicaland.magic.cast",
+    "sounds": [
+      { "name": "magicaland:magic/cast_1", "attenuation_distance": 8 },
+      { "name": "magicaland:magic/cast_2", "attenuation_distance": 8 }
+    ]
+  },
+  "magic.aura": {
+    "subtitle": "subtitles.magicaland.magic.aura",
+    "sounds": [
+      { "name": "magicaland:magic/aura", "attenuation_distance": 8, "preload": true }
+    ]
+  },
+  "magic.end": {
+    "subtitle": "subtitles.magicaland.magic.end",
+    "sounds": [
+      { "name": "magicaland:magic/end", "attenuation_distance": 8 }
+    ]
+  }
+}

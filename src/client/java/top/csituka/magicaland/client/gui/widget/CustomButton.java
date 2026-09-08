@@ -128,7 +128,8 @@ public class CustomButton extends PressableWidget {
             if (valueText != null) {
                 int labelX = this.getX() + 6;
                 int btnRight = this.getX() + this.width;
-                int valueWidth = textRenderer.getWidth(valueText);
+                String clippedValue = textRenderer.trimToWidth(valueText, Math.max(16, this.width / 2 - 8));
+                int valueWidth = textRenderer.getWidth(clippedValue);
 
                 int valueRight;
                 if (segmentCount > 0) {
@@ -148,13 +149,15 @@ public class CustomButton extends PressableWidget {
                     valueRight = btnRight - 6;
                 }
 
-                context.drawTextWithShadow(textRenderer, this.getMessage(),
+                context.drawTextWithShadow(textRenderer, textRenderer.trimToWidth(this.getMessage().getString(),
+                                Math.max(0, valueRight - valueWidth - labelX - 6)),
                         labelX, textY, (textAlpha << 24) | 0xFFFFFF);
-                context.drawTextWithShadow(textRenderer, valueText,
+                context.drawTextWithShadow(textRenderer, clippedValue,
                         valueRight - valueWidth, textY, (textAlpha << 24) | 0xFFFFFF);
             } else if (this.textAlignLeft) {
                 int textX = this.getX() + 6;
-                context.drawTextWithShadow(textRenderer, this.getMessage(),
+                context.drawTextWithShadow(textRenderer, textRenderer.trimToWidth(this.getMessage().getString(),
+                                Math.max(0, this.width - (this.showArrow ? 30 : 12))),
                         textX, textY, (textAlpha << 24) | 0xFFFFFF);
                 if (this.showArrow) {
                     int arrowX = this.getX() + this.width - textRenderer.getWidth(ARROW) - 6;
@@ -162,7 +165,8 @@ public class CustomButton extends PressableWidget {
                             arrowX, textY, (textAlpha << 24) | 0xFFFFFF);
                 }
             } else {
-                context.drawCenteredTextWithShadow(textRenderer, this.getMessage(),
+                context.drawCenteredTextWithShadow(textRenderer,
+                        textRenderer.trimToWidth(this.getMessage().getString(), Math.max(0, this.width - 10)),
                         this.getX() + this.width / 2, textY, (textAlpha << 24) | 0xFFFFFF);
             }
         }

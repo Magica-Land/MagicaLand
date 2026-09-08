@@ -7,6 +7,8 @@ import com.google.gson.JsonParser;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -27,8 +29,9 @@ public class NetworkHandler {
 
     private static final long MODEL_UPDATE_INTERVAL_NANOS = 100_000_000L;
     private static final long ANIMATION_UPDATE_INTERVAL_NANOS = 50_000_000L;
-    private static final Map<UUID, Long> lastModelUpdates = new ConcurrentHashMap<>();
+    private static final LatestModelUpdates modelUpdates = new LatestModelUpdates(MODEL_UPDATE_INTERVAL_NANOS);
     private static final Map<UUID, Long> lastAnimationUpdates = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> lastTransformations = new ConcurrentHashMap<>();
     private static final Map<String, Set<String>> ALLOWED_ANIMATIONS = Map.of(
             "controller", Set.of("fly", "elytra_fly", "swim", "swim_hold", "sneak", "sneaking", "run",
                     "backward_walk", "walk", "idle", "attacked", "jump1", "sleep", "boat", "ride",
@@ -43,6 +46,17 @@ public class NetworkHandler {
 
     public static void registerServer() {
         ServerGaze.register();
+
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            for (UUID uuid : modelUpdates.pendingPlayers()) applyPendingModel(server, uuid);
+        });
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+            modelUpdates.clear();
+            lastTransformations.clear();
+            lastAnimationUpdates.clear();
+            playerModels.clear();
+            playerAnimations.clear();
+        });
 
         ServerPlayNetworking.registerGlobalReceiver(CHANNEL,
                 (server, player, handler, buf, responseSender) -> {
@@ -66,8 +80,9 @@ public class NetworkHandler {
             UUID uuid = handler.getPlayer().getUuid();
             playerModels.remove(uuid);
             playerAnimations.remove(uuid);
-            lastModelUpdates.remove(uuid);
+            modelUpdates.remove(uuid);
             lastAnimationUpdates.remove(uuid);
+            lastTransformations.remove(uuid);
 
             JsonObject remove = new JsonObject();
             remove.addProperty("type", "player_remove");
@@ -90,6 +105,7 @@ public class NetworkHandler {
 
     private static void handleMessage(MinecraftServer server, ServerPlayerEntity player, String json) {
         try {
+            if (server.getPlayerManager().getPlayer(player.getUuid()) != player) return;
             JsonElement parsed = JsonParser.parseString(json);
             if (!parsed.isJsonObject()) {
                 return;
@@ -104,43 +120,14 @@ public class NetworkHandler {
             UUID uuid = player.getUuid();
             if ("model_update".equals(type)) {
                 String modelData = readString(msg, "data", MAX_MODEL_DATA_LENGTH);
-                if (modelData == null || !isModelData(modelData)
-                        || isRateLimited(lastModelUpdates, uuid, MODEL_UPDATE_INTERVAL_NANOS)) {
-                    return;
-                }
-
-                String previous = playerModels.put(uuid, modelData);
-                if (modelData.equals(previous)) {
-                    return;
-                }
-
-                JsonObject broadcast = new JsonObject();
-                broadcast.addProperty("type", "model_update");
-                broadcast.addProperty("uuid", uuid.toString());
-                broadcast.addProperty("data", modelData);
-                String broadcastJson = GSON.toJson(broadcast);
-
-                for (ServerPlayerEntity other : server.getPlayerManager().getPlayerList()) {
-                    if (!other.getUuid().equals(uuid)) {
-                        send(other, broadcastJson);
-                    }
-                }
-
-                for (Map.Entry<UUID, String> entry : playerModels.entrySet()) {
-                    if (!entry.getKey().equals(uuid)) {
-                        JsonObject existing = new JsonObject();
-                        existing.addProperty("type", "model_update");
-                        existing.addProperty("uuid", entry.getKey().toString());
-                        existing.addProperty("data", entry.getValue());
-                        send(player, GSON.toJson(existing));
-                    }
-                }
-
-                sendAnimationStates(player, uuid);
+                if (modelData == null || !isModelData(modelData)) return;
+                // 新包先替换等待项，再判断时限，不能先发出过期的旧外观。
+                modelUpdates.offer(uuid, modelData, TransformationMessage.requested(msg));
+                applyPendingModel(server, uuid);
             } else if ("model_remove".equals(type)) {
                 boolean removedModel = playerModels.remove(uuid) != null;
                 boolean removedAnimations = playerAnimations.remove(uuid) != null;
-                lastModelUpdates.remove(uuid);
+                modelUpdates.remove(uuid);
                 lastAnimationUpdates.remove(uuid);
                 if (!removedModel && !removedAnimations) {
                     return;
@@ -178,6 +165,49 @@ public class NetworkHandler {
             }
         } catch (RuntimeException ignored) {
         }
+    }
+
+    private static void applyPendingModel(MinecraftServer server, UUID uuid) {
+        ServerPlayerEntity player = server.getPlayerManager().getPlayer(uuid);
+        if (player == null) {
+            modelUpdates.remove(uuid);
+            return;
+        }
+        long now = System.nanoTime();
+        LatestModelUpdates.Update update = modelUpdates.poll(uuid, now);
+        if (update == null) return;
+        String modelData = update.modelData();
+        String previous = playerModels.put(uuid, modelData);
+        if (modelData.equals(previous)) return;
+
+        JsonObject broadcast = new JsonObject();
+        broadcast.addProperty("type", "model_update");
+        broadcast.addProperty("uuid", uuid.toString());
+        broadcast.addProperty("data", modelData);
+        if (update.transformation()) {
+            JsonObject request = new JsonObject();
+            request.addProperty("transform", true);
+            if (TransformationMessage.mayBroadcast(request, previous, modelData,
+                    lastTransformations.get(uuid), now)) {
+                lastTransformations.put(uuid, now);
+                broadcast.addProperty("transform", true);
+            }
+        }
+        String broadcastJson = GSON.toJson(broadcast);
+        for (ServerPlayerEntity other : server.getPlayerManager().getPlayerList()) {
+            if (!other.getUuid().equals(uuid)) send(other, broadcastJson);
+        }
+
+        for (Map.Entry<UUID, String> entry : playerModels.entrySet()) {
+            if (!entry.getKey().equals(uuid)) {
+                JsonObject existing = new JsonObject();
+                existing.addProperty("type", "model_update");
+                existing.addProperty("uuid", entry.getKey().toString());
+                existing.addProperty("data", entry.getValue());
+                send(player, GSON.toJson(existing));
+            }
+        }
+        sendAnimationStates(player, uuid);
     }
 
     private static String readString(JsonObject object, String name, int maxLength) {
