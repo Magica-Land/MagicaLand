@@ -10,6 +10,17 @@ English | [简体中文](README_ZH.md)
 
 </div>
 
+## Modules
+
+Starting with 0.2.0, this repository produces two separate mods:
+
+- **Appearance (`magicaland-appearance`)** retains mod ID `magicaland` and all customization, rendering, animation and appearance synchronization. Requires Fabric API and GeckoLib, but not Gameplay.
+- **Gameplay (`magicaland-gameplay`)** requires the matching Appearance version. Currently contains the golden-carrot horse encounter and its advancement; tribe abilities are still planned.
+
+Remove the old all-in-one JAR before installing the new Appearance JAR. Install both modules to retain the encounter. Multiplayer appearance synchronization still needs server support; splitting does not make Appearance a client-only mod.
+
+Open the repository root as one workspace. See the [module development guide (Chinese)](docs/module-split.md) for build tasks and test profiles.
+
 ## About the Project
 **Magical Land** is a Minecraft Java Edition mod that brings ponies and other elements from the television series "My Little Pony" in to the game.
 

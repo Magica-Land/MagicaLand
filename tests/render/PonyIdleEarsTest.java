@@ -96,7 +96,7 @@ public final class PonyIdleEarsTest {
     }
 
     private static void animation(Path repo) throws Exception {
-        JsonObject all = JsonParser.parseString(Files.readString(repo.resolve("src/main/resources/assets/magicaland/animations/mare_animation.json")))
+        JsonObject all = JsonParser.parseString(Files.readString(repo.resolve("appearance/src/main/resources/assets/magicaland/animations/mare_animation.json")))
                 .getAsJsonObject().getAsJsonObject("animations");
         JsonObject earOnly = new JsonObject(); earOnly.add("ear_parallel", all.get("ear_parallel"));
         Gson gson = new GsonBuilder().registerTypeAdapter(BakedAnimations.class, new BakedAnimationsAdapter())

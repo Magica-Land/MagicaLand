@@ -43,7 +43,7 @@ public final class ManeMirrorTest {
             for (String name : new String[] {"Mane", "Body", "Butt", "Head", "Emotions", "Style01FrontMane", "Style03Tail01", "TailDecorate"})
                 check(!ManeMirror.rootEnabled(copy, name), "children and body are not reflected twice");
         }
-        Model raw = JsonUtil.GEO_GSON.fromJson(Files.readString(repo.resolve("src/main/resources/assets/magicaland/geo/mare_geo.json")), Model.class);
+        Model raw = JsonUtil.GEO_GSON.fromJson(Files.readString(repo.resolve("appearance/src/main/resources/assets/magicaland/geo/mare_geo.json")), Model.class);
         var model = BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(GeometryTree.fromModel(raw));
         ModelConfig mirrored = new ModelConfig();
         mirrored.frontManeMirrored = mirrored.backManeMirrored = mirrored.tailMirrored = true;
@@ -82,7 +82,7 @@ public final class ManeMirrorTest {
             }
         }
         scopeCheck(mirrored);
-        String renderer = Files.readString(repo.resolve("src/client/java/top/csituka/magicaland/client/render/PonyRenderer.java"));
+        String renderer = Files.readString(repo.resolve("appearance/src/client/java/top/csituka/magicaland/client/render/PonyRenderer.java"));
         check(renderer.contains("ManeMirror.begin(poseStack, config, bone.getName())")
                 && renderer.contains("finally { mirroredMane = previousMirror; }"), "world and preview use scoped branch state");
         check(renderer.contains("if (mirroredMane) ManeMirror.emitReversed"), "culling winding corrected only for mirrored branch");

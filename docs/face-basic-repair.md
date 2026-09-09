@@ -64,7 +64,7 @@ Blockbench 内单独播放身体动作将不再自带表情，需要同时预览
 
 `tests/face/PonyFacePoseTest.java` 是独立 main 回归测试，使用真实 `mare_geo.json` 和 GeckoLib 4.8.3 的 `GeoBone` 检查三种眼型、闭眼父子关系、眼仁映射、pivot、重复切换和异常恢复。还检查配置改绑动作、新增模拟 04 眼型和错误配置回退。
 
-测试需要 Java 17+、项目使用的 GeckoLib 4.8.3、fastutil、JOML、Gson JAR。单独编译 `PonyExpressions.java`、`PonyFacePose.java`、`PonyGazeMath.java` 和测试类，将 `src/main/resources` 加入运行 classpath，以 `top.csituka.magicaland.client.render.PonyFacePoseTest <mare_geo.json 路径> <expressions.json 路径>` 运行。这不是完整模组编译或 Minecraft 渲染测试。
+测试需要 Java 17+、项目使用的 GeckoLib 4.8.3、fastutil、JOML、Gson JAR。单独编译 `PonyExpressions.java`、`PonyFacePose.java`、`PonyGazeMath.java` 和测试类，将 `appearance/src/main/resources` 加入运行 classpath，以 `top.csituka.magicaland.client.render.PonyFacePoseTest <mare_geo.json 路径> <expressions.json 路径>` 运行。这不是完整模组编译或 Minecraft 渲染测试。
 
 结构核对覆盖三个动画 JSON、两个 Blockbench 项目的身体轨道、原始眨眼、演出时长及非动画数据，通过 379 项检查；独立回归测试通过 5029 项断言。
 

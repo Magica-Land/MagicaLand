@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "magicaland",
+  "version": "${version}",
+  "name": "Magical Land: Appearance",
+  "description": "Pony appearance, customization and animation. Independent of the gameplay module.",
+  "authors": [
+    "JessDaodao",
+    "MayHooves"
+  ],
+  "contact": {
+    "issues": "https://github.com/Magical-Land-Official/Magical-Land/issues",
+    "sources": "https://github.com/Magical-Land-Official/Magical-Land"
+  },
+  "license": "MIT",
+  "icon": "assets/magicaland/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "top.csituka.magicaland.client.DataGenerator"
+    ],
+    "client": [
+      "top.csituka.magicaland.client.Client"
+    ],
+    "main": [
+      "top.csituka.magicaland.Magical_Land"
+    ],
+    "modmenu": [
+      "top.csituka.magicaland.client.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    {
+      "config": "magicaland.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "accessWidener": "magicaland.accesswidener",
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}",
+    "geckolib": ">=4.7"
+  }
+}

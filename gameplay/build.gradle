@@ -1,0 +1,43 @@
+plugins {
+    id 'fabric-loom'
+    id 'maven-publish'
+}
+
+base {
+    archivesName = "${rootProject.archives_base_name}-gameplay"
+}
+
+apply from: rootProject.file('gradle/mod-common.gradle')
+evaluationDependsOn(':appearance')
+
+loom {
+    splitEnvironmentSourceSets()
+    mods {
+        magicaland_gameplay {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+        magicaland {
+            sourceSet project(':appearance').sourceSets.main
+            sourceSet project(':appearance').sourceSets.client
+        }
+    }
+    runs {
+        client { runDir 'run/client' }
+        server { runDir 'run/server' }
+    }
+}
+
+dependencies {
+    implementation project(path: ':appearance', configuration: 'namedElements')
+    clientImplementation project(':appearance').sourceSets.client.output
+    // 联合开发启动所需的外观运行库，不嵌入玩法 JAR。
+    modRuntimeOnly("software.bernie.geckolib:geckolib-fabric-1.20.1:${project.geckolib_version}") {
+        exclude group: 'net.fabricmc', module: 'fabric-loader'
+        exclude group: 'net.fabricmc.fabric-api'
+    }
+    modLocalRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") {
+        exclude group: 'net.fabricmc', module: 'fabric-loader'
+        exclude group: 'net.fabricmc.fabric-api'
+    }
+}

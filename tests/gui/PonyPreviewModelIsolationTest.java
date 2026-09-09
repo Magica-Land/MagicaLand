@@ -17,7 +17,7 @@ public final class PonyPreviewModelIsolationTest {
     public static void main(String[] args) throws Exception {
         Path repo = Path.of(args[0]);
         Model raw = JsonUtil.GEO_GSON.fromJson(Files.readString(repo.resolve(
-                "src/main/resources/assets/magicaland/geo/mare_geo.json")), Model.class);
+                "appearance/src/main/resources/assets/magicaland/geo/mare_geo.json")), Model.class);
         BakedGeoModel world = bake(raw), rest = bake(raw);
         world.getBone("Head").orElseThrow().setRotX(1.2f);
         world.getBone("Neck").orElseThrow().setRotY(-.8f);
@@ -83,7 +83,7 @@ public final class PonyPreviewModelIsolationTest {
     }
 
     private static void sourceGuard(Path repo) throws Exception {
-        String source = Files.readString(repo.resolve("src/client/java/top/csituka/magicaland/client/gui/tab/PonyCustom.java"));
+        String source = Files.readString(repo.resolve("appearance/src/client/java/top/csituka/magicaland/client/gui/tab/PonyCustom.java"));
         String method = source.substring(source.indexOf("public BakedGeoModel getBakedModel(Identifier location)"),
                 source.indexOf("public void handleAnimations("));
         check(method.contains("BakedGeoModel source = super.getBakedModel(location);"), "shared identity observes GeckoLib resource reload");

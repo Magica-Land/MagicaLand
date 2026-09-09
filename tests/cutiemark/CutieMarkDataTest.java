@@ -94,8 +94,8 @@ public final class CutieMarkDataTest {
         check(!CutieMarkData.isValidModel(hidden), "linked models cannot carry an unused second image");
         hidden.addProperty("cutieMarkLinked", false);
         check(CutieMarkData.isValidModel(hidden), "independent right-only mark allowed");
-        String server = Files.readString(repo.resolve("src/main/java/top/csituka/magicaland/network/NetworkHandler.java"));
-        String client = Files.readString(repo.resolve("src/client/java/top/csituka/magicaland/client/network/ClientNetworkHandler.java"));
+        String server = Files.readString(repo.resolve("appearance/src/main/java/top/csituka/magicaland/network/NetworkHandler.java"));
+        String client = Files.readString(repo.resolve("appearance/src/client/java/top/csituka/magicaland/client/network/ClientNetworkHandler.java"));
         check(server.contains("CutieMarkData.isValidModel(parsed.getAsJsonObject())"), "server validates before relaying");
         check(client.contains("CutieMarkData.isValidModel(parsed.getAsJsonObject())"), "receiver does not trust server payloads");
         check(client.contains("ModelManager.getAppliedModel()"), "draft paint strokes do not replace applied network model");

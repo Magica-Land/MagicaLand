@@ -1,4 +1,4 @@
-package top.csituka.magicaland.easteregg;
+package top.csituka.magicaland.gameplay.easteregg;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,7 +32,7 @@ public final class CarrotTriggerFoodTest {
         }
 
         String source = Files.readString(Path.of(args[0],
-                "src/main/java/top/csituka/magicaland/easteregg/CarrotMisunderstanding.java"));
+                "gameplay/src/main/java/top/csituka/magicaland/gameplay/easteregg/CarrotMisunderstanding.java"));
         String feedRoute = source.substring(source.indexOf("public static void recordFeeding"),
                 source.indexOf("public static void carrotFinished"));
         String eatRoute = source.substring(source.indexOf("public static void carrotFinished"),

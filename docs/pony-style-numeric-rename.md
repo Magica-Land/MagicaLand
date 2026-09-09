@@ -29,7 +29,7 @@
 
 ## 3. 新增文件
 
-`src/client/java/top/csituka/magicaland/client/config/style/`（新包，替代原来散落在 `ModelConfig`/`ManePage`/`FacePage`/`PonyRenderer` 里的 `Set`/数组/字符串判断）：
+`appearance/src/client/java/top/csituka/magicaland/client/config/style/`（新包，替代原来散落在 `ModelConfig`/`ManePage`/`FacePage`/`PonyRenderer` 里的 `Set`/数组/字符串判断）：
 
 - `PonyStylePart.java`：枚举 `FRONT_MANE/BACK_MANE/TAIL/EYE`，携带骨骼名后缀 + 展示层通用名 lang key
 - `PonyStyleDefinition.java`：单个部位款式的不可变数据（part、部位内 id）
@@ -46,10 +46,10 @@
 | `PonyCustomPageHelper.java` | `createStyleButton` 从"字符串数组 + 拼接文字再反解析"改造成"按部位查注册表 + `CustomButton` 的 label/value 双段构造器"，按钮上显示"通用名+实际 id"（如"发型08"），不再显示角色名；删除了不再使用的 `getNextStyle` |
 | `ManePage.java` / `FacePage.java` | 删除硬编码的 `FRONT_MANE_STYLES`/`BACK_MANE_STYLES`/`TAIL_STYLES`/`EYE_STYLES` 数组，改为在调用 `createStyleButton` 时传 `PonyStylePart` 常量，候选集完全由注册表按部位提供 |
 | `PonyRenderer.java` | 所有发型/尾巴选择统一使用 `"Style" + 部位内id + part.boneSuffix`；眼睛使用 TS=`01`、RR=`02`、FS=`03`；删除了 Bun 强制隐藏等硬编码特例 |
-| `src/main/resources/assets/magicaland/lang/en_us.json` / `zh_cn.json` | 各新增 3 条 key：`text.magicaland.style.generic.mane`（发型/Hairstyle）、`.tail`（尾巴/Tail）、`.eye`（眼睛/Eyes）。没有逐角色的显示名 key，因为玩家看到的文字本来就不含角色信息 |
-| `src/main/resources/assets/magicaland/geo/mare_geo.json` / `Resources/Models/Mare.geo.json` | AJ 新增 `Style05FrontMane`；FS、DeepSidePart、Undercut 的前发分别使用 `Style06FrontMane*`、`Style07FrontMane*`、`Style08FrontMane`；原 07 丸子头后发改为 08，新 07 草案撤出，尾巴不变 |
+| `appearance/src/main/resources/assets/magicaland/lang/en_us.json` / `zh_cn.json` | 各新增 3 条 key：`text.magicaland.style.generic.mane`（发型/Hairstyle）、`.tail`（尾巴/Tail）、`.eye`（眼睛/Eyes）。没有逐角色的显示名 key，因为玩家看到的文字本来就不含角色信息 |
+| `appearance/src/main/resources/assets/magicaland/geo/mare_geo.json` / `Resources/Models/Mare.geo.json` | AJ 新增 `Style05FrontMane`；FS、DeepSidePart、Undercut 的前发分别使用 `Style06FrontMane*`、`Style07FrontMane*`、`Style08FrontMane`；原 07 丸子头后发改为 08，新 07 草案撤出，尾巴不变 |
 | `Resources/BlockbenchProjects/Mare.bbmodel` | 同步迁移所有 group 和动画 animator 名称，保留 UUID、元素、贴图及关键帧，避免重新打开或导出时恢复旧命名 |
-| `src/main/resources/assets/magicaland/animations/mare_animation.json` **以及** `Resources/Animations/mare_animation.json` | 动画绑定同步使用部位内编号，移除旧 Bun 在 13 段动作中的 scale=0 隐藏轨道；Bun 改为 `Style08BackMane`，不改其他动作轨道 |
+| `appearance/src/main/resources/assets/magicaland/animations/mare_animation.json` **以及** `Resources/Animations/mare_animation.json` | 动画绑定同步使用部位内编号，移除旧 Bun 在 13 段动作中的 scale=0 隐藏轨道；Bun 改为 `Style08BackMane`，不改其他动作轨道 |
 
 ## 5. 存档兼容策略
 

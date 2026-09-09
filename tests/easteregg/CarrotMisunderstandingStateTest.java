@@ -1,4 +1,4 @@
-package top.csituka.magicaland.easteregg;
+package top.csituka.magicaland.gameplay.easteregg;
 
 import java.util.UUID;
 import net.minecraft.entity.ai.goal.Goal;

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "magicaland_gameplay",
+  "version": "${version}",
+  "name": "Magical Land: Gameplay",
+  "description": "Gameplay for Magical Land. Currently includes the golden-carrot horse encounter; tribe abilities are planned.",
+  "authors": ["JessDaodao", "MayHooves"],
+  "contact": {
+    "issues": "https://github.com/Magical-Land-Official/Magical-Land/issues",
+    "sources": "https://github.com/Magical-Land-Official/Magical-Land"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["top.csituka.magicaland.gameplay.MagicalLandGameplay"]
+  },
+  "mixins": ["magicaland.gameplay.mixins.json"],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}",
+    "magicaland": "${version}"
+  }
+}
