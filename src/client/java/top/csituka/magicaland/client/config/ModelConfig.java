@@ -1,6 +1,7 @@
 package top.csituka.magicaland.client.config;
 
 import java.util.Locale;
+import top.csituka.magicaland.cutiemark.CutieMarkData;
 
 import top.csituka.magicaland.client.config.style.PonyStylePart;
 import top.csituka.magicaland.client.config.style.PonyStyleRegistry;
@@ -11,6 +12,9 @@ public class ModelConfig {
     public String frontManeStyle = PonyStyleRegistry.DEFAULT_ID;
     public String backManeStyle = PonyStyleRegistry.DEFAULT_ID;
     public String tailStyle = PonyStyleRegistry.DEFAULT_ID;
+    public boolean frontManeMirrored = false;
+    public boolean backManeMirrored = false;
+    public boolean tailMirrored = false;
     public String eyeStyle = PonyStyleRegistry.DEFAULT_ID;
     public String irisColor = "#516BD1";
     public String irisLightColor = "#7BA1D2";
@@ -66,6 +70,10 @@ public class ModelConfig {
     public String[] tailDyeColors;
 
     public String magicGlowColor = "#AA00FF";
+
+    public String cutieMarkLeft = "";
+    public String cutieMarkRight = "";
+    public boolean cutieMarkLinked = true;
 
     public boolean showHorn = true;
     public boolean showWings = false;
@@ -146,7 +154,31 @@ public class ModelConfig {
         config.backManeDyeColors = sanitizeDyeColors(config.backManeDyeColors, config.maneDyeColor, config.maneDyeAccentColor);
         config.tailDyeColors = sanitizeDyeColors(config.tailDyeColors, config.maneDyeColor, config.maneDyeColor);
         config.magicGlowColor = sanitizeColor(config.magicGlowColor, "#AA00FF");
+        config.cutieMarkLeft = CutieMarkData.sanitize(config.cutieMarkLeft);
+        config.cutieMarkRight = config.cutieMarkLinked ? "" : CutieMarkData.sanitize(config.cutieMarkRight);
         return config;
+    }
+
+    public String cutieMarkData(boolean left) {
+        String data = cutieMarkLinked || left ? cutieMarkLeft : cutieMarkRight;
+        return data == null ? "" : data;
+    }
+
+    public int[] cutieMarkPixels(boolean left) { return CutieMarkData.decode(cutieMarkData(left)); }
+
+    public void setCutieMarkPixels(boolean left, int[] pixels) {
+        String data = CutieMarkData.encode(pixels);
+        if (cutieMarkLinked || left) cutieMarkLeft = data;
+        else cutieMarkRight = data;
+        if (cutieMarkLinked) cutieMarkRight = "";
+    }
+
+    public void setCutieMarkLinked(boolean linked, boolean sourceLeft) {
+        if (linked == cutieMarkLinked) return;
+        String source = cutieMarkData(sourceLeft);
+        if (linked) { cutieMarkLeft = source; cutieMarkRight = ""; }
+        else { cutieMarkLeft = source; cutieMarkRight = source; }
+        cutieMarkLinked = linked;
     }
 
     private static String sanitizeText(String value, String fallback, int maxLength) {

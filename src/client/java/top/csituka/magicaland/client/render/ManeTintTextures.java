@@ -7,6 +7,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -22,19 +25,19 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.csituka.magicaland.client.config.ModelConfig;
+import top.csituka.magicaland.client.render.ManeDye.TextureKey;
 
 public final class ManeTintTextures {
     private static final Identifier SOURCE = new Identifier("magicaland", "textures/entity/mane.png");
-    private static final Identifier DYE_MASK = new Identifier("magicaland", "mane_dyes/stripe01.json");
     private static final Logger LOGGER = LoggerFactory.getLogger("magicaland/mane-shading");
     private static final int MAX_ENTRIES = 128;
     private static final long MAX_BYTES = 64L * 1024 * 1024;
     private static final Map<TextureKey, Entry> CACHE = new LinkedHashMap<>(16, 0.75f, true);
     private static NativeImage source;
-    private static ManeDyeMask dyeMask;
+    private static final Map<String, ManeDyeMask> DYE_MASKS = new HashMap<>();
+    private static final Set<String> FAILED_MASKS = new HashSet<>();
     private static long tick, bytes;
     private static boolean initialized, failed;
-    private static boolean dyeFailed;
 
     private ManeTintTextures() {}
 
@@ -80,10 +83,11 @@ public final class ManeTintTextures {
                     throw new IllegalArgumentException("Mane shading supports textures up to 1 megapixel");
                 }
             }
-            ManeDyeMask mask = requested ? mask(client, source.getWidth(), source.getHeight()) : null;
+            ManeDyeMask mask = requested ? mask(client, ManeDye.maskName(config, part), part,
+                    source.getWidth(), source.getHeight()) : null;
             if (legacy && mask == null) return null;
-            List<ManePalette.Colors> colors = ManeDye.palette(config, part, mask != null, legacy);
-            TextureKey key = new TextureKey(colors, legacy, mask == null ? null : part);
+            TextureKey key = ManeDye.textureKey(config, part, mask != null, legacy);
+            List<ManePalette.Colors> colors = key.colors();
             Entry existing = CACHE.get(key);
             if (existing != null) { existing.used = tick; return existing.id; }
             long cost = (long) source.getWidth() * source.getHeight() * 8;
@@ -114,21 +118,24 @@ public final class ManeTintTextures {
         }
     }
 
-    private static ManeDyeMask mask(MinecraftClient client, int width, int height) {
-        if (dyeFailed) return null;
+    private static ManeDyeMask mask(MinecraftClient client, String name, ManePalette.Part part, int width, int height) {
+        if (name == null || FAILED_MASKS.contains(name)) return null;
         try {
+            ManeDyeMask dyeMask = DYE_MASKS.get(name);
             if (dyeMask == null) {
-                try (InputStream input = client.getResourceManager().getResourceOrThrow(DYE_MASK).getInputStream()) {
+                Identifier resource = new Identifier("magicaland", "mane_dyes/" + name + ".json");
+                try (InputStream input = client.getResourceManager().getResourceOrThrow(resource).getInputStream()) {
                     byte[] data = input.readNBytes(262145);
                     if (data.length > 262144) throw new IllegalArgumentException("Mane dye mask exceeds 256 KiB");
-                    dyeMask = ManeDyeMask.read(new StringReader(new String(data, StandardCharsets.UTF_8)));
+                    dyeMask = ManeDyeMask.read(new StringReader(new String(data, StandardCharsets.UTF_8)), name);
                 }
             }
             if (!dyeMask.compatible(width, height)) throw new IllegalArgumentException("Mane dye mask aspect ratio mismatch");
-            return dyeMask;
+            DYE_MASKS.put(name, dyeMask);
+            return dyeMask.hasPart(part) ? dyeMask : null;
         } catch (Exception exception) {
-            dyeFailed = true; dyeMask = null;
-            LOGGER.warn("Mane dye mask unavailable; using plain hair until resources reload", exception);
+            FAILED_MASKS.add(name); DYE_MASKS.remove(name);
+            LOGGER.warn("Mane dye mask {} unavailable; using plain hair for this style until resources reload", name, exception);
             return null;
         }
     }
@@ -136,11 +143,9 @@ public final class ManeTintTextures {
     private static void clear() {
         for (Entry entry : CACHE.values()) MinecraftClient.getInstance().getTextureManager().destroyTexture(entry.id);
         CACHE.clear(); bytes = 0; failed = false;
-        dyeMask = null; dyeFailed = false;
+        DYE_MASKS.clear(); FAILED_MASKS.clear();
         if (source != null) { source.close(); source = null; }
     }
-
-    private record TextureKey(List<ManePalette.Colors> colors, boolean legacy, ManePalette.Part dyePart) {}
 
     private static final class Entry {
         final Identifier id; final long bytes; long used;

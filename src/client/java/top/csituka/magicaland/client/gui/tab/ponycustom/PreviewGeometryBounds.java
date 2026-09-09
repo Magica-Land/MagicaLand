@@ -21,6 +21,7 @@ import top.csituka.magicaland.client.animation.PonyExpressions;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
 import top.csituka.magicaland.client.render.ManeDye;
+import top.csituka.magicaland.client.render.ManeMirror;
 
 /** 私有静止骨骼；坐标不包含 GeoObjectRenderer 的 (.5,.51,.5) 平移。 */
 public final class PreviewGeometryBounds {
@@ -48,13 +49,14 @@ public final class PreviewGeometryBounds {
     public static Bounds bounds(ModelConfig config, PonyStylePart part) {
         ModelConfig selected = config == null ? new ModelConfig() : config;
         String key = part + ":" + selected.frontManeStyle + ":" + selected.backManeStyle + ":" + selected.tailStyle
-                + ":" + selected.eyeStyle + ":" + selected.showHorn + ":" + selected.showWings;
+                + ":" + selected.eyeStyle + ":" + selected.showHorn + ":" + selected.showWings
+                + ":" + selected.frontManeMirrored + ":" + selected.backManeMirrored + ":" + selected.tailMirrored;
         BakedGeoModel source = model();
         Bounds cached = CACHED.get(key);
         if (cached != null) return cached;
         Accumulator found = new Accumulator();
         MatrixStack stack = new MatrixStack();
-        for (GeoBone bone : source.topLevelBones()) collect(bone, stack, selected, part, found);
+        for (GeoBone bone : source.topLevelBones()) collect(bone, stack, selected, part, false, found);
         Bounds result = found.result();
         if (CACHED.size() >= 64) CACHED.remove(CACHED.keySet().iterator().next());
         CACHED.put(key, result);
@@ -63,6 +65,18 @@ public final class PreviewGeometryBounds {
 
     public static Bounds framingBounds(ModelConfig config, PonyStylePart part) {
         return bounds(config, part);
+    }
+
+    public static Bounds cutieMarkFramingBounds(ModelConfig config) {
+        BakedGeoModel source = model();
+        Bounds cached = CACHED.get("CUTIE_MARK");
+        if (cached != null) return cached;
+        Accumulator found = new Accumulator();
+        MatrixStack stack = new MatrixStack();
+        for (GeoBone bone : source.topLevelBones()) collect(bone, stack, config, null, true, found);
+        Bounds result = found.result();
+        CACHED.put("CUTIE_MARK", result);
+        return result;
     }
 
     static BakedGeoModel model() {
@@ -125,11 +139,12 @@ public final class PreviewGeometryBounds {
         return false;
     }
 
-    private static void collect(GeoBone bone, MatrixStack stack, ModelConfig config, PonyStylePart part, Accumulator found) {
+    private static void collect(GeoBone bone, MatrixStack stack, ModelConfig config, PonyStylePart part, boolean marks, Accumulator found) {
         stack.push();
         try {
+            if (ManeMirror.rootEnabled(config, bone.getName())) ManeMirror.reflect(stack);
             RenderUtils.prepMatrixForBone(stack, bone);
-            if (visible(bone, config, part)) for (var cube : bone.getCubes()) {
+            if (marks ? bone.getName().equals("Body") || under(bone, "HindLegs") : visible(bone, config, part)) for (var cube : bone.getCubes()) {
                 stack.push();
                 try {
                     RenderUtils.translateToPivotPoint(stack, cube);
@@ -141,7 +156,7 @@ public final class PreviewGeometryBounds {
                     }
                 } finally { stack.pop(); }
             }
-            for (GeoBone child : bone.getChildBones()) collect(child, stack, config, part, found);
+            for (GeoBone child : bone.getChildBones()) collect(child, stack, config, part, marks, found);
         } finally { stack.pop(); }
     }
 

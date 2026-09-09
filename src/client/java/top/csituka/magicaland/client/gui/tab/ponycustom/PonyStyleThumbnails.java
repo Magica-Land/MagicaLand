@@ -38,6 +38,7 @@ import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.render.PonyRenderer;
+import top.csituka.magicaland.client.render.ManeMirror;
 
 /** 真实模型的静止试穿图；只在内存保留，最多每帧更新两张。 */
 public final class PonyStyleThumbnails {
@@ -63,7 +64,7 @@ public final class PonyStyleThumbnails {
         init();
         if (lastContext != context) { lastContext = context; remaining = 2; }
         ThumbnailSize size = ThumbnailSize.of(width, height);
-        Key key = new Key(part, styleId, size.width(), size.height());
+        Key key = new Key(part, styleId, size.width(), size.height(), ManeMirror.enabled(active, part));
         Tile tile = CACHE.get(key);
         if (tile == null && remaining > 0 && !FAILED.containsKey(key)) {
             remaining--;
@@ -124,6 +125,7 @@ public final class PonyStyleThumbnails {
         config.frontManeColor = config.backManeColor = config.tailColor = "#75659C";
         config.maneColorLinkVersion = 1;
         config.maneDyeEnabled = false;
+        ManeMirror.set(config, part, ManeMirror.enabled(source, part));
         switch (part) {
             case FRONT_MANE -> config.frontManeStyle = styleId;
             case BACK_MANE -> config.backManeStyle = styleId;
@@ -238,7 +240,7 @@ public final class PonyStyleThumbnails {
         }
     }
 
-    private record Key(PonyStylePart part, String style, int width, int height) {}
+    private record Key(PonyStylePart part, String style, int width, int height, boolean mirrored) {}
     private record Tile(SimpleFramebuffer framebuffer) {}
 
     private static final class FrozenRenderer extends PonyRenderer {

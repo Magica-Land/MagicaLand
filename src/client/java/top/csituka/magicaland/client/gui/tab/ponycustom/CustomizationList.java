@@ -19,6 +19,7 @@ public final class CustomizationList extends SettingsList {
         for (Entry entry : children()) {
             if (entry.widget instanceof ColorPicker picker) picker.setExternalOverlay(true);
             if (entry.widget instanceof StyleGridWidget grid) grid.setViewport(bounds.y(), bounds.bottom());
+            if (entry.widget instanceof PixelCanvasWidget canvas) canvas.setViewport(bounds.y(), bounds.bottom());
         }
         context.enableScissor(bounds.x(), bounds.y(), bounds.right(), bounds.bottom());
         try {

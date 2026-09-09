@@ -11,8 +11,11 @@ $testSources = @(
     'render/BodyColorRamp.java', 'render/BodyPalette.java', 'render/ManePalette.java',
     'render/ManeDye.java', 'render/ManeDyeMask.java'
 ) | ForEach-Object { Join-Path $testPrefix $_ }
-& javac --release 17 -proc:none -encoding UTF-8 -cp $testGson -d $testOutput @testSources (Join-Path $PSScriptRoot 'ManeDyeTest.java')
+$testSources += Join-Path $testRepo 'src/main/java/top/csituka/magicaland/cutiemark/CutieMarkData.java'
+& javac --release 17 -proc:none -encoding UTF-8 -cp $testGson -d $testOutput @testSources (Join-Path $PSScriptRoot 'ManeDyeTest.java') (Join-Path $PSScriptRoot 'ManeDyeRoutingTest.java')
 if ($LASTEXITCODE -ne 0) { throw 'Java test compilation failed' }
 & java -cp ($testOutput + [IO.Path]::PathSeparator + $testGson) ManeDyeTest (Join-Path $testRepo 'src/main/resources/assets/magicaland/mane_dyes/stripe01.json')
 if ($LASTEXITCODE -ne 0) { throw 'Mane dye tests failed' }
+& java -cp ($testOutput + [IO.Path]::PathSeparator + $testGson) ManeDyeRoutingTest (Join-Path $testRepo 'src/main/resources/assets/magicaland/mane_dyes')
+if ($LASTEXITCODE -ne 0) { throw 'Mane dye routing tests failed' }
 Write-Output ('Test classes: ' + $testOutput)

@@ -3,6 +3,8 @@ package top.csituka.magicaland.client.render;
 import java.util.ArrayList;
 import java.util.List;
 import top.csituka.magicaland.client.config.ModelConfig;
+import top.csituka.magicaland.client.config.style.PonyStylePart;
+import top.csituka.magicaland.client.config.style.PonyStyleRegistry;
 
 public final class ManeDye {
     public static final int REGION_COUNT = 6;
@@ -71,12 +73,50 @@ public final class ManeDye {
     }
 
     public static boolean supports(ModelConfig config, ManePalette.Part part) {
-        if (config == null || part == null) return false;
-        return "01".equals(switch (part) {
+        return maskName(config, part) != null;
+    }
+
+    public static String maskName(ModelConfig config, ManePalette.Part part) {
+        if (config == null || part == null) return null;
+        String style = switch (part) {
             case FRONT -> config.frontManeStyle;
             case BACK -> config.backManeStyle;
             case TAIL -> config.tailStyle;
-        });
+        };
+        if (!supportsStyle(style, part)) return null;
+        return "01".equals(style) ? "stripe01" : "style" + style;
+    }
+
+    static boolean supportsStyle(String style, ManePalette.Part part) {
+        if (style == null || part == null) return false;
+        boolean covered = switch (style) {
+            case "01", "02", "03", "04", "05", "06", "07", "08" -> true;
+            default -> false;
+        };
+        PonyStylePart stylePart = switch (part) {
+            case FRONT -> PonyStylePart.FRONT_MANE;
+            case BACK -> PonyStylePart.BACK_MANE;
+            case TAIL -> PonyStylePart.TAIL;
+        };
+        return covered && PonyStyleRegistry.isValidStyleId(stylePart, style);
+    }
+
+    static String maskStyle(String name) {
+        if (name == null) return null;
+        return switch (name) {
+            case "stripe01" -> "01";
+            case "style02", "style03", "style04", "style05", "style06", "style07", "style08" -> name.substring(5);
+            default -> null;
+        };
+    }
+
+    public static TextureKey textureKey(ModelConfig config, ManePalette.Part part, boolean masked, boolean legacy) {
+        String mask = masked && enabled(config, part) ? maskName(config, part) : null;
+        return new TextureKey(palette(config, part, mask != null, legacy), legacy, mask == null ? null : part, mask);
+    }
+
+    public record TextureKey(List<ManePalette.Colors> colors, boolean legacy, ManePalette.Part dyePart, String maskName) {
+        public TextureKey { colors = List.copyOf(colors); }
     }
 
     public static boolean enabled(ModelConfig config, ManePalette.Part part) {

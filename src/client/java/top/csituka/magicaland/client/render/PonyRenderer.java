@@ -9,6 +9,7 @@ import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.cache.object.GeoQuad;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
 import software.bernie.geckolib.util.RenderUtils;
 import top.csituka.magicaland.client.animation.ClientGaze;
@@ -26,6 +27,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
 
     private ModelConfig overrideConfig = null;
     private boolean usingPalette;
+    private boolean mirroredMane;
     private VertexConsumerProvider eyeBuffers;
     private RenderLayer eyeLayer, pupilLayer;
     private EyeApertureRender eyeAperture;
@@ -104,9 +106,12 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         if (!PonyFacePose.shouldRender(bone.getName(), config == null ? "01" : config.eyeStyle))
             return;
 
-        try (HeadPose head = applyHeadLook(bone, animatable);
+        boolean previousMirror = mirroredMane;
+        try (var mirror = ManeMirror.begin(poseStack, config, bone.getName());
+                HeadPose head = applyHeadLook(bone, animatable);
                 PonyFacePose face = "Emotions".equals(bone.getName())
                 ? PonyFacePose.apply(bone) : null) {
+            if (mirror != null) mirroredMane = !previousMirror;
             if (face != null) {
                 String style = config == null ? "01" : config.eyeStyle;
                 applyGaze(poseStack, bone, face, animatable, style);
@@ -118,7 +123,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             Identifier palette = isOther ? ManeTintTextures.get(config, bone.getName())
                     : EyeMaterials.isEyeBone(bone.getName()) ? EyeTintTextures.get(config, false) : null;
             if (palette == null && !isOther)
-                palette = BodyTintTextures.get(config, BodyTintTextures.colorForBone(config, bone.getName()));
+                palette = BodyTintTextures.get(config, BodyTintTextures.colorForBone(config, bone.getName()), bone.getName());
             if (palette != null) texture = palette;
 
             RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
@@ -148,7 +153,14 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                 pupilLayer = previousPupil;
                 eyeAperture = previousAperture;
             }
-        }
+        } finally { mirroredMane = previousMirror; }
+    }
+
+    @Override
+    public void createVerticesOfQuad(GeoQuad quad, Matrix4f matrix, Vector3f normal, VertexConsumer buffer,
+            int light, int overlay, float red, float green, float blue, float alpha) {
+        if (mirroredMane) ManeMirror.emitReversed(quad, matrix, normal, buffer, light, overlay, red, green, blue, alpha);
+        else super.createVerticesOfQuad(quad, matrix, normal, buffer, light, overlay, red, green, blue, alpha);
     }
 
     private HeadPose applyHeadLook(GeoBone bone, GeckoPlayerAnimatable animatable) {
@@ -163,7 +175,9 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                         || (player.getAbilities().flying && player.isSprinting()) ? PonyHeadLookMath.Pose.FLYING
                 : player.isSwimming() || player.getLeaningPitch(gazePartialTick) > .01f
                         ? PonyHeadLookMath.Pose.SWIMMING : PonyHeadLookMath.Pose.NORMAL;
-        var rotation = PonyHeadLookMath.sample(player.prevBodyYaw, player.bodyYaw, player.prevHeadYaw, player.headYaw,
+        float previousBodyYaw = player.prevBodyYaw, bodyYaw = player.bodyYaw;
+        if (PonyBodyYaw.hasLivingMount(player)) previousBodyYaw = bodyYaw = PonyBodyYaw.sample(player, gazePartialTick);
+        var rotation = PonyHeadLookMath.sample(previousBodyYaw, bodyYaw, player.prevHeadYaw, player.headYaw,
                 player.prevPitch, player.getPitch(), gazePartialTick, pose);
         if (neck) {
             GeoBone head = bone.getChildBones().stream().filter(child -> "Head".equals(child.getName())).findFirst().orElse(null);

@@ -1,0 +1,2616 @@
+{
+  "version": 1,
+  "description": "Local transverse dye coordinates. u(local) = u + (local[axis] - center) * slope. Six shared channels per style/part; 01 is intentionally excluded.",
+  "fields": [
+    {
+      "uuid": "fbd3de0e-cccb-c82a-e1f9-e5fd0444bfc3",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": 0.09999999999999987,
+      "u": 0.49382716049382713,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "b0d8143a-507d-9953-2aae-6f090279757e",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": -2.59836,
+      "u": 0.20477334162376692,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "f08c8cd3-b4ef-90db-023c-3854720949b6",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": -2.3948,
+      "u": 0.23015093451944452,
+      "slope": -0.1234567901234568
+    },
+    {
+      "uuid": "3d043d0a-3472-1f4d-7138-8624cde4715f",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": -1.9948000000000001,
+      "u": 0.27376901332614556,
+      "slope": -0.1234567901234568
+    },
+    {
+      "uuid": "aa0bdea9-a8cf-ba31-6228-008f5c825121",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": -0.3999999999999999,
+      "u": 0.4320987654320988,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "e49f6642-f5d0-1ab3-2f63-d11defb9ee5b",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": -0.3999999999999999,
+      "u": 0.4320987654320988,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "13b79db6-ac74-9c44-d684-f9d2085c0559",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": -0.4,
+      "u": 0.4016591189657908,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "4ce96308-64f4-8583-cb96-9ccbf3138eae",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": 1.95,
+      "u": 0.7217646036509422,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "c927b1e9-6621-adba-670d-5a9ac632cdd6",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": 2.33401,
+      "u": 0.7326023481401621,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "e395a15e-3628-67a7-c02f-42b1af4c7f23",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": 1.65,
+      "u": 0.6965881946217696,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "4b069f5a-1a94-b232-60ed-08889c2b0931",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": 1.15,
+      "u": 0.6497895475236704,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "9064a1e9-6057-f08e-08ae-4b89ee69035d",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": -3.1163600000000002,
+      "u": 0.059641073933741795,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "fa6834d0-fd74-e0e1-395f-95fd0fceb2f0",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": -2.6163600000000002,
+      "u": 0.1605221316405675,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "a51e4b01-bce3-e166-4f70-e4b803597242",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": 2.375,
+      "u": 0.8479386742319779,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "2aec72f7-2039-20cd-4a2c-d4dd9a0876f6",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 1,
+      "center": 30.0529,
+      "u": 0.9198765773673563,
+      "slope": -0.1234567901234568
+    },
+    {
+      "uuid": "7042d764-6ad7-f999-d44a-a4bbfa0b77f1",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": 3.6448300000000002,
+      "u": 0.9365810719062782,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "a38cc3e2-2079-eb6f-8c3b-7f6bee3989b4",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 1,
+      "center": 30.909390000000002,
+      "u": 0.8256605310062608,
+      "slope": -0.1234567901234568
+    },
+    {
+      "uuid": "3bc4858a-b495-e7a4-b39f-c70f4b7642cb",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 1,
+      "center": 30.50939,
+      "u": 0.7920321896412879,
+      "slope": -0.1234567901234568
+    },
+    {
+      "uuid": "23262b55-fc76-4825-f47b-e879e0956a66",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": -2.9,
+      "u": 0.07845511032878483,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "00efcce6-c149-1d71-0a2c-337c553d29cb",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": -2,
+      "u": 0.14033367416042358,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "184cd968-64e1-ec6a-68a9-4ba95742702f",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": -0.15000000000000013,
+      "u": 0.3836769774395712,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "c5a36b8c-4698-4f2b-9613-ba1590dc5341",
+      "bone": "Style02FrontMane",
+      "part": "FRONT",
+      "style": "02",
+      "axis": 0,
+      "center": -2.45,
+      "u": 0.15813343879519415,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "4c07845f-5a39-16e0-eb6b-b25514fd7a51",
+      "bone": "Style02BackMane",
+      "part": "BACK",
+      "style": "02",
+      "axis": 1,
+      "center": 26.2279,
+      "u": 0.7678460194223463,
+      "slope": 0.16932664715174967
+    },
+    {
+      "uuid": "3d36532d-c080-937a-8ef7-baeb969fa28f",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 0,
+      "center": 2.9,
+      "u": 0.5286592465518775,
+      "slope": -0.17220890467860545
+    },
+    {
+      "uuid": "13c15846-1d11-3c6e-a7e6-996a61c6879a",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 2,
+      "center": 0.3905399999999999,
+      "u": 0.3878759900622251,
+      "slope": -0.14705882352941177
+    },
+    {
+      "uuid": "fae19cd3-56f7-f7e2-8c3a-d5271bf9718a",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 2,
+      "center": 0.24053999999999998,
+      "u": 0.38202568657005354,
+      "slope": -0.14705882352941177
+    },
+    {
+      "uuid": "2f6c8cd5-b79e-8715-abfe-36c015d994c7",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 0,
+      "center": 3.84183,
+      "u": 0.2454323104690826,
+      "slope": -0.14705882352941177
+    },
+    {
+      "uuid": "c0c161db-411f-fa41-d93d-e845c6eecfea",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 2,
+      "center": -4.90195,
+      "u": -0.03656150632516664,
+      "slope": -0.14705882352941177
+    },
+    {
+      "uuid": "569aad90-e491-a046-dfcb-85f2656ec402",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 0,
+      "center": 4.12033,
+      "u": 0.6126961348464829,
+      "slope": -0.1490978892371209
+    },
+    {
+      "uuid": "fa2077da-ade3-3e37-368a-6c4931e08754",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 2,
+      "center": -8.93727,
+      "u": 0.20296107890352588,
+      "slope": -0.1512069535085917
+    },
+    {
+      "uuid": "4895355c-5fd8-795b-7f05-94a3bc100326",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 0,
+      "center": 4.2800899999999995,
+      "u": 0.5025525634712792,
+      "slope": -0.14705882352941177
+    },
+    {
+      "uuid": "6f7a7f78-5cd2-0526-fc38-1e08f3de0df1",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 0,
+      "center": 2.80173,
+      "u": 0.8060664973854601,
+      "slope": -0.14705882352941174
+    },
+    {
+      "uuid": "9986cae6-1cd4-a311-050b-117799f1a612",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 0,
+      "center": 2.6517299999999997,
+      "u": 0.7707565534299479,
+      "slope": -0.1585029796722097
+    },
+    {
+      "uuid": "a9b66826-c6f0-8d99-d222-1029a9feb31b",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 2,
+      "center": 1.67956,
+      "u": 1.0117374083186539,
+      "slope": -0.14705882352941174
+    },
+    {
+      "uuid": "a7159b34-0b58-4a0c-2933-1bfbb8099d79",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 2,
+      "center": 0.22956,
+      "u": 0.7844112093208083,
+      "slope": -0.1494743431734402
+    },
+    {
+      "uuid": "90596f1d-d573-2fe7-e3a7-d34b863daa57",
+      "bone": "Style02BackMane01",
+      "part": "BACK",
+      "style": "02",
+      "axis": 0,
+      "center": 5.3467,
+      "u": 0.6510400624147421,
+      "slope": -0.15831811644347027
+    },
+    {
+      "uuid": "cfd39ac8-7d6a-8ea5-41d1-da42d5674c1c",
+      "bone": "Style02Tail",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "cb7de797-849e-4214-4880-80bb43455ab3",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0.15000000000000002,
+      "u": 0.5234375,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "2fb90c90-ad08-2756-4402-17a30cd6f01b",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5437373004622273,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "22fff42b-37c8-49f3-ddac-ab79b4f20cd8",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0.6,
+      "u": 0.6375327017322051,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "eb255ea3-aff2-2ca9-a871-ad1a41e24ce6",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "edb970e0-d4d2-1c75-7be1-06d606865a6c",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0,
+      "u": 0.46084752794315753,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "7b5e019e-41c7-7cd0-fb29-d14b1004eb7d",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0.49999999999999994,
+      "u": 0.573562339506471,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "1a4a7731-5274-3ad4-26b7-29790e75d643",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 1.0999999999999999,
+      "u": 0.7464895211519189,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "1390d04b-8b3e-9714-7fe8-86b8fc4734bf",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0.90337,
+      "u": 0.7095480175379472,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "c2c56012-c2ce-4268-bd5d-0b923aca1904",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 1.70337,
+      "u": 0.7554611594738617,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "31c0aa8b-61c6-459c-561f-41c184aeab05",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": -0.90337,
+      "u": 0.29045198246205284,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "92a7f7a4-b10c-f1a9-8439-5ebae6c3ed6d",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": -1.0999999999999999,
+      "u": 0.2535104788480811,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "13b18476-06fa-df01-a8f3-3426eafb3480",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": -1.70337,
+      "u": 0.1643710938358668,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "ddba4012-3ed1-ab78-a656-3e02d574e12d",
+      "bone": "Style02Tail01",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 2,
+      "center": 9.661840000000002,
+      "u": 0.526816199110595,
+      "slope": -0.15625
+    },
+    {
+      "uuid": "b02da7a9-bb2a-5a53-fd6a-60a1e9b9ad98",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 2,
+      "center": 13.56184,
+      "u": 0.2111407264038781,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "1d3b8e34-d083-3815-86df-f718d7fcb1fd",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 2,
+      "center": 13.06184,
+      "u": 0.24883026313423445,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "4b87cbcc-d102-d8b2-75a4-e170672725d9",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": -1.5,
+      "u": 0.3513595431711012,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "029a53f1-98c8-638e-287f-fff32ae6d723",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": -1.1206,
+      "u": 0.25794774173403034,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "0c8c1bda-3d12-b8d9-5fdf-1c64196328f4",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": -2.0206,
+      "u": 0.259068391156941,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "d7aaace9-30b5-89a9-48e2-58a8d8764c95",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0.5794,
+      "u": 0.48415664597395974,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "5a90f2e4-b4f7-3372-ab4e-1388380640b1",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": -2.2456,
+      "u": 0.16747139901856722,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "8b419741-74e7-0aca-106d-6fdb9e4fd4da",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": -2.3,
+      "u": 0.16691367536901353,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "2ec38a59-48e0-cf7d-f423-c94a97fe9f0f",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 2.3,
+      "u": 0.8330863246309865,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "637d0967-8341-037c-4b77-e4d27590a787",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 1.5,
+      "u": 0.6777426006501095,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "92338b2d-2ad1-505b-609f-94f681790d22",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 2,
+      "center": 13.56184,
+      "u": 0.7411889069126905,
+      "slope": -0.15625
+    },
+    {
+      "uuid": "df237553-ca82-e28b-9b2a-13686597c474",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 2,
+      "center": 14.06184,
+      "u": 0.8138797479935282,
+      "slope": -0.15625
+    },
+    {
+      "uuid": "68fff4fb-e499-772d-bff0-bfce9edd55cf",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 2,
+      "center": 13.06184,
+      "u": 0.7511697368657655,
+      "slope": -0.15625
+    },
+    {
+      "uuid": "0a61674a-be64-76c7-b23e-73f435445172",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 2,
+      "center": 11.961839999999999,
+      "u": 0.526261428288083,
+      "slope": -0.15625
+    },
+    {
+      "uuid": "ede5aeac-493c-8730-2998-b7db92fee975",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 2,
+      "center": 12.77608,
+      "u": 0.5242553465703977,
+      "slope": -0.15625
+    },
+    {
+      "uuid": "7d95e2aa-2da2-4c4a-46be-7263b25bd8fb",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 2,
+      "center": 13.22608,
+      "u": 0.45752605409093683,
+      "slope": -0.15625
+    },
+    {
+      "uuid": "b76db07a-f9d5-f91e-795e-172f7213fb33",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 2.2456,
+      "u": 0.8325286009814328,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "ccf0ea42-be98-e50d-2d3b-952a9bf1604a",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 2.0206,
+      "u": 0.8726701344489318,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "d6dacb66-9024-6cb1-b6fd-5c9ddf57dcc9",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0.1499999999999999,
+      "u": 0.5156105172815658,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "9f7fbb84-9c96-54c1-2a8b-ab816619b12d",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0.09999999999999998,
+      "u": 0.5070172366129169,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "b9aeb3e6-117f-4a14-9aae-9625cdcedaaf",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0.04999999999999993,
+      "u": 0.503014165717143,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "dae711b2-bc5a-a8cc-0073-5528a92e7cbf",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": 0.05188000000000004,
+      "u": 0.5046922030366982,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "648e5338-7fff-b609-f623-25e5a1b52093",
+      "bone": "Style02Tail02",
+      "part": "TAIL",
+      "style": "02",
+      "axis": 0,
+      "center": -0.49999999999999994,
+      "u": 0.30883930687515454,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "5d6cf648-8d0e-06f6-f928-9122e551d7b3",
+      "bone": "Style03FrontMane01",
+      "part": "FRONT",
+      "style": "03",
+      "axis": 2,
+      "center": -5.62172,
+      "u": 0.5261538461538462,
+      "slope": 0.14820599930052814
+    },
+    {
+      "uuid": "062ff4d1-f6aa-a24c-17f2-17fcf16b39ef",
+      "bone": "Style03FrontMane01",
+      "part": "FRONT",
+      "style": "03",
+      "axis": 2,
+      "center": -7.35917,
+      "u": 0.40769230769230774,
+      "slope": 0.1512628695001183
+    },
+    {
+      "uuid": "2c0022bc-7296-6f9c-ebed-a0754d99daf0",
+      "bone": "Style03FrontMane01",
+      "part": "FRONT",
+      "style": "03",
+      "axis": 2,
+      "center": -2.47981,
+      "u": 0.8276923076923077,
+      "slope": 0.10802290955386243
+    },
+    {
+      "uuid": "31330e16-d4bd-01b0-729a-0793b0977aa2",
+      "bone": "Style03FrontMane01",
+      "part": "FRONT",
+      "style": "03",
+      "axis": 2,
+      "center": -0.004809999999999981,
+      "u": 1.16,
+      "slope": 0.10801360984473053
+    },
+    {
+      "uuid": "42e4c447-696c-f859-6a06-1e2cbe3ab943",
+      "bone": "Style03FrontMane01",
+      "part": "FRONT",
+      "style": "03",
+      "axis": 2,
+      "center": -7.48287,
+      "u": 0.22769230769230775,
+      "slope": 0.13990934684459472
+    },
+    {
+      "uuid": "cd83e0c9-ba3d-649e-e918-a657046b80a9",
+      "bone": "Style03BackMane",
+      "part": "BACK",
+      "style": "03",
+      "axis": 2,
+      "center": 1.4657799999999999,
+      "u": 0.8200000000000001,
+      "slope": -0.06
+    },
+    {
+      "uuid": "6257099b-e088-4a16-9773-c0660f2ee023",
+      "bone": "Style03BackMane",
+      "part": "BACK",
+      "style": "03",
+      "axis": 0,
+      "center": -3.3920600000000003,
+      "u": 0.305,
+      "slope": 0.22592592592592592
+    },
+    {
+      "uuid": "3331a13c-e8d7-39cc-05d9-57d1f158acdc",
+      "bone": "Style03BackMane",
+      "part": "BACK",
+      "style": "03",
+      "axis": 0,
+      "center": -3.44206,
+      "u": 0.6950000000000001,
+      "slope": 0.23461538461538456
+    },
+    {
+      "uuid": "16a06532-fb19-70e1-7e84-d5624e96d8d9",
+      "bone": "Style03BackMane01",
+      "part": "BACK",
+      "style": "03",
+      "axis": 0,
+      "center": -6.21291,
+      "u": 0.6950000000000001,
+      "slope": 0.20333333333333334
+    },
+    {
+      "uuid": "12286f86-24eb-fb82-59bc-e173543eb8eb",
+      "bone": "Style03BackMane01",
+      "part": "BACK",
+      "style": "03",
+      "axis": 0,
+      "center": -5.34206,
+      "u": 0.305,
+      "slope": 0.19677419354838713
+    },
+    {
+      "uuid": "77604ac3-8520-8166-4991-c8fa4cecab57",
+      "bone": "Style03BackMane01",
+      "part": "BACK",
+      "style": "03",
+      "axis": 0,
+      "center": -2.69291,
+      "u": 0.5,
+      "slope": 0.1923076923076923
+    },
+    {
+      "uuid": "2d68b2f9-8b25-5cff-688e-3b588d926ecc",
+      "bone": "Style03FrontMane02",
+      "part": "FRONT",
+      "style": "03",
+      "axis": 2,
+      "center": -6.36989,
+      "u": 0.5,
+      "slope": 0.16
+    },
+    {
+      "uuid": "4f3bcdff-eec6-57bb-6db2-e499127c7435",
+      "bone": "Style03FrontMane03",
+      "part": "FRONT",
+      "style": "03",
+      "axis": 2,
+      "center": -6.14319,
+      "u": 0.5,
+      "slope": 0.16260162601626016
+    },
+    {
+      "uuid": "2a7b2c27-0c60-243e-50ad-dcdc83edfad8",
+      "bone": "Style03FrontMane03",
+      "part": "FRONT",
+      "style": "03",
+      "axis": 2,
+      "center": -4.25425,
+      "u": 0.5,
+      "slope": 0.14184397163120566
+    },
+    {
+      "uuid": "20c0c425-57f4-cfdd-2753-ef227ca27742",
+      "bone": "Style03Tail",
+      "part": "TAIL",
+      "style": "03",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.14705882352941177
+    },
+    {
+      "uuid": "2470fb7e-df46-c768-b657-b70625cdde48",
+      "bone": "Style03Tail",
+      "part": "TAIL",
+      "style": "03",
+      "axis": 2,
+      "center": 8.71184,
+      "u": 0.5038899564021708,
+      "slope": -0.14705882352941177
+    },
+    {
+      "uuid": "9a7d9549-778a-6b84-022d-b544bba5b1a7",
+      "bone": "Style03Tail01",
+      "part": "TAIL",
+      "style": "03",
+      "axis": 0,
+      "center": -1.5000000000000002,
+      "u": 0.30358850222687317,
+      "slope": 0.14705882352941177
+    },
+    {
+      "uuid": "b1a6bf3f-5477-0e79-76a7-682e7ae8ac1e",
+      "bone": "Style03Tail02",
+      "part": "TAIL",
+      "style": "03",
+      "axis": 0,
+      "center": 0.6000000000000001,
+      "u": 0.565108794546663,
+      "slope": 0.14705882352941177
+    },
+    {
+      "uuid": "0674abc4-2b48-748c-cce0-2715d5557a77",
+      "bone": "Style03Tail02",
+      "part": "TAIL",
+      "style": "03",
+      "axis": 0,
+      "center": -0.8999999999999999,
+      "u": 0.4038864960802848,
+      "slope": 0.14705882352941177
+    },
+    {
+      "uuid": "ee00a784-d03b-6f5e-0a93-95e5d394cd85",
+      "bone": "Style03Tail03",
+      "part": "TAIL",
+      "style": "03",
+      "axis": 0,
+      "center": -0.8999999999999999,
+      "u": 0.36398680869141486,
+      "slope": 0.14705882352941177
+    },
+    {
+      "uuid": "7b5997d9-2380-e2ad-7831-e1bcef052478",
+      "bone": "Style03Tail03",
+      "part": "TAIL",
+      "style": "03",
+      "axis": 0,
+      "center": 0.09999999999999998,
+      "u": 0.487234999876013,
+      "slope": 0.14705882352941177
+    },
+    {
+      "uuid": "6b390f77-b771-b42a-7e7b-6e7bf59a6f7f",
+      "bone": "Style04FrontMane",
+      "part": "FRONT",
+      "style": "04",
+      "axis": 0,
+      "center": 0.050000000000000044,
+      "u": 0.4736865151511632,
+      "slope": 0.17392653029333827
+    },
+    {
+      "uuid": "b1bcd07f-d227-0243-f230-eb378cf238ca",
+      "bone": "Style04FrontMane",
+      "part": "FRONT",
+      "style": "04",
+      "axis": 0,
+      "center": 0.6,
+      "u": 0.49390619035446276,
+      "slope": 0.2173913043478261
+    },
+    {
+      "uuid": "ed6ac108-9fb2-791c-b2e4-72d021dbee98",
+      "bone": "Style04FrontMane01",
+      "part": "FRONT",
+      "style": "04",
+      "axis": 0,
+      "center": 3.7,
+      "u": 0.5179076778806767,
+      "slope": 0.6404123505748411
+    },
+    {
+      "uuid": "1931c986-5815-2af9-92f7-fae435600515",
+      "bone": "Style04FrontMane01",
+      "part": "FRONT",
+      "style": "04",
+      "axis": 0,
+      "center": 2.3,
+      "u": 0.501510761308335,
+      "slope": 0.2856705005936301
+    },
+    {
+      "uuid": "d986c5b2-07f2-5ca6-5e6f-ff23e31b4bfa",
+      "bone": "Style04BackMane",
+      "part": "BACK",
+      "style": "04",
+      "axis": 1,
+      "center": 26.4279,
+      "u": 0.504672955615722,
+      "slope": 0.20796042396573475
+    },
+    {
+      "uuid": "f6212776-7fbe-82d0-1413-94a61ba2cd2b",
+      "bone": "Style04BackMane",
+      "part": "BACK",
+      "style": "04",
+      "axis": 0,
+      "center": -3.4,
+      "u": 0.3978781751343466,
+      "slope": 0.1724137931034483
+    },
+    {
+      "uuid": "014b92c7-d4a6-d43b-15cd-b1491890289d",
+      "bone": "Style04BackMane",
+      "part": "BACK",
+      "style": "04",
+      "axis": 0,
+      "center": -4.48009,
+      "u": 0.2544076196331124,
+      "slope": 0.17884082683794716
+    },
+    {
+      "uuid": "5357b2c7-2f0c-22f0-faa1-b711c8e173a1",
+      "bone": "Style04BackMane",
+      "part": "BACK",
+      "style": "04",
+      "axis": 0,
+      "center": -3.80173,
+      "u": 0.7850090237642435,
+      "slope": 0.16812033555151815
+    },
+    {
+      "uuid": "5ad5efbd-1b93-c4de-6601-c2952f975af1",
+      "bone": "Style04BackMane",
+      "part": "BACK",
+      "style": "04",
+      "axis": 2,
+      "center": 0.17955999999999994,
+      "u": 0.5357083865407402,
+      "slope": -0.1851221964483302
+    },
+    {
+      "uuid": "92e88769-e1ad-2eb3-630e-a439d4d89132",
+      "bone": "Style04BackMane",
+      "part": "BACK",
+      "style": "04",
+      "axis": 2,
+      "center": -0.32044000000000006,
+      "u": 0.6687927518903589,
+      "slope": -0.17875509825314745
+    },
+    {
+      "uuid": "05de585f-1d12-f70f-2e50-98cd8c4021ac",
+      "bone": "Style04BackMane",
+      "part": "BACK",
+      "style": "04",
+      "axis": 2,
+      "center": 2.02956,
+      "u": 0.5017968289733727,
+      "slope": -0.2221407079349297
+    },
+    {
+      "uuid": "e5222849-9e18-216d-7da5-bc72ccf5ff82",
+      "bone": "Style04BackMane",
+      "part": "BACK",
+      "style": "04",
+      "axis": 2,
+      "center": -1.97044,
+      "u": 0.5092242393131676,
+      "slope": 0.3888860084332999
+    },
+    {
+      "uuid": "a92df63e-46df-1039-3a53-052692cfcdcd",
+      "bone": "Style04Tail",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": 0,
+      "u": 0.4391891891891892,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "5e1a8df1-2351-b3d5-6350-1a73ee38fb20",
+      "bone": "Style04Tail",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": 0,
+      "u": 0.4391891891891892,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "c1883324-67e2-bf9c-3746-a8f79bd14322",
+      "bone": "Style04Tail01",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": 2.3,
+      "u": 0.7272638483295017,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "5c9cadb0-ace2-2f0f-0ff7-ebac31364faf",
+      "bone": "Style04Tail01",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": 2.45,
+      "u": 0.7393598579181244,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "362e1cec-fc07-9ac4-8741-9f62f2b09432",
+      "bone": "Style04Tail01",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": -1.45,
+      "u": 0.26850734250876707,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "eef81dfd-6a18-598b-c07e-c919e023d9d2",
+      "bone": "Style04Tail01",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": 0,
+      "u": 0.4391891891891892,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "912537fa-345f-420d-7c9e-15c7ae154ea4",
+      "bone": "Style04Tail01",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": 0.39999999999999997,
+      "u": 0.4908712558206297,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "c86f305e-f857-c78a-1f75-92c2743fc09b",
+      "bone": "Style04Tail01",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": 0,
+      "u": 0.4391891891891892,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "ed920ed0-f3e2-3bf1-26a7-0c20bd2fe9f2",
+      "bone": "Style04Tail02",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": 2.4499999999999997,
+      "u": 0.7169350017027403,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "997f8af7-a201-3ab4-e926-86ccd64c15c8",
+      "bone": "Style04Tail02",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": -0.29999999999999993,
+      "u": 0.43297138715598515,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "0d7463d7-34f2-084e-5210-fff3a3fe15b4",
+      "bone": "Style04Tail02",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": 1.25,
+      "u": 0.5672955972784421,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "ff615cdd-4273-f1c2-2655-fb7d72405149",
+      "bone": "Style04Tail02",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": 1.55,
+      "u": 0.6447518782322404,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "9d06c588-80d9-238c-b2da-0c55769a484f",
+      "bone": "Style04Tail02",
+      "part": "TAIL",
+      "style": "04",
+      "axis": 0,
+      "center": 1.6,
+      "u": 0.6574509267164876,
+      "slope": 0.13513513513513511
+    },
+    {
+      "uuid": "579f4b58-c0d0-518a-1530-ec8c69bcc6f0",
+      "bone": "Style05BackMane",
+      "part": "BACK",
+      "style": "05",
+      "axis": 1,
+      "center": 26.2279,
+      "u": 0.707107686392928,
+      "slope": 0.22315440050422541
+    },
+    {
+      "uuid": "a30a01cb-5d6a-d4b0-26e1-402a9bc64eb8",
+      "bone": "Style05BackMane01",
+      "part": "BACK",
+      "style": "05",
+      "axis": 0,
+      "center": 3.25041,
+      "u": 0.5287650479950018,
+      "slope": -0.17308450714753892
+    },
+    {
+      "uuid": "60bb2442-95f9-04e0-7bbc-9a10156a239a",
+      "bone": "Style05BackMane01",
+      "part": "BACK",
+      "style": "05",
+      "axis": 0,
+      "center": 5.7788900000000005,
+      "u": 0.5508820641230472,
+      "slope": -0.18424196848474875
+    },
+    {
+      "uuid": "a1426677-ccdb-cfea-fa75-8cf3287dab99",
+      "bone": "Style05BackMane01",
+      "part": "BACK",
+      "style": "05",
+      "axis": 1,
+      "center": 24.097659999999998,
+      "u": 0.2260185822147983,
+      "slope": -0.1739209943787279
+    },
+    {
+      "uuid": "3ff74c7f-c61e-8119-449a-0ad54575fc28",
+      "bone": "Style05BackMane01",
+      "part": "BACK",
+      "style": "05",
+      "axis": 1,
+      "center": 21.022660000000002,
+      "u": 0.2091571051513922,
+      "slope": -0.1827017271340241
+    },
+    {
+      "uuid": "2ef1f1d5-c41e-9b2f-eedf-2ff3a1d7ee90",
+      "bone": "Style05BackMane01",
+      "part": "BACK",
+      "style": "05",
+      "axis": 2,
+      "center": -3.8499999999999996,
+      "u": 0.5825574409000442,
+      "slope": 0.19723074194189474
+    },
+    {
+      "uuid": "97c63c93-81d1-b161-3ef1-8e4fa7e2143d",
+      "bone": "Style05BackMane01",
+      "part": "BACK",
+      "style": "05",
+      "axis": 2,
+      "center": -7.887269999999999,
+      "u": 0.2729102834130588,
+      "slope": -0.24291483711218897
+    },
+    {
+      "uuid": "53fe4e70-8e4b-7887-d81c-5330cc9865c5",
+      "bone": "Style05BackMane01",
+      "part": "BACK",
+      "style": "05",
+      "axis": 1,
+      "center": 23.74726,
+      "u": 0.7349765926633369,
+      "slope": 0.18292260738115063
+    },
+    {
+      "uuid": "cd50f006-fbec-1f47-2356-8d12c1dfde6f",
+      "bone": "Style05BackMane01",
+      "part": "BACK",
+      "style": "05",
+      "axis": 1,
+      "center": 18.64302,
+      "u": 0.708230075784991,
+      "slope": 0.18006884386472344
+    },
+    {
+      "uuid": "4ba8a590-940e-06e3-d2f3-c899980218a5",
+      "bone": "Style05BackMane01",
+      "part": "BACK",
+      "style": "05",
+      "axis": 0,
+      "center": 4.16591,
+      "u": 0.6340601715953084,
+      "slope": -0.22398986183189606
+    },
+    {
+      "uuid": "9c036695-131a-a245-d2e0-cf4e70d21304",
+      "bone": "Style05BackMane01",
+      "part": "BACK",
+      "style": "05",
+      "axis": 0,
+      "center": 6.2966999999999995,
+      "u": 0.46719999050149297,
+      "slope": -0.22721666635938437
+    },
+    {
+      "uuid": "1d63c912-17b6-3f14-aae9-2a038272c751",
+      "bone": "Style05BackMane01",
+      "part": "BACK",
+      "style": "05",
+      "axis": 0,
+      "center": 2.9,
+      "u": 0.5038483280314721,
+      "slope": -0.21396460865508496
+    },
+    {
+      "uuid": "e4e528aa-e8f1-d4b8-9cca-a2dc6a63635c",
+      "bone": "Style05Tail",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "d946fd1e-2481-2eb0-75c6-98b001348c02",
+      "bone": "Style05Tail",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "56633572-ce20-18be-348e-c366b04f762f",
+      "bone": "Style05Tail",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "9eaa91cf-a6b9-dff1-61fb-f1244e923427",
+      "bone": "Style05Tail01",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "79d73470-b6e7-aa6c-e7b3-438bf048f6f4",
+      "bone": "Style05Tail01",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "956c11c7-e3f6-b1ac-a306-fa0cb643e1f8",
+      "bone": "Style05Tail01",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "0d7f8070-88fb-9532-6639-317ce8e2f0d8",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "3cd49f4a-efdb-f822-e15c-673a1cd5fa01",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "c15312d7-08c8-025f-a566-59a25aa3f357",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "3f0bf845-3c56-ab11-f7a7-e9621d6e61d0",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "7efd5443-971a-67c5-2279-734edf134e66",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": -0.5,
+      "u": 0.2864720593377893,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "ce86b1ea-82a4-8e77-e7ea-85f64444b2d5",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0.5,
+      "u": 0.7073892897799828,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "8c1e2d8a-be78-2dc5-cab3-1a4dafc314e0",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": -0.8999999999999999,
+      "u": 0.14410192025622998,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "a073bea6-c872-5812-3632-83eb1065b149",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 1,
+      "center": 7.44344,
+      "u": 0.5002014428423308,
+      "slope": -0.29411764705882354
+    },
+    {
+      "uuid": "b706731d-94b8-ff07-8c38-67fd3998eff1",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0.8999999999999999,
+      "u": 0.8558980797437701,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "64fa1bc7-ef53-1bdf-5b2a-de99f21a26a7",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 1.475,
+      "u": 0.8247175527432138,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "44381cc9-646f-4254-b751-cfc7994c8eb9",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": -1.475,
+      "u": 0.1752824472567862,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "fc1c3e31-8cdb-5bbd-0e48-3d8d1fdecbba",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0.875,
+      "u": 0.6482469645079202,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "32a6f3d9-b2ff-5d69-fc56-4c902bb9bf39",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "2177bccf-8704-0e34-ba6b-91d1eaf4653f",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "33186163-3c8f-fcab-dd00-5b62f198f0e5",
+      "bone": "Style05Tail02",
+      "part": "TAIL",
+      "style": "05",
+      "axis": 0,
+      "center": -0.875,
+      "u": 0.3517530354920798,
+      "slope": 0.29411764705882354
+    },
+    {
+      "uuid": "6ff2c816-a9a6-4182-ad2f-e958b3bdc757",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": -2.45,
+      "u": 0.16237632209239294,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "33e49986-6a1d-4232-abdf-a0fc4e962433",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": 0.09999999999999987,
+      "u": 0.49382716049382713,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "a04ed736-400e-44af-af0c-9f30507943c0",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": -2.59836,
+      "u": 0.20477334162376692,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "5f264ca1-3957-41e7-a97d-5645d8a2c303",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": -2.3948,
+      "u": 0.23015093451944452,
+      "slope": -0.1234567901234568
+    },
+    {
+      "uuid": "2758fd51-6399-4c67-abd1-a0ccd935314b",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": -1.9948000000000001,
+      "u": 0.27376901332614556,
+      "slope": -0.1234567901234568
+    },
+    {
+      "uuid": "3ea5e820-5a63-4885-ac4b-1eb1b1244337",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": -0.3999999999999999,
+      "u": 0.4320987654320988,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "98e34e7f-cc69-4464-ad32-81ad5e22bbf6",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": -0.3999999999999999,
+      "u": 0.4320987654320988,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "aba1352a-d801-4a97-a8a4-337a7d67412b",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": -0.4,
+      "u": 0.4026112910394839,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "6361ff63-1040-45b4-a4f2-9628b94a4381",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": 1.95,
+      "u": 0.7217646036509422,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "ee00e884-d139-44eb-af72-d7c743604130",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": 2.33401,
+      "u": 0.7326023481401621,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "94b71476-529d-4da1-a53e-0c91b2587248",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": 1.65,
+      "u": 0.6965881946217696,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "5af0d941-b64f-4399-aee9-8ce343db150b",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": 1.15,
+      "u": 0.6497895475236704,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "35fb75a1-fa8c-42a9-aaf2-991318cb9764",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": -3.1163600000000002,
+      "u": 0.059641073933741795,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "c8547e0e-db50-41ce-a663-051ae605f258",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": -2.6163600000000002,
+      "u": 0.1605221316405675,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "440c1c74-fd01-484e-a23c-7617c6bf6cfa",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": 2.375,
+      "u": 0.8479386742319779,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "7ba5de9a-7ede-4261-ae6f-1e879e9117d5",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 1,
+      "center": 30.0529,
+      "u": 0.9157520446594066,
+      "slope": -0.1234567901234568
+    },
+    {
+      "uuid": "5751d715-85a6-4748-ac68-615ea825df6e",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": 3.59483,
+      "u": 0.9321577586541845,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "6964589b-6319-4bd7-a0b4-2d169b3aedeb",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 1,
+      "center": 30.909390000000002,
+      "u": 0.8256605310062608,
+      "slope": -0.1234567901234568
+    },
+    {
+      "uuid": "d25d146d-2f21-4874-a1a1-59f53c908c37",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 1,
+      "center": 30.50939,
+      "u": 0.7920321896412879,
+      "slope": -0.1234567901234568
+    },
+    {
+      "uuid": "be772005-cbc8-448c-a34b-070b10243597",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": -2.9,
+      "u": 0.07845511032878483,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "17bdd8d9-c1e2-4dc9-a095-e6934c761d1b",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": -2,
+      "u": 0.14033367416042358,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "1b889ad3-5bbc-4608-ae0e-fee121db3688",
+      "bone": "Style05FrontMane",
+      "part": "FRONT",
+      "style": "05",
+      "axis": 0,
+      "center": -0.15000000000000013,
+      "u": 0.3836769774395712,
+      "slope": 0.1234567901234568
+    },
+    {
+      "uuid": "c34c115e-de76-2339-7c34-6f5a8bf60fd8",
+      "bone": "Style06Tail",
+      "part": "TAIL",
+      "style": "06",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.2631578947368421
+    },
+    {
+      "uuid": "fcb3d5d7-6626-9e54-1982-6233beda94ad",
+      "bone": "Style06Tail",
+      "part": "TAIL",
+      "style": "06",
+      "axis": 2,
+      "center": 8.71184,
+      "u": 0.5087016077957899,
+      "slope": -0.2631578947368421
+    },
+    {
+      "uuid": "5da334c2-e3ed-67ec-ea63-cc76c32ec17f",
+      "bone": "Style06Tail01",
+      "part": "TAIL",
+      "style": "06",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.2631578947368421
+    },
+    {
+      "uuid": "3f773786-7984-5d3b-3ccf-5a718dcdd992",
+      "bone": "Style06Tail01",
+      "part": "TAIL",
+      "style": "06",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.2631578947368421
+    },
+    {
+      "uuid": "ad12654a-136e-4c22-6d2c-d654ba724fb0",
+      "bone": "Style06Tail01",
+      "part": "TAIL",
+      "style": "06",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.2631578947368421
+    },
+    {
+      "uuid": "f8fc0c29-7f41-d875-8cd7-606d80e8101e",
+      "bone": "Style06Tail02",
+      "part": "TAIL",
+      "style": "06",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.2631578947368421
+    },
+    {
+      "uuid": "31b7b254-5d56-79c8-1493-f2d35a80e797",
+      "bone": "Style06Tail02",
+      "part": "TAIL",
+      "style": "06",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.2631578947368421
+    },
+    {
+      "uuid": "466112ea-f3be-39ee-e9fa-2f66778f34e5",
+      "bone": "Style06Tail02",
+      "part": "TAIL",
+      "style": "06",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.2631578947368421
+    },
+    {
+      "uuid": "1b260789-6706-8121-1a7b-c82d2d199018",
+      "bone": "Style06Tail03",
+      "part": "TAIL",
+      "style": "06",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.2631578947368421
+    },
+    {
+      "uuid": "399dc48b-5d97-115b-3eb9-dd79f4bd5946",
+      "bone": "Style06Tail03",
+      "part": "TAIL",
+      "style": "06",
+      "axis": 0,
+      "center": -0.19999999999999996,
+      "u": 0.5,
+      "slope": 0.3225806451612903
+    },
+    {
+      "uuid": "a193c988-fa67-16b4-0ab5-e8ed9ff900f1",
+      "bone": "Style06FrontMane",
+      "part": "FRONT",
+      "style": "06",
+      "axis": 2,
+      "center": -5.62172,
+      "u": 0.5261538461538462,
+      "slope": 0.14820599930052814
+    },
+    {
+      "uuid": "96dfc159-d519-af79-8e07-e6e0dc4a1254",
+      "bone": "Style06FrontMane",
+      "part": "FRONT",
+      "style": "06",
+      "axis": 2,
+      "center": -7.35917,
+      "u": 0.40769230769230774,
+      "slope": 0.1512628695001183
+    },
+    {
+      "uuid": "f96b5065-2993-63c5-7ce3-98029b05259e",
+      "bone": "Style06FrontMane",
+      "part": "FRONT",
+      "style": "06",
+      "axis": 2,
+      "center": -2.47981,
+      "u": 0.8276923076923077,
+      "slope": 0.10802290955386243
+    },
+    {
+      "uuid": "15f521e3-b57c-28cc-7d7e-2702648078f9",
+      "bone": "Style06FrontMane",
+      "part": "FRONT",
+      "style": "06",
+      "axis": 2,
+      "center": -0.004809999999999981,
+      "u": 1.16,
+      "slope": 0.10801360984473053
+    },
+    {
+      "uuid": "720bc66b-6af5-09f6-8bf8-4080f0b9d820",
+      "bone": "Style06FrontMane",
+      "part": "FRONT",
+      "style": "06",
+      "axis": 2,
+      "center": -7.48287,
+      "u": 0.22769230769230775,
+      "slope": 0.13990934684459472
+    },
+    {
+      "uuid": "3512244d-eb44-8d0d-dcb8-7aceff47c42d",
+      "bone": "Style06BackMane",
+      "part": "BACK",
+      "style": "06",
+      "axis": 2,
+      "center": 1.4657799999999999,
+      "u": 0.8200000000000001,
+      "slope": -0.06
+    },
+    {
+      "uuid": "92c370c6-0528-70a2-aa69-e24b9ef21f98",
+      "bone": "Style06BackMane01",
+      "part": "BACK",
+      "style": "06",
+      "axis": 0,
+      "center": -3.3920600000000003,
+      "u": 0.305,
+      "slope": 0.22592592592592592
+    },
+    {
+      "uuid": "d6acef6f-e8e7-96ca-a6e5-817ee2e4aa5f",
+      "bone": "Style06BackMane01",
+      "part": "BACK",
+      "style": "06",
+      "axis": 0,
+      "center": -3.44206,
+      "u": 0.6950000000000001,
+      "slope": 0.23461538461538456
+    },
+    {
+      "uuid": "a9a7432d-d6d3-b273-bc7b-63c60ce38827",
+      "bone": "Style06BackMane02",
+      "part": "BACK",
+      "style": "06",
+      "axis": 0,
+      "center": -6.21291,
+      "u": 0.6950000000000001,
+      "slope": 0.20333333333333334
+    },
+    {
+      "uuid": "f9833595-9041-bf3f-fd6a-c45a896ef325",
+      "bone": "Style06BackMane02",
+      "part": "BACK",
+      "style": "06",
+      "axis": 0,
+      "center": -5.34206,
+      "u": 0.305,
+      "slope": 0.19677419354838713
+    },
+    {
+      "uuid": "49bb21c3-e3ce-950c-c737-e053df70c193",
+      "bone": "Style06BackMane02",
+      "part": "BACK",
+      "style": "06",
+      "axis": 0,
+      "center": -4.1929099999999995,
+      "u": 0.305,
+      "slope": 0.2772727272727272
+    },
+    {
+      "uuid": "71313ef8-1a76-afc2-ddda-cafda1038a63",
+      "bone": "Style06BackMane03",
+      "part": "BACK",
+      "style": "06",
+      "axis": 0,
+      "center": -7.16291,
+      "u": 0.5,
+      "slope": 0.45454545454545453
+    },
+    {
+      "uuid": "230424e8-7471-01b9-92bf-1a262c91557e",
+      "bone": "Style06BackMane03",
+      "part": "BACK",
+      "style": "06",
+      "axis": 0,
+      "center": -4.86659,
+      "u": 0.5,
+      "slope": 0.6666666666666666
+    },
+    {
+      "uuid": "f49db221-ecb7-6b58-6026-c04be38fccc0",
+      "bone": "Style06FrontMane01",
+      "part": "FRONT",
+      "style": "06",
+      "axis": 2,
+      "center": -6.36989,
+      "u": 0.5,
+      "slope": 0.16
+    },
+    {
+      "uuid": "25632773-4809-7cfe-75cd-f1ce3658683a",
+      "bone": "Style06FrontMane02",
+      "part": "FRONT",
+      "style": "06",
+      "axis": 2,
+      "center": -6.14319,
+      "u": 0.5,
+      "slope": 0.16260162601626016
+    },
+    {
+      "uuid": "b7649359-399e-7065-62da-aeec93b85549",
+      "bone": "Style06FrontMane02",
+      "part": "FRONT",
+      "style": "06",
+      "axis": 2,
+      "center": -3.75425,
+      "u": 0.5,
+      "slope": 0.16528925619834708
+    },
+    {
+      "uuid": "b5ef774d-472e-f478-0449-39730dc659a7",
+      "bone": "Style06FrontMane03",
+      "part": "FRONT",
+      "style": "06",
+      "axis": 2,
+      "center": -2.97925,
+      "u": 0.5,
+      "slope": 0.28169014084507044
+    },
+    {
+      "uuid": "64d6410e-7976-f680-026b-bd82860d571c",
+      "bone": "Style06FrontMane03",
+      "part": "FRONT",
+      "style": "06",
+      "axis": 2,
+      "center": -6.42925,
+      "u": 0.5,
+      "slope": 0.5
+    },
+    {
+      "uuid": "d5929031-c6dd-940e-f326-59eed5afd1d7",
+      "bone": "Style07FrontMane",
+      "part": "FRONT",
+      "style": "07",
+      "axis": 2,
+      "center": -5.62172,
+      "u": 0.5261538461538462,
+      "slope": 0.14820599930052814
+    },
+    {
+      "uuid": "4db16dfe-0829-c855-3dec-231104f23672",
+      "bone": "Style07FrontMane",
+      "part": "FRONT",
+      "style": "07",
+      "axis": 2,
+      "center": -7.35917,
+      "u": 0.40769230769230774,
+      "slope": 0.1512628695001183
+    },
+    {
+      "uuid": "cbc0dbd9-39b5-3647-61f8-087c4d04378d",
+      "bone": "Style07FrontMane",
+      "part": "FRONT",
+      "style": "07",
+      "axis": 2,
+      "center": -2.47981,
+      "u": 0.8276923076923077,
+      "slope": 0.10802290955386243
+    },
+    {
+      "uuid": "eae76640-52dd-d7c6-5b45-28c10bd2911e",
+      "bone": "Style07FrontMane",
+      "part": "FRONT",
+      "style": "07",
+      "axis": 2,
+      "center": -0.004809999999999981,
+      "u": 1.16,
+      "slope": 0.10801360984473053
+    },
+    {
+      "uuid": "d5428743-873a-f8ce-6d31-7649c932b9ba",
+      "bone": "Style07FrontMane",
+      "part": "FRONT",
+      "style": "07",
+      "axis": 2,
+      "center": -7.48287,
+      "u": 0.22769230769230775,
+      "slope": 0.13990934684459472
+    },
+    {
+      "uuid": "2ad19d42-0e88-2c5d-d0bb-af0f1cc2c4ba",
+      "bone": "Style07FrontMane01",
+      "part": "FRONT",
+      "style": "07",
+      "axis": 2,
+      "center": -6.79319,
+      "u": 0.5,
+      "slope": 0.14184397163120568
+    },
+    {
+      "uuid": "2c611737-00e7-9cb2-04f2-d0ea9c3e9839",
+      "bone": "Style07FrontMane01",
+      "part": "FRONT",
+      "style": "07",
+      "axis": 2,
+      "center": -4.40425,
+      "u": 0.5,
+      "slope": 0.14388489208633093
+    },
+    {
+      "uuid": "a3583f17-d719-c060-8986-d22cb729065e",
+      "bone": "Style07FrontMane02",
+      "part": "FRONT",
+      "style": "07",
+      "axis": 2,
+      "center": -8.29319,
+      "u": 0.2880665570214492,
+      "slope": 0.14184397163120568
+    },
+    {
+      "uuid": "4dc7655f-03b4-c691-279e-4b901e345599",
+      "bone": "Style07FrontMane02",
+      "part": "FRONT",
+      "style": "07",
+      "axis": 2,
+      "center": -5.95425,
+      "u": 0.2762723471322668,
+      "slope": 0.1438848920863309
+    },
+    {
+      "uuid": "a0d26782-de4e-6dec-5e92-cf8b9c473155",
+      "bone": "Style07FrontManeHighlight",
+      "part": "FRONT",
+      "style": "07",
+      "axis": 2,
+      "center": -8.95917,
+      "u": 0.1645859041808134,
+      "slope": 0.1512628695001183
+    },
+    {
+      "uuid": "d080989c-6c0d-8758-b485-51b67d4c93b5",
+      "bone": "Style07FrontManeHighlight",
+      "part": "FRONT",
+      "style": "07",
+      "axis": 2,
+      "center": -8.95917,
+      "u": 0.16458247166281265,
+      "slope": 0.1512628695001183
+    },
+    {
+      "uuid": "0c8b7097-1f0b-ecf6-efc4-71d6b7e45a94",
+      "bone": "Style07FrontManeHighlight",
+      "part": "FRONT",
+      "style": "07",
+      "axis": 2,
+      "center": -7.6328700000000005,
+      "u": 0.20691236833819804,
+      "slope": 0.1399093468445947
+    },
+    {
+      "uuid": "ee6ff6df-eff9-7663-bfb7-c80026c96751",
+      "bone": "Style07Tail",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "b2c5dffb-ee0c-8f91-e1f8-855170a378d3",
+      "bone": "Style07Tail01",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": 0.15000000000000002,
+      "u": 0.5234375,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "e629dcba-2833-2784-7801-0b3d6dd0f67c",
+      "bone": "Style07Tail01",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5922865892820467,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "a9b0fa59-5264-d1a4-bb01-8f0c1dac5e51",
+      "bone": "Style07Tail01",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": 0,
+      "u": 0.5,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "549e6fbc-0078-d8ed-2864-89039da9a6b8",
+      "bone": "Style07Tail01",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": 0,
+      "u": 0.46084752794315753,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "122cfbff-3c7a-727a-a1b6-837a651da843",
+      "bone": "Style07Tail01",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": 1,
+      "u": 0.651655788794147,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "260355cf-7f1e-4d61-0adc-fc9595fa2e1f",
+      "bone": "Style07Tail01",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": 1.0999999999999999,
+      "u": 0.7464895211519189,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "6794be0c-03eb-5412-5dea-da6d6386f4a3",
+      "bone": "Style07Tail01",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": 0.90337,
+      "u": 0.7095480175379472,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "e24a2daa-73fc-0fde-6eb8-e0063fa74212",
+      "bone": "Style07Tail01",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": 1.70337,
+      "u": 0.7554611594738617,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "64b349f8-6625-75d4-e757-6781ea546265",
+      "bone": "Style07Tail01",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": -1.0999999999999999,
+      "u": 0.2535104788480811,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "782d0124-299a-ec09-f320-c95773c4393d",
+      "bone": "Style07Tail01",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 2,
+      "center": 9.661840000000002,
+      "u": 0.526816199110595,
+      "slope": -0.15625
+    },
+    {
+      "uuid": "2440810d-ad6b-3add-bbda-19b93cc1f0a2",
+      "bone": "Style07Tail02",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 2,
+      "center": 13.06184,
+      "u": 0.20535203756408754,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "9d7e326f-0883-7648-04df-e2755af79ac0",
+      "bone": "Style07Tail02",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": -1.5,
+      "u": 0.3513595431711012,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "674eb7aa-45a3-8ce8-dd0e-991af444f92d",
+      "bone": "Style07Tail02",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": -2.3,
+      "u": 0.16691367536901353,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "42655ceb-4442-d1cf-0fc3-d921cc5dbcef",
+      "bone": "Style07Tail02",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": 2.3,
+      "u": 0.8330863246309865,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "c189379e-a9a9-98bf-edc5-0a339aed04f6",
+      "bone": "Style07Tail02",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": 1.5,
+      "u": 0.6777426006501095,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "b05cd0b3-7da4-1b9b-4a10-3d996a48f260",
+      "bone": "Style07Tail02",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 2,
+      "center": 13.06184,
+      "u": 0.7511697368657655,
+      "slope": -0.15625
+    },
+    {
+      "uuid": "2a2e34fd-c918-b36e-982f-960fb0fe3548",
+      "bone": "Style07Tail02",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 2,
+      "center": 11.961839999999999,
+      "u": 0.5257870699731833,
+      "slope": -0.15625
+    },
+    {
+      "uuid": "059b9ca4-bc4f-0b59-1db8-bcd4f9a6532d",
+      "bone": "Style07Tail02",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": 0.6499999999999999,
+      "u": 0.5937039665692418,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "7bad4a6b-1945-0bc5-c293-2b3d9d4905d4",
+      "bone": "Style07Tail02",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": -0.49999999999999994,
+      "u": 0.35781930687551183,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "d5d722ea-e064-9fe3-d5a2-e6e668315e89",
+      "bone": "Style07Tail02",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": -1.5,
+      "u": 0.2228232603817774,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "7da84a65-164a-6c20-6bea-f502504acb46",
+      "bone": "Style07Tail01",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": -0.90337,
+      "u": 0.29045198246205284,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "c646ecf8-0374-677a-c57e-8c21f6aaf5e4",
+      "bone": "Style07Tail01",
+      "part": "TAIL",
+      "style": "07",
+      "axis": 0,
+      "center": -1.70337,
+      "u": 0.2277060690078898,
+      "slope": 0.15625
+    },
+    {
+      "uuid": "7abf4d3d-f8fc-9df6-bd39-d0dee7be78c2",
+      "bone": "Style08BackMane",
+      "part": "BACK",
+      "style": "08",
+      "axis": 0,
+      "center": -0.6500000000000001,
+      "u": 0.5,
+      "slope": 0.1694915254237288
+    },
+    {
+      "uuid": "26665a4d-5b6a-4ade-660c-3f305b15af86",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 32.24736,
+      "u": 0.3306682280384251,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "68bb493d-fba5-76cb-f5a2-5450a0445435",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.232909999999997,
+      "u": 0.6641871702898228,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "22403c46-ee90-0961-a8ff-7df98eff7ee4",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.30939,
+      "u": 0.06973326129015506,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "aeaa8706-4474-f06a-0831-108a71ba939c",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.73095,
+      "u": 0.9270187898383024,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "6fefbcd8-ba61-7f07-8ff4-9af83d8e4ba8",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.738509999999998,
+      "u": 0.12908893375812486,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "cd6289a2-c141-0185-164a-b2958f03507a",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.23811,
+      "u": 0.3450170267990844,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "67174715-53e7-d7bc-6fed-9eb729209274",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.232909999999997,
+      "u": 0.6336152699880107,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "ed0322dd-adeb-bbe5-e421-e274c7c87e62",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.73095,
+      "u": 0.8747272857082788,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "1945fbfc-93d3-9f05-663b-fb320038a0ab",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 32.21595,
+      "u": 0.5844351265966684,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "c31c1b37-0129-659c-3807-ffb2bdae2a3e",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 32.25944,
+      "u": 0.8156470101776939,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "cfe16b9c-bdc0-2d37-8d84-f53a36ad1a96",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.93705,
+      "u": 0.35136642473878565,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "c2d92f2c-20dc-bc1a-a96f-5f7ac04f3e6d",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 32.45128,
+      "u": 0.1985322923446946,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "776de0c6-b74a-a06c-d9da-1ff008508ddb",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.89045,
+      "u": 0.7706983710670301,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "afd0490d-1d19-dbf9-087f-471dd6124a3e",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 30.579700000000003,
+      "u": 0.7673254223782309,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "29bbfa28-7e8d-6bc7-4bef-a775b9132752",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.952869999999997,
+      "u": 0.5426388255277244,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "12d5461f-606a-4c53-b70e-35fbd6bbaa1d",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.724469999999997,
+      "u": 0.40236030615377794,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "c811f226-23ed-4117-a0b2-116901c690ef",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.77452,
+      "u": 0.22353991200159173,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "a6da9afc-2299-f0e4-d4be-c1cd2690fef9",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 30.06884,
+      "u": 0.5082097731519103,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "96577ed5-4247-a20c-f602-a666efc949e0",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 30.296329999999998,
+      "u": 0.21853236949050786,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "11c8e3ec-2276-b4a5-193d-aa9604e6546a",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.738509999999998,
+      "u": 0.12665925304890124,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "d80fa731-dfa2-b1ec-2c3b-0ec7820366c5",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.161369999999998,
+      "u": 0.20146296573870065,
+      "slope": -0.14492753623188406
+    },
+    {
+      "uuid": "02c7b2fd-d766-db2d-5a0c-055e00085c81",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.161369999999998,
+      "u": 0.7840442806381109,
+      "slope": 0.14492753623188406
+    },
+    {
+      "uuid": "6899711f-4ec3-c58e-c3cd-e62f92c58c35",
+      "bone": "Style08FrontMane",
+      "part": "FRONT",
+      "style": "08",
+      "axis": 1,
+      "center": 31.738509999999998,
+      "u": 0.8631566591226538,
+      "slope": 0.14492753623188406
+    }
+  ]
+}

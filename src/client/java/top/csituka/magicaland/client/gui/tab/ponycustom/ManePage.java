@@ -14,6 +14,7 @@ import top.csituka.magicaland.client.gui.widget.Toggle;
 import top.csituka.magicaland.client.render.ManeDye;
 import top.csituka.magicaland.client.render.BodyPalette;
 import top.csituka.magicaland.client.render.ManePalette;
+import top.csituka.magicaland.client.render.ManeMirror;
 import top.csituka.magicaland.client.render.ManePalette.Part;
 
 public class ManePage implements PonyCustomPage {
@@ -47,6 +48,14 @@ public class ManePage implements PonyCustomPage {
             context.resetScroll();
             context.refreshKeepingScroll();
         }), SettingsList.Alignment.RIGHT);
+        Toggle mirror = new Toggle(buttonX, 0, buttonWidth, buttonHeight,
+                Text.translatable("text.magicaland.customize.styles.mirror"), ManeMirror.enabled(config, stylePart), button -> {
+                    context.focusPart(stylePart);
+                    ManeMirror.set(config, stylePart, button.getState());
+                    ModelManager.saveActiveModel();
+                });
+        mirror.setTooltip(Tooltip.of(Text.translatable("text.magicaland.customize.styles.mirror_hint")));
+        list.addWidget(mirror, SettingsList.Alignment.RIGHT);
         list.addWidget(new StyleGridWidget(buttonX, buttonWidth, config, stylePart,
                 () -> styleId(config, part), style -> {
                     context.focusPart(stylePart);
@@ -106,7 +115,7 @@ public class ManePage implements PonyCustomPage {
         list.addWidget(toggle, SettingsList.Alignment.RIGHT);
         if (!supported || !config.maneDyeEnabled) return;
         list.addWidget(new SectionLabel(x + 12, 0, width - 12, height,
-                Text.translatable("text.magicaland.config.mane_dye.stripe01")), SettingsList.Alignment.RIGHT);
+                Text.translatable("text.magicaland.config.mane_dye.style", styleId(config, part))), SettingsList.Alignment.RIGHT);
     }
 
     private void addDyePart(PonyCustomPageContext context, SettingsList list, ModelConfig config,

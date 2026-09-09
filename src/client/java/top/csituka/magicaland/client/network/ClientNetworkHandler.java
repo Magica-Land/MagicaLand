@@ -282,7 +282,7 @@ public class ClientNetworkHandler {
         }
         try {
             JsonElement parsed = JsonParser.parseString(modelData);
-            if (!parsed.isJsonObject()) {
+            if (!parsed.isJsonObject() || !top.csituka.magicaland.cutiemark.CutieMarkData.isValidModel(parsed.getAsJsonObject())) {
                 return null;
             }
             return ModelConfig.sanitize(GSON.fromJson(parsed, ModelConfig.class));

@@ -7,21 +7,25 @@ import com.google.gson.JsonParser;
 import java.io.Reader;
 import java.util.EnumMap;
 
-/** 01 分色区域。0 为未覆盖，1–6 为可独立调色的区域。 */
+/** 每款发型独立的分色区域。0 为未覆盖，1–6 为可独立调色的区域。 */
 public final class ManeDyeMask {
     private final int width, height;
+    private final String preset;
     private final EnumMap<ManePalette.Part, byte[]> channels;
 
-    private ManeDyeMask(int width, int height, EnumMap<ManePalette.Part, byte[]> channels) {
+    private ManeDyeMask(int width, int height, String preset, EnumMap<ManePalette.Part, byte[]> channels) {
         this.width = width;
         this.height = height;
+        this.preset = preset;
         this.channels = channels;
     }
 
     public static ManeDyeMask read(Reader reader) {
         JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
         int version = integer(root.get("version"));
-        if ((version < 1 || version > 3) || !"stripe01".equals(root.get("preset").getAsString()))
+        String preset = root.get("preset").getAsString();
+        String style = ManeDye.maskStyle(preset);
+        if ((version < 1 || version > 3) || style == null || (version < 3 && !"01".equals(style)))
             throw new IllegalArgumentException("Unsupported mane dye mask");
         int width = integer(root.get("texture_width")), height = integer(root.get("texture_height"));
         if (width < 1 || height < 1 || width > 1024 || height > 1024)
@@ -34,6 +38,7 @@ public final class ManeDyeMask {
         for (JsonElement element : regions) {
             JsonObject region = element.getAsJsonObject();
             ManePalette.Part part = ManePalette.Part.valueOf(region.get("part").getAsString());
+            if (!ManeDye.supportsStyle(style, part)) throw new IllegalArgumentException("Mask part unavailable for this style");
             int channel = integer(region.get("channel"));
             if (channel < 1 || channel > (version == 3 ? ManeDye.REGION_COUNT : 2)
                     || (version < 3 && channel == 2 && (version < 2 || part != ManePalette.Part.BACK))
@@ -54,8 +59,18 @@ public final class ManeDyeMask {
                 }
             }
         }
-        return new ManeDyeMask(width, height, channels);
+        return new ManeDyeMask(width, height, preset, channels);
     }
+
+    public static ManeDyeMask read(Reader reader, String expectedPreset) {
+        ManeDyeMask mask = read(reader);
+        if (!mask.preset.equals(expectedPreset)) throw new IllegalArgumentException("Mane dye mask identity mismatch");
+        return mask;
+    }
+
+    public String preset() { return preset; }
+
+    public boolean hasPart(ManePalette.Part part) { return channels.containsKey(part); }
 
     private static int integer(JsonElement value) {
         if (value == null || !value.isJsonPrimitive() || !value.getAsJsonPrimitive().isNumber())

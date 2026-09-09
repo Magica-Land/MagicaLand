@@ -215,6 +215,8 @@ public class ConfigScreen extends Screen {
                     widget.render(context, mouseX, mouseY, delta);
                 }
             }
+            if (editingAvailable) currentTab.getContent().postRender(context, 8, 31, width - 16, height - 39,
+                    mouseX, mouseY, delta, 1);
             if (ColorPicker.openPicker != null && ColorPicker.openPicker.open) {
                 ColorPicker.openPicker.renderOverlay(context, mouseX, mouseY);
                 setTooltip(java.util.List.of());
@@ -313,6 +315,8 @@ public class ConfigScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (canInteractWithContent() && currentTab.getContent() instanceof PonyCustom pony
+                && pony.overlayClick(mouseX, mouseY, button)) return true;
         if (ColorPicker.openPicker != null && ColorPicker.openPicker.open) {
             if (ColorPicker.openPicker.isMouseOver(mouseX, mouseY)) {
                 if (ColorPicker.openPicker.mouseClicked(mouseX, mouseY, button)) {
@@ -328,6 +332,12 @@ public class ConfigScreen extends Screen {
             return true;
         }
         return canInteractWithContent() && this.currentTab.getContent().mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+        if (canInteractWithContent() && currentTab.getContent() instanceof PonyCustom pony && pony.overlayScroll(amount)) return true;
+        return super.mouseScrolled(mouseX, mouseY, amount);
     }
 
     @Override
@@ -451,6 +461,8 @@ public class ConfigScreen extends Screen {
             ColorPicker.openPicker = null;
         }
         this.currentTab.getContent().onExit();
+        ((PonyCustom) Tab.PONY_CUSTOM.getContent()).endEditingSession();
+        clearChildren();
     }
 
     @Override

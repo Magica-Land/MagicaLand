@@ -13,6 +13,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import top.csituka.magicaland.gaze.ServerGaze;
+import top.csituka.magicaland.cutiemark.CutieMarkData;
 
 import java.util.Map;
 import java.util.Set;
@@ -221,7 +222,8 @@ public class NetworkHandler {
 
     private static boolean isModelData(String modelData) {
         try {
-            return JsonParser.parseString(modelData).isJsonObject();
+            JsonElement parsed = JsonParser.parseString(modelData);
+            return parsed.isJsonObject() && CutieMarkData.isValidModel(parsed.getAsJsonObject());
         } catch (RuntimeException ignored) {
             return false;
         }

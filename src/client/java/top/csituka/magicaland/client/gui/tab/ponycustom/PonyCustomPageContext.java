@@ -14,7 +14,8 @@ public final class PonyCustomPageContext {
         FACE,
         HORN,
         BODY,
-        GLOW
+        GLOW,
+        CUTIE_MARK
     }
 
     private final ConfigScreen screen;
@@ -26,6 +27,7 @@ public final class PonyCustomPageContext {
     private final Runnable pageRefresher;
     private final Consumer<PonyStylePart> partFocus;
     private final Runnable scrollReset;
+    private final Consumer<Boolean> cutieMarkFocus;
 
     public PonyCustomPageContext(ConfigScreen screen, int x, int y, int width, int height,
             BiConsumer<Page, Integer> pageSwitcher, Runnable pageRefresher) {
@@ -35,6 +37,12 @@ public final class PonyCustomPageContext {
     public PonyCustomPageContext(ConfigScreen screen, int x, int y, int width, int height,
             BiConsumer<Page, Integer> pageSwitcher, Runnable pageRefresher,
             Consumer<PonyStylePart> partFocus, Runnable scrollReset) {
+        this(screen, x, y, width, height, pageSwitcher, pageRefresher, partFocus, scrollReset, left -> {});
+    }
+
+    public PonyCustomPageContext(ConfigScreen screen, int x, int y, int width, int height,
+            BiConsumer<Page, Integer> pageSwitcher, Runnable pageRefresher,
+            Consumer<PonyStylePart> partFocus, Runnable scrollReset, Consumer<Boolean> cutieMarkFocus) {
         this.screen = screen;
         this.x = x;
         this.y = y;
@@ -44,6 +52,7 @@ public final class PonyCustomPageContext {
         this.pageRefresher = pageRefresher;
         this.partFocus = partFocus;
         this.scrollReset = scrollReset;
+        this.cutieMarkFocus = cutieMarkFocus;
     }
 
     public ConfigScreen getScreen() {
@@ -83,6 +92,7 @@ public final class PonyCustomPageContext {
     }
 
     public void focusPart(PonyStylePart part) { partFocus.accept(part); }
+    public void focusCutieMark(boolean left) { cutieMarkFocus.accept(left); }
 
     public void resetScroll() { scrollReset.run(); }
 }

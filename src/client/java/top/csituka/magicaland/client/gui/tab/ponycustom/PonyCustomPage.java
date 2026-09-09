@@ -9,6 +9,7 @@ public interface PonyCustomPage {
     void build(PonyCustomPageContext context, SettingsList list);
 
     default void onEnter() {}
+    default void onLeave() {}
 
     default void render(PonyCustomPageContext context, DrawContext drawContext, int mouseX, int mouseY,
             float delta, float alpha) {}

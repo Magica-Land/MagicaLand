@@ -15,6 +15,7 @@ import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.network.ClientNetworkHandler;
 import top.csituka.magicaland.client.render.PonyRenderer;
+import top.csituka.magicaland.client.render.PonyBodyYaw;
 import top.csituka.magicaland.network.NetworkHandler;
 
 import java.util.Map;
@@ -122,8 +123,7 @@ public abstract class PlayerEntityRendererMixin
                         .multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - bodyYaw));
             }
         } else {
-            float bodyYaw = net.minecraft.util.math.MathHelper.lerpAngleDegrees(g, player.prevBodyYaw,
-                    player.bodyYaw);
+            float bodyYaw = PonyBodyYaw.sample(player, g);
             matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - bodyYaw));
 
             if (player.getAbilities().flying && player.isSprinting()) {

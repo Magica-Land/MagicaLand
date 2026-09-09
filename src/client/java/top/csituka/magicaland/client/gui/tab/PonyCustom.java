@@ -50,23 +50,22 @@ import top.csituka.magicaland.client.util.RenderLayerHelper;
 public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     private static final Logger LOGGER = LoggerFactory.getLogger(PonyCustom.class);
     private static final PonyCustomPage[] PAGES = {
-            new ModelPage(), new MainPage(), new ManePage(), new FacePage(), new HornPage(), new BodyPage(), new GlowPage()
+            new ModelPage(), new MainPage(), new ManePage(), new FacePage(), new HornPage(), new BodyPage(), new GlowPage(), new CutieMarkPage()
     };
     private static final PonyCustomPageContext.Page[] CATEGORIES = {
             PonyCustomPageContext.Page.BODY, PonyCustomPageContext.Page.MANE, PonyCustomPageContext.Page.FACE,
-            PonyCustomPageContext.Page.HORN, PonyCustomPageContext.Page.GLOW, PonyCustomPageContext.Page.MODEL
+            PonyCustomPageContext.Page.HORN, PonyCustomPageContext.Page.GLOW, PonyCustomPageContext.Page.CUTIE_MARK
     };
-    private static final String[] CATEGORY_KEYS = { "body", "mane", "face", "horn", "glow", "presets" };
+    private static final String[] CATEGORY_KEYS = { "body", "mane", "face", "horn", "glow", "cutie_mark" };
     private final double[] scrollPositions = new double[PAGES.length];
     private SettingsList listWidget;
     private PonyCustomPageContext pageContext;
     private CustomizationLayout layout;
     private int selectedPage = PonyCustomPageContext.Page.BODY.ordinal();
     private boolean refreshRequested;
-    private boolean renameOpen;
-    private String renameDraft = "";
-    private String renameTargetName;
-    private boolean renameError;
+    private PresetDropdownWidget presetDropdown;
+    private PonyCustomPageContext.Page managementReturnPage = PonyCustomPageContext.Page.BODY;
+    private boolean presetError;
     private boolean showGlowItem;
     private PreviewLighting lighting = PreviewLighting.NOON;
     private PonyPreviewAnimatable ponyAnimatable;
@@ -76,6 +75,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     private boolean isDraggingModel;
     private final PreviewCamera camera = new PreviewCamera();
     private PonyStylePart focusedPart;
+    private Boolean focusedMarkSide;
     private boolean automaticFocus = true;
     private boolean snapCamera;
     private long lastPreviewFrame;
@@ -84,11 +84,13 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     public void onEnter() {
         selectedPage = PonyCustomPageContext.Page.BODY.ordinal();
         refreshRequested = false;
-        renameOpen = false;
-        renameError = false;
+        presetDropdown = null;
+        presetError = false;
+        managementReturnPage = PonyCustomPageContext.Page.BODY;
         showGlowItem = false;
         isDraggingModel = false;
         focusedPart = null;
+        focusedMarkSide = null;
         camera.reset();
         lastPreviewFrame = 0;
         resetCameraAngle();
@@ -100,7 +102,8 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     public void onExit() {
         refreshRequested = false;
         isDraggingModel = false;
-        renameOpen = false;
+        if (presetDropdown != null) presetDropdown.close();
+        currentPage().onLeave();
         ColorPicker.clearBodyLinkGroup();
         PonyStyleThumbnails.clear();
         if (ponyRenderer instanceof PonyRenderer renderer) renderer.clearOverride();
@@ -111,7 +114,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
 
     @Override
     public boolean mouseClicked(double x, double y, int button) {
-        if (renameOpen || currentPage().isEditingPreset() || layout == null || !isPreviewActive()
+        if (currentPage().isEditingPreset() || layout == null || !isPreviewActive()
                 || !layout.model().contains(x, y)) return false;
         if (button == 1) {
             resetCameraAngle();
@@ -136,21 +139,32 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     }
 
     public boolean keyPressed(int key) {
-        if (!renameOpen) return currentPage().keyPressed(key);
-        if (key == 256) {
-            renameOpen = false;
-            renameError = false;
-            pageContext.reinit();
-            return true;
-        }
-        if (key == 257 || key == 335) {
-            commitRename();
-            return true;
-        }
-        return false;
+        if (presetDropdown != null && presetDropdown.isOpen()) return presetDropdown.overlayKey(key);
+        return currentPage().keyPressed(key);
     }
 
-    public boolean hasPendingTextEdit() { return renameOpen || currentPage().isEditingPreset(); }
+    public boolean hasPendingTextEdit() { return currentPage().isEditingPreset(); }
+
+    public void endEditingSession() {
+        for (PonyCustomPage page : PAGES) if (page instanceof CutieMarkPage marks) marks.releaseSession();
+        listWidget = null;
+        pageContext = null;
+        presetDropdown = null;
+        layout = null;
+    }
+
+    public boolean overlayClick(double x, double y, int button) {
+        return presetDropdown != null && presetDropdown.overlayClick(x, y, button);
+    }
+
+    public boolean overlayScroll(double amount) {
+        return presetDropdown != null && presetDropdown.overlayScroll(amount);
+    }
+
+    @Override public void postRender(DrawContext context, int x, int y, int width, int height,
+            int mouseX, int mouseY, float delta, float alpha) {
+        if (presetDropdown != null) presetDropdown.renderOverlay(context, mouseX, mouseY);
+    }
 
     @Override public float getPreviewYaw() { return previewYaw; }
     @Override public float getPreviewPitch() { return previewPitch; }
@@ -172,10 +186,9 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
                 this::switchPage, () -> refreshRequested = true, this::focusPart, () -> {
                     scrollPositions[selectedPage] = 0;
                     if (listWidget != null) listWidget.restoreScrollAmount(0);
-                });
+                }, this::focusCutieMark);
         listWidget = new CustomizationList(MinecraftClient.getInstance(), details);
         currentPage().build(pageContext, listWidget);
-        if (renameOpen) for (SettingsList.Entry entry : listWidget.children()) entry.widget.active = false;
         listWidget.restoreScrollAmount(scrollPositions[selectedPage]);
         screen.addConsoleElement(listWidget);
         for (int i = 0; i < CATEGORIES.length; i++) {
@@ -185,7 +198,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
             CustomButton tab = new CustomButton(tabX, tabY, layout.tabWidth(), 20,
                     tr("category." + CATEGORY_KEYS[i]), selectedPage == CATEGORIES[i].ordinal(),
                     button -> switchPage(CATEGORIES[index], 0));
-            tab.active = !renameOpen;
+            tab.active = !currentPage().isEditingPreset();
             screen.addConsoleWidget(tab);
         }
         buildPreviewControls(screen);
@@ -196,46 +209,21 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         int x = panel.x() + 5;
         int y = panel.y() + 5;
         int width = panel.width() - 10;
-        ModelConfig active = ModelManager.getActiveModel();
-        if (renameOpen && active != null) {
-            TextFieldWidget field = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, x, y,
-                    width - 44, 20, tr("preset.rename"));
-            field.setMaxLength(32);
-            field.setText(renameDraft);
-            field.setChangedListener(value -> { renameDraft = value; renameError = false; });
-            screen.addConsoleWidget(field);
-            screen.setFocused(field);
-            field.setFocused(true);
-            screen.addConsoleWidget(new CustomButton(x + width - 42, y, 20, 20, Text.literal("✓"),
-                    tr("preset.rename"), false, button -> commitRename()));
-            screen.addConsoleWidget(new CustomButton(x + width - 20, y, 20, 20, Text.literal("×"),
-                    Text.translatable("text.magicaland.config.button.cancel"), false, button -> {
-                        renameOpen = false;
-                        renameError = false;
-                        pageContext.reinit();
-                    }));
-        } else {
-            List<String> models = List.copyOf(ModelManager.getAvailableModels());
-            String activeName = active == null ? "" : active.name;
-            CustomButton selector = new CustomButton(x, y, width - 24, 20, Text.literal(activeName),
-                    tr("preset.switch_hint"), false, button -> {
-                        if (models.size() < 2) { switchPage(PonyCustomPageContext.Page.MODEL, 0); return; }
-                        int next = (models.indexOf(activeName) + 1) % models.size();
-                        if (ModelManager.loadModel(models.get(next))) pageContext.refreshKeepingScroll();
-                    });
-            screen.addConsoleWidget(selector);
-            selector.active = !currentPage().isEditingPreset();
-            CustomButton rename = new CustomButton(x + width - 22, y, 22, 20, Text.literal("✎"),
-                    tr("preset.rename"), false, button -> {
-                        renameDraft = ModelManager.getActiveModel().name;
-                        renameTargetName = renameDraft;
-                        renameOpen = true;
-                        renameError = false;
-                        pageContext.reinit();
-                    });
-            rename.active = active != null && !currentPage().isEditingPreset();
-            screen.addConsoleWidget(rename);
-        }
+        var header = PresetMenuLayout.header(width);
+        presetDropdown = new PresetDropdownWidget(x, y, header.dropdownWidth(), width, this::selectPreset,
+                () -> switchPage(PonyCustomPageContext.Page.MODEL, 0), () -> currentPage().onLeave());
+        presetDropdown.active = !currentPage().isEditingPreset();
+        screen.addConsoleWidget(presetDropdown);
+        CustomButton createPreset = new CustomButton(x + header.createX(), y, header.buttonWidth(), 20,
+                Text.literal("+"), tr("preset.create_hint"), false, button -> openPresetAction(true));
+        createPreset.active = ModelManager.isEditing() && !currentPage().isEditingPreset();
+        screen.addConsoleWidget(createPreset);
+        boolean canDelete = ModelManager.getActiveModel() != null && ModelManager.getAvailableModels().size() > 1;
+        CustomButton deletePreset = new CustomButton(x + header.deleteX(), y, header.buttonWidth(), 20,
+                Text.literal("−"), canDelete ? Text.translatable("text.magicaland.customize.preset.delete_hint", ModelManager.getActiveModel().name)
+                        : tr("preset.last_hint"), false, button -> openPresetAction(false));
+        deletePreset.active = ModelManager.isEditing() && !currentPage().isEditingPreset() && canDelete;
+        screen.addConsoleWidget(deletePreset);
         int lightWidth = (width - 4) / 3;
         for (PreviewLighting option : PreviewLighting.values()) {
             CustomButton button = new CustomButton(x + option.ordinal() * (lightWidth + 2), layout.lightingY(),
@@ -267,18 +255,20 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         }
     }
 
-    private void commitRename() {
-        if (ModelManager.getActiveModel() == null || !ModelManager.getActiveModel().name.equals(renameTargetName)) {
-            renameOpen = false;
-            renameError = true;
-            pageContext.reinit();
-            return;
-        }
-        if (ModelManager.renameActiveModel(renameDraft)) {
-            renameOpen = false;
-            renameError = false;
-        } else renameError = true;
-        pageContext.reinit();
+    private void selectPreset(String name) {
+        currentPage().onLeave();
+        presetError = !ModelManager.loadModel(name);
+        pageContext.refreshKeepingScroll();
+    }
+
+    private void openPresetAction(boolean create) {
+        if (pageContext == null || currentPage().isEditingPreset() || !ModelManager.isEditing()) return;
+        ModelPage manager = (ModelPage) PAGES[PonyCustomPageContext.Page.MODEL.ordinal()];
+        boolean quick = selectedPage != PonyCustomPageContext.Page.MODEL.ordinal();
+        if (!(create ? manager.beginCreate(quick) : manager.beginDelete(quick))) return;
+        if (presetDropdown != null) presetDropdown.close();
+        if (quick) switchPage(PonyCustomPageContext.Page.MODEL, 0);
+        else pageContext.reinit();
     }
 
     private void applyPendingRefresh() {
@@ -287,7 +277,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         scrollPositions[selectedPage] = listWidget.getScrollAmount();
         int focusedIndex = listWidget.children().indexOf(listWidget.getFocused());
         pageContext.reinit();
-        if (!renameOpen && focusedIndex >= 0 && focusedIndex < listWidget.children().size()) {
+        if (!currentPage().isEditingPreset() && focusedIndex >= 0 && focusedIndex < listWidget.children().size()) {
             SettingsList.Entry entry = listWidget.children().get(focusedIndex);
             listWidget.setFocused(entry);
             entry.setFocused(entry.widget);
@@ -296,8 +286,10 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     }
 
     private void switchPage(PonyCustomPageContext.Page page, int direction) {
-        if (page == PonyCustomPageContext.Page.MAIN) page = PonyCustomPageContext.Page.BODY;
+        if (page == PonyCustomPageContext.Page.MAIN) page = managementReturnPage;
         if (pageContext == null || page.ordinal() == selectedPage) return;
+        if (page == PonyCustomPageContext.Page.MODEL) managementReturnPage = PonyCustomPageContext.Page.values()[selectedPage];
+        currentPage().onLeave();
         scrollPositions[selectedPage] = listWidget.getScrollAmount();
         selectedPage = page.ordinal();
         if (page == PonyCustomPageContext.Page.FACE) focusPart(PonyStylePart.EYE);
@@ -311,14 +303,25 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     private static Text tr(String key) { return Text.translatable("text.magicaland.customize." + key); }
 
     private void focusPart(PonyStylePart part) {
-        if (focusedPart == part) return;
+        if (focusedPart == part && focusedMarkSide == null) return;
         focusedPart = part;
+        focusedMarkSide = null;
+        if (automaticFocus) resetCameraAngle();
+    }
+
+    private void focusCutieMark(boolean left) {
+        if (focusedMarkSide != null && focusedMarkSide == left) return;
+        focusedPart = null;
+        focusedMarkSide = left;
         if (automaticFocus) resetCameraAngle();
     }
 
     private void resetCameraAngle() {
         float yaw = 155, pitch = -10;
-        if (automaticFocus && focusedPart != null) {
+        if (automaticFocus && focusedMarkSide != null) {
+            yaw = focusedMarkSide ? 75 : 285;
+            pitch = 5;
+        } else if (automaticFocus && focusedPart != null) {
             yaw = switch (focusedPart) { case FRONT_MANE -> 155; case EYE -> 145; case BACK_MANE -> 25; case TAIL -> 35; };
             pitch = focusedPart == PonyStylePart.TAIL ? 10 : focusedPart == PonyStylePart.BACK_MANE ? 6 : -8;
         }
@@ -345,7 +348,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         int lightX = panel.x() + 5 + lighting.ordinal() * (lightWidth + 2);
         context.fill(lightX + 2, layout.lightingY() + 19, lightX + lightWidth - 2, layout.lightingY() + 20, 0xFFE6D8AA);
         renderPreview(context, delta, mouseX, mouseY);
-        if (renameError) PonyCustomPageHelper.drawWrapped(context, tr("preset.rename_error"),
+        if (presetError) PonyCustomPageHelper.drawWrapped(context, tr("preset.operation_error"),
                 panel.x() + 5, layout.model().y() + 2, panel.width() - 10, 0xFFFF9999);
         currentPage().render(pageContext, context, mouseX, mouseY, delta, alpha);
         listWidget.render(context, mouseX, mouseY, delta);
@@ -364,7 +367,8 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         try {
             RenderSystem.setShaderColor(1, 1, 1, 1);
             PreviewLightingRig.apply();
-            var box = PreviewGeometryBounds.framingBounds(config, automaticFocus ? focusedPart : null);
+            var box = automaticFocus && focusedMarkSide != null ? PreviewGeometryBounds.cutieMarkFramingBounds(config)
+                    : PreviewGeometryBounds.framingBounds(config, automaticFocus ? focusedPart : null);
             long now = System.nanoTime();
             double seconds = lastPreviewFrame == 0 ? 1.0 / 60 : (now - lastPreviewFrame) / 1.0e9;
             lastPreviewFrame = now;

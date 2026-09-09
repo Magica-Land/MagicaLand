@@ -83,6 +83,15 @@ public class ModelManager {
 
     public static boolean isEditing() { return editing != null; }
 
+    public static Object editingSessionIdentity() { return editing; }
+
+    public static boolean isPresetDirty(String name) {
+        if (editing == null || name == null) return false;
+        ModelConfig draft = editing.drafts.get(name);
+        return draft != null && (!editing.originalFiles.containsKey(name)
+                || !Objects.equals(editing.baseline.get(name), GSON.toJson(draft)));
+    }
+
     public static boolean beginEditing() {
         if (editing != null) return true;
         EditingSession session = new EditingSession(copy(activeModel), List.copyOf(availableModels));

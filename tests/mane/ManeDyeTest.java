@@ -31,7 +31,9 @@ public class ManeDyeTest {
         c.maneDyeEnabled=true;
         for(Part part:Part.values())check(ManeDye.enabled(c,part),"01 unsupported");
         c.backManeStyle="02";
-        check(!ManeDye.enabled(c,Part.BACK)&&ManeDye.enabled(c,Part.FRONT),"Mixed-style dye leaked");
+        check(ManeDye.enabled(c,Part.BACK)&&ManeDye.enabled(c,Part.FRONT)
+                && "style02".equals(ManeDye.maskName(c,Part.BACK))
+                && "stripe01".equals(ManeDye.maskName(c,Part.FRONT)),"Mixed-style resource routing");
         c.backManeStyle="01";
         check(ManeDye.retiredOverlay("Style01FrontManeHighlight")&&!ManeDye.retiredOverlay("Style02FrontManeHighlight"),"Overlay scope");
         ModelConfig old=ModelConfig.sanitize(gson.fromJson("{\"maneDyeEnabled\":true,\"maneDyeColor\":\"#23BBDD\",\"maneDyeAccentColor\":\"#AA44BB\"}",ModelConfig.class));
