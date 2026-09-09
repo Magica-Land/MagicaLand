@@ -21,13 +21,13 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.core.object.Color;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.loading.FileLoader;
+import software.bernie.geckolib.loading.object.BakedModelFactory;
+import software.bernie.geckolib.loading.object.GeometryTree;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
-import top.csituka.magicaland.client.animation.PonyExpressions;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
@@ -40,9 +40,11 @@ import top.csituka.magicaland.client.gui.widget.SettingsList;
 import top.csituka.magicaland.client.gui.widget.ViewCube;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.model.GeckoPlayerModel;
+import top.csituka.magicaland.client.model.PonyPreviewAnimatable;
 import top.csituka.magicaland.client.render.GlowingItem;
 import top.csituka.magicaland.client.render.MagicGlow;
 import top.csituka.magicaland.client.render.PonyRenderer;
+import top.csituka.magicaland.client.render.PonyGuiGaze;
 import top.csituka.magicaland.client.util.RenderLayerHelper;
 
 public class PonyCustom implements TabContent, ViewCube.RotationTarget {
@@ -67,7 +69,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     private boolean renameError;
     private boolean showGlowItem;
     private PreviewLighting lighting = PreviewLighting.NOON;
-    private GeckoPlayerAnimatable ponyAnimatable;
+    private PonyPreviewAnimatable ponyAnimatable;
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
     private float previewYaw = 155.0f;
     private float previewPitch = -10.0f;
@@ -102,6 +104,9 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         ColorPicker.clearBodyLinkGroup();
         PonyStyleThumbnails.clear();
         if (ponyRenderer instanceof PonyRenderer renderer) renderer.clearOverride();
+        if (ponyAnimatable != null) ponyAnimatable.reset();
+        ponyAnimatable = null;
+        ponyRenderer = null;
     }
 
     @Override
@@ -339,7 +344,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         int lightWidth = (panel.width() - 14) / 3;
         int lightX = panel.x() + 5 + lighting.ordinal() * (lightWidth + 2);
         context.fill(lightX + 2, layout.lightingY() + 19, lightX + lightWidth - 2, layout.lightingY() + 20, 0xFFE6D8AA);
-        renderPreview(context, delta);
+        renderPreview(context, delta, mouseX, mouseY);
         if (renameError) PonyCustomPageHelper.drawWrapped(context, tr("preset.rename_error"),
                 panel.x() + 5, layout.model().y() + 2, panel.width() - 10, 0xFFFF9999);
         currentPage().render(pageContext, context, mouseX, mouseY, delta, alpha);
@@ -347,7 +352,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         scrollPositions[selectedPage] = listWidget.getScrollAmount();
     }
 
-    private void renderPreview(DrawContext context, float delta) {
+    private void renderPreview(DrawContext context, float delta, int mouseX, int mouseY) {
         ModelConfig config = ModelManager.getActiveModel();
         if (config == null || ponyRenderer == null) return;
         Rect area = layout.model();
@@ -370,6 +375,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
             if (currentPage().usesGlowPreview() && showGlowItem) {
                 renderGrassBlockPreview(context, config, area);
             } else {
+                ponyAnimatable.beginFrame(now);
                 ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
                 ((PonyRenderer) ponyRenderer).setOverrideConfig(config);
                 float scale = pose.scale();
@@ -383,7 +389,11 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
                         ponyRenderer.getTextureLocation(ponyAnimatable), context.getVertexConsumers(), delta);
                 if (layer != null) {
                     VertexConsumer consumer = context.getVertexConsumers().getBuffer(layer);
-                    ponyRenderer.render(matrices, ponyAnimatable, context.getVertexConsumers(), layer, consumer, 0xF000F0);
+                    var window = MinecraftClient.getInstance().getWindow();
+                    try (var gaze = PonyGuiGaze.begin(this, ponyAnimatable.getPlayer(), mouseX, mouseY,
+                            window.getScaledWidth(), window.getScaledHeight())) {
+                        ponyRenderer.render(matrices, ponyAnimatable, context.getVertexConsumers(), layer, consumer, 0xF000F0);
+                    }
                 }
             }
             context.draw();
@@ -403,23 +413,32 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
 
     private void initRenderer() {
         if (ponyAnimatable != null) return;
-        ponyAnimatable = new GeckoPlayerAnimatable() {
-            @Override
-            public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-                for (String animation : new String[] { "idle", "blink_parallel", "ear_parallel", "tail_parallel" }) {
-                    controllers.add(new AnimationController<>(this, animation + "_preview", 0, state -> {
-                        state.getController().setAnimation(RawAnimation.begin().thenLoop(animation));
-                        return PlayState.CONTINUE;
-                    }));
-                }
-                controllers.add(new AnimationController<>(this, "expression_controller", 0, state -> {
-                    state.getController().setAnimation(PonyExpressions.forAction("idle"));
-                    return PlayState.CONTINUE;
-                }));
-            }
-        };
+        ponyAnimatable = new PonyPreviewAnimatable();
         ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
         ponyRenderer = new PonyRenderer(new GeckoPlayerModel() {
+            private BakedGeoModel sharedSource, previewModel;
+
+            @Override
+            public BakedGeoModel getBakedModel(Identifier location) {
+                BakedGeoModel source = super.getBakedModel(location);
+                if (source != sharedSource) {
+                    var raw = FileLoader.loadModelFile(location, MinecraftClient.getInstance().getResourceManager());
+                    previewModel = BakedModelFactory.getForNamespace(location.getNamespace())
+                            .constructGeoModel(GeometryTree.fromModel(raw));
+                    // 动画只写私有骨骼；共享缓存仅用来识别资源重载。
+                    getAnimationProcessor().setActiveModel(previewModel);
+                    sharedSource = source;
+                }
+                return previewModel;
+            }
+
+            @Override
+            public void handleAnimations(GeckoPlayerAnimatable animatable, long instanceId,
+                    AnimationState<GeckoPlayerAnimatable> state) {
+                ((PonyPreviewAnimatable) animatable).prepareAnimationFrame(instanceId, state);
+                super.handleAnimations(animatable, instanceId, state);
+            }
+
             @Override
             public void applyMolangQueries(GeckoPlayerAnimatable animatable, double animTime) {
                 if (MinecraftClient.getInstance().world == null) return;

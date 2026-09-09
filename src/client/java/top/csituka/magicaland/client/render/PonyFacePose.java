@@ -9,6 +9,7 @@ import java.util.Map;
 
 /** 适配表情轨道与眼仁注视；所有临时修改在本次面部渲染后恢复。 */
 final class PonyFacePose implements AutoCloseable {
+    private static final float INWARD_LIMIT = .15f;
     private final Map<String, GeoBone> bones = new HashMap<>();
     private final Map<GeoBone, SavedPose> saved = new IdentityHashMap<>();
 
@@ -54,11 +55,17 @@ final class PonyFacePose implements AutoCloseable {
             GeoBone pupil = pupil(styleId, left);
             if (pupil == null) continue;
             var eye = limits.eye(left);
-            // 默认眼仁已靠鼻梁；水平只让目标侧眼仁向外移动。
-            float horizontal = left ? Math.max(0, bounded.x()) : Math.min(0, bounded.x());
-            float[] growth = growth(pupil, left);
-            float dx = horizontal * Math.max(0, eye.outward() - growth[0]);
-            float vertical = bounded.y() >= 0 ? eye.up() - growth[1] : eye.down() - growth[2];
+            boolean clipped = EyeApertures.forPupil(pupil) != null;
+            // 未适配裁剪的第三方眼型使用保守的旧式限位。
+            float horizontal = clipped ? bounded.x() : left ? Math.max(0, bounded.x()) : Math.min(0, bounded.x());
+            float[] growth = clipped ? new float[3] : growth(pupil, left);
+            float horizontalLimit = clipped ? eye.outward() : Math.min(.3f, eye.outward());
+            // 原始内聚眼位仅留少量向鼻梁的余量，正常向外幅度不变。
+            if (clipped && (left ? horizontal < 0 : horizontal > 0))
+                horizontalLimit = Math.min(horizontalLimit, INWARD_LIMIT);
+            float dx = horizontal * Math.max(0, horizontalLimit - growth[0]);
+            float vertical = bounded.y() >= 0 ? (clipped ? eye.up() : Math.min(.15f, eye.up())) - growth[1]
+                    : (clipped ? eye.down() : Math.min(.2f, eye.down())) - growth[2];
             float dy = bounded.y() * Math.max(0, vertical);
             save(pupil);
             pupil.updatePosition(pupil.getPosX() + dx, pupil.getPosY() + dy, pupil.getPosZ());

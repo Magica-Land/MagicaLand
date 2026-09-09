@@ -4,6 +4,9 @@
   "package": "top.csituka.magicaland.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AnimalLoveMixin",
+    "CarrotFinishUsingMixin",
+    "HorseGoalSelectorAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

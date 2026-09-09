@@ -258,11 +258,11 @@ public final class PonyFacePoseTest {
         bad = JsonParser.parseString(original).getAsJsonObject();
         bad.getAsJsonObject("eye_styles").getAsJsonObject("01").getAsJsonObject("gaze_limits").addProperty("horizontal", 99);
         try { PonyExpressions.reload(new StringReader(bad.toString())); throw new AssertionError("非法移动限位被接受"); }
-        catch (IllegalArgumentException expected) { check(PonyExpressions.gazeLimits("01").horizontal() < 1, "非法限位保留上一份配置"); }
+        catch (IllegalArgumentException expected) { check(PonyExpressions.gazeLimits("01").horizontal() < 2.5f, "非法限位保留上一份配置"); }
         bad = JsonParser.parseString(original).getAsJsonObject();
-        bad.getAsJsonObject("eye_styles").getAsJsonObject("03").getAsJsonObject("gaze_limits").getAsJsonObject("left").addProperty("outward", 0.99);
+        bad.getAsJsonObject("eye_styles").getAsJsonObject("03").getAsJsonObject("gaze_limits").getAsJsonObject("left").addProperty("outward", 1.2);
         try { PonyExpressions.reload(new StringReader(bad.toString())); throw new AssertionError("超出眼型总限位的单眼配置被接受"); }
-        catch (IllegalArgumentException expected) { check(PonyExpressions.gazeLimits("03").left().outward() < 0.99, "非法单眼限位保留原配置"); }
+        catch (IllegalArgumentException expected) { check(PonyExpressions.gazeLimits("03").left().outward() < 1.2, "非法单眼限位保留原配置"); }
         check(PonyExpressions.gazeLimits("01").left().equals(PonyExpressions.gazeLimits("01").right()), "省略单眼配置时继承公共限位");
         check(PonyExpressions.gazeLimits("03").left().outward() < PonyExpressions.gazeLimits("03").right().outward(), "03 两眼独立校准");
         var legacy = JsonParser.parseString(original).getAsJsonObject();

@@ -28,12 +28,16 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
     private boolean usingPalette;
     private VertexConsumerProvider eyeBuffers;
     private RenderLayer eyeLayer, pupilLayer;
+    private EyeApertureRender eyeAperture;
     private Matrix4f gazeFrame;
     private float gazePartialTick;
     private final PonyGazeMath.Smoother gazeSmoother = new PonyGazeMath.Smoother();
+    private final PonyTurnGaze turnGaze = new PonyTurnGaze();
+    private final PonyGuiGaze.Tracker guiGaze = new PonyGuiGaze.Tracker();
     private final HornGlowGeometry hornGlow = new HornGlowGeometry();
     private AuraCapture auraCapture;
     private boolean headLookActive;
+    private final PonyBackwardHeadPose backwardHeadPose = new PonyBackwardHeadPose();
 
     private static final class AuraCapture {
         final java.util.Set<RenderLayer> layers = new java.util.LinkedHashSet<>();
@@ -103,7 +107,10 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         try (HeadPose head = applyHeadLook(bone, animatable);
                 PonyFacePose face = "Emotions".equals(bone.getName())
                 ? PonyFacePose.apply(bone) : null) {
-            if (face != null) applyGaze(poseStack, bone, face, animatable, config == null ? "01" : config.eyeStyle);
+            if (face != null) {
+                String style = config == null ? "01" : config.eyeStyle;
+                applyGaze(poseStack, bone, face, animatable, style);
+            }
             String name = bone.getName().toLowerCase();
             // 翅膀使用身体图集，只有鬃毛和尾巴使用第二张贴图。
             boolean isOther = name.contains("mane") || name.contains("tail");
@@ -120,6 +127,8 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             boolean previousPalette = usingPalette;
             VertexConsumerProvider previousBuffers = eyeBuffers;
             RenderLayer previousEye = eyeLayer, previousPupil = pupilLayer;
+            EyeApertureRender previousAperture = eyeAperture;
+            eyeAperture = EyeApertureRender.begin(poseStack, bone);
             eyeBuffers = null;
             if (EyeMaterials.isEyeBone(bone.getName())) {
                 Identifier pupil = EyeTintTextures.get(config, true);
@@ -137,13 +146,16 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                 eyeBuffers = previousBuffers;
                 eyeLayer = previousEye;
                 pupilLayer = previousPupil;
+                eyeAperture = previousAperture;
             }
         }
     }
 
     private HeadPose applyHeadLook(GeoBone bone, GeckoPlayerAnimatable animatable) {
         // 仅世界渲染注入设置此frame，主预览和静态缩略图都不跟随玩家视角。
-        if (!PonyHeadLookMath.shouldApply(gazeFrame != null, headLookActive, bone.getName())) return null;
+        if (gazeFrame == null || headLookActive) return null;
+        boolean neck = "Neck".equals(bone.getName());
+        if (!neck && !"Head".equals(bone.getName())) return null;
         var player = animatable.getPlayer();
         if (player == null || !player.isAlive()) return null;
         PonyHeadLookMath.Pose pose = player.isSleeping() ? PonyHeadLookMath.Pose.SLEEPING
@@ -153,25 +165,36 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                         ? PonyHeadLookMath.Pose.SWIMMING : PonyHeadLookMath.Pose.NORMAL;
         var rotation = PonyHeadLookMath.sample(player.prevBodyYaw, player.bodyYaw, player.prevHeadYaw, player.headYaw,
                 player.prevPitch, player.getPitch(), gazePartialTick, pose);
+        if (neck) {
+            GeoBone head = bone.getChildBones().stream().filter(child -> "Head".equals(child.getName())).findFirst().orElse(null);
+            if (head == null) return null;
+            var target = backwardHeadPose.sample(player, bone, head, animatable.backwardLook(gazePartialTick), rotation);
+            return target == null ? null : new HeadPose(this, bone, head, target);
+        }
         if (rotation.pitch() == 0 && rotation.yaw() == 0) return null;
         return new HeadPose(this, bone, rotation);
     }
 
     static final class HeadPose implements AutoCloseable {
         private final PonyRenderer renderer;
-        private final GeoBone bone;
-        private final float x, y, z;
-        private final boolean rotationChanged, positionChanged, scaleChanged;
+        private final SavedBone first;
+        private SavedBone second;
         private boolean closed;
 
         HeadPose(PonyRenderer renderer, GeoBone bone, PonyHeadLookMath.Rotation rotation) {
             this.renderer = renderer;
-            this.bone = bone;
-            x = bone.getRotX(); y = bone.getRotY(); z = bone.getRotZ();
-            rotationChanged = bone.hasRotationChanged();
-            positionChanged = bone.hasPositionChanged();
-            scaleChanged = bone.hasScaleChanged();
-            bone.updateRotation(x + rotation.pitch(), y + rotation.yaw(), z);
+            first = new SavedBone(bone);
+            bone.updateRotation(first.x + rotation.pitch(), first.y + rotation.yaw(), first.z);
+            if (renderer != null) renderer.headLookActive = true;
+        }
+
+        HeadPose(PonyRenderer renderer, GeoBone neck, GeoBone head, PonyBackwardHeadPose.Rotations rotations) {
+            this.renderer = renderer;
+            first = new SavedBone(neck);
+            second = new SavedBone(head);
+            var n = rotations.neck(); var h = rotations.head();
+            neck.updateRotation(n.x(), n.y(), n.z());
+            head.updateRotation(h.x(), h.y(), h.z());
             if (renderer != null) renderer.headLookActive = true;
         }
 
@@ -179,32 +202,63 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             if (closed) return;
             closed = true;
             try {
+                first.restore();
+                if (second != null) second.restore();
+            } finally {
+                if (renderer != null) renderer.headLookActive = false;
+            }
+        }
+
+        private static final class SavedBone {
+            final GeoBone bone;
+            final float x, y, z;
+            final boolean rotationChanged, positionChanged, scaleChanged;
+            SavedBone(GeoBone bone) {
+                this.bone = bone;
+                x = bone.getRotX(); y = bone.getRotY(); z = bone.getRotZ();
+                rotationChanged = bone.hasRotationChanged();
+                positionChanged = bone.hasPositionChanged();
+                scaleChanged = bone.hasScaleChanged();
+            }
+            void restore() {
                 bone.updateRotation(x, y, z);
                 bone.resetStateChanges();
                 if (rotationChanged) bone.markRotationAsChanged();
                 if (positionChanged) bone.markPositionAsChanged();
                 if (scaleChanged) bone.markScaleAsChanged();
-            } finally {
-                if (renderer != null) renderer.headLookActive = false;
             }
         }
     }
 
     private void applyGaze(MatrixStack stack, GeoBone root, PonyFacePose face, GeckoPlayerAnimatable animatable, String style) {
         var player = animatable.getPlayer();
+        var gui = PonyGuiGaze.current();
+        if (gui != null) {
+            if (gui.entity() == player && animatable.allowsAutomaticGaze() && face.allowsGaze())
+                applyGuiGaze(stack, root, face, style, gui);
+            return;
+        }
         if (gazeFrame == null || !Config.getInstance().automaticGaze || !animatable.allowsAutomaticGaze()
                 || player == null || !player.isAlive() || player.isSleeping() || !face.allowsGaze()) {
             gazeSmoother.reset();
+            turnGaze.reset();
             return;
         }
         GeoBone left = face.pupil(style, true);
         GeoBone right = face.pupil(style, false);
         if (left == null || right == null || left.getParent() != right.getParent()) {
             gazeSmoother.reset();
+            turnGaze.reset();
             return;
         }
-        PonyGazeMath.Offset desired = PonyGazeMath.Offset.ZERO;
         var target = ClientGaze.targetFor(player);
+        double ticks = (double) player.age + gazePartialTick;
+        float viewYaw = net.minecraft.util.math.MathHelper.lerpAngleDegrees(gazePartialTick, player.prevHeadYaw, player.headYaw);
+        float viewPitch = net.minecraft.util.math.MathHelper.lerp(gazePartialTick, player.prevPitch, player.getPitch());
+        var turn = turnGaze.sample(player, player.getWorld(), ticks, viewYaw, viewPitch,
+                player.getX(), player.getY(), player.getZ(), target != null);
+        if (turn.resetSmoothing()) gazeSmoother.reset();
+        PonyGazeMath.Offset desired = turn.offset();
         if (target != null) {
             Vec3d relative = target.getLerpedPos(gazePartialTick).add(0, target.getEyeHeight(target.getPose()), 0)
                     .subtract(player.getLerpedPos(gazePartialTick));
@@ -231,8 +285,37 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                 stack.pop();
             }
         }
-        var offset = gazeSmoother.step(desired, player.age + gazePartialTick);
+        var offset = gazeSmoother.step(desired, ticks);
         face.gaze(style, offset.x(), offset.y());
+    }
+
+    private void applyGuiGaze(MatrixStack stack, GeoBone root, PonyFacePose face, String style, PonyGuiGaze.Frame gui) {
+        GeoBone left = face.pupil(style, true), right = face.pupil(style, false);
+        if (left == null || right == null || left.getParent() != right.getParent()) return;
+        var path = new java.util.ArrayDeque<GeoBone>();
+        for (GeoBone bone = left.getParent(); bone != null; bone = bone.getParent()) {
+            path.addFirst(bone);
+            if (bone == root) break;
+        }
+        if (path.peekFirst() != root) return;
+        stack.push();
+        try {
+            for (GeoBone bone : path) {
+                if (Math.abs(bone.getScaleX() * bone.getScaleY() * bone.getScaleZ()) < .001f) return;
+                RenderUtils.prepMatrixForBone(stack, bone);
+            }
+            Vector3f center = new Vector3f(
+                    (left.getPivotX() + right.getPivotX() - left.getPosX() - right.getPosX()) / 32f,
+                    (left.getPivotY() + right.getPivotY() + left.getPosY() + right.getPosY()) / 32f,
+                    (left.getPivotZ() + right.getPivotZ() + left.getPosZ() + right.getPosZ()) / 32f);
+            var desired = PonyGuiGaze.project(gui, stack.peek().getPositionMatrix(),
+                    com.mojang.blaze3d.systems.RenderSystem.getModelViewMatrix(),
+                    com.mojang.blaze3d.systems.RenderSystem.getProjectionMatrix(), center);
+            var offset = guiGaze.step(gui, desired);
+            face.gaze(style, offset.x(), offset.y());
+        } finally {
+            stack.pop();
+        }
     }
 
     @Override
@@ -244,7 +327,12 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         ModelConfig config = getEffectiveConfig();
         var player = animatable.getPlayer();
         if ((config != null && !config.showHorn) || player == null || player.isInvisible() || player.isSpectator()
-                || (player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty())) return;
+                || !player.isAlive()) return;
+        boolean worldHorn = gazeFrame != null && HornAuraPass.isWorld();
+        float progress = worldHorn ? MagicEquip.hornProgress(player, partialTick)
+                : player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty() ? 0 : 1;
+        if (progress <= 0) return;
+        int ignition = Math.round(net.minecraft.util.math.MathHelper.clamp(progress, 0, 1) * 32767);
 
         int color = GlowingItem.getGlowColor(config);
         float cr = (color >>> 16 & 255) / 255f, cg = (color >>> 8 & 255) / 255f, cb = (color & 255) / 255f;
@@ -261,18 +349,18 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                 for (var shell : hornGlow.shells(cube)) {
                     pose.push();
                     try {
-                        renderCube(pose, shell, glow, 0xF000F0, clock, cr, cg, cb, 0.26f - layer++ * 0.09f);
+                        renderCube(pose, shell, glow, ignition, clock | 4 << 16, cr, cg, cb, 0.26f - layer++ * 0.09f);
                     } finally {
                         pose.pop();
                     }
                 }
-                renderMagicStars(pose, cube, glow, ticks, seed, cr, cg, cb, clock);
+                renderMagicStars(pose, cube, glow, ticks, seed, cr, cg, cb, clock, progress);
             }
         });
     }
 
     private void renderMagicStars(MatrixStack stack, software.bernie.geckolib.cache.object.GeoCube cube,
-            VertexConsumer buffer, double ticks, int seed, float red, float green, float blue, int clock) {
+            VertexConsumer buffer, double ticks, int seed, float red, float green, float blue, int clock, float progress) {
         stack.push();
         try {
             RenderUtils.translateToPivotPoint(stack, cube);
@@ -288,11 +376,16 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             for (int slot = 0; slot < 4; slot++) {
                 var star = MagicSparkles.sample(ticks, seed, slot);
                 if (star == null) continue;
+                float height = net.minecraft.util.math.MathHelper.clamp((center.y + star.y() - bounds[0].y)
+                        / Math.max(bounds[1].y - bounds[0].y, .0001f), 0, 1);
+                float ignition = net.minecraft.util.math.MathHelper.clamp((progress * 1.16f - height) / .16f, 0, 1);
+                float opacity = star.alpha() * ignition * ignition * (3 - 2 * ignition);
+                if (opacity <= 0) continue;
                 Vector3f position = stack.peek().getPositionMatrix().transformPosition(new Vector3f(center).add(star.x(), star.y(), star.z()));
                 for (int corner = 0; corner < 4; corner++) {
                     float x = corner == 0 || corner == 3 ? -1 : 1, y = corner < 2 ? -1 : 1;
                     Vector3f point = new Vector3f(position).fma(x * star.radius(), right).fma(y * star.radius(), up);
-                    buffer.vertex(point.x, point.y, point.z).color(red, green, blue, star.alpha())
+                    buffer.vertex(point.x, point.y, point.z).color(red, green, blue, opacity)
                             .texture((x + 1) * 0.5f, (y + 1) * 0.5f).overlay(clock, 1).light(0xF000F0)
                             .normal(normal.x, normal.y, normal.z).next();
                 }
@@ -308,7 +401,13 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             float red, float green, float blue, float alpha) {
         ModelConfig config = getEffectiveConfig();
         if (config == null) {
-            super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            if (eyeAperture == null)
+                super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+            else if (!bone.isHidden()) for (var cube : bone.getCubes()) {
+                poseStack.push();
+                try { eyeAperture.cube(poseStack, cube, buffer, packedLight, packedOverlay, red, green, blue, alpha); }
+                finally { poseStack.pop(); }
+            }
             return;
         }
 
@@ -341,7 +440,9 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                     VertexConsumer eyeBuffer = eyeBuffers.getBuffer(EyeMaterials.isPupil(cube) ? pupilLayer : eyeLayer);
                     poseStack.push();
                     try {
-                        renderCube(poseStack, cube, eyeBuffer, packedLight, packedOverlay, red, green, blue, alpha);
+                        if (eyeAperture == null)
+                            renderCube(poseStack, cube, eyeBuffer, packedLight, packedOverlay, red, green, blue, alpha);
+                        else eyeAperture.cube(poseStack, cube, eyeBuffer, packedLight, packedOverlay, red, green, blue, alpha);
                     } finally {
                         poseStack.pop();
                     }

@@ -156,7 +156,7 @@ public final class PonyExpressions {
 
     private static float limit(JsonObject values, String name) {
         float value = values.get(name).getAsFloat();
-        if (!Float.isFinite(value) || value < 0 || value > 1) throw new IllegalArgumentException("无效眼仁移动上限: " + name);
+        if (!Float.isFinite(value) || value < 0 || value > 2.5f) throw new IllegalArgumentException("无效眼仁移动上限: " + name);
         return value;
     }
 

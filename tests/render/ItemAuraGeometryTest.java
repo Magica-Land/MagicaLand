@@ -37,8 +37,8 @@ public final class ItemAuraGeometryTest {
             for (int i = 0; i < output.values.size(); i++) {
                 Sample sample = output.values.get(i);
                 Vector3f local = inverse.transformPosition(new Vector3f(sample.x, sample.y, sample.z));
-                check(Math.abs(local.x) < 0.60f && Math.abs(local.y) < 0.60f && Math.abs(local.z) < 0.04f,
-                        "expanded sprite follows silhouette tightly at all preview scales/handedness");
+                check(Math.abs(local.x) < 0.63f && Math.abs(local.y) < 0.63f && Math.abs(local.z) < 0.06f,
+                        "thicker sprite shell remains bounded at all preview scales/handedness");
                 check(sample.effect == 2 && sample.clock == 1200, "per-vertex item flow metadata");
                 check(sample.height == (i % 4 < 2 ? 0 : 32767), "flow spans complete local height");
                 Sample source = original.values.get(i % 8);
@@ -61,6 +61,24 @@ public final class ItemAuraGeometryTest {
         sprite(second, pose.peek(), 0.03f, -1);
         check(capture.finish().batches.size() == 2, "special item textures remain separate");
 
+        for (int alpha : new int[] {0, 64, 128, 255}) {
+            var faded = new ItemAuraGeometry.Capture(pose.peek());
+            Sink forwarded = new Sink();
+            sprite(faded.wrap(forwarded, ATLAS), pose.peek(), 0, 1, alpha);
+            var mesh = faded.finish();
+            Sink output = new Sink();
+            mesh.render(mesh.batches.get(0), output, 0x6611CC, 1200);
+            for (Sample originalSample : forwarded.values)
+                check(near(originalSample.alpha, alpha / 255f), "original item alpha is not amplified");
+            for (int layer = 0; layer < ItemAuraGeometry.OPACITY.length; layer++) for (int vertex = 0; vertex < 4; vertex++) {
+                Sample sample = output.values.get(layer * 4 + vertex);
+                float expected = (int) (ItemAuraGeometry.OPACITY[layer] * (alpha / 255f) * 255) / 255f;
+                check(near(sample.alpha, expected), "thickness change preserves source alpha and layer opacity");
+                check(sample.u == forwarded.values.get(vertex).u && sample.v == forwarded.values.get(vertex).v,
+                        "transparent sprite UV coverage unchanged");
+            }
+        }
+
         var limited = new ItemAuraGeometry.Capture(pose.peek());
         Sink sink = new Sink();
         VertexConsumer recorder = limited.wrap(sink, ATLAS);
@@ -74,11 +92,15 @@ public final class ItemAuraGeometryTest {
     }
 
     private static void sprite(VertexConsumer consumer, MatrixStack.Entry root, float z, float normalZ) {
+        sprite(consumer, root, z, normalZ, 255);
+    }
+
+    private static void sprite(VertexConsumer consumer, MatrixStack.Entry root, float z, float normalZ, int alpha) {
         for (int i = 0; i < 4; i++) {
             float x = i == 0 || i == 3 ? -0.5f : 0.5f, y = i < 2 ? -0.5f : 0.5f;
             Vector3f position = root.getPositionMatrix().transformPosition(new Vector3f(x, y, z));
             Vector3f normal = root.getNormalMatrix().transform(new Vector3f(0, 0, normalZ));
-            consumer.vertex(position.x, position.y, position.z).color(255, 255, 255, 255)
+            consumer.vertex(position.x, position.y, position.z).color(255, 255, 255, alpha)
                     .texture(0.3f + (x + 0.5f) * 0.05f, 0.6f + (y + 0.5f) * 0.1f)
                     .overlay(0, 0).light(240, 240).normal(normal.x, normal.y, normal.z).next();
         }

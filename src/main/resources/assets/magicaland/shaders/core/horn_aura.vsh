@@ -30,4 +30,6 @@ void main() {
     flowTime = float(UV1.x) * 0.001;
     effect = UV1.y;
     if (effect == 2) flowTime -= float(UV2.y) / 32767.0 * 6.0;
+    // 每只角的点亮进度随顶点提交，不污染同批次其他光效。
+    if (effect == 4) effect |= clamp(UV2.x, 0, 32767) << 3;
 }

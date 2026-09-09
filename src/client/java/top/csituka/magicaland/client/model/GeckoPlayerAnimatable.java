@@ -11,6 +11,9 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import top.csituka.magicaland.client.animation.PonyExpressions;
+import top.csituka.magicaland.client.animation.PonyBackwardLook;
+import top.csituka.magicaland.client.animation.PonyIdleEars;
+import top.csituka.magicaland.client.animation.PonyIdleEarAnimations;
 import top.csituka.magicaland.client.network.ClientNetworkHandler;
 
 import java.util.HashMap;
@@ -22,6 +25,9 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     private AbstractClientPlayerEntity player;
     private String mainAnimationName;
     private String expressionAction;
+    private final PonyBackwardLook backwardLook = new PonyBackwardLook();
+    private final PonyIdleEars idleEars = new PonyIdleEars();
+    private long earEventWindow = Long.MIN_VALUE;
 
     private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
     private static final RawAnimation ELYTRA_FLY_ANIM = RawAnimation.begin().thenLoop("elytra_fly");
@@ -34,7 +40,6 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation BLINK_ANIM = RawAnimation.begin().thenLoop("blink_parallel");
-    private static final RawAnimation EAR_ANIM = RawAnimation.begin().thenLoop("ear_parallel");
     private static final RawAnimation TAIL_ANIM = RawAnimation.begin().thenLoop("tail_parallel");
     private static final RawAnimation ATTACKED_ANIM = RawAnimation.begin().thenPlay("attacked");
     private static final RawAnimation JUMP_ANIM = RawAnimation.begin().thenPlayAndHold("jump1");
@@ -67,10 +72,14 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     }
 
     public void setPlayer(AbstractClientPlayerEntity player) {
-        if (this.player != null && (player == null || !this.player.getUuid().equals(player.getUuid()))) {
-            fallStates.remove(this.player.getUuid());
+        if (this.player != player) {
+            if (this.player != null)
+                fallStates.remove(this.player.getUuid());
             mainAnimationName = null;
             expressionAction = null;
+            backwardLook.reset();
+            idleEars.reset();
+            earEventWindow = Long.MIN_VALUE;
         }
         this.player = player;
     }
@@ -80,7 +89,21 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     }
 
     public boolean allowsAutomaticGaze() {
-        return player != null && PonyExpressions.allowsAutomaticGaze(mainAnimationName);
+        return player != null && PonyExpressions.allowsAutomaticGaze(effectiveExpressionAction());
+    }
+
+    public PonyBackwardLook.Frame backwardLook(float partialTick) {
+        return backwardLook.sample(player == null ? 0 : player.age + Math.max(0, Math.min(1, partialTick)));
+    }
+
+    private String effectiveExpressionAction() {
+        String action = mainAnimationName == null ? "idle" : mainAnimationName;
+        return backwardLook.expressionAction(action, player == null ? 0 : player.age);
+    }
+
+    private void setMainAnimation(String name) {
+        mainAnimationName = name;
+        backwardLook.update("backward_walk".equals(name), player == null ? 0 : player.age);
     }
 
     @Override
@@ -88,7 +111,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         controllers.add(new AnimationController<>(this, "controller", 3, this::predicate));
         controllers.add(new AnimationController<>(this, "blink_controller", 3, this::blinkPredicate));
         controllers.add(new AnimationController<>(this, "expression_controller", 3, this::expressionPredicate));
-        controllers.add(new AnimationController<>(this, "ear_controller", 3, this::earPredicate));
+        controllers.add(new AnimationController<>(this, "ear_controller", 1, this::earPredicate));
         controllers.add(new AnimationController<>(this, "tail_controller", 3, this::tailPredicate));
     }
 
@@ -140,7 +163,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     }
 
     private PlayState expressionPredicate(AnimationState<GeckoPlayerAnimatable> state) {
-        String action = mainAnimationName == null ? "idle" : mainAnimationName;
+        String action = effectiveExpressionAction();
         if (!action.equals(expressionAction)) {
             state.getController().forceAnimationReset();
             expressionAction = action;
@@ -150,15 +173,28 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     }
 
     private PlayState earPredicate(AnimationState<GeckoPlayerAnimatable> state) {
-        if (player == null)
-            return stopAnimation(state);
-
-        PlayState remoteState = applyRemoteAnimation(state);
-        if (remoteState != null)
-            return remoteState;
-        if (!isIdle())
-            return stopAnimation(state);
-        return playAnimation(state, new AnimationSelection("ear_parallel", EAR_ANIM));
+        boolean permission = player != null && (isLocalPlayer()
+                || !ClientNetworkHandler.hasRemoteAnimation(player.getUuid(), "ear_controller")
+                || "ear_parallel".equals(ClientNetworkHandler.getRemoteAnimation(player.getUuid(), "ear_controller")));
+        boolean allowed = PonyIdleEars.allowed(mainAnimationName,
+                player != null && player.isAlive() && !player.isSpectator() && isIdle(), permission);
+        if (isLocalPlayer()) ClientNetworkHandler.sendAnimation("ear_controller", allowed ? "ear_parallel" : "");
+        var event = player == null ? null : idleEars.sample(player, player.getWorld(), player.getUuid(),
+                player.getWorld().getTime() + (double) state.getPartialTick(), allowed);
+        if (event == null) {
+            earEventWindow = Long.MIN_VALUE;
+            state.getController().stop();
+            return PlayState.STOP;
+        }
+        if (earEventWindow != event.window()) {
+            earEventWindow = event.window();
+            state.getController().forceAnimationReset();
+        } else if (state.getController().hasAnimationFinished()) {
+            state.getController().stop();
+            return PlayState.STOP;
+        }
+        state.getController().setAnimation(PonyIdleEarAnimations.raw(event.variant()));
+        return PlayState.CONTINUE;
     }
 
     private PlayState tailPredicate(AnimationState<GeckoPlayerAnimatable> state) {
@@ -195,7 +231,9 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         ClientNetworkHandler.sendAnimation("blink_controller", "blink_parallel");
 
         boolean idle = isIdle();
-        ClientNetworkHandler.sendAnimation("ear_controller", idle ? "ear_parallel" : "");
+        boolean earAllowed = PonyIdleEars.allowed(main == null ? null : main.name(),
+                idle && player.isAlive() && !player.isSpectator(), true);
+        ClientNetworkHandler.sendAnimation("ear_controller", earAllowed ? "ear_parallel" : "");
         ClientNetworkHandler.sendAnimation("tail_controller", idle ? "tail_parallel" : "");
     }
 
@@ -312,7 +350,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
 
         String name = ClientNetworkHandler.getRemoteAnimation(player.getUuid(), controller);
         if (name == null || name.isEmpty()) {
-            if ("controller".equals(controller)) mainAnimationName = null;
+            if ("controller".equals(controller)) setMainAnimation(null);
             state.getController().stop();
             return PlayState.STOP;
         }
@@ -321,11 +359,11 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         if (animation == null)
             return null;
 
-        if ("controller".equals(controller)) mainAnimationName = name;
+        if ("controller".equals(controller)) setMainAnimation(name);
 
         if (isOneShot(controller, name) && state.getController().getCurrentRawAnimation() == animation
                 && state.getController().hasAnimationFinished()) {
-            if ("controller".equals(controller)) mainAnimationName = null;
+            if ("controller".equals(controller)) setMainAnimation(null);
             state.getController().stop();
             return PlayState.STOP;
         }
@@ -337,8 +375,6 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     private RawAnimation getAnimation(String controller, String name) {
         if ("blink_controller".equals(controller))
             return "blink_parallel".equals(name) ? BLINK_ANIM : null;
-        if ("ear_controller".equals(controller))
-            return "ear_parallel".equals(name) ? EAR_ANIM : null;
         if ("tail_controller".equals(controller))
             return "tail_parallel".equals(name) ? TAIL_ANIM : null;
         if (!"controller".equals(controller))
@@ -375,7 +411,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     }
 
     private PlayState playAnimation(AnimationState<GeckoPlayerAnimatable> state, AnimationSelection selection) {
-        if ("controller".equals(state.getController().getName())) mainAnimationName = selection.name();
+        if ("controller".equals(state.getController().getName())) setMainAnimation(selection.name());
         state.getController().setAnimation(selection.animation());
         if (isLocalPlayer()) {
             ClientNetworkHandler.sendAnimation(state.getController().getName(), selection.name());
@@ -384,7 +420,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     }
 
     private PlayState stopAnimation(AnimationState<GeckoPlayerAnimatable> state) {
-        if ("controller".equals(state.getController().getName())) mainAnimationName = null;
+        if ("controller".equals(state.getController().getName())) setMainAnimation(null);
         state.getController().stop();
         if (isLocalPlayer()) {
             ClientNetworkHandler.sendAnimation(state.getController().getName(), "");

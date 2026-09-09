@@ -6,12 +6,12 @@ public final class MagicSparkles {
 
     public static Spark sample(double ticks, int seed, int slot) {
         if (!Double.isFinite(ticks) || slot < 0 || slot >= 4) return null;
-        int period = 110 + Math.floorMod(seed, 40);
+        int period = 60 + Math.floorMod(seed, 21);
         double clock = ticks + Math.floorMod(seed, period);
         long cycle = (long) Math.floor(clock / period);
         int count = 2 + (int) Math.floorMod(cycle + seed, 3);
         if (slot >= count) return null;
-        double progress = (clock - cycle * period - 36 - slot * 2) / 18;
+        double progress = (clock - cycle * period - 14 - slot * 2) / 18;
         if (progress <= 0 || progress >= 1) return null;
         double angle = slot * 2.39996 + Math.floorMod(seed, 100) * 0.06283 + Math.floorMod(cycle, 16) * 0.65;
         float spread = (float) (0.075 + 0.055 * progress);

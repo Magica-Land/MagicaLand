@@ -46,8 +46,8 @@
     "empty": "neutral"
   },
   "eye_styles": {
-    "01": {"normal": "CommonFace", "left_pupil": "leye", "right_pupil": "reye", "gaze_limits": {"horizontal": 0.94, "up": 0.18, "down": 0.46}},
-    "02": {"normal": "Style02CommonFace", "left_pupil": "leye3", "right_pupil": "reye3", "gaze_limits": {"horizontal": 0.94, "up": 0.42, "down": 0.46}},
-    "03": {"normal": "Style03CommonFace", "left_pupil": "leye2", "right_pupil": "reye2", "happy": "Style03Smile", "gaze_limits": {"horizontal": 0.78, "up": 0.24, "down": 0.46, "left": {"outward": 0.68, "up": 0.24, "down": 0.46}, "right": {"outward": 0.78, "up": 0.24, "down": 0.46}}}
+    "01": {"normal": "CommonFace", "left_pupil": "leye", "right_pupil": "reye", "gaze_limits": {"horizontal": 1.2, "up": 1.05, "down": 1.2}},
+    "02": {"normal": "Style02CommonFace", "left_pupil": "leye3", "right_pupil": "reye3", "gaze_limits": {"horizontal": 1.2, "up": 0.45, "down": 1.2}},
+    "03": {"normal": "Style03CommonFace", "left_pupil": "leye2", "right_pupil": "reye2", "happy": "Style03Smile", "gaze_limits": {"horizontal": 0.65, "up": 0.85, "down": 1.2, "left": {"outward": 0.6, "up": 0.85, "down": 1.2}, "right": {"outward": 0.65, "up": 0.85, "down": 1.2}}}
   }
 }

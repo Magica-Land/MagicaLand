@@ -120,7 +120,7 @@ public final class MagicHeldItemSounds {
                 }
             }
             if (LOOPS.size() >= MagicSoundState.MAX_LOOPS) continue;
-            Voice voice = new Voice(AURA, observation, .035f, true);
+            Voice voice = new Voice(AURA, observation, .070f, true);
             voice.update(entities.get(observation.id()), observation.distance(), true);
             LOOPS.put(observation.id(), voice);
             sounds.play(voice);
@@ -139,7 +139,7 @@ public final class MagicHeldItemSounds {
             MagicSoundState.Observation observation = frame.eligible().get(event.id());
             if (observation == null) continue;
             boolean cast = event.burst() == MagicSoundState.Burst.CAST;
-            Voice voice = new Voice(cast ? CAST : END, observation, cast ? .12f : .09f, false);
+            Voice voice = new Voice(cast ? CAST : END, observation, cast ? .24f : .18f, false);
             voice.update(entities.get(event.id()), observation.distance(), true);
             Voice previous = BURSTS.put(event.id(), voice);
             if (previous != null) previous.finish(sounds);

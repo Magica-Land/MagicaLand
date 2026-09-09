@@ -30,6 +30,7 @@ public final class ItemLevitation {
     public static void init() {
         if (initialized) return;
         initialized = true;
+        MagicEquip.init();
         WorldRenderEvents.START.register(context -> {
             boolean first = MinecraftClient.getInstance().options.getPerspective().isFirstPerson();
             if (trackedWorld != context.world() || trackedFirstPerson != first) clear();
@@ -63,6 +64,10 @@ public final class ItemLevitation {
         Matrix4f inverseFrame = new Matrix4f(entityFrame).invert();
         Vector3f anchor = inverseFrame.transformPosition(anchorFrame.transformPosition(new Vector3f(), new Vector3f()));
         LevitationMotion.Point target = point(player).add(point(anchor));
+        Vector3f entrance = vector(MagicEquipMotion.springTarget(MagicEquip.progress(entity, main, delta), left, false));
+        anchorFrame.transformDirection(entrance);
+        inverseFrame.transformDirection(entrance);
+        target = target.add(point(entrance));
         Matrix3f worldToRender = new Matrix3f(entityFrame);
         float yaw = MathHelper.lerpAngleDegrees(delta, entity.prevBodyYaw, entity.bodyYaw);
         return apply(entity, stack, main, left, false, matrices, target, point(player), worldToRender,
@@ -81,6 +86,7 @@ public final class ItemLevitation {
         Matrix3f worldToRender = new Matrix3f().rotation(new Quaternionf(rotation).conjugate());
         Vector3f anchor = new Vector3f(left ? -.71f : .71f, -.32f, -1.12f).rotate(rotation);
         LevitationMotion.Point target = point(cameraPosition).add(point(anchor));
+        target = target.add(point(vector(MagicEquipMotion.springTarget(MagicEquip.progress(entity, main, delta), left, true)).rotate(rotation)));
         return apply(entity, stack, main, left, true, matrices, target, point(entity.getLerpedPos(delta)),
                 worldToRender, new Matrix4f().set(worldToRender), point(cameraPosition),
                 entity.getYaw(delta), delta);
@@ -97,22 +103,26 @@ public final class ItemLevitation {
         STATES.sample(entry, target, player, yaw, time, using);
         if (entry.pose == null || !target.finite()) return LevitationTrail.EMPTY;
         Matrix3f renderToLocal = new Matrix3f(matrices.peek().getPositionMatrix()).invert();
-        Vector3f displacement = worldToRender.transform(vector(entry.pose.offset()), new Vector3f());
+        double flight = MagicEquipMotion.flight(MagicEquip.progress(entity, main, delta));
+        Vector3f displacement = worldToRender.transform(vector(entry.pose.offset().multiply(flight)), new Vector3f());
         renderToLocal.transform(displacement);
         Vector3f yawAxis = worldToRender.transform(new Vector3f(0, 1, 0), new Vector3f());
         renderToLocal.transform(yawAxis);
         if (!displacement.isFinite() || !yawAxis.isFinite() || yawAxis.lengthSquared() < 1e-10f)
             return LevitationTrail.EMPTY;
         matrices.translate(displacement.x, displacement.y, displacement.z);
-        matrices.multiply(new Quaternionf().rotationAxis((float) Math.toRadians(-entry.pose.yaw()), yawAxis.normalize()));
+        matrices.multiply(new Quaternionf().rotationAxis((float) Math.toRadians(-entry.pose.yaw() * flight), yawAxis.normalize()));
+        float scale = MagicEquip.scale(entity, main, delta);
+        // 调用方在零尺寸时不绘制；此处只缩物品局部，不缩飞行路径。
+        if (scale > 0 && scale < 1) matrices.scale(scale, scale, scale);
         boolean sprinting = entity.isSprinting();
         Matrix4f inverseWorld = new Matrix4f(worldFrame).invert();
         // ItemRenderer 的显示变换也会移动几何中心，等 capture 完成再记录尾迹。
         return LevitationTrail.deferred(center -> {
             Vector3f actualRelative = inverseWorld.transformPosition(new Vector3f(center));
             LevitationMotion.Point actual = origin.add(point(actualRelative));
-            var trail = STATES.recordTrail(entry, actual, time, sprinting, using);
-            return LevitationTrail.create(trail, worldFrame, origin, (float) profile.trailWidth());
+            var trail = STATES.recordTrail(entry, actual, time, sprinting, using || flight < 1);
+            return LevitationTrail.create(trail, worldFrame, origin, entry.motion.trailWidth());
         });
     }
 

@@ -1,0 +1,100 @@
+package top.csituka.magicaland.client.render;
+
+import java.util.Arrays;
+import org.joml.Vector3f;
+
+public final class MagicPolishParametersTest {
+    private static int checks;
+
+    public static void main(String[] args) {
+        shellThickness();
+        sparkSchedule();
+        System.out.println("PASS magic polish parameters: " + checks + " shell displacement, unchanged opacity, star cadence/lifetime/count/size checks");
+    }
+
+    private static void shellThickness() {
+        check(Arrays.equals(ItemAuraGeometry.OPACITY, new float[] {.12f, .095f, .072f, .050f, .030f, .016f}),
+                "six shell layers and original opacities remain exact");
+        for (Vector3f center : new Vector3f[] {new Vector3f(), new Vector3f(2, -1, .75f)})
+            for (float extent : new float[] {.01f, .02f, .25f, 1, 4})
+                for (float direction : new float[] {-1, 0, 1})
+                    for (Vector3f normal : new Vector3f[] {new Vector3f(), new Vector3f(0, 0, 1),
+                            new Vector3f(0, 0, -1), new Vector3f(1, 2, -1).normalize()})
+                        for (int layer = 0; layer < 6; layer++) {
+                            Vector3f position = new Vector3f(center).add(direction * extent * .5f, extent * .3f, -extent * .1f);
+                            var vertex = new ItemAuraGeometry.Vertex(position.x, position.y, position.z, .32f, .74f,
+                                    normal.x, normal.y, normal.z, .4f);
+                            float extraDilation = .025f + layer * .024f;
+                            float push = extent * (.007f + layer * .004f);
+                            Vector3f oldOffset = new Vector3f(position).sub(center).mul(extraDilation).fma(push, normal);
+                            Vector3f expected = new Vector3f(position).fma(1.65f, oldOffset);
+                            Vector3f actual = ItemAuraGeometry.expanded(vertex, center, extent, layer);
+                            check(actual.isFinite() && actual.distance(expected) < .00001f,
+                                    "multiply only surface offset by 1.65, not original item or translation");
+                            check(vertex.x() == position.x && vertex.y() == position.y && vertex.z() == position.z
+                                    && vertex.u() == .32f && vertex.v() == .74f && vertex.alpha() == .4f,
+                                    "original vertex, alpha and UV remain unchanged");
+                            var centered = new ItemAuraGeometry.Vertex(center.x, center.y, center.z, 0, 0,
+                                    normal.x, normal.y, normal.z, 1);
+                            check(ItemAuraGeometry.expanded(centered, center, extent, layer)
+                                    .distance(new Vector3f(center).fma(push * 1.65f, normal)) < .00001f,
+                                    "normal push alone increases by 1.65");
+                        }
+    }
+
+    private static void sparkSchedule() {
+        boolean[] countsSeen = new boolean[5];
+        for (int index = -1; index <= 211; index++) {
+            int seed = index == -1 ? Integer.MIN_VALUE : index == 211 ? Integer.MAX_VALUE : index;
+            int period = 60 + Math.floorMod(seed, 21);
+            int phase = Math.floorMod(seed, period);
+            check(period >= 60 && period <= 80, "3–4 second cycle at 20 TPS");
+            for (long cycle = -3; cycle < 9; cycle++) {
+                int count = 2 + (int) Math.floorMod(cycle + seed, 3);
+                countsSeen[count] = true;
+                double start = cycle * period - phase + 14;
+                check(MagicSparkles.sample(start, seed, 0) == null && MagicSparkles.sample(start + .001, seed, 0) != null,
+                        "first star begins just after 14 tick batch offset");
+                check(MagicSparkles.sample(start + 18, seed, 0) == null, "first star lifetime is exactly 18 ticks");
+                check(MagicSparkles.sample(start + period, seed, 0) == null
+                                && MagicSparkles.sample(start + period + .001, seed, 0) != null,
+                        "next first-star onset follows the exact seeded period");
+                for (int slot = 0; slot < 4; slot++) {
+                    double birth = start + slot * 2;
+                    check(MagicSparkles.sample(birth, seed, slot) == null
+                                    && MagicSparkles.sample(birth + 18, seed, slot) == null,
+                            "exclusive birth/death endpoints unchanged");
+                    for (double progress : new double[] {.0001, .1, .5, .9, .9999}) {
+                        var star = MagicSparkles.sample(birth + progress * 18, seed, slot);
+                        if (slot >= count) { check(star == null, "batch contains only the selected 2–4 stars"); continue; }
+                        check(star != null, "all selected slots live for the full 18-tick interval");
+                        float radius = (.014f + slot * .002f) * (float) (.75 + progress * .7);
+                        float alpha = (float) Math.sin(progress * Math.PI) * .65f;
+                        check(near(star.radius(), radius) && near(star.alpha(), alpha), "radius and fade curves unchanged");
+                        check(near(star.y(), (float) progress * .14f)
+                                        && Math.abs(Math.hypot(star.x(), star.z()) - (.075 + .055 * progress)) < .00001,
+                                "rising motion and spread remain unchanged");
+                        check(star.radius() > 0 && star.radius() < .03f && star.alpha() > 0 && star.alpha() <= .65f,
+                                "stars remain tiny and softly faded");
+                    }
+                }
+                int activeFrames = 0;
+                for (int frame = 0; frame < period * 4; frame++) {
+                    double ticks = cycle * period - phase + frame * .25;
+                    int active = 0;
+                    for (int slot = 0; slot < 4; slot++) if (MagicSparkles.sample(ticks, seed, slot) != null) active++;
+                    check(active <= count && active <= 4, "concurrent count never exceeds batch limit");
+                    if (active > 0) activeFrames++;
+                }
+                check(activeFrames > 0 && activeFrames < period * 2, "more than half of every cycle remains quiet");
+            }
+        }
+        check(countsSeen[2] && countsSeen[3] && countsSeen[4], "all original batch sizes still occur");
+        for (double invalid : new double[] {Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY})
+            check(MagicSparkles.sample(invalid, 0, 0) == null, "invalid time remains safe");
+        check(MagicSparkles.sample(20, 0, -1) == null && MagicSparkles.sample(20, 0, 4) == null, "invalid slots remain safe");
+    }
+
+    private static boolean near(float first, float second) { return Math.abs(first - second) < .00001f; }
+    private static void check(boolean condition, String message) { checks++; if (!condition) throw new AssertionError(message); }
+}

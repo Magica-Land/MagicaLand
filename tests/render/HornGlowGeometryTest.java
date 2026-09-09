@@ -55,7 +55,7 @@ public final class HornGlowGeometryTest {
                 bursts[active]++;
                 if (active > 0) activeFrames++;
             }
-            check(activeFrames < 1500 && activeFrames > 0, "mostly quiet, occasional bursts only");
+            check(activeFrames < 3000 && activeFrames > 0, "3–4 second bursts still leave most frames without stars");
         }
         check(bursts[2] > 0 && bursts[3] > 0 && bursts[4] > 0, "2 to 4 stars occur");
         check(MagicSparkles.sample(Double.NaN, 0, 0) == null && MagicSparkles.sample(40, 0, 4) == null, "invalid inputs safe");

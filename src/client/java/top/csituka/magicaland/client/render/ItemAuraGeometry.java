@@ -14,6 +14,7 @@ import org.joml.Vector3f;
 
 final class ItemAuraGeometry {
     static final int MAX_VERTICES = 8192;
+    static final float EXPANSION_GAIN = 1.65f;
     static final float[] OPACITY = {0.12f, 0.095f, 0.072f, 0.050f, 0.030f, 0.016f};
     record Vertex(float x, float y, float z, float u, float v, float nx, float ny, float nz, float alpha) {}
     record Batch(Identifier texture, List<Vertex> vertices) {}
@@ -159,8 +160,8 @@ final class ItemAuraGeometry {
     }
 
     static Vector3f expanded(Vertex vertex, Vector3f center, float extent, int layer) {
-        float dilation = 1.025f + layer * 0.024f;
-        float push = extent * (0.007f + layer * 0.004f);
+        float dilation = 1 + (0.025f + layer * 0.024f) * EXPANSION_GAIN;
+        float push = extent * (0.007f + layer * 0.004f) * EXPANSION_GAIN;
         return new Vector3f(vertex.x, vertex.y, vertex.z).sub(center).mul(dilation).add(center)
                 .add(vertex.nx * push, vertex.ny * push, vertex.nz * push);
     }

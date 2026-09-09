@@ -33,6 +33,8 @@ import net.minecraft.client.render.VertexConsumer;
 import top.csituka.magicaland.client.render.GlowingItem;
 import top.csituka.magicaland.client.render.ItemLevitation;
 import top.csituka.magicaland.client.render.LevitationTrail;
+import top.csituka.magicaland.client.render.MagicEquip;
+import top.csituka.magicaland.client.render.MagicEquipMotion;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class PlayerEntityRendererMixin
@@ -223,8 +225,8 @@ public abstract class PlayerEntityRendererMixin
             return;
         }
 
-        net.minecraft.item.ItemStack mainHandStack = player.getMainHandStack();
-        net.minecraft.item.ItemStack offHandStack = player.getOffHandStack();
+        net.minecraft.item.ItemStack mainHandStack = MagicEquip.visualStack(player, true, tickDelta);
+        net.minecraft.item.ItemStack offHandStack = MagicEquip.visualStack(player, false, tickDelta);
 
         if (mainHandStack.isEmpty() && offHandStack.isEmpty())
             return;
@@ -254,6 +256,7 @@ public abstract class PlayerEntityRendererMixin
             MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta,
             boolean isMainHand, boolean isRightArm, boolean isSneaking,
             float swingProgress, float pitch, org.joml.Matrix4f entityFrame) {
+        if (MagicEquip.scale(player, isMainHand, tickDelta) <= MagicEquipMotion.MIN_VISIBLE_SCALE) return;
         matrices.push();
 
         if (isSneaking) {
@@ -269,6 +272,8 @@ public abstract class PlayerEntityRendererMixin
         matrices.translate(pivotX, pivotY, pivotZ);
         org.joml.Matrix4f anchorFrame = new org.joml.Matrix4f(matrices.peek().getPositionMatrix())
                 .translate(isRightArm ? .2f : -.2f, 0, -.4f);
+        var entrance = MagicEquipMotion.offset(MagicEquip.progress(player, isMainHand, tickDelta), !isRightArm, false);
+        matrices.translate(entrance.x(), entrance.y(), entrance.z());
 
         float armPitch = 0.0F;
         float armYaw = 0.0F;

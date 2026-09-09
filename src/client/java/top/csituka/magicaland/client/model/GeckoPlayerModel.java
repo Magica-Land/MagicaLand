@@ -2,6 +2,8 @@ package top.csituka.magicaland.client.model;
 
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.core.animation.Animation;
+import top.csituka.magicaland.client.animation.PonyIdleEarAnimations;
 
 public class GeckoPlayerModel extends GeoModel<GeckoPlayerAnimatable> {
     private static final Identifier MODEL = new Identifier("magicaland", "geo/mare_geo.json");
@@ -20,5 +22,12 @@ public class GeckoPlayerModel extends GeoModel<GeckoPlayerAnimatable> {
     @Override
     public Identifier getAnimationResource(GeckoPlayerAnimatable object) {
         return ANIMATION;
+    }
+
+    @Override
+    public Animation getAnimation(GeckoPlayerAnimatable object, String name) {
+        if (PonyIdleEarAnimations.internal(name))
+            return PonyIdleEarAnimations.resolve(super.getAnimation(object, "ear_parallel"), name);
+        return super.getAnimation(object, name);
     }
 }

@@ -4,6 +4,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipFile;
 import org.lwjgl.opengl.GL;
+import org.joml.Matrix4f;
+import top.csituka.magicaland.client.render.LevitationGeometryTest;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33C.*;
 
@@ -12,7 +14,34 @@ public final class LevitationTrailShaderTest {
     private static final int SIZE = 256;
     private static final float[] BODY = {0.16f, 0.23f, 0.12f, 1};
     private static final float[] FRONT = {0.35f, 0.18f, 0.1f, 1};
-    private static int trail, solid, checks;
+    private static int trail, solid, volumeTrail, checks;
+    private static final Matrix4f PROJECTION = new Matrix4f().setPerspective((float) Math.toRadians(35), 1, .1f, 100);
+    private static final String GEOMETRY_VERTEX = """
+            #version 150
+            in vec3 Position;
+            in float Alpha;
+            in vec2 UV;
+            in float Kind;
+            uniform mat4 Projection;
+            uniform float Time;
+            out float vertexDistance;
+            out vec4 vertexColor;
+            out vec2 texCoord0;
+            out vec3 viewPosition;
+            out vec3 viewNormal;
+            out float flowTime;
+            flat out int effect;
+            void main() {
+                gl_Position = Projection * vec4(Position, 1.0);
+                vertexDistance = 0.0;
+                vertexColor = vec4(0.6, 0.2, 1.0, Alpha);
+                texCoord0 = UV;
+                viewPosition = Position;
+                viewNormal = vec3(0, 0, 1);
+                flowTime = Time;
+                effect = int(Kind + 0.5);
+            }
+            """;
     private static final String VERTEX = """
             #version 150
             uniform float Depth;
@@ -70,6 +99,7 @@ public final class LevitationTrailShaderTest {
             String fragment = Files.readString(Path.of(args[1]).resolve("horn_aura.fsh"))
                     .replace("#moj_import <fog.glsl>", fog);
             trail = program(fragment);
+            volumeTrail = program(GEOMETRY_VERTEX, fragment);
             solid = program("#version 150\nin vec4 vertexColor; out vec4 fragColor; void main(){fragColor=vertexColor;}");
             scene = target();
             item = target();
@@ -145,6 +175,7 @@ public final class LevitationTrailShaderTest {
             ribbon(0, false, false, true, true);
             check(pixel(128, 128)[3] == 0 && near(depth(128, 128), 0.2f),
                     "copied foreground depth occludes the isolated Fabulous trail");
+            productionGeometry(scene, item);
             check(glGetError() == GL_NO_ERROR, "no GPU errors");
             System.out.println("PASS levitation trail shader GPU: " + checks + " checks; " + glGetString(GL_RENDERER));
         } finally {
@@ -152,10 +183,151 @@ public final class LevitationTrailShaderTest {
             if (item != null) item.close();
             if (trail != 0) glDeleteProgram(trail);
             if (solid != 0) glDeleteProgram(solid);
+            if (volumeTrail != 0) glDeleteProgram(volumeTrail);
             if (vao != 0) glDeleteVertexArrays(vao);
             glfwDestroyWindow(window);
             glfwTerminate();
         }
+    }
+
+    private static void productionGeometry(Target scene, Target item) {
+        for (float yaw : new float[] {0, .7f, (float) Math.PI / 2, -(float) Math.PI / 2}) {
+            for (float width : new float[] {.055f, .022f}) {
+                float[] geometry = LevitationGeometryTest.trailVertices(yaw, width, false);
+                clear(scene);
+                drawGeometry(geometry, 0, false, true);
+                Stats stats = stats();
+                check(stats.covered >= (width > .04f ? 12 : 3), "production trail is visible from side/oblique/front/back, width=" + width + " yaw=" + yaw);
+                check(stats.peak > .018f && stats.peak <= .31f, "volume support is readable without additive overexposure");
+                check(stats.soft > 0, "production geometry retains a soft lower-alpha perimeter");
+                check(near(depth(stats.x, stats.y), 1), "ordinary production trail leaves depth untouched");
+            }
+        }
+        float[] rear = LevitationGeometryTest.trailVertices((float) Math.PI / 2, .055f, false);
+        for (float offset : new float[] {-.65f, .65f}) for (boolean reverse : new boolean[] {false, true}) {
+            clear(scene);
+            drawGeometry(LevitationGeometryTest.trailVertices((float) Math.PI / 2, .055f, reverse, offset, -.25f), 0, false, true);
+            Stats offCenter = stats();
+            check(offCenter.covered >= 12 && offCenter.peak > .025f,
+                    "off-center left/right held-item trail retains rear-view volume in both directions");
+            check(offCenter.peak <= .31f, "off-center ribbon and slices remain within the shared brightness budget");
+        }
+        int[] corner = radialCorner(rear);
+        clear(scene);
+        drawGeometry(rear, 0, true, true);
+        Stats reference = stats();
+        check(reference.peak > .035f, "rear-view volume is not a zero-area ribbon");
+        check(pixel(corner[0], corner[1])[3] == 0 && near(depth(corner[0], corner[1]), 1),
+                "transparent radial corner inside its quad discards color and depth");
+        float minimum = Float.MAX_VALUE, maximum = 0;
+        for (int phase = 0; phase < 8; phase++) {
+            clear(scene);
+            drawGeometry(rear, phase * .25f, false, true);
+            float energy = stats().energy;
+            minimum = Math.min(minimum, energy); maximum = Math.max(maximum, energy);
+        }
+        check(maximum - minimum > .02f, "volume soft glow flows over time without vanishing");
+
+        clear(scene);
+        fill(.995f, BODY);
+        drawGeometry(rear, 0, false, true);
+        check(pixel(reference.x, reference.y)[2] > BODY[2] + .025f,
+                "ordinary rear-view support remains visible over terrain behind it");
+        check(near(depth(reference.x, reference.y), .995f), "ordinary support never owns the scene depth");
+        fill(.9f, FRONT);
+        drawGeometry(rear, 0, false, true);
+        check(close(pixel(reference.x, reference.y), FRONT), "foreground correctly blocks rear-view support");
+
+        clear(scene);
+        fill(.995f, BODY);
+        copyDepth(scene, item);
+        bind(item);
+        drawGeometry(rear, 0, true, true);
+        check(pixel(reference.x, reference.y)[2] > .025f && depth(reference.x, reference.y) < .99f,
+                "Fabulous target stores the volume's real visible depth");
+        check(pixel(corner[0], corner[1])[3] == 0 && near(depth(corner[0], corner[1]), .995f),
+                "Fabulous radial corner preserves copied terrain depth");
+        bind(scene);
+        check(close(pixel(reference.x, reference.y), BODY) && near(depth(reference.x, reference.y), .995f),
+                "isolated Fabulous target cannot pollute opaque terrain");
+        fill(.9f, FRONT);
+        copyDepth(scene, item);
+        bind(item);
+        drawGeometry(rear, 0, true, true);
+        check(pixel(reference.x, reference.y)[3] == 0 && near(depth(reference.x, reference.y), .9f),
+                "copied foreground depth blocks Fabulous radial support");
+        for (boolean reverse : new boolean[] {false, true}) {
+            clear(scene);
+            drawGeometry(LevitationGeometryTest.trailVertices((float) Math.PI / 2, .055f, reverse), 0, true, true);
+            check(stats().peak > .035f, "far-to-near support remains visible for both travel directions");
+        }
+    }
+
+    private static void drawGeometry(float[] vertices, float time, boolean writeDepth, boolean blend) {
+        glUseProgram(volumeTrail);
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(writeDepth);
+        if (blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glUniformMatrix4fv(glGetUniformLocation(volumeTrail, "Projection"), false, PROJECTION.get(new float[16]));
+        glUniform1f(glGetUniformLocation(volumeTrail, "Time"), time);
+        glUniform4f(glGetUniformLocation(volumeTrail, "ColorModulator"), 1, 1, 1, 1);
+        glUniform1f(glGetUniformLocation(volumeTrail, "FogStart"), 0);
+        glUniform1f(glGetUniformLocation(volumeTrail, "FogEnd"), 100);
+        int buffer = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STREAM_DRAW);
+        String[] names = {"Position", "Alpha", "UV", "Kind"};
+        int[] sizes = {3, 1, 2, 1}, offsets = {0, 3, 4, 6};
+        for (int i = 0; i < names.length; i++) {
+            int attribute = glGetAttribLocation(volumeTrail, names[i]);
+            glEnableVertexAttribArray(attribute);
+            glVertexAttribPointer(attribute, sizes[i], GL_FLOAT, false, 7 * Float.BYTES, offsets[i] * (long) Float.BYTES);
+        }
+        glDrawArrays(GL_TRIANGLES, 0, vertices.length / 7);
+        for (String name : names) glDisableVertexAttribArray(glGetAttribLocation(volumeTrail, name));
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDeleteBuffers(buffer);
+    }
+
+    private record Stats(int covered, int soft, float peak, float energy, int x, int y) {}
+
+    private static Stats stats() {
+        float[] pixels = new float[SIZE * SIZE * 4];
+        glReadPixels(0, 0, SIZE, SIZE, GL_RGBA, GL_FLOAT, pixels);
+        int count = 0, soft = 0, x = 0, y = 0;
+        float peak = 0, energy = 0;
+        for (int i = 0; i < SIZE * SIZE; i++) {
+            float blue = pixels[i * 4 + 2];
+            if (blue > .004f) count++;
+            if (blue > .004f && blue < .018f) soft++;
+            energy += blue;
+            if (blue > peak) { peak = blue; x = i % SIZE; y = i / SIZE; }
+        }
+        return new Stats(count, soft, peak, energy, x, y);
+    }
+
+    private static int[] radialCorner(float[] vertices) {
+        float area = 0, selectedX = 0, selectedY = 0;
+        for (int base = 0; base < vertices.length; base += 6 * 7) {
+            if (vertices[base + 4] >= 0) continue;
+            float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, maxX = -Float.MAX_VALUE, maxY = -Float.MAX_VALUE;
+            for (int i = 0; i < 6; i++) {
+                int index = base + i * 7;
+                var p = PROJECTION.transformProject(new org.joml.Vector3f(vertices[index], vertices[index + 1], vertices[index + 2]));
+                float x = (p.x * .5f + .5f) * SIZE, y = (p.y * .5f + .5f) * SIZE;
+                minX = Math.min(minX, x); maxX = Math.max(maxX, x);
+                minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+            }
+            float current = (maxX - minX) * (maxY - minY);
+            if (current > area) {
+                area = current;
+                selectedX = (minX + maxX) * .5f + (maxX - minX) * .42f;
+                selectedY = (minY + maxY) * .5f + (maxY - minY) * .42f;
+            }
+        }
+        check(area > 0, "production rear trail supplies radial support quads");
+        return new int[] {(int) selectedX, (int) selectedY};
     }
 
     private record Target(int framebuffer, int color, int depth) {
@@ -266,10 +438,14 @@ public final class LevitationTrailShaderTest {
     }
 
     private static int program(String fragment) {
+        return program(VERTEX, fragment);
+    }
+
+    private static int program(String vertex, String fragment) {
         int program = glCreateProgram();
         for (int type : new int[] {GL_VERTEX_SHADER, GL_FRAGMENT_SHADER}) {
             int shader = glCreateShader(type);
-            glShaderSource(shader, type == GL_VERTEX_SHADER ? VERTEX : fragment);
+            glShaderSource(shader, type == GL_VERTEX_SHADER ? vertex : fragment);
             glCompileShader(shader);
             if (glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE)
                 throw new AssertionError(glGetShaderInfoLog(shader));
