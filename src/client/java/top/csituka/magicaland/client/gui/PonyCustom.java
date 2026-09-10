@@ -333,10 +333,8 @@ public class PonyCustom implements ViewCube.RotationTarget {
         if (layout == null) return;
         applyPendingRefresh();
         Rect panel = layout.preview();
-        Rect details = layout.details();
         context.fillGradient(panel.x(), panel.y(), panel.right(), panel.bottom(), lighting.top, lighting.bottom);
         context.drawBorder(panel.x(), panel.y(), panel.width(), panel.height(), 0x557B8DA9);
-        context.fill(details.x(), details.y(), details.right(), details.bottom(), 0x800E1420);
         categoryBar.render(context, mouseX, mouseY, !currentPage().isEditingPreset());
         int lightWidth = (panel.width() - 14) / 3;
         int lightX = panel.x() + 5 + lighting.ordinal() * (lightWidth + 2);
