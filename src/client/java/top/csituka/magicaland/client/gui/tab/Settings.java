@@ -8,6 +8,7 @@ import top.csituka.magicaland.client.gui.tab.settings.GeneralPage;
 import top.csituka.magicaland.client.gui.tab.settings.GamePage;
 import top.csituka.magicaland.client.gui.tab.settings.NetworkPage;
 import top.csituka.magicaland.client.gui.tab.settings.SettingsPage;
+import top.csituka.magicaland.client.gui.widget.HorizontalTabBar;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 
 public class Settings implements TabContent {
@@ -21,6 +22,9 @@ public class Settings implements TabContent {
             "text.magicaland.config.tab.game",
             "text.magicaland.config.tab.network"
     };
+    private static final Text[] TAB_LABELS = {
+            Text.translatable(TAB_KEYS[0]), Text.translatable(TAB_KEYS[1]), Text.translatable(TAB_KEYS[2])
+    };
     private static final SettingsPage[] PAGES = {
             new GeneralPage(),
             new GamePage(),
@@ -31,15 +35,13 @@ public class Settings implements TabContent {
     private int buttonX;
     private int buttonWidth;
     private int tabBarY;
-
-    private float indicatorX = -1;
-    private float targetIndicatorX = -1;
+    private final HorizontalTabBar tabBar = new HorizontalTabBar(TAB_LABELS, TAB_LABELS.length, 0, TAB_BAR_HEIGHT);
 
     @Override
     public void onEnter() {
         selectedTab = 0;
-        indicatorX = -1;
-        targetIndicatorX = -1;
+        tabBar.setSelected(0);
+        tabBar.resetIndicator();
     }
 
     @Override
@@ -62,11 +64,7 @@ public class Settings implements TabContent {
         int tabWidth = buttonWidth / TAB_KEYS.length;
         int totalWidth = tabWidth * TAB_KEYS.length;
         int startX = buttonX + (buttonWidth - totalWidth) / 2;
-        float newTarget = startX + tabWidth * selectedTab;
-        targetIndicatorX = newTarget;
-        if (indicatorX < 0) {
-            indicatorX = newTarget;
-        }
+        tabBar.init(startX, tabBarY, tabWidth, selectedTab);
 
         PAGES[selectedTab].build(listWidget, buttonX, buttonWidth);
 
@@ -76,64 +74,9 @@ public class Settings implements TabContent {
     @Override
     public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta,
             float alpha) {
-        if (targetIndicatorX >= 0) {
-            float diff = targetIndicatorX - indicatorX;
-            if (Math.abs(diff) > 0.5f) {
-                indicatorX += diff * 0.3f;
-            } else {
-                indicatorX = targetIndicatorX;
-            }
-        }
-
-        renderTabBar(context, mouseX, mouseY);
+        tabBar.render(context, mouseX, mouseY, true);
         if (listWidget != null) {
             listWidget.render(context, mouseX, mouseY, delta);
-        }
-    }
-
-    private void renderTabBar(DrawContext context, int mouseX, int mouseY) {
-        int tabCount = TAB_KEYS.length;
-        int tabWidth = buttonWidth / tabCount;
-        int totalWidth = tabWidth * tabCount;
-        int startX = buttonX + (buttonWidth - totalWidth) / 2;
-
-        var textRenderer = MinecraftClient.getInstance().textRenderer;
-
-        for (int i = 0; i < tabCount; i++) {
-            int tabLeft = startX + tabWidth * i;
-            int tabRight = tabLeft + tabWidth;
-            boolean hovered = mouseX >= tabLeft && mouseX < tabRight
-                    && mouseY >= tabBarY && mouseY < tabBarY + TAB_BAR_HEIGHT;
-
-            int textColor;
-            if (i == selectedTab) {
-                textColor = 0xFFFFFFFF;
-            } else if (hovered) {
-                textColor = 0xFFCCCCCC;
-            } else {
-                textColor = 0xFF777777;
-            }
-
-            Text label = Text.translatable(TAB_KEYS[i]);
-            int textWidth = textRenderer.getWidth(label);
-            int textX = tabLeft + (tabWidth - textWidth) / 2;
-            context.drawText(textRenderer, label,
-                    textX, tabBarY + 6, textColor, false);
-        }
-
-        int lineY = tabBarY + 20;
-        Text selLabel = Text.translatable(TAB_KEYS[selectedTab]);
-        int selTextWidth = textRenderer.getWidth(selLabel);
-        int indWidth = selTextWidth + 8;
-        int selLeft = startX + tabWidth * selectedTab;
-        int indCenter = selLeft + tabWidth / 2;
-        if (indicatorX >= 0) {
-            int indCenterX = Math.round(indicatorX) + tabWidth / 2;
-            context.fill(indCenterX - indWidth / 2, lineY,
-                    indCenterX + indWidth / 2, lineY + 2, 0xFFFFFFFF);
-        } else {
-            context.fill(indCenter - indWidth / 2, lineY,
-                    indCenter + indWidth / 2, lineY + 2, 0xFFFFFFFF);
         }
     }
 
@@ -141,23 +84,9 @@ public class Settings implements TabContent {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button != 0 || screenRef == null) return false;
 
-        int tabCount = TAB_KEYS.length;
-        int tabWidth = buttonWidth / tabCount;
-        int totalWidth = tabWidth * tabCount;
-        int startX = buttonX + (buttonWidth - totalWidth) / 2;
-
-        if (mouseY >= tabBarY && mouseY < tabBarY + TAB_BAR_HEIGHT) {
-            for (int i = 0; i < tabCount; i++) {
-                int tabLeft = startX + tabWidth * i;
-                if (mouseX >= tabLeft && mouseX < tabLeft + tabWidth) {
-                    if (i != selectedTab) {
-                        selectedTab = i;
-                        screenRef.reinitScreen();
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
+        return tabBar.mouseClicked(mouseX, mouseY, button, true, index -> {
+            selectedTab = index;
+            screenRef.reinitScreen();
+        });
     }
 }

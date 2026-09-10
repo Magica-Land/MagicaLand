@@ -35,6 +35,7 @@ import top.csituka.magicaland.client.gui.ponycustom.*;
 import top.csituka.magicaland.client.gui.ponycustom.CustomizationLayout.Rect;
 import top.csituka.magicaland.client.gui.widget.ColorPicker;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
+import top.csituka.magicaland.client.gui.widget.HorizontalTabBar;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 import top.csituka.magicaland.client.gui.widget.ViewCube;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
@@ -56,6 +57,14 @@ public class PonyCustom implements ViewCube.RotationTarget {
             PonyCustomPageContext.Page.HORN, PonyCustomPageContext.Page.GLOW, PonyCustomPageContext.Page.CUTIE_MARK
     };
     private static final String[] CATEGORY_KEYS = { "body", "mane", "face", "horn", "glow", "cutie_mark" };
+    private static final Text[] CATEGORY_LABELS = {
+            Text.translatable("text.magicaland.customize.category.body"),
+            Text.translatable("text.magicaland.customize.category.mane"),
+            Text.translatable("text.magicaland.customize.category.face"),
+            Text.translatable("text.magicaland.customize.category.horn"),
+            Text.translatable("text.magicaland.customize.category.glow"),
+            Text.translatable("text.magicaland.customize.category.cutie_mark")
+    };
     private final double[] scrollPositions = new double[PAGES.length];
     private SettingsList listWidget;
     private PonyCustomPageContext pageContext;
@@ -78,6 +87,7 @@ public class PonyCustom implements ViewCube.RotationTarget {
     private boolean automaticFocus = true;
     private boolean snapCamera;
     private long lastPreviewFrame;
+    private final HorizontalTabBar categoryBar = new HorizontalTabBar(CATEGORY_LABELS, 6, 4, 23);
 
     public void onEnter() {
         selectedPage = PonyCustomPageContext.Page.BODY.ordinal();
@@ -91,6 +101,8 @@ public class PonyCustom implements ViewCube.RotationTarget {
         focusedMarkSide = null;
         camera.reset();
         lastPreviewFrame = 0;
+        categoryBar.setSelected(0);
+        categoryBar.resetIndicator();
         resetCameraAngle();
         java.util.Arrays.fill(scrollPositions, 0);
         for (PonyCustomPage page : PAGES) page.onEnter();
@@ -110,6 +122,8 @@ public class PonyCustom implements ViewCube.RotationTarget {
     }
 
     public boolean mouseClicked(double x, double y, int button) {
+        if (button == 0 && layout != null && !currentPage().isEditingPreset()
+                && categoryBar.mouseClicked(x, y, button, true, index -> switchPage(CATEGORIES[index], 0))) return true;
         if (currentPage().isEditingPreset() || layout == null || !isPreviewActive()
                 || !layout.model().contains(x, y)) return false;
         if (button == 1) {
@@ -173,6 +187,8 @@ public class PonyCustom implements ViewCube.RotationTarget {
         isDraggingModel = false;
         ColorPicker.clearBodyLinkGroup();
         layout = CustomizationLayout.of(x, y, width, height);
+        categoryBar.setColumns(layout.tabColumns());
+        categoryBar.init(x, y, layout.tabWidth(), selectedCategory());
         initRenderer();
         Rect details = layout.details();
         pageContext = new PonyCustomPageContext(screen, details.x(), details.y(), details.width(), details.height(),
@@ -184,16 +200,6 @@ public class PonyCustom implements ViewCube.RotationTarget {
         currentPage().build(pageContext, listWidget);
         listWidget.restoreScrollAmount(scrollPositions[selectedPage]);
         screen.addConsoleElement(listWidget);
-        for (int i = 0; i < CATEGORIES.length; i++) {
-            int index = i;
-            int tabX = x + i % layout.tabColumns() * (layout.tabWidth() + 4);
-            int tabY = y + i / layout.tabColumns() * 23;
-            CustomButton tab = new CustomButton(tabX, tabY, layout.tabWidth(), 20,
-                    tr("category." + CATEGORY_KEYS[i]), selectedPage == CATEGORIES[i].ordinal(),
-                    button -> switchPage(CATEGORIES[index], 0));
-            tab.active = !currentPage().isEditingPreset();
-            screen.addConsoleWidget(tab);
-        }
         buildPreviewControls(screen);
     }
 
@@ -331,11 +337,7 @@ public class PonyCustom implements ViewCube.RotationTarget {
         context.fillGradient(panel.x(), panel.y(), panel.right(), panel.bottom(), lighting.top, lighting.bottom);
         context.drawBorder(panel.x(), panel.y(), panel.width(), panel.height(), 0x557B8DA9);
         context.fill(details.x(), details.y(), details.right(), details.bottom(), 0x800E1420);
-        for (int i = 0; i < CATEGORIES.length; i++) if (CATEGORIES[i].ordinal() == selectedPage) {
-            int tabX = x + i % layout.tabColumns() * (layout.tabWidth() + 4);
-            int tabY = y + i / layout.tabColumns() * 23;
-            context.fill(tabX + 3, tabY + 19, tabX + layout.tabWidth() - 3, tabY + 21, 0xFFC4B0EB);
-        }
+        categoryBar.render(context, mouseX, mouseY, !currentPage().isEditingPreset());
         int lightWidth = (panel.width() - 14) / 3;
         int lightX = panel.x() + 5 + lighting.ordinal() * (lightWidth + 2);
         context.fill(lightX + 2, layout.lightingY() + 19, lightX + lightWidth - 2, layout.lightingY() + 20, 0xFFE6D8AA);
@@ -345,6 +347,11 @@ public class PonyCustom implements ViewCube.RotationTarget {
         currentPage().render(pageContext, context, mouseX, mouseY, delta, alpha);
         listWidget.render(context, mouseX, mouseY, delta);
         scrollPositions[selectedPage] = listWidget.getScrollAmount();
+    }
+
+    private int selectedCategory() {
+        for (int i = 0; i < CATEGORIES.length; i++) if (CATEGORIES[i].ordinal() == selectedPage) return i;
+        return -1;
     }
 
     private void renderPreview(DrawContext context, float delta, int mouseX, int mouseY) {
