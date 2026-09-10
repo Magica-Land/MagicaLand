@@ -24,13 +24,14 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
+import top.csituka.magicaland.client.animation.PonyFlightVisuals;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.network.ClientNetworkHandler;
 import top.csituka.magicaland.network.NetworkHandler;
 
-/** 客户端本地音源：不修改手持渲染，不广播声音包。 */
+/** 手持与悬浮共用客户端魔法音源。 */
 public final class MagicHeldItemSounds {
     private static final SoundEvent CAST = SoundEvent.of(new Identifier("magicaland", "magic.cast"));
     private static final SoundEvent AURA = SoundEvent.of(new Identifier("magicaland", "magic.aura"));
@@ -78,13 +79,18 @@ public final class MagicHeldItemSounds {
         Map<UUID, AbstractClientPlayerEntity> entities = new LinkedHashMap<>();
         for (AbstractClientPlayerEntity player : client.world.getPlayers()) {
             boolean local = player == client.player;
-            if (!eligible(client, player, local)) continue;
+            ModelConfig model = eligibleModel(client, player, local);
+            if (model == null) continue;
             double distance = player.getPos().add(0, player.getStandingEyeHeight() * .75, 0).distanceTo(listener);
             if (distance >= MagicSoundState.RANGE) continue;
             UUID id = player.getUuid();
             entities.put(id, player);
+            boolean holding = (!local || !client.options.getPerspective().isFirstPerson()
+                    || Config.getInstance().firstPersonMagicGlow)
+                    && (!player.getMainHandStack().isEmpty() || !player.getOffHandStack().isEmpty());
+            boolean flying = !model.showWings && PonyFlightVisuals.flying(player);
             observations.add(new MagicSoundState.Observation(id, player.getId(), local,
-                    !player.getMainHandStack().isEmpty() || !player.getOffHandStack().isEmpty(), distance));
+                    holding, flying, distance));
         }
         MagicSoundState.Frame frame = STATE.advance(observations);
         SoundManager sounds = client.getSoundManager();
@@ -147,18 +153,17 @@ public final class MagicHeldItemSounds {
         }
     }
 
-    private static boolean eligible(MinecraftClient client, AbstractClientPlayerEntity player, boolean local) {
+    private static ModelConfig eligibleModel(MinecraftClient client, AbstractClientPlayerEntity player, boolean local) {
         if (player.isRemoved() || !player.isAlive() || player.isSpectator() || player.isInvisible()
-                || player.isSleeping()) return false;
+                || player.isSleeping()) return null;
         ModelConfig model;
         if (local) {
-            if (client.options.getPerspective().isFirstPerson() && !Config.getInstance().firstPersonMagicGlow) return false;
             model = ModelManager.getAppliedModel();
         } else {
-            if (!NetworkHandler.serverHasMod) return false;
+            if (!NetworkHandler.serverHasMod) return null;
             model = ClientNetworkHandler.remoteModels.get(player.getUuid());
         }
-        return model != null && model.showHorn;
+        return model != null && model.showHorn ? model : null;
     }
 
     private static void clear(MinecraftClient client) {

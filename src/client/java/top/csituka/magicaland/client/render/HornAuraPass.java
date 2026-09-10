@@ -30,17 +30,26 @@ final class HornAuraPass {
         });
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
             accepting = false;
-            try {
-                draw(PENDING, context.advancedTranslucency());
-            } finally {
-                PENDING.clear();
-            }
+            if (context.advancedTranslucency()) drawWorld(true);
+        });
+        WorldRenderEvents.LAST.register(context -> {
+            accepting = false;
+            // 普通画质先画云再加光；Fabulous 已交给透明层按深度合成。
+            if (!context.advancedTranslucency()) drawWorld(false);
         });
         WorldRenderEvents.END.register(context -> clear());
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> clear());
     }
 
     static boolean isWorld() { return world; }
+
+    private static void drawWorld(boolean fabulous) {
+        try {
+            draw(PENDING, fabulous);
+        } finally {
+            PENDING.clear();
+        }
+    }
 
     static void beginHands() {
         HANDS.clear();

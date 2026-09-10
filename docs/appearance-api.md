@@ -1,6 +1,6 @@
-# 外观 API v1.2
+# 外观 API v1.3
 
-Magicaland Appearance 0.3.2 通过 `top.csituka.magicaland.api` 和 `top.csituka.magicaland.api.client` 提供公共接口。Gameplay 及其他扩展（Addon）依赖这些包；配置、渲染实现、动画状态和同步缓存均属于外观模组内部实现。
+Magicaland Appearance 0.3.3 通过 `top.csituka.magicaland.api` 和 `top.csituka.magicaland.api.client` 提供公共接口。Gameplay 及其他扩展（Addon）依赖这些包；配置、渲染实现、动画状态和同步缓存均属于外观模组内部实现。
 
 `ApiVersion` 位于主源码集，只依赖 Java 标准库，可在独立服务端安全查询。`.api.client` 下的接口仅供客户端使用：查询和注册操作必须在客户端线程执行，视觉接口必须在渲染线程执行。本 API 不授予玩法能力，也不提供可作为服务端判定依据的权威外观数据。
 
@@ -8,18 +8,18 @@ Magicaland Appearance 0.3.2 通过 `top.csituka.magicaland.api` 和 `top.csituka
 
 API 版本与模组版本独立。`ApiVersion.requireCompatible(1, 0)` 要求已安装 API 的主版本为 1、次版本至少为 0，不满足时抛出明确异常；`isCompatible` 提供不抛异常的兼容性检查。API 次版本更新保持已有签名和语义，不兼容变更必须提升主版本。扩展的模组元数据也必须声明兼容的 Appearance 版本要求；运行时检查无法解决 API 本身未安装的问题。
 
-独立持物视觉上下文与第三人称悬浮入口需要 `ApiVersion.requireCompatible(1, 1)`；新增魔法活动注册需要 `ApiVersion.requireCompatible(1, 2)`。已有入口继续兼容。
+独立持物视觉上下文与第三人称悬浮入口需要 `ApiVersion.requireCompatible(1, 1)`；魔法活动注册需要 `ApiVersion.requireCompatible(1, 2)`；随实体运动的光焰入口需要 `ApiVersion.requireCompatible(1, 3)`。已有方法签名继续兼容。
 
-发布坐标为 `top.csituka:magicaland-appearance:0.3.2`。编译时依赖带 `api` 分类标识（classifier）的产物，运行时依赖完整 Appearance 模组。扩展应与主模组使用相同的 Minecraft 1.20.1、Fabric 和映射版本。通过 Loom 引用重映射后的 API 产物，Loom 会将其中的 Minecraft 类型签名转换为扩展开发环境所用的命名空间。
+发布坐标为 `top.csituka:magicaland-appearance:0.3.3`。编译时依赖带 `api` 分类标识（classifier）的产物，运行时依赖完整 Appearance 模组。扩展应与主模组使用相同的 Minecraft 1.20.1、Fabric 和映射版本。通过 Loom 引用重映射后的 API 产物，Loom 会将其中的 Minecraft 类型签名转换为扩展开发环境所用的命名空间。
 
 ```groovy
-modCompileOnly "top.csituka:magicaland-appearance:0.3.2:api"
-modRuntimeOnly "top.csituka:magicaland-appearance:0.3.2"
+modCompileOnly "top.csituka:magicaland-appearance:0.3.3:api"
+modRuntimeOnly "top.csituka:magicaland-appearance:0.3.3"
 ```
 
 `api` JAR 仅用于编译。不要将它放入 `mods` 文件夹、通过 `include` 嵌套打包、合并打包（shade），或把其中的类复制进扩展。运行时由完整 Appearance JAR 提供唯一一份公共 API 及其实现。Appearance 现有的服务端同步功能也保留在这同一个完整 JAR 中。
 
-API 产物包含 `top/csituka/magicaland/api/**` 下的全部类文件，包括嵌套枚举类。v1.2 具体包含 `ApiVersion`、`Registration`、`AppearanceSnapshot`、`Appearances`、`AppearanceOverrides`、`AppearanceOverrides$Visibility`、`AppearanceVisuals` 和 `ItemVisualContext`。它不包含 `client/api` 内部桥接实现、`ModelConfig`、渲染内部类、网络类、Mixin 或资源。公共方法签名只使用 Java、Minecraft 或 API 自身的类型。`api-sources` 分类产物包含相应的公共源码；完整源码产物供主模组开发使用。
+API 产物包含 `top/csituka/magicaland/api/**` 下的全部类文件，包括嵌套枚举类。v1.3 具体包含 `ApiVersion`、`Registration`、`AppearanceSnapshot`、`Appearances`、`AppearanceOverrides`、`AppearanceOverrides$Visibility`、`AppearanceVisuals` 和 `ItemVisualContext`。它不包含 `client/api` 内部桥接实现、`ModelConfig`、渲染内部类、网络类、Mixin 或资源。公共方法签名只使用 Java、Minecraft 或 API 自身的类型。`api-sources` 分类产物包含相应的公共源码；完整源码产物供主模组开发使用。
 
 ## 只读外观查询
 
@@ -62,11 +62,13 @@ Registration magic = AppearanceOverrides.registerMagicActivity("my_addon:project
 magic.close();
 ```
 
-Gameplay 在 JOIN 时注册远控实体查询、原持物隐藏和魔法活动三条回调，断线时关闭各自句柄。空手投影也属于魔法活动；远控实体销毁、移出当前世界或不再有效后，回调返回 false。
+Gameplay 在 JOIN 时注册远控实体注视与魔法活动两条回调，断线时关闭各自句柄。工具已实际转入独立携带槽，无需隐藏本体持物。空手投影也属于魔法活动；远控实体销毁、移出当前世界或不再有效后，回调返回 false。
 
 ## 视觉入口
 
-`AppearanceVisuals.renderOrb(matrices, magicColor, ticks, seed)` 在调用方提供的变换下，调用现有魔法光团渲染器。
+`AppearanceVisuals.renderOrb(matrices, magicColor, ticks, seed)` 保留旧调用签名，使用静态光焰样式。
+
+`AppearanceVisuals.renderFlame(matrices, source, magicColor, tickDelta)` 在调用方的世界渲染锚点绘制柔光内核和流动焰尾，尾部响应 source 的实际移动。矩阵使用当前相机的世界坐标系，调用方先平移到实体插值位置。入口接受非空 matrices/source 及有限的 0–1 tickDelta，忽略已移除或不在当前世界的实体；无效参数在绘制前拒绝。入口自行 push/pop，异常时也恢复调用方栈。它不改变实体、碰撞、交互范围或光团遮挡采样范围。
 
 `renderGlowingItem(stack, mode, matrices, buffers, world, light, seed, magicColor)` 调用现有物品渲染及发光捕获逻辑。需要传入当前渲染上下文；底层预览渲染器支持无世界的场景时，`world` 可以为 null。调用方负责管理自己的变换栈。此入口不会重新定位物品或选择其他动画。
 

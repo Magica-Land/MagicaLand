@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-/** 只观察真实玩家的持物变化，不依赖渲染次数或物品种类。 */
+/** 持物与魔法悬浮共享启停状态，不重复叠加音源。 */
 public final class MagicSoundState {
     public static final int MAX_LOOPS = 4;
     public static final int EMPTY_DEBOUNCE_TICKS = 3;
@@ -20,7 +20,12 @@ public final class MagicSoundState {
     private Set<UUID> selected = Set.of();
     private long tick;
 
-    public record Observation(UUID id, int incarnation, boolean local, boolean holding, double distance) {}
+    public record Observation(UUID id, int incarnation, boolean local, boolean holding, boolean flying, double distance) {
+        public Observation(UUID id, int incarnation, boolean local, boolean holding, double distance) {
+            this(id, incarnation, local, holding, false, distance);
+        }
+        boolean active() { return holding || flying; }
+    }
     public enum Burst { CAST, END }
     public record Event(UUID id, Burst burst) {}
     public record Frame(Map<UUID, Observation> eligible, Map<UUID, Observation> loops, List<Event> events) {}
@@ -40,7 +45,7 @@ public final class MagicSoundState {
                 players.put(observation.id, state);
             } else {
                 boolean previous = state.holding;
-                if (observation.holding) {
+                if (observation.active()) {
                     state.emptyTicks = 0;
                     state.holding = true;
                 } else if (state.holding && ++state.emptyTicks >= EMPTY_DEBOUNCE_TICKS) {
@@ -100,7 +105,7 @@ public final class MagicSoundState {
         PlayerState(Observation observation) {
             incarnation = observation.incarnation;
             local = observation.local;
-            holding = observation.holding;
+            holding = observation.active();
         }
     }
 }

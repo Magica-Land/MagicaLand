@@ -17,6 +17,11 @@ public final class AppearanceVisuals {
         AppearanceVisualBridge.renderOrb(matrices, magicColor, ticks, seed);
     }
 
+    /** Draws a world-space flame anchored by the caller, with a tail driven by source motion. */
+    public static void renderFlame(MatrixStack matrices, Entity source, int magicColor, float tickDelta) {
+        AppearanceVisualBridge.renderFlame(matrices, source, magicColor, tickDelta);
+    }
+
     public static void renderGlowingItem(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices,
             VertexConsumerProvider buffers, World world, int light, int seed, int magicColor) {
         AppearanceVisualBridge.renderGlowingItem(stack, mode, matrices, buffers, world, light, seed, magicColor);

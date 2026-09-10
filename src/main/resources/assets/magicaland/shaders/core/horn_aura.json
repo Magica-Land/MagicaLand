@@ -1,5 +1,5 @@
 {
-  "blend": { "func": "add", "srcrgb": "srcalpha", "dstrgb": "one" },
+  "blend": { "func": "add", "srcrgb": "srcalpha", "dstrgb": "one", "srcalpha": "one", "dstalpha": "1-srcalpha" },
   "vertex": "magicaland:horn_aura",
   "fragment": "magicaland:horn_aura",
   "attributes": ["Position", "Color", "UV0", "UV1", "UV2", "Normal"],

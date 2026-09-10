@@ -8,11 +8,23 @@ uniform float FogEnd;
 in float vertexDistance;
 in vec4 vertexColor;
 in vec2 texCoord0;
+in vec2 auraCoord;
 in vec3 viewPosition;
 in vec3 viewNormal;
 in float flowTime;
 flat in int effect;
 out vec4 fragColor;
+
+float hornWisps(vec2 uv, float time) {
+    float angle = uv.x * 6.283185;
+    float phase = time * 0.5235988;
+    // 宽而不等距的光纹缓慢游动，圆周接缝与 12 秒时钟都连续。
+    float drift = sin(uv.y * 5.2 - phase * 2.0 + sin(angle + phase) * 1.15);
+    float curl = sin(angle * 2.0 - uv.y * 3.1 + phase + sin(angle - phase * 3.0) * 0.7);
+    float wisps = 0.5 + 0.5 * (drift * 0.6 + curl * 0.4);
+    float breath = 0.5 + 0.5 * sin(phase + sin(phase * 2.0) * 0.45);
+    return 0.49 + 0.36 * wisps + 0.045 * breath;
+}
 
 void main() {
     float opacity;
@@ -26,26 +38,36 @@ void main() {
         float mask = texture(Sampler0, texCoord0).a;
         vec3 facing = -viewPosition / max(length(viewPosition), 0.0001);
         float edge = pow(abs(dot(normalize(viewNormal), facing)), 0.8);
-        float wave = 0.5 + 0.5 * sin(-flowTime * 3.141593);
-        opacity = mask * (0.3 + 0.7 * edge) * (0.45 + 0.55 * wave * wave);
+        opacity = mask * (0.3 + 0.7 * edge) * hornWisps(auraCoord, flowTime);
     } else if (effectType == 3) {
         if (texCoord0.x < 0.0) {
             vec2 p = vec2((-texCoord0.x - 1.0) * 2.0 - 1.0, texCoord0.y * 2.0 - 1.0);
             float radius = length(p);
-            float wave = 0.5 + 0.5 * sin(radius * 6.283185 - flowTime * 3.141593);
-            opacity = (1.0 - smoothstep(0.12, 1.0, radius)) * (0.82 + 0.18 * wave);
+            opacity = (1.0 - smoothstep(0.12, 1.0, radius)) * hornWisps(p * 0.5 + 0.5, flowTime);
         } else {
             float edge = 1.0 - smoothstep(0.5, 1.0, abs(texCoord0.y * 2.0 - 1.0));
-            float wave = 0.5 + 0.5 * sin(texCoord0.x * 12.56637 - flowTime * 3.141593 + texCoord0.y * 1.2);
-            opacity = edge * (0.76 + 0.24 * wave);
+            opacity = edge * hornWisps(vec2(texCoord0.y, texCoord0.x), flowTime);
+        }
+    } else if (effectType == 5) {
+        if (texCoord0.x < 0.0) {
+            vec2 p = vec2((-texCoord0.x - 1.0) * 2.0 - 1.0, texCoord0.y * 2.0 - 1.0);
+            float phase = flowTime * 0.5235988;
+            float warp = 1.0 + 0.035 * sin(p.x * 3.0 + phase * 2.0) * sin(p.y * 4.0 - phase);
+            opacity = (1.0 - smoothstep(0.10, 1.0, length(p) * warp))
+                    * (0.80 + 0.20 * hornWisps(p * 0.5 + 0.5, flowTime));
+        } else {
+            float curl = 0.13 * sin(texCoord0.y * 5.0 - flowTime * 1.0471976)
+                    * sin(texCoord0.y * 3.141593);
+            float edge = 1.0 - smoothstep(0.28, 1.0, abs(texCoord0.x * 2.0 - 1.0 + curl));
+            edge *= 1.0 - smoothstep(0.85, 0.98, abs(texCoord0.x * 2.0 - 1.0));
+            opacity = edge * smoothstep(0.0, 0.16, texCoord0.y)
+                    * (1.0 - smoothstep(0.50, 1.0, texCoord0.y)) * hornWisps(texCoord0, flowTime);
         }
     } else {
         vec3 facing = -viewPosition / max(length(viewPosition), 0.0001);
         float edge = pow(abs(dot(normalize(viewNormal), facing)), 0.8);
         float height = smoothstep(0.0, 0.17, texCoord0.y) * (1.0 - smoothstep(0.84, 1.0, texCoord0.y));
-        float wave = 0.5 + 0.5 * sin(texCoord0.y * 18.84956 - flowTime * 3.141593
-                + sin(texCoord0.x * 6.283185) * 1.4);
-        opacity = edge * height * (0.45 + 0.55 * wave * wave);
+        opacity = edge * height * hornWisps(texCoord0, flowTime);
         if (effectType == 4) {
             float progress = float(effect >> 3) / 32767.0;
             float front = progress * 1.16;

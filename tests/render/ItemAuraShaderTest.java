@@ -19,6 +19,7 @@ public final class ItemAuraShaderTest {
             out float vertexDistance;
             out vec4 vertexColor;
             out vec2 texCoord0;
+            out vec2 auraCoord;
             out vec3 viewPosition;
             out vec3 viewNormal;
             out float flowTime;
@@ -27,11 +28,12 @@ public final class ItemAuraShaderTest {
                 vec2 p = vec2((gl_VertexID & 1) * 2 - 1, (gl_VertexID >> 1) * 2 - 1);
                 gl_Position = vec4(p, Depth * 2.0 - 1.0, 1.0);
                 texCoord0 = p * 0.5 + 0.5;
+                auraCoord = texCoord0;
                 vertexDistance = 0.0;
                 vertexColor = Tint;
                 viewPosition = vec3(0, 0, -1);
                 viewNormal = vec3(0, 0, 1);
-                flowTime = Time - (Effect == 2 ? texCoord0.y * 6.0 : 0.0);
+                flowTime = Time;
                 effect = Effect;
             }
             """;
@@ -76,13 +78,14 @@ public final class ItemAuraShaderTest {
                     "transparent texture holes cannot punch out late background geometry");
 
             float minimum = 1, maximum = 0;
-            for (int phase = 0; phase < 8; phase++) {
+            for (int phase = 0; phase < 24; phase++) {
                 clear();
-                aura(phase * 0.25f, 2, false);
+                aura(phase * 0.5f, 2, false);
                 float alpha = pixel(12, 16)[3];
                 minimum = Math.min(minimum, alpha); maximum = Math.max(maximum, alpha);
             }
-            check(maximum - minimum > 0.3f, "flow changes along item local height over time");
+            check(maximum - minimum > 0.07f && maximum - minimum < 0.29f,
+                    "slow local wisps vary moderately without a synchronized bright/dark pulse");
             clear(); aura(0, 2, false); float[] start = pixel(12, 16);
             clear(); aura(12, 2, false);
             check(close(start, pixel(12, 16)), "item and horn clocks wrap seamlessly");

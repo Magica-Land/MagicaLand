@@ -1,0 +1,8 @@
+{
+  "blend": {"func": "add", "srcrgb": "srcalpha", "dstrgb": "one", "srcalpha": "one", "dstalpha": "1-srcalpha"},
+  "vertex": "magicaland:body_aura_screen",
+  "fragment": "magicaland:body_aura_composite",
+  "attributes": ["Position", "Color", "UV0"],
+  "samplers": [{"name": "Sampler0"}, {"name": "Sampler1"}],
+  "uniforms": []
+}

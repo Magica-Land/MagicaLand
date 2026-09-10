@@ -16,6 +16,7 @@ import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.network.ClientNetworkHandler;
 import top.csituka.magicaland.client.render.PonyRenderer;
 import top.csituka.magicaland.client.render.PonyBodyYaw;
+import top.csituka.magicaland.client.animation.PonyFlightVisuals;
 import top.csituka.magicaland.network.NetworkHandler;
 
 import java.util.Map;
@@ -126,7 +127,9 @@ public abstract class PlayerEntityRendererMixin
             float bodyYaw = PonyBodyYaw.sample(player, g);
             matrixStack.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - bodyYaw));
 
-            if (player.getAbilities().flying && player.isSprinting()) {
+            if (!configToUse.showWings) {
+                flightRolls.remove(player.getUuid());
+            } else if (player.getAbilities().flying && player.isSprinting()) {
                 float yawDelta = net.minecraft.util.math.MathHelper
                         .wrapDegrees(player.bodyYaw - player.prevBodyYaw);
                 float targetRoll = net.minecraft.util.math.MathHelper.clamp(yawDelta * -2.5F, -30.0F, 30.0F);
@@ -167,11 +170,13 @@ public abstract class PlayerEntityRendererMixin
                 ponyRenderer.getTextureLocation(ponyAnimatable), vertexConsumerProvider, g);
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(renderLayer);
         ponyRenderer.setGazeFrame(gazeFrame, g);
+        ponyRenderer.setFlightFrame(PonyFlightVisuals.sample(player, configToUse, g));
         try {
             ponyRenderer.render(matrixStack, ponyAnimatable, vertexConsumerProvider, renderLayer,
                     vertexConsumer, i);
         } finally {
             ponyRenderer.setGazeFrame(null, 0);
+            ponyRenderer.setFlightFrame(PonyFlightVisuals.Frame.NONE);
         }
 
         this.renderMagicHeldItem(player, configToUse, matrixStack, vertexConsumerProvider, i, g, gazeFrame);

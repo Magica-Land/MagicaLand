@@ -17,10 +17,12 @@ import top.csituka.magicaland.client.network.ClientNetworkHandler;
 import top.csituka.magicaland.client.render.BodyTintTextures;
 import top.csituka.magicaland.client.render.ManeTintTextures;
 import top.csituka.magicaland.client.render.MagicGlow;
+import top.csituka.magicaland.client.render.BodyFlightAura;
 import top.csituka.magicaland.client.render.GlowingItem;
 import top.csituka.magicaland.client.render.EyeTintTextures;
 import top.csituka.magicaland.client.render.TransformationParticles;
 import top.csituka.magicaland.client.animation.PonyExpressions;
+import top.csituka.magicaland.client.animation.PonyFlightVisuals;
 import top.csituka.magicaland.client.sound.MagicHeldItemSounds;
 
 import java.io.InputStreamReader;
@@ -36,6 +38,7 @@ public class Client implements ClientModInitializer {
         BodyTintTextures.init();
         ManeTintTextures.init();
         MagicGlow.init();
+        BodyFlightAura.init();
         GlowingItem.initLevitation();
         EyeTintTextures.init();
         TransformationParticles.init();
@@ -55,6 +58,7 @@ public class Client implements ClientModInitializer {
 
         // 注册客户端网络处理
         ClientNetworkHandler.register();
+        PonyFlightVisuals.register();
 
         configKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.magicaland.config",

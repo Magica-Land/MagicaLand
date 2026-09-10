@@ -27,6 +27,7 @@ public final class LevitationTrailShaderTest {
             out float vertexDistance;
             out vec4 vertexColor;
             out vec2 texCoord0;
+            out vec2 auraCoord;
             out vec3 viewPosition;
             out vec3 viewNormal;
             out float flowTime;
@@ -36,6 +37,7 @@ public final class LevitationTrailShaderTest {
                 vertexDistance = 0.0;
                 vertexColor = vec4(0.6, 0.2, 1.0, Alpha);
                 texCoord0 = UV;
+                auraCoord = UV;
                 viewPosition = Position;
                 viewNormal = vec3(0, 0, 1);
                 flowTime = Time;
@@ -53,6 +55,7 @@ public final class LevitationTrailShaderTest {
             out float vertexDistance;
             out vec4 vertexColor;
             out vec2 texCoord0;
+            out vec2 auraCoord;
             out vec3 viewPosition;
             out vec3 viewNormal;
             out float flowTime;
@@ -65,10 +68,11 @@ public final class LevitationTrailShaderTest {
                 vertexDistance = 0.0;
                 vertexColor = vec4(Tint.rgb, Tint.a * mix(1.0, uv.x, Fade));
                 texCoord0 = uv;
+                auraCoord = uv;
                 viewPosition = vec3(0, 0, -1);
                 viewNormal = vec3(0, 0, 1);
                 flowTime = Time;
-                effect = 0;
+                effect = 3;
             }
             """;
 
@@ -109,7 +113,7 @@ public final class LevitationTrailShaderTest {
             clear(scene);
             ribbon(0, false, false, true, false);
             float core = pixel(128, 128)[3];
-            check(core > 0.06f && core <= 0.16f, "effect 0 thin strip has a low-alpha visible core");
+            check(core > 0.06f && core <= 0.16f, "production effect 3 thin strip has a low-alpha visible core");
             check(pixel(128, 96)[3] == 0 && pixel(128, 159)[3] == 0,
                     "both lateral soft edges discard before reaching the strip boundary");
             check(near(depth(128, 96), 1) && near(depth(128, 159), 1),
@@ -120,15 +124,16 @@ public final class LevitationTrailShaderTest {
             check(pixel(128, 95)[3] == 0 && pixel(128, 160)[3] == 0,
                     "the thin strip does not shade outside its geometry");
             float minimum = 1, maximum = 0;
-            for (int phase = 0; phase < 8; phase++) {
+            for (int phase = 0; phase < 24; phase++) {
                 clear(scene);
-                ribbon(phase * 0.25f, false, false, true, false);
+                ribbon(phase * 0.5f, false, false, true, false);
                 float alpha = pixel(128, 128)[3];
                 minimum = Math.min(minimum, alpha);
                 maximum = Math.max(maximum, alpha);
                 check(alpha >= 0 && alpha <= 0.16001f, "flow cannot exceed the 0.16 vertex-alpha cap");
             }
-            check(maximum - minimum > 0.06f, "flow changes the thin strip over time");
+            check(maximum - minimum > 0.01f && maximum - minimum < 0.07f,
+                    "slow irregular wisps vary without erasing the thin trail or exceeding its alpha budget");
             clear(scene);
             ribbon(12, false, false, true, false);
             check(Math.abs(pixel(128, 128)[3] - core) < 0.0001f, "packed flow clock wraps seamlessly");

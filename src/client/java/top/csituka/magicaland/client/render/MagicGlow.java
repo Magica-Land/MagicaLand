@@ -49,6 +49,15 @@ public abstract class MagicGlow extends RenderPhase {
     private static final ShaderProgram MAGIC_PROGRAM = new ShaderProgram(() -> shader);
     private static net.minecraft.client.gl.ShaderProgram auraShader;
     private static final ShaderProgram AURA_PROGRAM = new ShaderProgram(() -> auraShader);
+    private static final Transparency AURA_TRANSPARENCY = new Transparency("magicaland_aura", () -> {
+        RenderSystem.enableBlend();
+        RenderSystem.blendEquation(org.lwjgl.opengl.GL14.GL_FUNC_ADD);
+        RenderSystem.blendFuncSeparate(org.lwjgl.opengl.GL11.GL_SRC_ALPHA, org.lwjgl.opengl.GL11.GL_ONE,
+                org.lwjgl.opengl.GL11.GL_ONE, org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }, () -> {
+        RenderSystem.disableBlend();
+        RenderSystem.defaultBlendFunc();
+    });
 
     public static void init() {
         if (initialized) return;
@@ -62,6 +71,7 @@ public abstract class MagicGlow extends RenderPhase {
         WorldRenderEvents.START.register(context -> worldPass = true);
         WorldRenderEvents.END.register(context -> worldPass = false);
         HornAuraPass.init();
+        MagicFlame.init();
     }
 
     private MagicGlow() {
@@ -103,7 +113,7 @@ public abstract class MagicGlow extends RenderPhase {
                 VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, VertexFormat.DrawMode.QUADS, 32768, false, true,
                 RenderLayer.MultiPhaseParameters.builder().program(AURA_PROGRAM).texture(new Texture(texture, false, false))
                         .writeMaskState(fabulous ? ALL_MASK : COLOR_MASK).depthTest(LEQUAL_DEPTH_TEST)
-                        .target(fabulous ? ITEM_ENTITY_TARGET : MAIN_TARGET).transparency(LIGHTNING_TRANSPARENCY)
+                        .target(fabulous ? ITEM_ENTITY_TARGET : MAIN_TARGET).transparency(AURA_TRANSPARENCY)
                         .lightmap(DISABLE_LIGHTMAP).cull(DISABLE_CULLING).build(false));
     }
 

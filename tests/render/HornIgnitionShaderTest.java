@@ -64,7 +64,7 @@ public final class HornIgnitionShaderTest {
             draw(4, 1, true, 1);
             float[] complete = image();
             for (int i = 0; i < legacy.length; i++) close(legacy[i], complete[i], 1e-6f,
-                    "full ignition preserves exact legacy horn look");
+                    "full ignition matches the steady horn pattern");
             draw(4, 0, true, 1);
             for (float value : image()) close(value, 0, 1e-9f, "zero ignition has no colored shell");
             close(depth(SIZE / 2, SIZE / 2), 1, 1e-6f, "unlit horn never writes depth");

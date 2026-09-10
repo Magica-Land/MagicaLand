@@ -13,6 +13,7 @@ import software.bernie.geckolib.cache.object.GeoQuad;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
 import software.bernie.geckolib.util.RenderUtils;
 import top.csituka.magicaland.client.animation.ClientGaze;
+import top.csituka.magicaland.client.animation.PonyFlightVisuals;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
@@ -33,11 +34,13 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
     private EyeApertureRender eyeAperture;
     private Matrix4f gazeFrame;
     private float gazePartialTick;
+    private PonyFlightVisuals.Frame flightFrame = PonyFlightVisuals.Frame.NONE;
     private final PonyGazeMath.Smoother gazeSmoother = new PonyGazeMath.Smoother();
     private final PonyTurnGaze turnGaze = new PonyTurnGaze();
     private final PonyGuiGaze.Tracker guiGaze = new PonyGuiGaze.Tracker();
     private final HornGlowGeometry hornGlow = new HornGlowGeometry();
     private AuraCapture auraCapture;
+    private BodyFlightAura.Capture bodyAuraCapture;
     private boolean headLookActive;
     private final PonyBackwardHeadPose backwardHeadPose = new PonyBackwardHeadPose();
 
@@ -50,10 +53,13 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
     public void defaultRender(MatrixStack stack, GeckoPlayerAnimatable animatable, VertexConsumerProvider buffers,
             RenderLayer renderType, VertexConsumer buffer, float yaw, float partialTick, int light) {
         AuraCapture previous = auraCapture;
+        BodyFlightAura.Capture previousBody = bodyAuraCapture;
         AuraCapture capture = new AuraCapture();
         auraCapture = capture;
+        bodyAuraCapture = beginBodyAura(animatable, partialTick);
         try {
             super.defaultRender(stack, animatable, buffers, renderType, buffer, yaw, partialTick, light);
+            if (bodyAuraCapture != null) bodyAuraCapture.finish();
             if (!capture.draws.isEmpty()) {
                 // 预览先提交整只小马；世界光晕另等全部实体与透明层完成。
                 if (!HornAuraPass.isWorld() && buffers instanceof VertexConsumerProvider.Immediate immediate)
@@ -62,12 +68,32 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             }
         } finally {
             auraCapture = previous;
+            bodyAuraCapture = previousBody;
         }
+    }
+
+    private BodyFlightAura.Capture beginBodyAura(GeckoPlayerAnimatable animatable, float partialTick) {
+        var player = animatable.getPlayer();
+        ModelConfig config = getEffectiveConfig();
+        if (!worldFlightRender() || flightFrame.magic() <= 0
+                || config == null || config.showWings || !config.showHorn || player == null
+                || !player.isAlive() || player.isInvisible() || player.isSpectator()) return null;
+        var camera = net.minecraft.client.MinecraftClient.getInstance().gameRenderer.getCamera();
+        if (player.squaredDistanceTo(camera.getPos()) > 48 * 48) return null;
+        return BodyFlightAura.begin(flightFrame.magic(), GlowingItem.getGlowColor(config), player.age + (double) partialTick);
+    }
+
+    private boolean worldFlightRender() {
+        return gazeFrame != null && HornAuraPass.isWorld() && PonyGuiGaze.current() == null;
     }
 
     public void setGazeFrame(Matrix4f frame, float partialTick) {
         gazeFrame = frame == null ? null : new Matrix4f(frame);
         gazePartialTick = partialTick;
+    }
+
+    public void setFlightFrame(PonyFlightVisuals.Frame frame) {
+        flightFrame = frame == null ? PonyFlightVisuals.Frame.NONE : frame;
     }
 
     public PonyRenderer() {
@@ -108,6 +134,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
 
         boolean previousMirror = mirroredMane;
         try (var mirror = ManeMirror.begin(poseStack, config, bone.getName());
+                PonyFlightPose flight = PonyFlightPose.apply(bone, flightFrame, worldFlightRender(), isReRender);
                 HeadPose head = applyHeadLook(bone, animatable);
                 PonyFacePose face = "Emotions".equals(bone.getName())
                 ? PonyFacePose.apply(bone) : null) {
@@ -129,6 +156,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             RenderLayer newRenderType = this.getRenderType(animatable, texture, bufferSource, partialTick);
             if (auraCapture != null) auraCapture.layers.add(newRenderType);
             VertexConsumer newBuffer = bufferSource.getBuffer(newRenderType);
+            if (bodyAuraCapture != null && !isReRender) newBuffer = bodyAuraCapture.wrap(newBuffer, texture);
             boolean previousPalette = usingPalette;
             VertexConsumerProvider previousBuffers = eyeBuffers;
             RenderLayer previousEye = eyeLayer, previousPupil = pupilLayer;
@@ -170,9 +198,11 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         if (!neck && !"Head".equals(bone.getName())) return null;
         var player = animatable.getPlayer();
         if (player == null || !player.isAlive()) return null;
+        ModelConfig config = getEffectiveConfig();
         PonyHeadLookMath.Pose pose = player.isSleeping() ? PonyHeadLookMath.Pose.SLEEPING
                 : player.isFallFlying() || player.isUsingRiptide()
-                        || (player.getAbilities().flying && player.isSprinting()) ? PonyHeadLookMath.Pose.FLYING
+                        || (config != null && config.showWings && player.getAbilities().flying && player.isSprinting())
+                        ? PonyHeadLookMath.Pose.FLYING
                 : player.isSwimming() || player.getLeaningPitch(gazePartialTick) > .01f
                         ? PonyHeadLookMath.Pose.SWIMMING : PonyHeadLookMath.Pose.NORMAL;
         float previousBodyYaw = player.prevBodyYaw, bodyYaw = player.bodyYaw;
@@ -344,7 +374,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         if ((config != null && !config.showHorn) || player == null || player.isInvisible() || player.isSpectator()
                 || !player.isAlive()) return;
         boolean worldHorn = gazeFrame != null && HornAuraPass.isWorld();
-        float progress = worldHorn ? MagicEquip.hornProgress(player, partialTick)
+        float progress = worldHorn ? Math.max(MagicEquip.hornProgress(player, partialTick), worldFlightRender() ? flightFrame.amount() : 0)
                 : player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty() ? 0 : 1;
         if (progress <= 0) return;
         int ignition = Math.round(net.minecraft.util.math.MathHelper.clamp(progress, 0, 1) * 32767);

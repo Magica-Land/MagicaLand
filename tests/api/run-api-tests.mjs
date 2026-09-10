@@ -98,6 +98,15 @@ const fixtures = {
     public class NetworkHandler { public static boolean serverHasMod=true; }`,
   [javaBase + '/client/render/MagicOrb.java']: `package top.csituka.magicaland.client.render;
     public class MagicOrb { public static void render(net.minecraft.client.util.math.MatrixStack matrices,int color,double ticks,int seed) {} }`,
+  [javaBase + '/client/render/MagicFlame.java']: `package top.csituka.magicaland.client.render;
+    public class MagicFlame {
+      public static int calls; public static boolean failRender;
+      public static net.minecraft.entity.Entity source; public static int color; public static float delta;
+      public static void render(net.minecraft.client.util.math.MatrixStack matrices,net.minecraft.entity.Entity entity,int tint,float tickDelta) {
+        calls++; source=entity; color=tint; delta=tickDelta;
+        if (failRender) throw new IllegalStateException("flame failed");
+      }
+    }`,
   [javaBase + '/client/render/GlowingItem.java']: `package top.csituka.magicaland.client.render;
     public class GlowingItem {
       public static final java.util.List<String> events=new java.util.ArrayList<>(); public static boolean failEnd,failRender;
@@ -176,12 +185,14 @@ try {
       public void use(java.util.UUID id, LivingEntity owner, Entity camera, ItemStack stack,
                       MatrixStack matrices, VertexConsumerProvider.Immediate buffers) {
         ApiVersion.requireCompatible(1,0);
+        ApiVersion.requireCompatible(1,3);
         java.util.Optional<AppearanceSnapshot> snapshot=Appearances.find(id);
         try (Registration registration=AppearanceOverrides.registerGaze("addon:test",0,player -> camera)) {
           AppearanceOverrides.registerMagicActivity("addon:test",0,player -> player.equals(id)).close();
           boolean active=AppearanceOverrides.magicActive(id);
           AppearanceOverrides.registerMainHandVisibility("addon:test",0,player -> AppearanceOverrides.Visibility.HIDDEN).close();
           AppearanceVisuals.renderOrb(matrices,Appearances.magicColor(id),0,0);
+          AppearanceVisuals.renderFlame(matrices,camera,Appearances.magicColor(id),.5f);
           AppearanceVisuals.renderGlowingItem(stack,net.minecraft.client.render.model.json.ModelTransformationMode.GROUND,
             matrices,buffers,camera.getWorld(),0,0,Appearances.magicColor(id));
           AppearanceVisuals.renderFirstPerson(owner,camera,stack,buffers,() -> {});

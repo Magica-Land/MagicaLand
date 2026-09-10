@@ -1,0 +1,12 @@
+{
+  "vertex": "magicaland:body_aura_screen",
+  "fragment": "magicaland:body_aura_soften",
+  "attributes": ["Position", "Color", "UV0"],
+  "samplers": [{"name": "Sampler0"}, {"name": "Sampler1"}, {"name": "Sampler2"}],
+  "uniforms": [
+    {"name": "MaskSize", "type": "float", "count": 2, "values": [1, 1]},
+    {"name": "ProjectionDepth", "type": "float", "count": 2, "values": [-1, -0.1]},
+    {"name": "ProjectionScale", "type": "float", "count": 1, "values": [1]},
+    {"name": "FlowTime", "type": "float", "count": 1, "values": [0]}
+  ]
+}

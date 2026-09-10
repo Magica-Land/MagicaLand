@@ -14,6 +14,7 @@ uniform int FogShape;
 out float vertexDistance;
 out vec4 vertexColor;
 out vec2 texCoord0;
+out vec2 auraCoord;
 out vec3 viewPosition;
 out vec3 viewNormal;
 out float flowTime;
@@ -25,11 +26,11 @@ void main() {
     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
     vertexColor = Color;
     texCoord0 = UV0;
+    auraCoord = clamp(vec2(UV2) / 32767.0, 0.0, 1.0);
     viewPosition = view.xyz;
     viewNormal = mat3(ModelViewMat) * Normal;
     flowTime = float(UV1.x) * 0.001;
     effect = UV1.y;
-    if (effect == 2) flowTime -= float(UV2.y) / 32767.0 * 6.0;
     // 每只角的点亮进度随顶点提交，不污染同批次其他光效。
     if (effect == 4) effect |= clamp(UV2.x, 0, 32767) << 3;
 }

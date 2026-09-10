@@ -4,6 +4,7 @@ import net.minecraft.util.Identifier;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.core.animation.Animation;
 import top.csituka.magicaland.client.animation.PonyIdleEarAnimations;
+import top.csituka.magicaland.client.animation.PonyFlightAnimations;
 
 public class GeckoPlayerModel extends GeoModel<GeckoPlayerAnimatable> {
     private static final Identifier MODEL = new Identifier("magicaland", "geo/mare_geo.json");
@@ -26,6 +27,8 @@ public class GeckoPlayerModel extends GeoModel<GeckoPlayerAnimatable> {
 
     @Override
     public Animation getAnimation(GeckoPlayerAnimatable object, String name) {
+        if (PonyFlightAnimations.NAME.equals(name))
+            return PonyFlightAnimations.resolve(super.getAnimation(object, "fly"));
         if (PonyIdleEarAnimations.internal(name))
             return PonyIdleEarAnimations.resolve(super.getAnimation(object, "ear_parallel"), name);
         return super.getAnimation(object, name);

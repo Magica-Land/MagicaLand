@@ -20,6 +20,7 @@ public final class HornAuraOrderingTest {
             out float vertexDistance;
             out vec4 vertexColor;
             out vec2 texCoord0;
+            out vec2 auraCoord;
             out vec2 texCoord;
             out vec3 viewPosition;
             out vec3 viewNormal;
@@ -30,6 +31,7 @@ public final class HornAuraOrderingTest {
                 gl_Position = vec4(p, Depth * 2.0 - 1.0, 1.0);
                 texCoord = p * 0.5 + 0.5;
                 texCoord0 = vec2(0.5, 0.35);
+                auraCoord = texCoord0;
                 vertexDistance = 0.0;
                 vertexColor = Tint;
                 viewPosition = vec3(0, 0, -1);

@@ -132,7 +132,8 @@ final class ItemAuraGeometry {
                 Vector3f normal = normals.transform(new Vector3f(vertex.nx, vertex.ny, vertex.nz)).normalize();
                 buffer.vertex(point.x, point.y, point.z).color(red, green, blue, opacity[layer] * vertex.alpha)
                         .texture(vertex.u, vertex.v).overlay(clock, 2)
-                        .light(0, height(vertex.y, min.y, max.y))
+                        .light(max.x - min.x >= max.z - min.z ? height(vertex.x, min.x, max.x) : height(vertex.z, min.z, max.z),
+                                height(vertex.y, min.y, max.y))
                         .normal(normal.x, normal.y, normal.z).next();
             }
         }

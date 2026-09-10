@@ -26,6 +26,7 @@ public final class MagicSoundStateTest {
 
     public static void main(String[] args) {
         startupAndEquip();
+        flightAndHeldShareVoice();
         debounceAndCooldown();
         remoteAndSlots();
         lifecycleAndIdentity();
@@ -50,6 +51,31 @@ public final class MagicSoundStateTest {
         for (int i = 0; i < 8; i++) silent(advance(state, self(false)), "remaining empty is silent");
         event(advance(state, self(true)), MagicSoundState.Burst.CAST, "real pickup after baseline casts");
         check(advance(state, self(true)).loops().size() == 1, "cast does not require render loop");
+    }
+
+    private static void flightAndHeldShareVoice() {
+        MagicSoundState state = new MagicSoundState();
+        advance(state, self(false));
+        var flying = new MagicSoundState.Observation(SELF, 1, true, false, true, 0);
+        event(advance(state, flying), MagicSoundState.Burst.CAST, "empty-handed magic takeoff casts once");
+        for (int i = 0; i < 20; i++) {
+            var frame = advance(state, flying);
+            silent(frame, "steady flight does not repeat cast");
+            check(frame.loops().size() == 1, "flight has one quiet loop");
+        }
+        silent(advance(state, new MagicSoundState.Observation(SELF, 1, true, true, true, 0)), "equipping during flight does not layer cast");
+        silent(advance(state, self(true)), "landing while still holding preserves same magic voice");
+        advance(state, self(false));
+        advance(state, self(false));
+        event(advance(state, self(false)), MagicSoundState.Burst.END, "end when both flight and held magic finish");
+        check(advance(state, self(false)).loops().isEmpty(), "finished flight leaves no loop");
+        state.clear();
+        silent(advance(state, flying), "joining mid-flight starts loop without sudden cast");
+        check(advance(state, flying).loops().size() == 1, "mid-flight baseline restores aura");
+        var remote = new MagicSoundState.Observation(new UUID(0, 2), 2, false, false, true, 2);
+        state.clear();
+        silent(advance(state, remote), "remote flight does not spam local cast cues");
+        check(advance(state, remote).loops().size() == 1, "nearby unicorn flight has distance-limited loop");
     }
 
     private static void debounceAndCooldown() {

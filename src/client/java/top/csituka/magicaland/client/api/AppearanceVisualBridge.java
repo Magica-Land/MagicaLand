@@ -14,6 +14,7 @@ import top.csituka.magicaland.client.render.GlowingItem;
 import top.csituka.magicaland.client.render.ItemLevitation;
 import top.csituka.magicaland.client.render.MagicEquipMotion;
 import top.csituka.magicaland.client.render.MagicOrb;
+import top.csituka.magicaland.client.render.MagicFlame;
 
 public final class AppearanceVisualBridge {
     private static boolean firstPersonPass;
@@ -23,6 +24,20 @@ public final class AppearanceVisualBridge {
 
     public static void renderOrb(MatrixStack matrices, int color, double ticks, int seed) {
         MagicOrb.render(matrices, color, ticks, seed);
+    }
+
+    public static void renderFlame(MatrixStack matrices, Entity source, int color, float delta) {
+        Objects.requireNonNull(matrices, "matrices");
+        Objects.requireNonNull(source, "source");
+        if (!Float.isFinite(delta) || delta < 0 || delta > 1)
+            throw new IllegalArgumentException("tickDelta must be finite and between 0 and 1");
+        if (source.isRemoved() || source.getWorld() != MinecraftClient.getInstance().world) return;
+        matrices.push();
+        try {
+            MagicFlame.render(matrices, source, color, delta);
+        } finally {
+            matrices.pop();
+        }
     }
 
     public static void renderGlowingItem(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices,

@@ -14,6 +14,8 @@ import top.csituka.magicaland.client.animation.PonyExpressions;
 import top.csituka.magicaland.client.animation.PonyBackwardLook;
 import top.csituka.magicaland.client.animation.PonyIdleEars;
 import top.csituka.magicaland.client.animation.PonyIdleEarAnimations;
+import top.csituka.magicaland.client.animation.PonyFlightAnimations;
+import top.csituka.magicaland.client.animation.PonyFlightVisuals;
 import top.csituka.magicaland.client.network.ClientNetworkHandler;
 
 import java.util.HashMap;
@@ -294,10 +296,11 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             fallState.landed = false;
         }
 
-        if (player.getAbilities().flying) {
-            return player.isSprinting()
-                    ? new AnimationSelection("elytra_fly", ELYTRA_FLY_ANIM)
-                    : new AnimationSelection("fly", FLY_ANIM);
+        var flightConfig = PonyFlightVisuals.config(player);
+        boolean authoredFlight = player.getAbilities().flying && (flightConfig == null || flightConfig.showWings);
+        if (authoredFlight || PonyFlightVisuals.flying(player)) {
+            String action = player.isSprinting() ? "elytra_fly" : "fly";
+            return new AnimationSelection(action, flightAnimation(action));
         }
 
         if (player.isTouchingWater() && moving) {
@@ -368,7 +371,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             return PlayState.STOP;
         }
 
-        state.getController().setAnimation(animation);
+        applyAnimation(state, animation);
         return PlayState.CONTINUE;
     }
 
@@ -381,8 +384,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             return null;
 
         return switch (name) {
-            case "fly" -> FLY_ANIM;
-            case "elytra_fly" -> ELYTRA_FLY_ANIM;
+            case "fly", "elytra_fly" -> flightAnimation(name);
             case "swim" -> SWIM_ANIM;
             case "swim_hold" -> SWIM_HOLD_ANIM;
             case "sneak" -> SNEAK_ANIM;
@@ -412,11 +414,25 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
 
     private PlayState playAnimation(AnimationState<GeckoPlayerAnimatable> state, AnimationSelection selection) {
         if ("controller".equals(state.getController().getName())) setMainAnimation(selection.name());
-        state.getController().setAnimation(selection.animation());
+        applyAnimation(state, selection.animation());
         if (isLocalPlayer()) {
             ClientNetworkHandler.sendAnimation(state.getController().getName(), selection.name());
         }
         return PlayState.CONTINUE;
+    }
+
+    private RawAnimation flightAnimation(String action) {
+        var config = PonyFlightVisuals.config(player);
+        return PonyFlightAnimations.select(config != null && !config.showWings && PonyFlightVisuals.eligible(player),
+                "elytra_fly".equals(action) ? ELYTRA_FLY_ANIM : FLY_ANIM);
+    }
+
+    private void applyAnimation(AnimationState<GeckoPlayerAnimatable> state, RawAnimation animation) {
+        var controller = state.getController();
+        if ("controller".equals(controller.getName()) && controller.getCurrentRawAnimation() != animation) {
+            controller.transitionLength(PonyFlightAnimations.transitionTicks(controller.getCurrentRawAnimation(), animation));
+        }
+        controller.setAnimation(animation);
     }
 
     private PlayState stopAnimation(AnimationState<GeckoPlayerAnimatable> state) {

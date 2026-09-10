@@ -16,6 +16,7 @@ import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.network.ClientNetworkHandler;
 import top.csituka.magicaland.client.render.GlowingItem;
 import top.csituka.magicaland.client.render.MagicEquip;
+import top.csituka.magicaland.client.render.MagicFlame;
 
 public final class AppearanceApiTest {
     private static int checks;
@@ -36,6 +37,7 @@ public final class AppearanceApiTest {
         check(ApiVersion.isCompatible(1, 0), "v1.0 supported");
         check(ApiVersion.isCompatible(1, 1), "independent visuals require v1.1");
         check(ApiVersion.isCompatible(1, 2), "magic activity requires v1.2");
+        check(ApiVersion.isCompatible(1, 3), "flame requires v1.3");
         check(!ApiVersion.isCompatible(2, 0) && !ApiVersion.isCompatible(1, ApiVersion.MINOR + 1)
                 && !ApiVersion.isCompatible(1, -1), "incompatible requests rejected");
         fails(IllegalStateException.class, () -> ApiVersion.requireCompatible(2, 0));
@@ -46,7 +48,36 @@ public final class AppearanceApiTest {
         snapshots();
         firstPerson();
         visualContext();
+        flame();
         System.out.println("Appearance API: " + checks + " checks passed");
+    }
+
+    private static void flame() {
+        var client = MinecraftClient.getInstance();
+        var source = new Entity(UUID.randomUUID(), client.world);
+        var matrices = new net.minecraft.client.util.math.MatrixStack();
+        matrices.push();
+        AppearanceVisuals.renderFlame(matrices, source, 0x123456, .25f);
+        check(MagicFlame.calls == 1 && MagicFlame.source == source && MagicFlame.color == 0x123456
+                && MagicFlame.delta == .25f && matrices.depth == 1, "flame arguments forwarded and caller stack preserved");
+        MagicFlame.failRender = true;
+        fails(IllegalStateException.class, () -> AppearanceVisuals.renderFlame(matrices, source, 0, .5f));
+        MagicFlame.failRender = false;
+        check(matrices.depth == 1, "flame failure restores caller stack");
+        int calls = MagicFlame.calls;
+        for (float delta : new float[] {Float.NaN, Float.POSITIVE_INFINITY, -.001f, 1.001f})
+            fails(IllegalArgumentException.class, () -> AppearanceVisuals.renderFlame(matrices, source, 0, delta));
+        fails(NullPointerException.class, () -> AppearanceVisuals.renderFlame(null, source, 0, 0));
+        fails(NullPointerException.class, () -> AppearanceVisuals.renderFlame(matrices, null, 0, 0));
+        AppearanceVisuals.renderFlame(matrices, new Entity(UUID.randomUUID(), new World()), 0, .5f);
+        source.removed = true;
+        AppearanceVisuals.renderFlame(matrices, source, 0, .5f);
+        check(MagicFlame.calls == calls && matrices.depth == 1, "invalid and stale flame sources leave renderer untouched");
+        source.removed = false;
+        AppearanceVisuals.renderFlame(matrices, source, 0, 0);
+        AppearanceVisuals.renderFlame(matrices, source, 0, 1);
+        check(MagicFlame.calls == calls + 2, "interpolation endpoints accepted");
+        matrices.pop();
     }
 
     private static void registry() {
