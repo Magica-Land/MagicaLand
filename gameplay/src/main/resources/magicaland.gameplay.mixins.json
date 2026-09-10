@@ -6,7 +6,10 @@
   "mixins": [
     "AnimalLoveMixin",
     "CarrotFinishUsingMixin",
-    "HorseGoalSelectorAccessor"
+    "HorseGoalSelectorAccessor",
+    "RemoteBodyActionMixin",
+    "RemoteWorldFeedbackMixin",
+    "RemoteAttackEffectsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

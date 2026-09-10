@@ -15,7 +15,7 @@ English | [简体中文](README_ZH.md)
 Starting with 0.2.0, this repository produces two separate mods:
 
 - **Appearance (`magicaland-appearance`)** retains mod ID `magicaland` and all customization, rendering, animation and appearance synchronization. Requires Fabric API and GeckoLib, but not Gameplay.
-- **Gameplay (`magicaland-gameplay`)** requires the matching Appearance version. Currently contains the golden-carrot horse encounter and its advancement; tribe abilities are still planned.
+- **Gameplay (`magicaland-gameplay`)** requires the matching Appearance version. Includes the golden-carrot encounter; 0.2.1 introduces an experimental [remote-presence prototype (Chinese)](docs/remote-presence.md). Other tribe abilities remain planned.
 
 Remove the old all-in-one JAR before installing the new Appearance JAR. Install both modules to retain the encounter. Multiplayer appearance synchronization still needs server support; splitting does not make Appearance a client-only mod.
 

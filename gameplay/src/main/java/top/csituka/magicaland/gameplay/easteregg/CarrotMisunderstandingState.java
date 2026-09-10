@@ -12,13 +12,25 @@ public final class CarrotMisunderstandingState {
     public static final double RANGE_SQUARED = 8 * 8;
     public record Feed(UUID horse, String world, long tick) {}
     public record Claim(UUID horse, long tick) {}
+    public record Meal(String world, long tick) {}
     private final Map<UUID, Feed> feeds = new HashMap<>();
+    private final Map<UUID, Meal> meals = new HashMap<>();
     private final Map<UUID, Claim> active = new HashMap<>();
     private final Map<UUID, UUID> horses = new HashMap<>();
     private final Map<UUID, Long> cooldowns = new HashMap<>();
 
     public void fed(UUID player, UUID horse, String world, long now) {
         if (!active.containsKey(player) && !cooling(player, now)) feeds.put(player, new Feed(horse, world, now));
+    }
+    public void ate(UUID player, String world, long now) {
+        if (!active.containsKey(player) && !cooling(player,now)) meals.put(player,new Meal(world,now));
+    }
+    public Feed takeMatch(UUID player, String world, long now) {
+        Meal meal=meals.get(player);
+        if (meal==null || !meal.world.equals(world) || !age(now,meal.tick,FEED_WINDOW)) return null;
+        Feed feed=takeFeed(player,world,now);
+        if (feed!=null) meals.remove(player);
+        return feed;
     }
     public Feed takeFeed(UUID player, String world, long now) {
         Feed feed = feeds.remove(player);
@@ -35,6 +47,7 @@ public final class CarrotMisunderstandingState {
     }
     public void release(UUID player) {
         feeds.remove(player);
+        meals.remove(player);
         Claim claim = active.remove(player);
         if (claim != null) horses.remove(claim.horse, player);
     }
@@ -46,9 +59,11 @@ public final class CarrotMisunderstandingState {
     public void prune(long now, BiPredicate<UUID, String> validPlayer) {
         feeds.entrySet().removeIf(entry -> !age(now, entry.getValue().tick, FEED_WINDOW)
                 || !validPlayer.test(entry.getKey(), entry.getValue().world));
+        meals.entrySet().removeIf(entry -> !age(now,entry.getValue().tick,FEED_WINDOW)
+                || !validPlayer.test(entry.getKey(),entry.getValue().world));
         cooldowns.values().removeIf(until -> now >= until);
     }
-    public void clear() { feeds.clear(); active.clear(); horses.clear(); cooldowns.clear(); }
+    public void clear() { feeds.clear(); meals.clear(); active.clear(); horses.clear(); cooldowns.clear(); }
     public static boolean age(long now, long then, long limit) { return now >= then && now - then <= limit; }
     public static float damage(float health) { return Float.isFinite(health) && health > 1 ? 1 : 0; }
     public static boolean contact(double x, double y, double z, double horseWidth, double playerWidth) {

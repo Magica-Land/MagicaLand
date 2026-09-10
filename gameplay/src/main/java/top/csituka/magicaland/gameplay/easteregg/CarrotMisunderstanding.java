@@ -51,11 +51,16 @@ public final class CarrotMisunderstanding {
                 || player.getServer() == null || !player.isAlive()) return;
         bind(player.getServer());
         STATE.fed(player.getUuid(), horse.getUuid(), worldKey(player), now());
+        tryStart(player);
     }
     public static void carrotFinished(ServerPlayerEntity player, Item food) {
         if (!triggerFood(food)) return;
         bind(player.getServer());
-        var feed = STATE.takeFeed(player.getUuid(), worldKey(player), now());
+        STATE.ate(player.getUuid(),worldKey(player),now());
+        tryStart(player);
+    }
+    private static void tryStart(ServerPlayerEntity player) {
+        var feed = STATE.takeMatch(player.getUuid(), worldKey(player), now());
         if (feed == null) return;
         var entity = player.getServerWorld().getEntity(feed.horse());
         if (!(entity instanceof HorseEntity horse) || !eligible(player, horse)
@@ -130,6 +135,7 @@ public final class CarrotMisunderstanding {
             var type = player.getServerWorld().getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.MOB_ATTACK);
             damaged = player.damage(new DamageSource(type, horse.getPos()), amount);
         }
+        if (damaged) horse.playAngrySound();
         Vec3d away = player.getPos().subtract(horse.getPos()).multiply(1, 0, 1);
         if (damaged && away.lengthSquared() > 1e-6 && safePush(player, away.normalize())) {
             player.takeKnockback(.12, -away.x, -away.z);

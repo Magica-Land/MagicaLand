@@ -7,7 +7,7 @@
 | 模块 | 模组 ID | 内容 |
 | --- | --- | --- |
 | `appearance` | `magicaland` | 原有外观、捏脸、预设、眼神、耳动、动画、悬浮手持物视觉、魔法音效、光效、保存变身光尘及多人外观同步 |
-| `gameplay` | `magicaland_gameplay` | 金胡萝卜马匹互动、轻微碰撞伤害、爱心演出与「不是这个意思！」进度；未来三族能力 |
+| `gameplay` | `magicaland_gameplay` | 金胡萝卜马匹互动、轻微碰撞伤害、爱心演出与「不是这个意思！」进度；0.2.1 念力出窍原型及未来三族能力 |
 
 服务端眼神目标选择仅服务外观，仍属于外观包。现有悬浮物没有获得远程操作、采矿能力；未来实际能力判定与魔法值归玩法包。两模块均保留公共/客户端代码分离，不把外观包改为仅客户端。
 
@@ -37,7 +37,7 @@
 | `gradle :gameplay:runClient` | 外观＋玩法客户端 |
 | `gradle :gameplay:runServer` | 外观＋玩法专用服务端 |
 
-产物分别位于 `appearance/build/libs/magicaland-appearance-0.2.0.jar` 和 `gameplay/build/libs/magicaland-gameplay-0.2.0.jar`。正式安装用 remap 后的普通 JAR，不用 `sources` 或 `dev` JAR。根工程不产出第三个模组。
+产物分别位于 `appearance/build/libs/magicaland-appearance-<版本>.jar` 和 `gameplay/build/libs/magicaland-gameplay-<版本>.jar`，当前版本见根 `gradle.properties`。正式安装用 remap 后的普通 JAR，不用 `sources` 或 `dev` JAR。根工程不产出第三个模组。
 
 两个模块的客户端/服务端分别使用各自的 `run/client`、`run/server`，避免共用存档锁。首次启动不会自动搬迁旧测试存档或设置；需有意复制，不能覆盖玩家数据。专用服务端的 EULA 由使用者确认。
 

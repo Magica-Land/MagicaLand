@@ -7,5 +7,6 @@ public final class MagicalLandGameplay implements ModInitializer {
     @Override
     public void onInitialize() {
         CarrotMisunderstanding.register();
+        top.csituka.magicaland.gameplay.remote.RemoteToolServer.register();
     }
 }

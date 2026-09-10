@@ -88,6 +88,16 @@ public final class ItemAuraGeometryTest {
         check(ItemAuraGeometry.height(0, 0, 0) == 16384, "zero-height face safe");
         check(ItemAuraGeometry.height(10, 0, 1) == 32767, "packed height upper bound");
         check(ItemAuraGeometry.height(-10, 0, 1) == 0, "packed height lower bound");
+        var softMesh=capture.finish();
+        Sink soft=new Sink();
+        float[] profile={.075f,.05f,.025f,.01f};
+        softMesh.render(softMesh.batches.get(0),soft,0x6611CC,1200,profile,4.5f);
+        check(soft.values.size()==4*profile.length,"independent orb profile layer count");
+        for (int layer=0;layer<profile.length;layer++)
+            check(near(soft.values.get(layer*4).alpha,(int)(profile[layer]*255)/255f),"orb opacity uses its own soft profile");
+        var vertex=new ItemAuraGeometry.Vertex(.075f,.075f,.075f,0,0,1,0,0,1);
+        check(ItemAuraGeometry.expanded(vertex,new Vector3f(),.15f,5,4.5f).x
+                >ItemAuraGeometry.expanded(vertex,new Vector3f(),.15f,5).x,"orb softness expands independently of existing held item aura");
         System.out.println("PASS item aura geometry: " + checks + " checks");
     }
 

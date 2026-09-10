@@ -87,9 +87,11 @@ public final class ItemLevitation {
         Vector3f anchor = new Vector3f(left ? -.71f : .71f, -.32f, -1.12f).rotate(rotation);
         LevitationMotion.Point target = point(cameraPosition).add(point(anchor));
         target = target.add(point(vector(MagicEquipMotion.springTarget(MagicEquip.progress(entity, main, delta), left, true)).rotate(rotation)));
-        return apply(entity, stack, main, left, true, matrices, target, point(entity.getLerpedPos(delta)),
+        var view=top.csituka.magicaland.client.api.FirstPersonItemView.forOwner(entity);
+        var source=view==null?entity:view.camera;
+        return apply(entity, stack, main, left, true, matrices, target, point(source.getLerpedPos(delta)),
                 worldToRender, new Matrix4f().set(worldToRender), point(cameraPosition),
-                entity.getYaw(delta), delta);
+                source.getYaw(delta), delta);
     }
 
     private static LevitationTrail apply(LivingEntity entity, ItemStack stack, boolean main, boolean left,

@@ -26,7 +26,8 @@ public final class CarrotTriggerFoodTest {
         for (Item fed : foods) for (Item eaten : foods) {
             var state = new CarrotMisunderstandingState();
             if (CarrotMisunderstanding.triggerFood(fed)) state.fed(player, horse, "test", 100);
-            var match = CarrotMisunderstanding.triggerFood(eaten) ? state.takeFeed(player, "test", 110) : null;
+            if (CarrotMisunderstanding.triggerFood(eaten)) state.ate(player,"test",110);
+            var match = state.takeMatch(player,"test",110);
             check((match != null) == (fed == Items.GOLDEN_CARROT && eaten == Items.GOLDEN_CARROT),
                     "both feeding and eating must use golden carrot");
         }
@@ -41,10 +42,13 @@ public final class CarrotTriggerFoodTest {
                 && feedRoute.indexOf("!triggerFood(food.getItem())") < feedRoute.indexOf("STATE.fed("),
                 "real feeding route applies the filter before recording");
         check(eatRoute.contains("if (!triggerFood(food)) return;")
-                && eatRoute.indexOf("if (!triggerFood(food)) return;") < eatRoute.indexOf("STATE.takeFeed("),
+                && eatRoute.indexOf("if (!triggerFood(food)) return;") < eatRoute.indexOf("STATE.ate("),
                 "real eating route applies the same filter before consuming a record");
         check(feedRoute.contains("!horse.isInLove()") && feedRoute.contains("horse.getLovingPlayer() != player"),
                 "successful original breeding feed and feeder association remain required");
+        check(feedRoute.contains("tryStart(player)") && eatRoute.contains("tryStart(player)")
+                && eatRoute.contains("STATE.takeMatch("),"both food orders use the same match path");
+        check(source.contains("if (damaged) horse.playAngrySound();"),"rear only after successful damage via vanilla horse reaction");
         System.out.println("PASS CarrotTriggerFoodTest: " + checks + " exact-food and route checks");
     }
 

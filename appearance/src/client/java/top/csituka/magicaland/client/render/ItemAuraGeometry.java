@@ -121,12 +121,16 @@ final class ItemAuraGeometry {
         Vector3f centerInRender() { return root.transformPosition(new Vector3f(center)); }
 
         void render(Batch batch, VertexConsumer buffer, int color, int clock) {
+            render(batch,buffer,color,clock,OPACITY,EXPANSION_GAIN);
+        }
+
+        void render(Batch batch, VertexConsumer buffer, int color, int clock,float[] opacity,float expansion) {
             float red = (color >>> 16 & 255) / 255f, green = (color >>> 8 & 255) / 255f, blue = (color & 255) / 255f;
-            for (int layer = 0; layer < OPACITY.length; layer++) for (Vertex vertex : batch.vertices) {
-                Vector3f point = expanded(vertex, center, extent, layer);
+            for (int layer = 0; layer < opacity.length; layer++) for (Vertex vertex : batch.vertices) {
+                Vector3f point = expanded(vertex, center, extent, layer,expansion);
                 root.transformPosition(point);
                 Vector3f normal = normals.transform(new Vector3f(vertex.nx, vertex.ny, vertex.nz)).normalize();
-                buffer.vertex(point.x, point.y, point.z).color(red, green, blue, OPACITY[layer] * vertex.alpha)
+                buffer.vertex(point.x, point.y, point.z).color(red, green, blue, opacity[layer] * vertex.alpha)
                         .texture(vertex.u, vertex.v).overlay(clock, 2)
                         .light(0, height(vertex.y, min.y, max.y))
                         .normal(normal.x, normal.y, normal.z).next();
@@ -160,8 +164,12 @@ final class ItemAuraGeometry {
     }
 
     static Vector3f expanded(Vertex vertex, Vector3f center, float extent, int layer) {
-        float dilation = 1 + (0.025f + layer * 0.024f) * EXPANSION_GAIN;
-        float push = extent * (0.007f + layer * 0.004f) * EXPANSION_GAIN;
+        return expanded(vertex,center,extent,layer,EXPANSION_GAIN);
+    }
+
+    static Vector3f expanded(Vertex vertex, Vector3f center, float extent, int layer,float expansion) {
+        float dilation = 1 + (0.025f + layer * 0.024f) * expansion;
+        float push = extent * (0.007f + layer * 0.004f) * expansion;
         return new Vector3f(vertex.x, vertex.y, vertex.z).sub(center).mul(dilation).add(center)
                 .add(vertex.nx * push, vertex.ny * push, vertex.nz * push);
     }

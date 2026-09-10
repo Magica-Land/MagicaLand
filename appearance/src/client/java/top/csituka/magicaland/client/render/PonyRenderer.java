@@ -252,7 +252,8 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                 applyGuiGaze(stack, root, face, style, gui);
             return;
         }
-        if (gazeFrame == null || !Config.getInstance().automaticGaze || !animatable.allowsAutomaticGaze()
+        var forced=player==null?null:top.csituka.magicaland.client.api.ExternalGaze.target(player.getUuid());
+        if (gazeFrame == null || (forced==null && !Config.getInstance().automaticGaze) || !animatable.allowsAutomaticGaze()
                 || player == null || !player.isAlive() || player.isSleeping() || !face.allowsGaze()) {
             gazeSmoother.reset();
             turnGaze.reset();
@@ -265,7 +266,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             turnGaze.reset();
             return;
         }
-        var target = ClientGaze.targetFor(player);
+        net.minecraft.entity.Entity target = forced!=null?forced:ClientGaze.targetFor(player);
         double ticks = (double) player.age + gazePartialTick;
         float viewYaw = net.minecraft.util.math.MathHelper.lerpAngleDegrees(gazePartialTick, player.prevHeadYaw, player.headYaw);
         float viewPitch = net.minecraft.util.math.MathHelper.lerp(gazePartialTick, player.prevPitch, player.getPitch());
