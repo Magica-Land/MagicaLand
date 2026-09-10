@@ -1,4 +1,4 @@
-package top.csituka.magicaland.client.gui.tab.ponycustom;
+package top.csituka.magicaland.client.gui.ponycustom;
 
 public record StyleGridLayout(int width, int count, int columns, int cardWidth, int rows) {
     public static final int CARD_HEIGHT = 68;

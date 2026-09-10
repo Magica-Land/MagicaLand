@@ -1,10 +1,10 @@
-package top.csituka.magicaland.client.gui.tab.ponycustom;
+package top.csituka.magicaland.client.gui.ponycustom;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
 
-import top.csituka.magicaland.client.gui.ConfigScreen;
+import top.csituka.magicaland.client.gui.PonyCustomScreen;
 
 public final class PonyCustomPageContext {
     public enum Page {
@@ -18,7 +18,7 @@ public final class PonyCustomPageContext {
         CUTIE_MARK
     }
 
-    private final ConfigScreen screen;
+    private final PonyCustomScreen screen;
     private final int x;
     private final int y;
     private final int width;
@@ -29,18 +29,18 @@ public final class PonyCustomPageContext {
     private final Runnable scrollReset;
     private final Consumer<Boolean> cutieMarkFocus;
 
-    public PonyCustomPageContext(ConfigScreen screen, int x, int y, int width, int height,
+    public PonyCustomPageContext(PonyCustomScreen screen, int x, int y, int width, int height,
             BiConsumer<Page, Integer> pageSwitcher, Runnable pageRefresher) {
         this(screen, x, y, width, height, pageSwitcher, pageRefresher, part -> {}, () -> {});
     }
 
-    public PonyCustomPageContext(ConfigScreen screen, int x, int y, int width, int height,
+    public PonyCustomPageContext(PonyCustomScreen screen, int x, int y, int width, int height,
             BiConsumer<Page, Integer> pageSwitcher, Runnable pageRefresher,
             Consumer<PonyStylePart> partFocus, Runnable scrollReset) {
         this(screen, x, y, width, height, pageSwitcher, pageRefresher, partFocus, scrollReset, left -> {});
     }
 
-    public PonyCustomPageContext(ConfigScreen screen, int x, int y, int width, int height,
+    public PonyCustomPageContext(PonyCustomScreen screen, int x, int y, int width, int height,
             BiConsumer<Page, Integer> pageSwitcher, Runnable pageRefresher,
             Consumer<PonyStylePart> partFocus, Runnable scrollReset, Consumer<Boolean> cutieMarkFocus) {
         this.screen = screen;
@@ -55,7 +55,7 @@ public final class PonyCustomPageContext {
         this.cutieMarkFocus = cutieMarkFocus;
     }
 
-    public ConfigScreen getScreen() {
+    public PonyCustomScreen getScreen() {
         return screen;
     }
 

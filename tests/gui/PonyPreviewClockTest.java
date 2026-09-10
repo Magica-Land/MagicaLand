@@ -93,7 +93,7 @@ public final class PonyPreviewClockTest {
     }
 
     private static void sourceContract(Path root) throws Exception {
-        String custom = Files.readString(root.resolve("appearance/src/client/java/top/csituka/magicaland/client/gui/tab/PonyCustom.java"));
+        String custom = Files.readString(root.resolve("appearance/src/client/java/top/csituka/magicaland/client/gui/PonyCustom.java"));
         String preview = Files.readString(root.resolve("appearance/src/client/java/top/csituka/magicaland/client/model/PonyPreviewAnimatable.java"));
         String init = custom.substring(custom.indexOf("private void initRenderer()"), custom.indexOf("private void renderGrassBlockPreview"));
         check(init.contains("if (ponyAnimatable != null) return;"), "page/color reinit reuses preview instance");
@@ -106,7 +106,7 @@ public final class PonyPreviewClockTest {
                 "preview reuses authored probabilistic ear variants rather than fixed old loop");
         check(custom.contains("try (var gaze = PonyGuiGaze.begin(this, ponyAnimatable.getPlayer(), mouseX, mouseY,"),
                 "mouse gaze is scoped to the main pony draw");
-        String thumbnails = Files.readString(root.resolve("appearance/src/client/java/top/csituka/magicaland/client/gui/tab/ponycustom/PonyStyleThumbnails.java"));
+        String thumbnails = Files.readString(root.resolve("appearance/src/client/java/top/csituka/magicaland/client/gui/ponycustom/PonyStyleThumbnails.java"));
         check(!thumbnails.contains("PonyPreviewAnimatable") && !thumbnails.contains("PonyGuiGaze.begin"), "static thumbnail path stays independent");
     }
 

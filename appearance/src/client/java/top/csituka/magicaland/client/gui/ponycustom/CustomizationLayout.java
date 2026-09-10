@@ -1,4 +1,4 @@
-package top.csituka.magicaland.client.gui.tab.ponycustom;
+package top.csituka.magicaland.client.gui.ponycustom;
 
 public record CustomizationLayout(Rect preview, Rect model, Rect details, int tabsY, int tabColumns,
         int tabWidth, int lightingY) {

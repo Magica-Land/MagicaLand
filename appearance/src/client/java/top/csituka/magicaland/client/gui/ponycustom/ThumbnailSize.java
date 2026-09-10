@@ -1,4 +1,4 @@
-package top.csituka.magicaland.client.gui.tab.ponycustom;
+package top.csituka.magicaland.client.gui.ponycustom;
 
 record ThumbnailSize(int width, int height) {
     static ThumbnailSize of(int width, int height) {

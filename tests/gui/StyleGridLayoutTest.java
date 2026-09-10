@@ -1,4 +1,4 @@
-import top.csituka.magicaland.client.gui.tab.ponycustom.StyleGridLayout;
+import top.csituka.magicaland.client.gui.ponycustom.StyleGridLayout;
 import top.csituka.magicaland.client.config.style.PonyStyleRegistry;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
 

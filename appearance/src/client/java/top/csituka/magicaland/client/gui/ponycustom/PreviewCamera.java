@@ -1,4 +1,4 @@
-package top.csituka.magicaland.client.gui.tab.ponycustom;
+package top.csituka.magicaland.client.gui.ponycustom;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

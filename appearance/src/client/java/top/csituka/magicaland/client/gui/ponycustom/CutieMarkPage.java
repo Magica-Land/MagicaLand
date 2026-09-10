@@ -1,4 +1,4 @@
-package top.csituka.magicaland.client.gui.tab.ponycustom;
+package top.csituka.magicaland.client.gui.ponycustom;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -10,7 +10,7 @@ import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.gui.widget.ColorPicker;
 import top.csituka.magicaland.client.gui.widget.SectionLabel;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
-import static top.csituka.magicaland.client.gui.tab.ponycustom.ActionRowWidget.action;
+import static top.csituka.magicaland.client.gui.ponycustom.ActionRowWidget.action;
 
 public final class CutieMarkPage implements PonyCustomPage {
     private final Map<ModelConfig, PixelCanvasHistory> histories = new IdentityHashMap<>();
