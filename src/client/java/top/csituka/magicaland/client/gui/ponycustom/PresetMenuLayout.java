@@ -1,4 +1,4 @@
-package top.csituka.magicaland.client.gui.tab.ponycustom;
+package top.csituka.magicaland.client.gui.ponycustom;
 
 public record PresetMenuLayout(int top, int rows, int rowHeight) {
     public record Header(int dropdownWidth, int createX, int deleteX, int buttonWidth) {}

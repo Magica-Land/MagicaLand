@@ -1,4 +1,4 @@
-package top.csituka.magicaland.client.gui.tab;
+package top.csituka.magicaland.client.gui;
 
 import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -31,9 +31,8 @@ import software.bernie.geckolib.renderer.GeoObjectRenderer;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
-import top.csituka.magicaland.client.gui.ConfigScreen;
-import top.csituka.magicaland.client.gui.tab.ponycustom.*;
-import top.csituka.magicaland.client.gui.tab.ponycustom.CustomizationLayout.Rect;
+import top.csituka.magicaland.client.gui.ponycustom.*;
+import top.csituka.magicaland.client.gui.ponycustom.CustomizationLayout.Rect;
 import top.csituka.magicaland.client.gui.widget.ColorPicker;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
@@ -47,7 +46,7 @@ import top.csituka.magicaland.client.render.PonyRenderer;
 import top.csituka.magicaland.client.render.PonyGuiGaze;
 import top.csituka.magicaland.client.util.RenderLayerHelper;
 
-public class PonyCustom implements TabContent, ViewCube.RotationTarget {
+public class PonyCustom implements ViewCube.RotationTarget {
     private static final Logger LOGGER = LoggerFactory.getLogger(PonyCustom.class);
     private static final PonyCustomPage[] PAGES = {
             new ModelPage(), new MainPage(), new ManePage(), new FacePage(), new HornPage(), new BodyPage(), new GlowPage(), new CutieMarkPage()
@@ -80,7 +79,6 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     private boolean snapCamera;
     private long lastPreviewFrame;
 
-    @Override
     public void onEnter() {
         selectedPage = PonyCustomPageContext.Page.BODY.ordinal();
         refreshRequested = false;
@@ -98,7 +96,6 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         for (PonyCustomPage page : PAGES) page.onEnter();
     }
 
-    @Override
     public void onExit() {
         refreshRequested = false;
         isDraggingModel = false;
@@ -112,7 +109,6 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         ponyRenderer = null;
     }
 
-    @Override
     public boolean mouseClicked(double x, double y, int button) {
         if (currentPage().isEditingPreset() || layout == null || !isPreviewActive()
                 || !layout.model().contains(x, y)) return false;
@@ -124,14 +120,12 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         return isDraggingModel;
     }
 
-    @Override
     public boolean mouseReleased(double x, double y, int button) {
         boolean dragging = isDraggingModel;
         if (button == 0) isDraggingModel = false;
         return dragging;
     }
 
-    @Override
     public boolean mouseDragged(double x, double y, int button, double dx, double dy) {
         if (button != 0 || !isDraggingModel) return false;
         setPreviewRotation(previewYaw - (float) dx * 0.5f, previewPitch - (float) dy * 0.5f);
@@ -161,7 +155,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         return presetDropdown != null && presetDropdown.overlayScroll(amount);
     }
 
-    @Override public void postRender(DrawContext context, int x, int y, int width, int height,
+    public void postRender(DrawContext context, int x, int y, int width, int height,
             int mouseX, int mouseY, float delta, float alpha) {
         if (presetDropdown != null) presetDropdown.renderOverlay(context, mouseX, mouseY);
     }
@@ -175,8 +169,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
     }
     @Override public boolean isPreviewActive() { return ModelManager.getActiveModel() != null; }
 
-    @Override
-    public void init(ConfigScreen screen, int x, int y, int width, int height) {
+    public void init(PonyCustomScreen screen, int x, int y, int width, int height) {
         isDraggingModel = false;
         ColorPicker.clearBodyLinkGroup();
         layout = CustomizationLayout.of(x, y, width, height);
@@ -204,7 +197,7 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         buildPreviewControls(screen);
     }
 
-    private void buildPreviewControls(ConfigScreen screen) {
+    private void buildPreviewControls(PonyCustomScreen screen) {
         Rect panel = layout.preview();
         int x = panel.x() + 5;
         int y = panel.y() + 5;
@@ -329,7 +322,6 @@ public class PonyCustom implements TabContent, ViewCube.RotationTarget {
         if (camera.pose() == null) { previewYaw = yaw; previewPitch = pitch; }
     }
 
-    @Override
     public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY,
             float delta, float alpha) {
         if (layout == null) return;

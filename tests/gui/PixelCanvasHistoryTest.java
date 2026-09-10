@@ -1,6 +1,6 @@
 import java.util.Arrays;
 import top.csituka.magicaland.cutiemark.CutieMarkData;
-import top.csituka.magicaland.client.gui.tab.ponycustom.PixelCanvasHistory;
+import top.csituka.magicaland.client.gui.ponycustom.PixelCanvasHistory;
 
 public final class PixelCanvasHistoryTest {
     private static int checks;

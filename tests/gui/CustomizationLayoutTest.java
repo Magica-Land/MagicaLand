@@ -1,4 +1,4 @@
-import top.csituka.magicaland.client.gui.tab.ponycustom.CustomizationLayout;
+import top.csituka.magicaland.client.gui.ponycustom.CustomizationLayout;
 
 public final class CustomizationLayoutTest {
     public static void main(String[] args) {

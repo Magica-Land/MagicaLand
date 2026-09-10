@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import com.google.gson.Gson;
 import top.csituka.magicaland.client.config.ModelManager;
-import top.csituka.magicaland.client.gui.tab.ponycustom.ModelPage;
-import top.csituka.magicaland.client.gui.tab.ponycustom.PonyCustomPageContext;
+import top.csituka.magicaland.client.gui.ponycustom.ModelPage;
+import top.csituka.magicaland.client.gui.ponycustom.PonyCustomPageContext;
 import top.csituka.magicaland.client.network.ClientNetworkHandler;
 
 public final class PresetShortcutTest {

@@ -1,4 +1,4 @@
-package top.csituka.magicaland.client.gui.tab.ponycustom;
+package top.csituka.magicaland.client.gui.ponycustom;
 
 import net.minecraft.client.gui.DrawContext;
 import top.csituka.magicaland.client.gui.widget.SettingsList;

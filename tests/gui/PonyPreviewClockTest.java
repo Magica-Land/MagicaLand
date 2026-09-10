@@ -106,7 +106,7 @@ public final class PonyPreviewClockTest {
                 "preview reuses authored probabilistic ear variants rather than fixed old loop");
         check(custom.contains("try (var gaze = PonyGuiGaze.begin(this, ponyAnimatable.getPlayer(), mouseX, mouseY,"),
                 "mouse gaze is scoped to the main pony draw");
-        String thumbnails = Files.readString(root.resolve("src/client/java/top/csituka/magicaland/client/gui/tab/ponycustom/PonyStyleThumbnails.java"));
+        String thumbnails = Files.readString(root.resolve("src/client/java/top/csituka/magicaland/client/gui/ponycustom/PonyStyleThumbnails.java"));
         check(!thumbnails.contains("PonyPreviewAnimatable") && !thumbnails.contains("PonyGuiGaze.begin"), "static thumbnail path stays independent");
     }
 

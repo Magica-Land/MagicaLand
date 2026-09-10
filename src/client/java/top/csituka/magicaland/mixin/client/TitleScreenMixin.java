@@ -19,7 +19,7 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import top.csituka.magicaland.client.config.Config;
-import top.csituka.magicaland.client.gui.ConfigScreen;
+import top.csituka.magicaland.client.gui.PonyCustomScreen;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.model.GeckoPlayerModel;
 import top.csituka.magicaland.client.render.PonyRenderer;
@@ -121,7 +121,7 @@ public class TitleScreenMixin {
         ButtonWidget ponyButton = ButtonWidget.builder(
                 Text.translatable("text.magicaland.console.tab.pony_custom"),
                 button -> client.setScreen(
-                        new ConfigScreen((Screen) (Object) this, ConfigScreen.Tab.PONY_CUSTOM)))
+                        new PonyCustomScreen((Screen) (Object) this)))
                 .dimensions(x, y, buttonWidth, buttonHeight)
                 .build();
 
