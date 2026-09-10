@@ -28,7 +28,7 @@
 - 改 UV 后必须同步该款式遮罩。新增发型时需要配套遮罩、注册表和 `ManeDye` 支持范围，不能只改 JSON 的描述字段。
 - 不同款式可以复用基础贴图与 UV；它们各自的遮罩和动态纹理独立。同款同部件内完全重叠的 UV 仍只能得到相同颜色，若两处应有不同分区，必须先拆开这项 UV 冲突。
 - 锁定色区必须继承完整色阶，而不只是同一个主色 RGB，否则主色手动调阴影时仍会露出分界。
-- `Resources` 中的贴图/模型与 `appearance/src/main/resources` 中的运行时版本要一起维护；Blockbench 不会执行 Java 调色代码，玩家分色不应烘焙回基础贴图。
+- `Resources` 中的贴图/模型与 `src/main/resources` 中的运行时版本要一起维护；Blockbench 不会执行 Java 调色代码，玩家分色不应烘焙回基础贴图。
 
 独立逻辑测试：`./tests/mane/run-dye-tests.ps1 -GsonJar '本机现有 gson.jar 的绝对路径'`。需要 JDK 17+，仅编译测试到临时目录，不运行 Gradle。
 

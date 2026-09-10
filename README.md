@@ -12,14 +12,14 @@ English | [简体中文](README_ZH.md)
 
 ## Modules
 
-Starting with 0.2.0, this repository produces two separate mods:
+Appearance and Gameplay are maintained in separate repositories. This repository publishes the Appearance mod:
 
 - **Appearance (`magicaland-appearance`)** retains mod ID `magicaland` and all customization, rendering, animation and appearance synchronization. Requires Fabric API and GeckoLib, but not Gameplay.
-- **Gameplay (`magicaland-gameplay`)** requires the matching Appearance version. Includes the golden-carrot encounter; 0.2.1 introduces an experimental [remote-presence prototype (Chinese)](docs/remote-presence.md). Other tribe abilities remain planned.
+- **[Gameplay Addon (`magicaland-gameplay`)](https://github.com/Magical-Land-Official/Magical-Land-Gameplay)** has its own version and uses the public Appearance API. It contains the golden-carrot encounter and experimental remote presence; further tribe abilities are developed there.
 
-Remove the old all-in-one JAR before installing the new Appearance JAR. Install both modules to retain the encounter. Multiplayer appearance synchronization still needs server support; splitting does not make Appearance a client-only mod.
+Remove the old all-in-one JAR before installing Appearance. Install both mods and their dependencies for gameplay. Appearance works with a client-only installation; without a compatible relay, only local customization is guaranteed. Installing the same Appearance JAR on a server provides existing appearance, animation and gaze synchronization without Gameplay. There is no separate sync-server download.
 
-Open the repository root as one workspace. See the [module development guide (Chinese)](docs/module-split.md) for build tasks and test profiles.
+The repositories can be opened separately or together in an editor. Builds use versioned artifacts, not a fixed sibling directory or the other repository's source sets. See the [development guide (Chinese)](docs/module-split.md) and [public API (Chinese)](docs/appearance-api.md).
 
 ## About the Project
 **Magical Land** is a Minecraft Java Edition mod that brings ponies and other elements from the television series "My Little Pony" in to the game.

@@ -1,25 +1,80 @@
 plugins {
-    id 'base'
-    id 'fabric-loom' version '1.16-SNAPSHOT' apply false
+    id 'fabric-loom' version '1.16.3'
+    id 'maven-publish'
 }
 
-allprojects {
-    version = rootProject.mod_version
-    group = rootProject.maven_group
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
 }
 
-tasks.named('build') {
-    dependsOn ':appearance:build', ':gameplay:build'
+apply from: 'gradle/mod-common.gradle'
+
+loom {
+    splitEnvironmentSourceSets()
+    mods {
+        magicaland {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+    accessWidenerPath = file('src/main/resources/magicaland.accesswidener')
+    runs {
+        client { runDir 'run/client' }
+        server { runDir 'run/server' }
+    }
+}
+
+fabricApi {
+    configureDataGeneration { client = true }
+}
+
+dependencies {
+    modImplementation "software.bernie.geckolib:geckolib-fabric-1.20.1:${project.geckolib_version}"
+    clientCompileOnly 'com.eliotlash.mclib:mclib:20'
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+}
+
+// Compile-only API artifacts reuse the exact remapped classes shipped by the mod.
+def apiJar = tasks.register('apiJar', Jar) {
+    dependsOn tasks.named('remapJar')
+    archiveClassifier = 'api'
+    from({ zipTree(tasks.named('remapJar').get().archiveFile.get().asFile) }) {
+        include 'top/csituka/magicaland/api/**'
+    }
+    manifest {
+        attributes 'Fabric-Loom-Remap': 'true', 'Magicaland-API-Major': '1'
+    }
+    from('LICENSE.txt')
+}
+
+def apiSourcesJar = tasks.register('apiSourcesJar', Jar) {
+    dependsOn tasks.named('remapSourcesJar')
+    archiveClassifier = 'api-sources'
+    from({ zipTree(tasks.named('remapSourcesJar').get().archiveFile.get().asFile) }) {
+        include 'top/csituka/magicaland/api/**'
+    }
+    from('LICENSE.txt')
 }
 
 tasks.named('assemble') {
-    dependsOn ':appearance:assemble', ':gameplay:assemble'
+    dependsOn apiJar, apiSourcesJar
 }
 
-tasks.named('check') {
-    dependsOn ':appearance:check', ':gameplay:check'
-}
-
-tasks.named('clean') {
-    dependsOn ':appearance:clean', ':gameplay:clean'
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact apiJar
+            artifact apiSourcesJar
+        }
+    }
+    repositories {
+        maven {
+            name = 'localDevelopment'
+            url = uri(providers.gradleProperty('appearanceMavenRepo')
+                    .getOrElse(layout.buildDirectory.dir('repo').get().asFile.absolutePath))
+        }
+    }
 }

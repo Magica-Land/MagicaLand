@@ -1,60 +1,59 @@
-# 外观与玩法分包
+# 外观主模组与独立 Gameplay Addon
 
-## 结构与归属
+## 职责与安装
 
-一个仓库、一个 Gradle 根工程、两个独立 JAR。开发者直接打开根目录；不复制外观代码或美术资源到玩法模块。
+两个 Git 仓库、两个 Mod 安装包。外观同一个 JAR 保留客户端显示与服务端同步，不改为禁止服务端加载，不拆第三个同步安装包，也不引入云同步。
 
-| 模块 | 模组 ID | 内容 |
+| 仓库 | 模组 ID | 内容 |
 | --- | --- | --- |
-| `appearance` | `magicaland` | 原有外观、捏脸、预设、眼神、耳动、动画、悬浮手持物视觉、魔法音效、光效、保存变身光尘及多人外观同步 |
-| `gameplay` | `magicaland_gameplay` | 金胡萝卜马匹互动、轻微碰撞伤害、爱心演出与「不是这个意思！」进度；0.2.1 念力出窍原型及未来三族能力 |
+| [Magical-Land](https://github.com/Magical-Land-Official/Magical-Land) | `magicaland` | 模型、捏脸、动画、预设、挑染、可爱标志、眼神、耳动、手持物视觉、光效音效、外观同步、公共 API |
+| [Magical-Land-Gameplay](https://github.com/Magical-Land-Official/Magical-Land-Gameplay) | `magicaland_gameplay` | 能力轮盘、念力出窍、投影交互、携带槽、金胡萝卜彩蛋、后续三族玩法 |
 
-服务端眼神目标选择仅服务外观，仍属于外观包。现有悬浮物没有获得远程操作、采矿能力；未来实际能力判定与魔法值归玩法包。两模块均保留公共/客户端代码分离，不把外观包改为仅客户端。
+外观不依赖 Gameplay。玩法只通过[公共 API](appearance-api.md)使用外观表现，不读配置管理器、网络缓存或渲染内部实现。权限、库存、伤害和交互仍由 Gameplay 服务端判断，捏脸显示角翼不是授权依据。
 
-`Resources/` 的 Blockbench 工程和美术源文件、`docs/`、`tools/`、`tests/` 保持在根目录。正式外观运行资源改到 `appearance/src/main/resources`；生成挑染遮罩的脚本和独立测试路径已同步迁移。
+- 客户端装外观及 Fabric API、GeckoLib：使用本地外观与编辑器；没有服务端同步支持时不保证互见自定义外观。
+- 客户端和服务器都装外观及依赖：保留多人外观、动画和辅助注视同步，不需要 Gameplay。
+- 使用玩法：两端都装兼容的外观及 Gameplay。Addon 注册自定义投影实体，不承诺无 Addon 客户端加入玩法服务器。
+- 玩家只安装普通 JAR，不安装 API 编译产物，也不把旧一体包与新外观包并装。
 
-## 依赖与数据兼容
+## 版本与源码
 
-- 外观不依赖玩法；玩法通过 Gradle `namedElements` 和客户端输出依赖外观，且 Fabric 元数据要求同版本外观。没有 jar-in-jar 嵌入，不在玩法包重复发布模型或贴图。
-- 外观继续依赖 Fabric API、GeckoLib；Mod Menu 仍为开发依赖和可选集成。玩法联合开发配置显式提供外观所需的运行库。
-- 根 `gradle.properties` 统一管理两包版本，首个分包版本为 `0.2.0`。旧 `0.1` 一体包不满足新玩法包依赖，不能与外观包并装。
-- 外观模组 ID、Java 包、资源命名空间、网络通道及预设数据格式不变。没有重写模型、UV、贴图、动画或玩家文件。
-- 彩蛋 Java 包迁到 `top.csituka.magicaland.gameplay` 下，但进度仍为 `magicaland:not_what_i_meant`，条件仍为 `misunderstanding`。旧进度记录可继续匹配。
-- 彩蛋翻译也迁入玩法包，保留原翻译键及 `assets/magicaland/lang` 路径；两包语言文件的键互不重复，游戏按资源包合并语言。未来新增玩法资源使用 `magicaland_gameplay` 命名空间。
-- 不新增空泛的能力接口；开始三族实现时由外观提供小范围、稳定的表现入口，玩法只传递状态，不直接耦合骨骼内部结构。外观选择不能作为服务端能力授权。
+两个仓库各自使用根 `src/main`、`src/client`、`tests` 和 Gradle 配置。美术与 Blockbench 源文件只保留在外观仓库 `Resources/`。
 
-## 开发与产物
+新架构从外观 `0.3.0`、Gameplay `0.1.0` 开始，公共 API 主版本为 1；不再要求两包版本号相同。Addon 记录准确开发依赖版本，运行时声明兼容范围，API 破坏性变更必须同步调整范围与测试。
 
-需要与原项目一致的 Gradle 9.4.1 和能运行当前 Loom 的 JDK；Java 输出目标仍为 17。仓库目前仅有 wrapper 配置文件，没有 wrapper 启动脚本和 JAR，以下 `gradle` 指本机安装的 Gradle 9.4.1 或 IDE 配置的对应发行版。
+模组、资源、通道、预设及可爱标志格式不变。玩法保留 `magicaland:not_what_i_meant` 进度、`misunderstanding` 条件、`magicaland_remote_cargo` 存档及原授权标签。
 
-| 命令（从根目录运行） | 用途 |
-| --- | --- |
-| `gradle build` | 构建两个模块 |
-| `gradle :appearance:build` | 构建外观包 |
-| `gradle :gameplay:build` | 构建玩法及必要的外观依赖产物；不把外观嵌入玩法 |
-| `gradle :appearance:runClient` | 仅外观客户端 |
-| `gradle :appearance:runServer` | 仅外观专用服务端 |
-| `gradle :gameplay:runClient` | 外观＋玩法客户端 |
-| `gradle :gameplay:runServer` | 外观＋玩法专用服务端 |
+## 独立构建与联合开发
 
-产物分别位于 `appearance/build/libs/magicaland-appearance-<版本>.jar` 和 `gameplay/build/libs/magicaland-gameplay-<版本>.jar`，当前版本见根 `gradle.properties`。正式安装用 remap 后的普通 JAR，不用 `sources` 或 `dev` JAR。根工程不产出第三个模组。
+两仓使用 Gradle 9.4.1 wrapper、Loom 1.16.3，Java 输出仍为 17。请使用能运行这些开发工具的现代 JDK。以下命令供开发者按需执行，不代表此次已构建或实机验收。
 
-两个模块的客户端/服务端分别使用各自的 `run/client`、`run/server`，避免共用存档锁。首次启动不会自动搬迁旧测试存档或设置；需有意复制，不能覆盖玩家数据。专用服务端的 EULA 由使用者确认。
+外观仓库：
 
-## 验证与后续验收
+```powershell
+.\gradlew.bat build
+.\gradlew.bat publishMavenJavaPublicationToLocalDevelopmentRepository
+```
 
-- `node tests/modules/ModuleSplitTest.mjs`：无需构建，检查模块边界、入口、Mixin、翻译、依赖和迁移后路径。
-- `node tests/modules/MigrationSnapshotTest.mjs a97115e`：与分包前提交对照，逐项检查原文件完整迁移，允许的改动仅为入口、包名、元数据及翻译归属。
-- `node tools/generate-mane-dye-masks.mjs`：默认只检查，不重写模型和遮罩。
-- `tests/mane/run-dye-tests.ps1`：保留独立 Java 回归入口，路径已适配新结构。
-- 根 `check` 聚合各模块 Gradle 检查，但现有根 `tests/` 的独立测试不是 JUnit，不能将 Gradle `check` 成功当作它们全部通过。
-- 遵循根 `AGENTS.md`，本次分包不自行构建或启动游戏；源码/资源与独立测试验证不等于完整 Loom 构建和游戏验收。
+默认发布到 `build/repo`，坐标 `top.csituka:magicaland-appearance:0.3.0`，同时提供普通安装 JAR、`api`、`sources`、`api-sources` 产物。API 运行实现只在主 Mod 中打包一次。
 
-后续实际构建后应验收：仅外观客户端与专用服务端、两包联合客户端与专用服务端；旧预设加载、多玩家外观同步、只装外观不触发彩蛋、两包触发规则不变、旧成就进度延续；缺失外观或装旧版本时由 Loader 明确拒绝玩法包。
+Gameplay 仓库：
 
-### 本次检查结果（2026-09-09）
+```powershell
+.\gradlew.bat build -PappearanceMavenRepo=C:/absolute/path/to/appearance/build/repo
+.\gradlew.bat runClient -PappearanceMavenRepo=C:/absolute/path/to/appearance/build/repo
+```
 
-- 模块边界检查通过；分包前 161 个源文件及资源全部保留或按明确规则迁移，模型、动画、纹理、声音内容未改。
-- 挑染生成器只读检查通过；独立调色与分区路由回归分别通过 407843、1443804 项断言。
-- 迁移后的彩蛋食物与触发路径通过 1323 项断言，状态、时限和原版 GoalSelector 相关检查通过 43968 项。测试借助 Fabric 类加载器运行，没有进入 Minecraft 主循环；这不是实际马匹互动或 Mixin 注入的游戏验收。
-- Gradle 离线 `build --dry-run` 成功解析两个模块及独立 remap 产物任务；两个模块的 `runClient`、`runServer` 任务图也通过 dry-run。所有构建和启动任务均跳过，尚未生成新 JAR，也未进行客户端或专用服务端实机验收。
+两边也支持 Maven Local：先在外观仓库执行 `publishToMavenLocal`。新克隆的 Addon 需要先取得声明版本的主 Mod/API 产物；本次未假定已经存在公开 Maven 托管。
+
+两个仓库可分开或在同一个编辑器工作区打开。各自 `runClient`/`runServer` 使用独立 `run/client`/`run/server`；Gameplay 通过发布物加载外观，外观运行配置不加载 Gameplay。不要恢复跨仓 `sourceSets`、复制美术或共享正在使用的存档。
+
+## 验证与后续
+
+两仓分别运行 `node tests/architecture/RepositoryArchitectureTest.mjs`；Gameplay 另运行 `node tests/remote/RemoteStructureTest.mjs`。外观 `node tools/generate-mane-dye-masks.mjs` 默认仅检查。原有独立 Java 测试不是 JUnit，任务图通过不等于它们全部通过。
+
+发布前检查仅外观客户端/同步服务器、两包联合客户端/服务器；首次入服与退出同步、旧预设、草稿保存/取消、第一人称合成收尾、出窍结束后注视恢复、满包/死亡/重连携带物品。
+
+遵循 `AGENTS.md`，未经用户要求不自行构建或启动游戏。[迁移记录](repository-migration.md)区分已执行检查与待实机验收项。
+
+[独立同步服务](appearance-sync-future.md)只保留备选方案。当前握手、通道和同步行为不改；首次快照与自身广播开关耦合、重复全量回传问题另列待办，不混入此次迁移。

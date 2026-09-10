@@ -13,7 +13,7 @@ public final class CutieMarkTextureTest {
 
     public static void main(String[] args) throws Exception {
         Path repo = Path.of(args[0]);
-        var image = ImageIO.read(repo.resolve("appearance/src/main/resources/assets/magicaland/textures/entity/base.png").toFile());
+        var image = ImageIO.read(repo.resolve("src/main/resources/assets/magicaland/textures/entity/base.png").toFile());
         check(image.getWidth() == 256 && image.getHeight() == 256, "real production atlas");
         for (var side : CutieMarkTexture.Side.values()) {
             for (int scale : new int[] {1, 2, 4}) {
@@ -49,7 +49,7 @@ public final class CutieMarkTextureTest {
     }
 
     private static void geometryCheck(Path repo) throws Exception {
-        Model raw = JsonUtil.GEO_GSON.fromJson(Files.readString(repo.resolve("appearance/src/main/resources/assets/magicaland/geo/mare_geo.json")), Model.class);
+        Model raw = JsonUtil.GEO_GSON.fromJson(Files.readString(repo.resolve("src/main/resources/assets/magicaland/geo/mare_geo.json")), Model.class);
         var model = BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(GeometryTree.fromModel(raw));
         for (String name : new String[] {"LHindLeg", "RHindLeg"}) {
             var side = CutieMarkTexture.sideForBone(name);
@@ -76,8 +76,8 @@ public final class CutieMarkTextureTest {
     }
 
     private static void sourceGuard(Path repo) throws Exception {
-        String body = Files.readString(repo.resolve("appearance/src/client/java/top/csituka/magicaland/client/render/BodyTintTextures.java"));
-        String renderer = Files.readString(repo.resolve("appearance/src/client/java/top/csituka/magicaland/client/render/PonyRenderer.java"));
+        String body = Files.readString(repo.resolve("src/client/java/top/csituka/magicaland/client/render/BodyTintTextures.java"));
+        String renderer = Files.readString(repo.resolve("src/client/java/top/csituka/magicaland/client/render/PonyRenderer.java"));
         check(body.contains("new Draft[2]"), "bounded draft slots independent of stroke count");
         check(body.contains("config == ModelManager.getActiveModel()") && body.contains("ModelManager.isEditing()"), "draft texture never mutates saved or remote cache");
         check(body.contains("fill(previous.texture.getImage(), key)") && body.contains("previous.texture.upload()"), "repaint reuses registered texture rather than filling cache");

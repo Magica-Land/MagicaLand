@@ -20,7 +20,7 @@ import top.csituka.magicaland.client.animation.PonyExpressions;
 public final class EyeApertureRenderTest {
     private static int checks;
     public static void main(String[] args) throws Exception {
-        var path = Path.of(args[0], "appearance/src/main/resources/assets/magicaland/geo/mare_geo.json");
+        var path = Path.of(args[0], "src/main/resources/assets/magicaland/geo/mare_geo.json");
         var raw = JsonUtil.GEO_GSON.fromJson(Files.readString(path), Model.class);
         var model = BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(GeometryTree.fromModel(raw));
         var root = model.getBone("Emotions").orElseThrow();

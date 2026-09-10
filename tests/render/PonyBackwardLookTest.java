@@ -76,7 +76,7 @@ public final class PonyBackwardLookTest {
     }
 
     private static void animationReference(Path repo) throws Exception {
-        try (var reader = Files.newBufferedReader(repo.resolve("appearance/src/main/resources/assets/magicaland/animations/mare_animation.json"))) {
+        try (var reader = Files.newBufferedReader(repo.resolve("src/main/resources/assets/magicaland/animations/mare_animation.json"))) {
             var bones = JsonParser.parseReader(reader).getAsJsonObject().getAsJsonObject("animations")
                     .getAsJsonObject("backward_walk").getAsJsonObject("bones");
             for (String name : new String[] {"Neck", "Head"}) {

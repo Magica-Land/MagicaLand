@@ -61,7 +61,7 @@ for(const style of styles){const regions=[];
  }
  assert(regions.flatMap(r=>r.runs).length<=8192,'遮罩超出运行时上限');
  const text=JSON.stringify({version:3,preset:'style'+style,style,texture_width:256,texture_height:256,regions})+'\n';
- for(const folder of ['Resources/ManeDyes','appearance/src/main/resources/assets/magicaland/mane_dyes'])outputs.push({file:path.join(repo,folder,'style'+style+'.json'),text});
+ for(const folder of ['Resources/ManeDyes','src/main/resources/assets/magicaland/mane_dyes'])outputs.push({file:path.join(repo,folder,'style'+style+'.json'),text});
 }
 // 全部资源通过检查后才允许写入；永不改动 01、模型或贴图。
 for(const{file,text}of outputs)if(write)await fs.writeFile(file,text);else assert.equal(await fs.readFile(file,'utf8'),text,'遮罩与源坐标不一致 '+file);

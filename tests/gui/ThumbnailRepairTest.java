@@ -13,6 +13,12 @@ public final class ThumbnailRepairTest {
         ModelConfig source = ModelConfig.sanitize(new ModelConfig());
         for (PonyStylePart part : PonyStylePart.values()) for (var style : PonyStyleRegistry.stylesFor(part)) {
             String expected = gson.toJson(PonyStyleThumbnails.previewConfig(source, part, style.id));
+            String mirroredField = switch (part) {
+                case FRONT_MANE -> "frontManeMirrored";
+                case BACK_MANE -> "backManeMirrored";
+                case TAIL -> "tailMirrored";
+                case EYE -> "";
+            };
             for (var field : ModelConfig.class.getFields()) {
                 if (Modifier.isStatic(field.getModifiers())) continue;
                 Object before = field.get(source);
@@ -21,7 +27,12 @@ public final class ThumbnailRepairTest {
                 else if (field.getType() == int.class) field.set(source, 73);
                 else if (field.getType() == String[].class) field.set(source, new String[] {"#123456"});
                 String unchanged = gson.toJson(source);
-                check(expected.equals(gson.toJson(PonyStyleThumbnails.previewConfig(source, part, style.id))), "fixed palette ignores " + field.getName());
+                ModelConfig thumbnail = PonyStyleThumbnails.previewConfig(source, part, style.id);
+                if (field.getName().equals(mirroredField)) {
+                    check(field.getBoolean(thumbnail) == field.getBoolean(source), "thumbnail follows " + mirroredField);
+                    field.set(thumbnail, before);
+                }
+                check(expected.equals(gson.toJson(thumbnail)), "fixed palette ignores " + field.getName());
                 check(unchanged.equals(gson.toJson(source)), "thumbnail cannot mutate " + field.getName());
                 field.set(source, before);
             }

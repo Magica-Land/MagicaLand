@@ -34,8 +34,13 @@ java {
     withSourcesJar()
 }
 
+tasks.withType(Jar).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
 tasks.named('jar') {
-    from(rootProject.file('LICENSE.txt')) {
+    from('LICENSE.txt') {
         rename { "${it}_${project.base.archivesName.get()}" }
     }
 }

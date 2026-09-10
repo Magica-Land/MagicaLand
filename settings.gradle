@@ -9,4 +9,3 @@ pluginManagement {
 }
 
 rootProject.name = 'Magical-Land'
-include 'appearance', 'gameplay'

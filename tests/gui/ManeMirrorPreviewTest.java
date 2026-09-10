@@ -19,7 +19,7 @@ public final class ManeMirrorPreviewTest {
     private static int checks;
     public static void main(String[] args) throws Exception {
         Path repo = Path.of(args[0]);
-        Model raw = JsonUtil.GEO_GSON.fromJson(Files.readString(repo.resolve("appearance/src/main/resources/assets/magicaland/geo/mare_geo.json")), Model.class);
+        Model raw = JsonUtil.GEO_GSON.fromJson(Files.readString(repo.resolve("src/main/resources/assets/magicaland/geo/mare_geo.json")), Model.class);
         var model = BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(GeometryTree.fromModel(raw));
         var field = PreviewGeometryBounds.class.getDeclaredField("model"); field.setAccessible(true); field.set(null, model);
         field = PreviewGeometryBounds.class.getDeclaredField("initialized"); field.setAccessible(true); field.set(null, true);
