@@ -64,5 +64,5 @@ for(const style of styles){const regions=[];
  for(const folder of ['Resources/ManeDyes','src/main/resources/assets/magicaland/mane_dyes'])outputs.push({file:path.join(repo,folder,'style'+style+'.json'),text});
 }
 // 全部资源通过检查后才允许写入；永不改动 01、模型或贴图。
-for(const{file,text}of outputs)if(write)await fs.writeFile(file,text);else assert.equal(await fs.readFile(file,'utf8'),text,'遮罩与源坐标不一致 '+file);
+for(const{file,text}of outputs)if(write)await fs.writeFile(file,text);else assert.equal((await fs.readFile(file,'utf8')).replace(/\r\n/g,'\n'),text,'遮罩与源坐标不一致 '+file);
 console.log(`${write?'已生成':'检查通过'}：${visited.size} 个发块、${faceCount} 个面、${regionCount} 个色区；01 未改动。`);
