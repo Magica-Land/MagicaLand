@@ -15,7 +15,7 @@ public final class CustomizationLayoutTest {
                 check(details.right() <= width - 8, "right edge");
                 check(preview.bottom() <= height - 8 && details.bottom() <= height - 8, "bottom edge");
                 check(model.y() >= preview.y() + 31, "preset controls excluded from dragging");
-                check(model.bottom() < layout.lightingY(), "lighting controls excluded from dragging");
+                check(model.bottom() <= preview.bottom(), "preview stays within panel");
                 check(model.height() >= 80, "usable rotatable preview");
                 check(!model.contains(model.right(), model.y()), "right edge exclusive");
                 check(!model.contains(model.x(), model.bottom()), "bottom edge exclusive");

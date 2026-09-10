@@ -1,7 +1,7 @@
 package top.csituka.magicaland.client.gui.ponycustom;
 
 public record CustomizationLayout(Rect preview, Rect model, Rect details, int tabsY, int tabColumns,
-        int tabWidth, int lightingY) {
+        int tabWidth) {
     public record Rect(int x, int y, int width, int height) {
         public int right() { return x + width; }
         public int bottom() { return y + height; }
@@ -19,10 +19,9 @@ public record CustomizationLayout(Rect preview, Rect model, Rect details, int ta
         leftWidth = Math.min(leftWidth, Math.max(80, width - 158));
         int panelHeight = Math.max(80, bottom - top);
         Rect preview = new Rect(x, top, leftWidth, panelHeight);
-        int lightingY = preview.bottom() - 24;
-        Rect model = new Rect(x + 4, top + 54, leftWidth - 8, Math.max(20, lightingY - top - 58));
+        // 底部不再保留昼夜按钮行，预览区延伸到面板底部并留 4px 边距。
+        Rect model = new Rect(x + 4, top + 54, leftWidth - 8, Math.max(20, panelHeight - 58));
         Rect details = new Rect(preview.right() + 8, top, width - leftWidth - 8, panelHeight);
-        return new CustomizationLayout(preview, model, details, y, columns, (width + 4) / columns - 4,
-                lightingY);
+        return new CustomizationLayout(preview, model, details, y, columns, (width + 4) / columns - 4);
     }
 }
