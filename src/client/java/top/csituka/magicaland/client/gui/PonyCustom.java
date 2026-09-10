@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.core.object.Color;
 import software.bernie.geckolib.loading.FileLoader;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.loading.object.GeometryTree;
@@ -75,7 +74,6 @@ public class PonyCustom implements ViewCube.RotationTarget {
     private PonyCustomPageContext.Page managementReturnPage = PonyCustomPageContext.Page.BODY;
     private boolean presetError;
     private boolean showGlowItem;
-    private PreviewLighting lighting = PreviewLighting.NOON;
     private PonyPreviewAnimatable ponyAnimatable;
     private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
     private float previewYaw = 155.0f;
@@ -223,13 +221,6 @@ public class PonyCustom implements ViewCube.RotationTarget {
                         : tr("preset.last_hint"), false, button -> openPresetAction(false));
         deletePreset.active = ModelManager.isEditing() && !currentPage().isEditingPreset() && canDelete;
         screen.addConsoleWidget(deletePreset);
-        int lightWidth = (width - 4) / 3;
-        for (PreviewLighting option : PreviewLighting.values()) {
-            CustomButton button = new CustomButton(x + option.ordinal() * (lightWidth + 2), layout.lightingY(),
-                    lightWidth, 20, tr("lighting." + option.key), option == lighting, pressed -> lighting = option);
-            button.setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(tr("lighting.hint")));
-            screen.addConsoleWidget(button);
-        }
         CustomButton focus = new CustomButton(x, panel.y() + 28, width - 24, 20,
                 Text.literal(automaticFocus ? "☑ " : "☐ ").append(tr("preview.auto_focus")),
                 tr("preview.auto_focus_hint"), false, button -> {
@@ -333,12 +324,7 @@ public class PonyCustom implements ViewCube.RotationTarget {
         if (layout == null) return;
         applyPendingRefresh();
         Rect panel = layout.preview();
-        context.fillGradient(panel.x(), panel.y(), panel.right(), panel.bottom(), lighting.top, lighting.bottom);
-        context.drawBorder(panel.x(), panel.y(), panel.width(), panel.height(), 0x557B8DA9);
         categoryBar.render(context, mouseX, mouseY, !currentPage().isEditingPreset());
-        int lightWidth = (panel.width() - 14) / 3;
-        int lightX = panel.x() + 5 + lighting.ordinal() * (lightWidth + 2);
-        context.fill(lightX + 2, layout.lightingY() + 19, lightX + lightWidth - 2, layout.lightingY() + 20, 0xFFE6D8AA);
         renderPreview(context, delta, mouseX, mouseY);
         if (presetError) PonyCustomPageHelper.drawWrapped(context, tr("preset.operation_error"),
                 panel.x() + 5, layout.model().y() + 2, panel.width() - 10, 0xFFFF9999);
@@ -451,10 +437,6 @@ public class PonyCustom implements ViewCube.RotationTarget {
                     VertexConsumerProvider buffers, float partialTick) {
                 return RenderLayer.getEntityTranslucent(texture);
             }
-            @Override
-            public Color getRenderColor(GeckoPlayerAnimatable animatable, float partialTick, int packedLight) {
-                return Color.ofOpaque(lighting.tint);
-            }
         };
     }
 
@@ -469,22 +451,7 @@ public class PonyCustom implements ViewCube.RotationTarget {
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180));
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(previewYaw));
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(previewPitch));
-        RenderSystem.setShaderColor((lighting.tint >> 16 & 255) / 255f, (lighting.tint >> 8 & 255) / 255f,
-                (lighting.tint & 255) / 255f, 1);
         GlowingItem.renderPreviewWithGlow(client.getItemRenderer(), stack, ModelTransformationMode.NONE,
                 matrices, buffers, client.world, 0xF000F0, 0, GlowingItem.getGlowColor(config));
-    }
-
-    private enum PreviewLighting {
-        DAY("day", 0xFFF1DE, 0xE06B8490, 0xE040515E),
-        NOON("noon", 0xFFFFFF, 0xE0788B9D, 0xE04C5D6C),
-        NIGHT("night", 0x7A91C7, 0xF01C253F, 0xF010162A);
-        final String key;
-        final int tint;
-        final int top;
-        final int bottom;
-        PreviewLighting(String key, int tint, int top, int bottom) {
-            this.key = key; this.tint = tint; this.top = top; this.bottom = bottom;
-        }
     }
 }
