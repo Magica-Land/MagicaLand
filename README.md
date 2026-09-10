@@ -1,60 +1,89 @@
 <div align="center">
 
-<img src="Resources\Icon\full-缩放.png"
-        width ="45%">
+<img src="Resources/Icon/full-缩放.png" alt="Magical Land logo" width="45%">
 
-# Magical Land  
-A Minecraft Project that turns players and mobs into ponies
+# Magical Land · Appearance
+
+Bring your own pony into Minecraft.
+
+Minecraft Java 1.20.1 · Fabric · In development
 
 English | [简体中文](README_ZH.md)
 
 </div>
 
-## Modules
+**Magical Land** is a fan mod inspired by *My Little Pony: Friendship Is Magic*. Mix pony styles, choose colors, draw cutie marks, and save your own character presets.
 
-Appearance and Gameplay are maintained in separate repositories. This repository publishes the Appearance mod:
+Appearance provides models, customization, animations, and appearance synchronization, and can be used on its own. Tribe abilities, achievements, and other gameplay features are being developed in the separate [Gameplay Addon](https://github.com/Magical-Land-Official/Magical-Land-Gameplay).
 
-- **Appearance (`magicaland-appearance`)** retains mod ID `magicaland` and all customization, rendering, animation and appearance synchronization. Requires Fabric API and GeckoLib, but not Gameplay.
-- **[Gameplay Addon (`magicaland-gameplay`)](https://github.com/Magical-Land-Official/Magical-Land-Gameplay)** has its own version and uses the public Appearance API. It contains the golden-carrot encounter and experimental remote presence; further tribe abilities are developed there.
+[Downloads](https://github.com/Magical-Land-Official/Magical-Land/releases) · [User and developer documentation (Chinese)](docs/README.md) · [Report an issue](https://github.com/Magical-Land-Official/Magical-Land/issues)
 
-Remove the old all-in-one JAR before installing Appearance. Install both mods and their dependencies for gameplay. Appearance works with a client-only installation; without a compatible relay, only local customization is guaranteed. Installing the same Appearance JAR on a server provides existing appearance, animation and gaze synchronization without Gameplay. There is no separate sync-server download.
+## Character customization
 
-The repositories can be opened separately or together in an editor. Builds use versioned artifacts, not a fixed sibling directory or the other repository's source sets. See the [development guide (Chinese)](docs/module-split.md) and [public API (Chinese)](docs/appearance-api.md).
+- **Styles**: Choose the front mane, back mane, tail, and eye shape separately. Each mane section and the tail can be mirrored independently.
+- **Body and mane colors**: Choose a base color to automatically get matching highlight and shadow colors, or unlock those colors to adjust them yourself. Front mane, back mane, and tail colors can be linked or set separately.
+- **Six-region dyeing**: The front mane, back mane, and tail each have six regions you can color independently. Create two-tone or multicolor streaks while keeping the original texture and shading.
+- **Eye colors**: Adjust the two iris colors independently while keeping the original gradient. Expand the advanced options to also change the colors of the eye whites, pupils, and eyelashes.
+- **Custom cutie marks**: Draw on a 12×12 pixel canvas with a brush, eraser, eyedropper, undo, and redo. Share one design between both sides or draw each side separately.
+- **Character presets**: Switch, create, duplicate, rename, and delete presets to try new looks based on an existing character.
 
-## About the Project
-**Magical Land** is a Minecraft Java Edition mod that brings ponies and other elements from the television series "My Little Pony" in to the game.
+Ponies blink, occasionally twitch their ears, and look at nearby entities. Some actions also have matching expressions. Soft, flowing magical glows surround unicorn horns and levitating items, accompanied by a few star sparkles and gentle magic sounds. Levitating items lag and sway with your movements, leaving magical trails as you move.
+
+During flight, winged characters flap their wings while wingless characters hover upright. Wingless unicorns are also surrounded by a magical glow. The ability to fly comes from vanilla Minecraft or a gameplay mod; see the [flight visuals guide (Chinese)](docs/flight-visuals.md).
 
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/9d5d3c8d-fb6e-4066-bb05-3bfdbf14ad2d"
-        width ="45%">
-    <img src="https://github.com/user-attachments/assets/be96510c-c7bc-45e5-a75e-e2c09c7155fb" 
-        width ="45%">
-    <p align="center">
-        <sub><em> *Twilight Sparkel in Minecraft* </em></sub>
+  <img src="https://github.com/user-attachments/assets/9d5d3c8d-fb6e-4066-bb05-3bfdbf14ad2d" alt="Twilight Sparkle pony model showcase" width="45%">
+  <img src="https://github.com/user-attachments/assets/be96510c-c7bc-45e5-a75e-e2c09c7155fb" alt="Another view of Twilight Sparkle" width="45%">
 </p>
 
-## Vision
-- Introduce pony characters into Minecraft in a faithful and polished way  
-- Expand the mod with models, textures, animations, and additional mechanics where possible
-- Build a project that can be enjoyed, studied, and improved by fans and developers alike
+*Early in-game screenshots showing the models and art style.*
 
-## Looking for Collaborators
-The **artwork and creative assets** are the foundation of this project, but it cannot be completed without strong programming support. 
+## Installation and use
 
-We’re looking for long-term collaborators who share a love for both ponies and Minecraft, especially those able to help with:
-- Writing and debugging Java code for mod development.
-- Implementing entity behaviors and animation controllers.
-- Implementing a model customization system similar to pony.town.
+The current platform is **Minecraft Java 1.20.1 / Fabric**. Forge / NeoForge support may be considered later.
 
-This is a passion project first and foremost. While future monetization is uncertain, our primary aim is to create something meaningful together. I also hope that through this project we can form genuine friendships, learn from one another, and grow together as creators.  
+Current development versions: Appearance **0.3.3**, paired with Gameplay **0.2.2** when using the addon.
 
+Appearance requires:
 
-## How to Join
-If you are interested in contributing or collaborating:  
-1. Share ideas, report bugs, or suggest features in Issues / Discussions.
-2. Looking for closer collaboration? Please feel free for contact us via Discord or email：
-- **Discord ID: mayhooves**
-- **email: w2026010008@outlook.com**
+- Fabric Loader **0.19.1 or later**;
+- **Fabric API** for Minecraft 1.20.1;
+- **GeckoLib 4.7 or later** for Minecraft 1.20.1; development currently uses 4.8.3.
 
+See [Releases](https://github.com/Magical-Land-Official/Magical-Land/releases) for version files and installation notes. Place the Appearance JAR and its dependencies in your game's `mods` folder. When upgrading from the old all-in-one mod, replace it with the new Appearance mod.
 
-We are really hoping for a wonderful, friendly and enjoyable journey together!
+Click **“Pony Custom”** at the bottom right of the game's main menu to open the standalone character editor. **F9** opens mod settings by default; the optional Mod Menu also provides an entry to Appearance's settings.
+
+If you have hidden the main-menu button, change its visibility under **Settings → General** in Appearance's settings.
+
+The preview on the left updates as you edit. Drag to rotate it; selecting a part automatically focuses the camera on it, and you can turn automatic focus off. The preview uses fixed lighting, and style thumbnails use fixed reference colors. See the [customization guide (Chinese)](docs/customization-ui.md) for details.
+
+Edits stay in a draft. Select **“Save & apply”** to update your character and presets. Choosing to discard changes when leaving restores the previously saved state.
+
+## Multiplayer and Gameplay
+
+| Installation | Features |
+| --- | --- |
+| Appearance and its dependencies on the client | Local pony appearance and customization. |
+| Appearance and its dependencies on both client and server | Multiplayer appearance, animation, and gaze synchronization. The server uses the same Appearance JAR. |
+| A compatible Gameplay Addon also installed on both sides | Separate gameplay features; see the Gameplay repository. |
+
+Seeing each other's custom appearances in multiplayer requires compatible appearance synchronization on the server. Gameplay uses Appearance's public API. The mods have independent versions; check their release notes for compatible combinations.
+
+## Development and feedback
+
+The project is still in development. You're welcome to try it and share feedback. See the [project task list (Chinese)](TODO.md) for known issues and future plans.
+
+When reporting an issue, include the game and mod versions, whether Gameplay is installed, whether the issue occurs in singleplayer or multiplayer, steps to reproduce it, and relevant screenshots or logs. Check logs for personal information before posting them publicly.
+
+## Get involved
+
+We want to keep refining the models, hand-painted textures, animations, and customization experience. Contributions in Java development, modeling and animation, art, testing, and translation are welcome. You can also share ideas through [Issues](https://github.com/Magical-Land-Official/Magical-Land/issues).
+
+Developer resources (Chinese): [Separate-repository guide](docs/module-split.md) · [Public API](docs/appearance-api.md)
+
+- QQ: 2026010008
+- Discord: mayhooves
+- Email: w2026010008@outlook.com
+
+This is an unofficial fan project. See [LICENSE.txt](LICENSE.txt) for the repository license and the relevant documentation for asset information. The [magic sound source records (Chinese)](docs/magic-sounds.md) are still being completed.

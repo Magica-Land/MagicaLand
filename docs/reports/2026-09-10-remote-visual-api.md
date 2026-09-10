@@ -1,6 +1,6 @@
 # 出窍视觉 API 扩展检查
 
-本文保留最初外观 0.3.1 / API 1.1 的独立检查记录。后续外观 0.3.2 / API 1.2 与 Gameplay 0.2.1 已完成构建和用户体验验收；包括亮角、渲染坐标、物品朝向与拾取的追加修复，详见 [Gameplay 最新验收记录](https://github.com/Magical-Land-Official/Magical-Land-Gameplay/blob/1.20.1-Fabric/docs/reports/2026-09-10-remote-pickup-pose.md)。多人及其他渲染模组兼容不在本轮用户总体确认的明确覆盖范围内。
+本文保留最初外观 0.3.1 / API 1.1 的独立检查记录。后续外观 0.3.2 / API 1.2 与 Gameplay 0.2.1 已完成构建和用户体验验收；包括亮角、渲染坐标、物品朝向与拾取的追加修复，详见 [Gameplay 最新验收记录](https://github.com/Magical-Land-Official/Magical-Land-Gameplay/blob/1.20.1-Fabric/docs/reports/2026-09-10-remote-pickup-pose.md)。用户本轮的总体确认未明确覆盖多人联机，以及与其他渲染模组的兼容性；这两项仍需单独验收。
 
 日期：2026-09-10。对应工作区：外观 0.3.1 / API 1.1，起点 `0b3cf2d993a4a1f7527fb8b427bde16b6dbc3c6a`；联调 Gameplay 0.2.0，起点 `70061236c84b9f765a738daa8e531ebccf42c134`。两仓均为 `1.20.1-Fabric` 上本轮未提交的源码改动。
 

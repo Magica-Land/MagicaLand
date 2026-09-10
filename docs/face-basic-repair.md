@@ -23,7 +23,7 @@ ID 不依赖列表顺序，中文名称可以修改。`happy` 当前只代表已
 
 例如想让跳跃用笑眼，只需将 `actions` 中的 `"jump1": "neutral"` 改为 `"jump1": "happy"`。本次没有替作者更换跳跃表情：当前实际资源的 `jump1` 与 `run` 使用普通眼。睡眠和潜行在旧渲染器中的闭眼规则转移至配置；旧 `sneak` 内的向下看轨道另存为 `look_down`，供作者选择。
 
-下落的组合动作使用 `{"expression": "fall_transition", "then_loop": "neutral"}`，先播放过渡表情，再循环普通表情。原下落过渡缺少普通眼与闭眼显隐值，本次保留原有轨道，并补齐 `CommonFace=1`、`close=0`，避免依赖上一动作或回到模型默认值后叠眼。挥手和芭蕾不是一个静态表情，不简化其作者制作的变化节奏。
+下落的组合动作使用 `{"expression": "fall_transition", "then_loop": "neutral"}`，先播放过渡表情，再循环普通表情。原下落过渡缺少普通眼与闭眼显隐值，本次保留原有轨道，并补齐 `CommonFace=1`、`close=0`，避免依赖上一动作或回到模型默认值后叠眼。挥手和芭蕾保留作者制作的动态表情及原有变化节奏。
 
 Java 可通过 `PonyExpressions.forExpression("happy")` 取得可复用的 `RawAnimation`；`forAction` 查询动作搭配，`expressions()` 提供 ID 与中文名称。未知 ID 回退普通表情。将来的玩家表情系统可复用这些入口，但仍需另行实现手动表情与动作表情的优先级、持续时间及必要的多人同步；本次没有开放这些玩法。
 

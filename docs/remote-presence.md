@@ -1,5 +1,5 @@
-# 念力出窍原型（0.2.1）
+# 三族能力 · 独角兽 · 念力出窍
 
-本功能／设计已迁入独立 [Gameplay Addon](https://github.com/Magical-Land-Official/Magical-Land-Gameplay)。请在[玩法仓库的对应文档](https://github.com/Magical-Land-Official/Magical-Land-Gameplay/blob/1.20.1-Fabric/docs/remote-presence.md)继续维护，外观包不包含这些玩法。
+念力出窍是三族能力中独角兽的一项能力，说明由 [Gameplay 的对应功能文档](https://github.com/Magical-Land-Official/Magical-Land-Gameplay/blob/1.20.1-Fabric/docs/remote-presence.md)维护。
 
 此文件保留旧链接入口；两仓职责与安装方式见[双仓说明](module-split.md)。

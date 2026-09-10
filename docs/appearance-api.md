@@ -111,7 +111,12 @@ AppearanceVisuals.renderFirstPerson(owner, visual, buffers, () -> renderVanillaH
 
 ## 验证方式与范围
 
-在 Appearance 仓库根目录执行 `node tests/api/run-api-tests.mjs`，环境需要可用的 Node 和 JDK 17 或更高版本。这是一组针对源码契约的独立测试，不会构建整个项目。测试使用轻量 Minecraft/Fabric 测试替身编译实际 API 与内部桥接源码，验证同优先级顺序、逐级回退、owner 与句柄清理、断线会话、无效注视目标、快照隔离、回调异常、刷新异常、新旧第一人称重载防嵌套与状态恢复、上下文物品复制，以及第三人称入口的参数约束和矩阵恢复。还会仅使用公共 API JAR 与 Minecraft 测试替身编译外部调用示例，并检查公共字节码签名是否泄漏内部类型。
+在 Appearance 仓库根目录执行 `node tests/api/run-api-tests.mjs`，环境需要可用的 Node 和 JDK 17 或更高版本。这是一组针对源码契约的独立测试，不会构建整个项目。测试使用轻量 Minecraft/Fabric 测试替身编译实际 API 与内部桥接源码，检查以下内容：
+
+- 外观快照：快照数据隔离。
+- 回调与注册：同优先级顺序、逐级回退、owner 与句柄清理、断线会话、无效注视目标和回调异常。
+- 视觉状态：刷新异常、新旧第一人称重载的嵌套调用保护与状态恢复、上下文物品复制，以及第三人称入口的参数约束和矩阵恢复。
+- API 打包边界：仅使用公共 API JAR 与 Minecraft 测试替身编译外部调用示例，并检查公共字节码签名是否泄漏内部类型。
 
 API 测试还在轻量实体替身上执行实际 `MagicEquip` 与装备包络，覆盖空手远控点亮、回收淡出、正常持物保留、物品转入远控时持续发光、隐身和无角资格、断线清理。`tests/render/LevitationVisualIsolationTest.java` 使用真实 `ItemLevitation` 的两组缓存，验证本体与投影的独立状态、时钟、视角与清理。`LevitationMotionTest` 和 `MagicEquipMotionTest` 继续覆盖惯性与装备动画的纯计算规则。这些测试不提供游戏内画面验收。
 
