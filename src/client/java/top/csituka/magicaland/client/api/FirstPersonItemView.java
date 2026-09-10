@@ -3,6 +3,7 @@ package top.csituka.magicaland.client.api;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import top.csituka.magicaland.api.client.ItemVisualContext;
 
 public final class FirstPersonItemView implements AutoCloseable {
     private static FirstPersonItemView current;
@@ -11,11 +12,15 @@ public final class FirstPersonItemView implements AutoCloseable {
     public final LivingEntity owner;
     public final Entity camera;
     public final ItemStack stack;
-    private FirstPersonItemView(LivingEntity owner,Entity camera,ItemStack stack) {
-        previous=current; this.owner=owner; this.camera=camera; this.stack=stack; current=this;
+    public final ItemVisualContext context;
+    private FirstPersonItemView(LivingEntity owner,Entity camera,ItemStack stack,ItemVisualContext context) {
+        previous=current; this.owner=owner; this.camera=camera; this.stack=stack; this.context=context; current=this;
     }
     public static FirstPersonItemView open(LivingEntity owner,Entity camera,ItemStack stack) {
-        return new FirstPersonItemView(owner,camera,stack);
+        return new FirstPersonItemView(owner,camera,stack,null);
+    }
+    public static FirstPersonItemView open(LivingEntity owner,ItemVisualContext context) {
+        return new FirstPersonItemView(owner,context.source(),context.stack(),context);
     }
     public static FirstPersonItemView forOwner(LivingEntity owner) {
         return current!=null && current.owner==owner?current:null;

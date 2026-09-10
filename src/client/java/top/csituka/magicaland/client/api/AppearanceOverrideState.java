@@ -1,7 +1,9 @@
 package top.csituka.magicaland.client.api;
 
 import java.util.UUID;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
@@ -12,6 +14,7 @@ import top.csituka.magicaland.api.client.Registration;
 public final class AppearanceOverrideState {
     private static final OverrideRegistry<Visibility> VISIBILITY = new OverrideRegistry<>(AppearanceOverrideState::failed);
     private static final OverrideRegistry<Entity> GAZE = new OverrideRegistry<>(AppearanceOverrideState::failed);
+    private static final OverrideRegistry<Boolean> MAGIC = new OverrideRegistry<>(AppearanceOverrideState::failed);
     private static boolean initialized;
 
     private AppearanceOverrideState() {}
@@ -22,6 +25,7 @@ public final class AppearanceOverrideState {
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             VISIBILITY.clear();
             GAZE.clear();
+            MAGIC.clear();
         });
     }
 
@@ -33,9 +37,15 @@ public final class AppearanceOverrideState {
         return GAZE.register(ownerId, priority, provider);
     }
 
+    public static Registration registerMagicActivity(String ownerId, int priority, Predicate<UUID> provider) {
+        Objects.requireNonNull(provider, "provider");
+        return MAGIC.register(ownerId, priority, provider::test);
+    }
+
     public static void unregisterOwner(String ownerId) {
         VISIBILITY.unregisterOwner(ownerId);
         GAZE.unregisterOwner(ownerId);
+        MAGIC.unregisterOwner(ownerId);
     }
 
     public static Visibility visibility(UUID player) {
@@ -45,6 +55,10 @@ public final class AppearanceOverrideState {
     public static Entity gaze(UUID player) {
         var world = MinecraftClient.getInstance().world;
         return GAZE.resolve(player, target -> !target.isRemoved() && target.getWorld() == world, null);
+    }
+
+    public static boolean magicActive(UUID player) {
+        return MAGIC.resolve(player, Boolean.TRUE::equals, false);
     }
 
     private static void failed(String ownerId, RuntimeException failure) {

@@ -1,6 +1,6 @@
-# 外观 API v1
+# 外观 API v1.2
 
-Magicaland Appearance 0.3.0 通过 `top.csituka.magicaland.api` 和 `top.csituka.magicaland.api.client` 提供公共接口。Gameplay 及其他扩展（Addon）依赖这些包；配置、渲染实现、动画状态和同步缓存均属于外观模组内部实现。
+Magicaland Appearance 0.3.2 通过 `top.csituka.magicaland.api` 和 `top.csituka.magicaland.api.client` 提供公共接口。Gameplay 及其他扩展（Addon）依赖这些包；配置、渲染实现、动画状态和同步缓存均属于外观模组内部实现。
 
 `ApiVersion` 位于主源码集，只依赖 Java 标准库，可在独立服务端安全查询。`.api.client` 下的接口仅供客户端使用：查询和注册操作必须在客户端线程执行，视觉接口必须在渲染线程执行。本 API 不授予玩法能力，也不提供可作为服务端判定依据的权威外观数据。
 
@@ -8,16 +8,18 @@ Magicaland Appearance 0.3.0 通过 `top.csituka.magicaland.api` 和 `top.csituka
 
 API 版本与模组版本独立。`ApiVersion.requireCompatible(1, 0)` 要求已安装 API 的主版本为 1、次版本至少为 0，不满足时抛出明确异常；`isCompatible` 提供不抛异常的兼容性检查。API 次版本更新保持已有签名和语义，不兼容变更必须提升主版本。扩展的模组元数据也必须声明兼容的 Appearance 版本要求；运行时检查无法解决 API 本身未安装的问题。
 
-发布坐标为 `top.csituka:magicaland-appearance:0.3.0`。编译时依赖带 `api` 分类标识（classifier）的产物，运行时依赖完整 Appearance 模组。扩展应与主模组使用相同的 Minecraft 1.20.1、Fabric 和映射版本。通过 Loom 引用重映射后的 API 产物，Loom 会将其中的 Minecraft 类型签名转换为扩展开发环境所用的命名空间。
+独立持物视觉上下文与第三人称悬浮入口需要 `ApiVersion.requireCompatible(1, 1)`；新增魔法活动注册需要 `ApiVersion.requireCompatible(1, 2)`。已有入口继续兼容。
+
+发布坐标为 `top.csituka:magicaland-appearance:0.3.2`。编译时依赖带 `api` 分类标识（classifier）的产物，运行时依赖完整 Appearance 模组。扩展应与主模组使用相同的 Minecraft 1.20.1、Fabric 和映射版本。通过 Loom 引用重映射后的 API 产物，Loom 会将其中的 Minecraft 类型签名转换为扩展开发环境所用的命名空间。
 
 ```groovy
-modCompileOnly "top.csituka:magicaland-appearance:0.3.0:api"
-modRuntimeOnly "top.csituka:magicaland-appearance:0.3.0"
+modCompileOnly "top.csituka:magicaland-appearance:0.3.2:api"
+modRuntimeOnly "top.csituka:magicaland-appearance:0.3.2"
 ```
 
 `api` JAR 仅用于编译。不要将它放入 `mods` 文件夹、通过 `include` 嵌套打包、合并打包（shade），或把其中的类复制进扩展。运行时由完整 Appearance JAR 提供唯一一份公共 API 及其实现。Appearance 现有的服务端同步功能也保留在这同一个完整 JAR 中。
 
-API 产物包含 `top/csituka/magicaland/api/**` 下的全部类文件，包括嵌套枚举类。v1 具体包含 `ApiVersion`、`Registration`、`AppearanceSnapshot`、`Appearances`、`AppearanceOverrides`、`AppearanceOverrides$Visibility` 和 `AppearanceVisuals`。它不包含 `client/api` 内部桥接实现、`ModelConfig`、渲染内部类、网络类、Mixin 或资源。公共方法签名只使用 Java、Minecraft 或 API 自身的类型。`api-sources` 分类产物包含相应的公共源码；完整源码产物供主模组开发使用。
+API 产物包含 `top/csituka/magicaland/api/**` 下的全部类文件，包括嵌套枚举类。v1.2 具体包含 `ApiVersion`、`Registration`、`AppearanceSnapshot`、`Appearances`、`AppearanceOverrides`、`AppearanceOverrides$Visibility`、`AppearanceVisuals` 和 `ItemVisualContext`。它不包含 `client/api` 内部桥接实现、`ModelConfig`、渲染内部类、网络类、Mixin 或资源。公共方法签名只使用 Java、Minecraft 或 API 自身的类型。`api-sources` 分类产物包含相应的公共源码；完整源码产物供主模组开发使用。
 
 ## 只读外观查询
 
@@ -33,7 +35,7 @@ API 产物包含 `top/csituka/magicaland/api/**` 下的全部类文件，包括�
 
 `Appearances.magicColor(UUID)` 返回相同的魔法颜色；没有已知外观时沿用现有默认值 `0xAA00FF`。查询结果不会暴露可变配置对象、预设名称或底层映射表。已经保存的快照不会随外观更新而变化；需要最新的同步或已应用数据时，应重新查询。
 
-## 持物可见性与注视覆盖
+## 持物可见性、注视与魔法活动
 
 `AppearanceOverrides.registerMainHandVisibility(ownerId, priority, provider)` 和 `registerGaze(ownerId, priority, provider)` 返回 `Registration` 注册句柄。`ownerId` 是带命名空间的小写字符串，例如 `magicaland_gameplay:remote_tool`；命名空间应标识发起注册的扩展。同一 owner 可以在任一覆盖类别下拥有多条注册。`provider` 回调接收正在渲染的玩家 UUID。
 
@@ -43,11 +45,24 @@ API 产物包含 `top/csituka/magicaland/api/**` 下的全部类文件，包括�
 * 注视目标覆盖原有头部和眼睛的目标。null、已移除实体或其他世界中的实体均交给下一条回调处理。没有有效目标时，执行原有注视逻辑。
 * 回调抛出 `RuntimeException` 时，该条注册会被撤销并记录一次日志，然后继续尝试较低优先级条目。对应句柄将报告注册已失效。
 
-`registration.close()` 只撤销该句柄对应的注册，重复调用不会产生额外影响。`unregisterOwner(ownerId)` 撤销该 owner 在两类覆盖中的全部注册，保留其他 owner 的注册。撤销后立即恢复到下一条适用回调或原有行为，并释放已撤销的回调引用。扩展可以通过 `ownerId()`、`priority()` 和 `isRegistered()` 检查自己的注册句柄。
+`registration.close()` 只撤销该句柄对应的注册，重复调用不会产生额外影响。`unregisterOwner(ownerId)` 撤销该 owner 在全部三类覆盖中的注册，保留其他 owner 的注册。撤销后立即恢复到下一条适用回调或原有行为，并释放已撤销的回调引用。扩展可以通过 `ownerId()`、`priority()` 和 `isRegistered()` 检查自己的注册句柄。
 
-每次断线都会清空两类覆盖，并使尚未关闭的句柄失效。需要跨会话使用的扩展必须在 `ClientPlayConnectionEvents.JOIN` 中重新注册，并在 `DISCONNECT` 或功能关闭时关闭自己的句柄。无论断线回调先后顺序如何，关闭已失效句柄都是安全的。回调应根据 UUID 获取当前状态，并在世界切换时释放扩展自己持有的世界和实体引用。能力结束时返回 `DEFAULT` 或 null 即可恢复正常视觉表现，无需反复安装回调。
+每次断线都会清空所有覆盖，并使尚未关闭的句柄失效。需要跨会话使用的扩展必须在 `ClientPlayConnectionEvents.JOIN` 中重新注册，并在 `DISCONNECT` 或功能关闭时关闭自己的句柄。无论断线回调先后顺序如何，关闭已失效句柄都是安全的。回调应根据 UUID 获取当前状态，并在世界切换时释放扩展自己持有的世界和实体引用。能力结束时，可见性返回 `DEFAULT`、注视返回 null、魔法活动返回 false 即可恢复正常视觉表现，无需反复安装回调。
 
-Gameplay 扩展在 JOIN 时注册当前远程工具查询与原持物隐藏判断，断线时关闭两个句柄，同时保留已有能力输入和同步流程。
+### 空手施法时的角部发光
+
+`AppearanceOverrides.registerMagicActivity(ownerId, priority, Predicate<UUID> provider)` 返回独立的 `Registration`。回调返回 true 表示对应玩家正在施法；false 交给下一条注册，不会关闭普通持物或其他扩展请求的发光。优先级控制查询顺序，异常隔离与生命周期沿用上述规则。
+
+世界中的角部发光由「主手非空、副手非空、扩展请求施法」任一条件触发，沿用已有渐亮和淡出。外观替换、角的显示、隐身、睡眠、骑乘等现有资格检查保持不变。注册不会改变物品、手部装备动画或 GUI 预览。`magicActive(UUID)` 仅查询扩展请求，不代表当前模型一定显示角部光效，也不包含普通持物状态。
+
+```java
+Registration magic = AppearanceOverrides.registerMagicActivity("my_addon:projection", 100,
+        playerId -> hasActiveProjectionInCurrentWorld(playerId));
+// 能力停用或断线时释放；跨会话重新注册。
+magic.close();
+```
+
+Gameplay 在 JOIN 时注册远控实体查询、原持物隐藏和魔法活动三条回调，断线时关闭各自句柄。空手投影也属于魔法活动；远控实体销毁、移出当前世界或不再有效后，回调返回 false。
 
 ## 视觉入口
 
@@ -65,10 +80,37 @@ Gameplay 扩展在 JOIN 时注册当前远程工具查询与原持物隐藏判�
 
 即使回调或缓冲刷新抛出异常，也会恢复此前的视图。null 参数会在状态改变之前被拒绝。嵌套调用这个入口也会在修改外层渲染阶段之前被拒绝。不要在回调中开始或结束另一轮手部渲染，不要保留回调供稍后执行，也不要在手部渲染上下文之外使用这个入口。内部 `FirstPersonItemView` 仍属于实现细节，公共方法签名不暴露其作用域实现类型。
 
-Gameplay 保留原有矩阵、插值、渲染种子、第一人称调用和渲染阶段顺序。其渲染器通过 `Appearances` 获取魔法色，手部 Mixin 则将已有渲染调用作为视觉入口的回调传入。
+旧签名继续提供原 stack 引用，沿用装备已完成的表现与 owner 的使用状态。普通玩家的第一、第三人称渲染不需要创建上下文。
+
+### 独立持物视觉状态
+
+`new ItemVisualContext(source, stack, equipProgress, swingProgress, usingItem, sprinting)` 保存一次绘制需要的状态，供投影等独立视觉对象使用。构造与 `stack()` 读取均复制物品，外部修改输入或返回的 stack 不会改变此上下文。数值与布尔状态固定；`source()` 保留实际实体引用，用于读取其当前插值位置、朝向和 age，并非实体世界状态的深拷贝。
+
+| 参数 | 语义 |
+| --- | --- |
+| `source` | 独立持物/相机实体，UUID 标识动画缓存，位置、朝向与 age 驱动悬浮惯性。不要用玩家本体代替真实投影实体。 |
+| `equipProgress` | 0 表示收起，1 表示完全显示。对接原版 lowered equip 参数时传 `1 - vanillaEquip`。必须有限且位于 0–1。 |
+| `swingProgress` | 当前挥动物品动作进度，必须有限且位于 0–1；大于 0 时收束悬浮并停止产生新尾迹。挥动姿态本身由调用方绘制。 |
+| `usingItem` | 当前视觉对象自己的使用/执行动作状态；为 true 时收束悬浮并停止产生新尾迹，不读取本体的使用状态。 |
+| `sprinting` | 当前视觉对象自己的冲刺状态，与实际位移速度共同决定现有尾迹表现。 |
+
+`renderFirstPerson(owner, context, buffers, renderCallback)` 使用 `context.source()` 作为视觉相机，使用上下文物品、装备进度与动作状态，不读取玩家本体的装备动画缓存。它沿用上述阶段顺序、嵌套拒绝和异常恢复规则。回调应同步调用原版第一人称物品绘制，并传入同一帧的物品、挥动与装备参数。此上下文保留调用方的原版装备升降，仅叠加缩放与受限悬浮惯性，不再添加本体装备的侧边飞入路径或该路径的弹簧驱动力。悬浮位置比普通持物略靠前、略向中央；沿用现有光效样式。旧签名与普通外观的持物位置不变。
+
+```java
+var visual = new ItemVisualContext(tool, stack, 1 - vanillaEquip, swing, actionActive, sprinting);
+AppearanceVisuals.renderFirstPerson(owner, visual, buffers, () -> renderVanillaHand());
+```
+
+`renderLevitatingItem(owner, context, mode, matrices, buffers, world, light, seed, magicColor, tickDelta)` 在世界渲染阶段绘制第三人称独立悬浮持物。调用方先设置实体插值位置、yaw/pitch 和挥动/工具动作姿态，再调用此入口。矩阵必须处于当前游戏相机的世界渲染坐标系；入口从当前物品锚点复用现有世界悬浮惯性、物品光效与尾迹，不重新设置物品动作。`owner` 提供物品模型所需的玩家信息；`source` 提供独立位置、朝向、动画时钟与状态。
+
+`mode` 只接受 `THIRD_PERSON_LEFT_HAND` 或 `THIRD_PERSON_RIGHT_HAND`。`world` 必须同时是 owner 和 source 所在世界，`tickDelta` 必须有限且位于 0–1；这些约束与所有非空参数在修改矩阵前检查。入口自行 push/pop，绘制抛异常也会恢复调用方矩阵。物品不可见时不绘制几何；正常世界渲染阶段之外不累积悬浮尾迹。
+
+独立视觉使用专用缓存，按 source UUID、持物侧与第一/第三人称区分，即使 UUID 与 owner 相同也不共享普通本体缓存。物品身份变化、间断渲染返回、世界/视角切换及断线沿用现有重置和清理规则。所有这些入口只改变显示，不移动实体、不改变物品使用状态，不控制碰撞、射线、命中或服务端判定。
 
 ## 验证方式与范围
 
-在 Appearance 仓库根目录执行 `node tests/api/run-api-tests.mjs`，环境需要可用的 Node 和 JDK 17 或更高版本。这是一组针对源码契约的独立测试，不会构建整个项目。测试使用轻量 Minecraft/Fabric 测试替身编译实际 API 与内部桥接源码，验证同优先级顺序、逐级回退、owner 与句柄清理、断线会话、无效注视目标、快照隔离、回调异常、刷新异常和第一人称状态恢复。还会仅使用公共 API JAR 与 Minecraft 测试替身编译外部调用示例，并检查公共字节码签名是否泄漏内部类型。
+在 Appearance 仓库根目录执行 `node tests/api/run-api-tests.mjs`，环境需要可用的 Node 和 JDK 17 或更高版本。这是一组针对源码契约的独立测试，不会构建整个项目。测试使用轻量 Minecraft/Fabric 测试替身编译实际 API 与内部桥接源码，验证同优先级顺序、逐级回退、owner 与句柄清理、断线会话、无效注视目标、快照隔离、回调异常、刷新异常、新旧第一人称重载防嵌套与状态恢复、上下文物品复制，以及第三人称入口的参数约束和矩阵恢复。还会仅使用公共 API JAR 与 Minecraft 测试替身编译外部调用示例，并检查公共字节码签名是否泄漏内部类型。
+
+API 测试还在轻量实体替身上执行实际 `MagicEquip` 与装备包络，覆盖空手远控点亮、回收淡出、正常持物保留、物品转入远控时持续发光、隐身和无角资格、断线清理。`tests/render/LevitationVisualIsolationTest.java` 使用真实 `ItemLevitation` 的两组缓存，验证本体与投影的独立状态、时钟、视角与清理。`LevitationMotionTest` 和 `MagicEquipMotionTest` 继续覆盖惯性与装备动画的纯计算规则。这些测试不提供游戏内画面验收。
 
 如果同级目录存在 Gameplay 仓库，测试还会扫描其 Java 源码，检查是否越过 API 边界引用 Appearance 内部实现。Gameplay 位于其他位置时，可将 `MAGICALAND_GAMEPLAY_REPO` 设置为该仓库路径以启用扫描。这些检查不能替代 Loom 构建、打包后 JAR 的启动检查或游戏内视觉验证。

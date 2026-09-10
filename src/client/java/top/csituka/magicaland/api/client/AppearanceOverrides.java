@@ -2,6 +2,7 @@ package top.csituka.magicaland.api.client;
 
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import net.minecraft.entity.Entity;
 import top.csituka.magicaland.client.api.AppearanceOverrideState;
 
@@ -22,7 +23,12 @@ public final class AppearanceOverrides {
         return AppearanceOverrideState.registerGaze(ownerId, priority, provider);
     }
 
-    /** Removes this owner's registrations in both channels; other owners are preserved. */
+    /** true requests horn glow; false yields and cannot suppress normal held-item glow. Since API 1.2. */
+    public static Registration registerMagicActivity(String ownerId, int priority, Predicate<UUID> provider) {
+        return AppearanceOverrideState.registerMagicActivity(ownerId, priority, provider);
+    }
+
+    /** Removes this owner's registrations in all channels; other owners are preserved. */
     public static void unregisterOwner(String ownerId) {
         AppearanceOverrideState.unregisterOwner(ownerId);
     }
@@ -33,5 +39,10 @@ public final class AppearanceOverrides {
 
     public static Entity gazeTarget(UUID player) {
         return AppearanceOverrideState.gaze(player);
+    }
+
+    /** Whether an addon requests magic activity; normal equipment and appearance eligibility are separate. */
+    public static boolean magicActive(UUID player) {
+        return AppearanceOverrideState.magicActive(player);
     }
 }

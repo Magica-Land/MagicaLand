@@ -27,4 +27,18 @@ public final class AppearanceVisuals {
             VertexConsumerProvider.Immediate buffers, Runnable render) {
         AppearanceVisualBridge.renderFirstPerson(owner, camera, stack, buffers, render);
     }
+
+    /** Runs a hand pass with independent pose, equip and action state. */
+    public static void renderFirstPerson(LivingEntity owner, ItemVisualContext context,
+            VertexConsumerProvider.Immediate buffers, Runnable render) {
+        AppearanceVisualBridge.renderFirstPerson(owner, context, buffers, render);
+    }
+
+    /** Adds visual inertia, the existing item glow and trail; restores the caller's matrices. */
+    public static void renderLevitatingItem(LivingEntity owner, ItemVisualContext context,
+            ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider buffers,
+            World world, int light, int seed, int magicColor, float tickDelta) {
+        AppearanceVisualBridge.renderLevitatingItem(owner, context, mode, matrices, buffers,
+                world, light, seed, magicColor, tickDelta);
+    }
 }

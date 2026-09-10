@@ -3,7 +3,7 @@ package top.csituka.magicaland.api;
 /** Version of the public contract, independent of the mod release version. */
 public final class ApiVersion {
     public static final int MAJOR = 1;
-    public static final int MINOR = 0;
+    public static final int MINOR = 2;
 
     private ApiVersion() {}
 

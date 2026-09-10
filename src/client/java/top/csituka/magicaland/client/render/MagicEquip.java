@@ -73,13 +73,16 @@ public final class MagicEquip {
     }
 
     public static float progress(LivingEntity player, boolean main, float delta) {
-        if (top.csituka.magicaland.client.api.FirstPersonItemView.forOwner(player)!=null) return 1;
+        var view = top.csituka.magicaland.client.api.FirstPersonItemView.forOwner(player);
+        if (view != null) return view.context == null ? 1 : main ? view.context.equipProgress() : 0;
         Entry state = entry(player, delta);
         return state == null ? 1 : state.hand(main).motion.progress(state.clock.seconds());
     }
 
     public static boolean transitioning(LivingEntity player, boolean main, float delta) {
-        if (top.csituka.magicaland.client.api.FirstPersonItemView.forOwner(player)!=null) return false;
+        var view = top.csituka.magicaland.client.api.FirstPersonItemView.forOwner(player);
+        if (view != null) return view.context != null && main && !view.stack.isEmpty()
+                && view.context.equipProgress() < 1;
         Entry state = entry(player, delta);
         if (state == null) return false;
         HandState hand = state.hand(main);
@@ -88,6 +91,8 @@ public final class MagicEquip {
     }
 
     public static boolean instantSwap(LivingEntity player, float delta) {
+        var view = top.csituka.magicaland.client.api.FirstPersonItemView.forOwner(player);
+        if (view != null && view.context != null) return false;
         Entry state = entry(player, delta);
         return state != null && state.clock.seconds() < state.instantUntil;
     }
@@ -110,6 +115,8 @@ public final class MagicEquip {
 
     public static boolean overrideFirstPerson(LivingEntity player, boolean main, float delta,
             ItemStack vanillaStack, float vanillaEquip) {
+        var view = top.csituka.magicaland.client.api.FirstPersonItemView.forOwner(player);
+        if (view != null && view.context != null) return false;
         Entry state = entry(player, delta);
         if (state == null) return false;
         HandState hand = state.hand(main);
@@ -121,11 +128,15 @@ public final class MagicEquip {
     }
 
     public static boolean firstPersonHandoff(LivingEntity player, boolean main, float delta) {
+        var view = top.csituka.magicaland.client.api.FirstPersonItemView.forOwner(player);
+        if (view != null && view.context != null) return false;
         Entry state = entry(player, delta);
         return state != null && state.hand(main).handoff.active();
     }
 
     public static void firstPersonPath(LivingEntity player, boolean main, boolean left, MatrixStack matrices, float delta) {
+        var view = top.csituka.magicaland.client.api.FirstPersonItemView.forOwner(player);
+        if (view != null && view.context != null) return;
         if (!enabled(player)) return;
         var offset = MagicEquipMotion.offset(progress(player, main, delta), left, true);
         matrices.translate(offset.x(), offset.y(), offset.z());
@@ -158,7 +169,8 @@ public final class MagicEquip {
             if (swap) main.settle(seconds);
             slot = selected;
             off.observe(actualOff, seconds);
-            horn.observe(main.held || off.held, seconds);
+            horn.observe(main.held || off.held
+                    || top.csituka.magicaland.api.client.AppearanceOverrides.magicActive(entity.getUuid()), seconds);
             if (exchanged) {
                 main.settle(seconds);
                 off.settle(seconds);

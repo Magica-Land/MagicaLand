@@ -9,11 +9,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import top.csituka.magicaland.api.client.ItemVisualContext;
 import top.csituka.magicaland.client.render.GlowingItem;
+import top.csituka.magicaland.client.render.ItemLevitation;
+import top.csituka.magicaland.client.render.MagicEquipMotion;
 import top.csituka.magicaland.client.render.MagicOrb;
 
 public final class AppearanceVisualBridge {
     private static boolean firstPersonPass;
+    private static final GlowingItem ITEMS = new GlowingItem();
 
     private AppearanceVisualBridge() {}
 
@@ -32,11 +36,23 @@ public final class AppearanceVisualBridge {
         Objects.requireNonNull(owner, "owner");
         Objects.requireNonNull(camera, "camera");
         Objects.requireNonNull(stack, "stack");
+        runFirstPerson(() -> FirstPersonItemView.open(owner, camera, stack), buffers, render);
+    }
+
+    public static void renderFirstPerson(LivingEntity owner, ItemVisualContext context,
+            VertexConsumerProvider.Immediate buffers, Runnable render) {
+        Objects.requireNonNull(owner, "owner");
+        Objects.requireNonNull(context, "context");
+        runFirstPerson(() -> FirstPersonItemView.open(owner, context), buffers, render);
+    }
+
+    private static void runFirstPerson(java.util.function.Supplier<FirstPersonItemView> open,
+            VertexConsumerProvider.Immediate buffers, Runnable render) {
         Objects.requireNonNull(buffers, "buffers");
         Objects.requireNonNull(render, "render");
         if (firstPersonPass) throw new IllegalStateException("Temporary first-person passes cannot be nested");
         firstPersonPass = true;
-        try (var view = FirstPersonItemView.open(owner, camera, stack)) {
+        try (var view = open.get()) {
             GlowingItem.beginFirstPersonPass();
             try {
                 render.run();
@@ -45,6 +61,35 @@ public final class AppearanceVisualBridge {
             }
         } finally {
             firstPersonPass = false;
+        }
+    }
+
+    public static void renderLevitatingItem(LivingEntity owner, ItemVisualContext context,
+            ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider buffers,
+            World world, int light, int seed, int color, float delta) {
+        Objects.requireNonNull(owner, "owner");
+        Objects.requireNonNull(context, "context");
+        Objects.requireNonNull(mode, "mode");
+        Objects.requireNonNull(matrices, "matrices");
+        Objects.requireNonNull(buffers, "buffers");
+        Objects.requireNonNull(world, "world");
+        if (mode != ModelTransformationMode.THIRD_PERSON_LEFT_HAND
+                && mode != ModelTransformationMode.THIRD_PERSON_RIGHT_HAND)
+            throw new IllegalArgumentException("Levitating items require a third-person hand mode");
+        if (!Float.isFinite(delta) || delta < 0 || delta > 1)
+            throw new IllegalArgumentException("tickDelta must be finite and between 0 and 1");
+        if (owner.getWorld() != world || context.source().getWorld() != world)
+            throw new IllegalArgumentException("Visual owner and source must belong to the render world");
+        ItemStack stack = context.stack();
+        boolean left = mode == ModelTransformationMode.THIRD_PERSON_LEFT_HAND;
+        matrices.push();
+        try {
+            var trail = ItemLevitation.applyVisualWorld(context, stack, left, matrices, delta);
+            if (!stack.isEmpty() && MagicEquipMotion.scale(context.equipProgress()) > MagicEquipMotion.MIN_VISIBLE_SCALE)
+                ITEMS.renderItemWithGlow(MinecraftClient.getInstance().getItemRenderer(), owner, stack,
+                        mode, left, matrices, buffers, world, light, seed, color, true, trail);
+        } finally {
+            matrices.pop();
         }
     }
 }
