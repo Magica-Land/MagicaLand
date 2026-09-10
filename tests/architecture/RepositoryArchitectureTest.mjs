@@ -66,7 +66,7 @@ for (const entry of metadata.mixins) {
     }
 }
 for (const name of ['ApiVersion', 'client.Registration', 'client.AppearanceSnapshot',
-    'client.Appearances', 'client.AppearanceOverrides', 'client.AppearanceVisuals']) {
+    'client.Appearances', 'client.AppearanceOverrides', 'client.AppearanceVisuals', 'client.AnatomyOverride']) {
     check(classes.has('top.csituka.magicaland.api.' + name), `public API exists: ${name}`);
 }
 check(!exists('src/main/resources/data/magicaland/advancements/not_what_i_meant.json'), 'encounter advancement is owned by gameplay');
@@ -74,6 +74,19 @@ for (const locale of ['zh_cn', 'en_us']) {
     check(!Object.keys(json(`src/main/resources/assets/magicaland/lang/${locale}.json`))
         .some(key => key.includes('ability_view')), 'ability perspective labels are owned by gameplay');
 }
+const clientBase = 'src/client/java/top/csituka/magicaland/';
+check(!read(clientBase + 'client/config/ModelManager.java').includes('AppearanceAnatomy'), 'display override never enters persistence');
+check(!read(clientBase + 'client/network/ClientNetworkHandler.java').includes('AppearanceAnatomy'), 'anatomy does not change appearance protocol/cache');
+check(read(clientBase + 'client/gui/PonyCustom.java').includes('AppearanceAnatomy.apply(player == null ? null : player.getUuid(), config)'),
+    'current-player editor display uses anatomy while title preview remains native');
+check(read(clientBase + 'mixin/client/PlayerEntityRendererMixin.java').includes('AppearanceAnatomy.apply(player.getUuid(), configToUse)'),
+    'world and inventory model display use effective anatomy');
+check(read(clientBase + 'client/animation/PonyFlightVisuals.java').includes('AppearanceAnatomy.apply(player.getUuid(), source)'),
+    'flight controller uses effective anatomy');
+check(read(clientBase + 'client/render/MagicEquip.java').includes('AppearanceAnatomy.apply(player.getUuid(), model)'),
+    'horn ignition and equipment use effective anatomy');
+check(read(clientBase + 'client/sound/MagicHeldItemSounds.java').includes('AppearanceAnatomy.apply(player.getUuid(), model)'),
+    'magic sound eligibility follows displayed anatomy');
 for (const file of walk('src').filter(file => file.endsWith('.json'))) { json(file); checks++; }
 for (const file of ['gradlew', 'gradlew.bat', 'gradle/wrapper/gradle-wrapper.jar']) check(exists(file), `wrapper present: ${file}`);
 check(read('gradle/wrapper/gradle-wrapper.properties').includes('distributionSha256Sum='), 'wrapper distribution has checksum');

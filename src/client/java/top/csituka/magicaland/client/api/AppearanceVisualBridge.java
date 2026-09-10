@@ -1,6 +1,7 @@
 package top.csituka.magicaland.client.api;
 
 import java.util.Objects;
+import java.util.UUID;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
@@ -15,12 +16,23 @@ import top.csituka.magicaland.client.render.ItemLevitation;
 import top.csituka.magicaland.client.render.MagicEquipMotion;
 import top.csituka.magicaland.client.render.MagicOrb;
 import top.csituka.magicaland.client.render.MagicFlame;
+import top.csituka.magicaland.client.render.TransformationParticles;
 
 public final class AppearanceVisualBridge {
     private static boolean firstPersonPass;
     private static final GlowingItem ITEMS = new GlowingItem();
 
     private AppearanceVisualBridge() {}
+
+    public static void playTransformation(UUID playerId) {
+        Objects.requireNonNull(playerId, "player");
+        var client = MinecraftClient.getInstance();
+        if (client.world == null || client.player == null) return;
+        var player = client.world.getPlayerByUuid(playerId);
+        if (player == null || player.isRemoved() || player.getWorld() != client.world) return;
+        if (AppearanceAccess.find(playerId).filter(value -> value.modelReplacementEnabled()).isEmpty()) return;
+        TransformationParticles.play(player, AppearanceAnatomy.forPlayer(player));
+    }
 
     public static void renderOrb(MatrixStack matrices, int color, double ticks, int seed) {
         MagicOrb.render(matrices, color, ticks, seed);

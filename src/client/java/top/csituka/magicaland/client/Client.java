@@ -59,6 +59,7 @@ public class Client implements ClientModInitializer {
         // 注册客户端网络处理
         ClientNetworkHandler.register();
         PonyFlightVisuals.register();
+        top.csituka.magicaland.client.render.UnicornFlightRim.init();
 
         configKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.magicaland.config",

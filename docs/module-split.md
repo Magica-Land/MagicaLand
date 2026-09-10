@@ -35,7 +35,7 @@
 .\gradlew.bat publishMavenJavaPublicationToLocalDevelopmentRepository
 ```
 
-默认发布到 `build/repo`，当前开发坐标为 `top.csituka:magicaland-appearance:0.3.3`，同时提供普通安装 JAR、`api`、`sources`、`api-sources` 产物。API 运行实现只在主 Mod 中打包一次。
+默认发布到 `build/repo`，当前开发坐标为 `top.csituka:magicaland-appearance:0.3.4`，同时提供普通安装 JAR、`api`、`sources`、`api-sources` 产物。API 运行实现只在主 Mod 中打包一次。
 
 Gameplay 仓库：
 

@@ -102,6 +102,8 @@ public abstract class PlayerEntityRendererMixin
             }
         }
 
+        configToUse = top.csituka.magicaland.client.api.AppearanceAnatomy.apply(player.getUuid(), configToUse);
+        ponyRenderer.setOverrideConfig(configToUse);
         ponyAnimatable.setPlayer(player);
 
         matrixStack.push();
@@ -347,7 +349,8 @@ public abstract class PlayerEntityRendererMixin
     private void onRenderRightArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
             AbstractClientPlayerEntity player, CallbackInfo ci) {
         // 获取当前模型配置，检查 showHorn 设置
-        ModelConfig modelConfig = ModelManager.getAppliedModel();
+        ModelConfig modelConfig = top.csituka.magicaland.client.api.AppearanceAnatomy.apply(
+                player.getUuid(), ModelManager.getAppliedModel());
         boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
 
         // 当 replacePlayerModel=true 且 showHorn=true 时才隐藏手臂
@@ -360,7 +363,8 @@ public abstract class PlayerEntityRendererMixin
     private void onRenderLeftArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
             AbstractClientPlayerEntity player, CallbackInfo ci) {
         // 获取当前模型配置，检查 showHorn 设置
-        ModelConfig modelConfig = ModelManager.getAppliedModel();
+        ModelConfig modelConfig = top.csituka.magicaland.client.api.AppearanceAnatomy.apply(
+                player.getUuid(), ModelManager.getAppliedModel());
         boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
 
         // 当 replacePlayerModel=true 且 showHorn=true 时才隐藏手臂

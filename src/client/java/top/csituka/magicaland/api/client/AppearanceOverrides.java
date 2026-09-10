@@ -12,6 +12,12 @@ public final class AppearanceOverrides {
 
     private AppearanceOverrides() {}
 
+    /** null yields to lower priorities and finally the saved horn/wing choices. Since API 1.4. */
+    public static Registration registerAnatomy(String ownerId, int priority,
+            Function<UUID, AnatomyOverride> provider) {
+        return AppearanceOverrideState.registerAnatomy(ownerId, priority, provider);
+    }
+
     /** DEFAULT (or null) yields to lower priorities and finally normal held-item rendering. */
     public static Registration registerMainHandVisibility(String ownerId, int priority,
             Function<UUID, Visibility> provider) {

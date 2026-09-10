@@ -152,7 +152,8 @@ public class HeldItemRendererMixin {
         }
 
         // 获取当前模型配置，检查 showHorn 设置
-        ModelConfig modelConfig = ModelManager.getAppliedModel();
+        ModelConfig modelConfig = top.csituka.magicaland.client.api.AppearanceAnatomy.apply(
+                entity.getUuid(), ModelManager.getAppliedModel());
         boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
 
         if (entity instanceof AbstractClientPlayerEntity && Config.getInstance().replacePlayerModel && enableHornEffect) {

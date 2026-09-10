@@ -16,6 +16,7 @@ import top.csituka.magicaland.client.animation.PonyIdleEars;
 import top.csituka.magicaland.client.animation.PonyIdleEarAnimations;
 import top.csituka.magicaland.client.animation.PonyFlightAnimations;
 import top.csituka.magicaland.client.animation.PonyFlightVisuals;
+import top.csituka.magicaland.client.animation.PonySneakController;
 import top.csituka.magicaland.client.network.ClientNetworkHandler;
 
 import java.util.HashMap;
@@ -110,7 +111,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 3, this::predicate));
+        controllers.add(new PonySneakController<>(this, "controller", 3, this::predicate));
         controllers.add(new AnimationController<>(this, "blink_controller", 3, this::blinkPredicate));
         controllers.add(new AnimationController<>(this, "expression_controller", 3, this::expressionPredicate));
         controllers.add(new AnimationController<>(this, "ear_controller", 1, this::earPredicate));
@@ -212,6 +213,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     }
 
     private PlayState predicate(AnimationState<GeckoPlayerAnimatable> state) {
+        if (state.getController() instanceof PonySneakController<?> controller) controller.setPlaybackSpeed(1);
         if (player == null)
             return stopAnimation(state);
 
@@ -429,6 +431,10 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
 
     private void applyAnimation(AnimationState<GeckoPlayerAnimatable> state, RawAnimation animation) {
         var controller = state.getController();
+        if (controller instanceof PonySneakController<?> locomotion) {
+            locomotion.setPlaybackSpeed(PonySneakController.speed(mainAnimationName,
+                    player == null ? Double.NaN : player.limbAnimator.getSpeed(state.getPartialTick())));
+        }
         if ("controller".equals(controller.getName()) && controller.getCurrentRawAnimation() != animation) {
             controller.transitionLength(PonyFlightAnimations.transitionTicks(controller.getCurrentRawAnimation(), animation));
         }

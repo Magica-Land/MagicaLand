@@ -7,11 +7,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import java.util.UUID;
 import top.csituka.magicaland.client.api.AppearanceVisualBridge;
 
-/** Render-thread visual entry points; caller supplies the current matrices and buffers. */
+/** Visual entry points. Drawing methods require the render thread and the caller's matrices and buffers. */
 public final class AppearanceVisuals {
     private AppearanceVisuals() {}
+
+    /** Client-thread, current-world transformation burst using the player's applied colors. Since API 1.4. */
+    public static void playTransformation(UUID player) {
+        AppearanceVisualBridge.playTransformation(player);
+    }
 
     public static void renderOrb(MatrixStack matrices, int magicColor, double ticks, int seed) {
         AppearanceVisualBridge.renderOrb(matrices, magicColor, ticks, seed);

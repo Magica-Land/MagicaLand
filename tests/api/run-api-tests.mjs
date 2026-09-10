@@ -13,6 +13,8 @@ const client = path.join(source, 'client/java', javaBase);
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'magicaland-api-test-'));
 const fixtures = {
   'net/minecraft/world/World.java': `package net.minecraft.world; public class World {
+    public final java.util.Map<java.util.UUID,net.minecraft.entity.LivingEntity> players=new java.util.HashMap<>();
+    public net.minecraft.entity.LivingEntity getPlayerByUuid(java.util.UUID id) { return players.get(id); }
     public java.util.List<net.minecraft.entity.LivingEntity> getPlayers() { return java.util.List.of(); }
   }`,
   'net/minecraft/entity/Entity.java': `package net.minecraft.entity;
@@ -84,7 +86,14 @@ const fixtures = {
       public static class Logger { public void warn(String message, Throwable failure) {} }
     }`,
   [javaBase + '/client/config/ModelConfig.java']: `package top.csituka.magicaland.client.config;
-    public class ModelConfig { public boolean showHorn,showWings; public int magicColor; }`,
+    public class ModelConfig implements Cloneable {
+      public boolean showHorn,showWings; public int magicColor; public String[] frontManeDyeColors;
+      public ModelConfig copyForDisplay() {
+        try { var copy=(ModelConfig)super.clone();
+          copy.frontManeDyeColors=frontManeDyeColors==null?null:frontManeDyeColors.clone(); return copy;
+        } catch(CloneNotSupportedException e) { throw new AssertionError(e); }
+      }
+    }`,
   [javaBase + '/client/config/ModelManager.java']: `package top.csituka.magicaland.client.config;
     public class ModelManager { public static ModelConfig applied; public static ModelConfig getAppliedModel() { return applied; } }`,
   [javaBase + '/client/config/Config.java']: `package top.csituka.magicaland.client.config;
@@ -98,6 +107,14 @@ const fixtures = {
     public class NetworkHandler { public static boolean serverHasMod=true; }`,
   [javaBase + '/client/render/MagicOrb.java']: `package top.csituka.magicaland.client.render;
     public class MagicOrb { public static void render(net.minecraft.client.util.math.MatrixStack matrices,int color,double ticks,int seed) {} }`,
+  [javaBase + '/client/render/TransformationParticles.java']: `package top.csituka.magicaland.client.render;
+    public class TransformationParticles {
+      public static int calls; public static net.minecraft.entity.LivingEntity player;
+      public static top.csituka.magicaland.client.config.ModelConfig config;
+      public static void play(net.minecraft.entity.LivingEntity target,top.csituka.magicaland.client.config.ModelConfig model) {
+        calls++; player=target; config=model;
+      }
+    }`,
   [javaBase + '/client/render/MagicFlame.java']: `package top.csituka.magicaland.client.render;
     public class MagicFlame {
       public static int calls; public static boolean failRender;
@@ -159,7 +176,7 @@ try {
   }
   const classes = path.join(temp, 'classes');
   const publicSources = [path.join(main, 'api/ApiVersion.java'), ...files(path.join(client, 'api/client')).filter(file => file.endsWith('.java'))];
-  const internalSources = ['AppearanceAccess', 'AppearanceOverrideState', 'AppearanceVisualBridge', 'OverrideRegistry', 'FirstPersonItemView']
+  const internalSources = ['AppearanceAccess', 'AppearanceAnatomy', 'AppearanceOverrideState', 'AppearanceVisualBridge', 'OverrideRegistry', 'FirstPersonItemView']
     .map(name => path.join(client, 'client/api', name + '.java'));
   run('javac', ['--release', '17', '-d', classes, ...fixtureSources, ...publicSources, ...internalSources,
     ...['MagicEquip', 'MagicEquipMotion', 'LevitationMotion'].map(name => path.join(client, 'client/render', name + '.java')),
@@ -186,8 +203,11 @@ try {
                       MatrixStack matrices, VertexConsumerProvider.Immediate buffers) {
         ApiVersion.requireCompatible(1,0);
         ApiVersion.requireCompatible(1,3);
+        ApiVersion.requireCompatible(1,4);
         java.util.Optional<AppearanceSnapshot> snapshot=Appearances.find(id);
         try (Registration registration=AppearanceOverrides.registerGaze("addon:test",0,player -> camera)) {
+          AppearanceOverrides.registerAnatomy("addon:test",0,player -> new AnatomyOverride(true,false)).close();
+          AppearanceVisuals.playTransformation(id);
           AppearanceOverrides.registerMagicActivity("addon:test",0,player -> player.equals(id)).close();
           boolean active=AppearanceOverrides.magicActive(id);
           AppearanceOverrides.registerMainHandVisibility("addon:test",0,player -> AppearanceOverrides.Visibility.HIDDEN).close();

@@ -1,25 +1,25 @@
-# 外观 API v1.3
+# 外观 API v1.4
 
-Magicaland Appearance 0.3.3 通过 `top.csituka.magicaland.api` 和 `top.csituka.magicaland.api.client` 提供公共接口。Gameplay 及其他扩展（Addon）依赖这些包；配置、渲染实现、动画状态和同步缓存均属于外观模组内部实现。
+Magicaland Appearance 0.3.4 通过 `top.csituka.magicaland.api` 和 `top.csituka.magicaland.api.client` 提供公共接口。Gameplay 及其他扩展（Addon）依赖这些包；配置、渲染实现、动画状态和同步缓存均属于外观模组内部实现。
 
-`ApiVersion` 位于主源码集，只依赖 Java 标准库，可在独立服务端安全查询。`.api.client` 下的接口仅供客户端使用：查询和注册操作必须在客户端线程执行，视觉接口必须在渲染线程执行。本 API 不授予玩法能力，也不提供可作为服务端判定依据的权威外观数据。
+`ApiVersion` 位于主源码集，只依赖 Java 标准库，可在独立服务端安全查询。`.api.client` 下的接口仅供客户端使用：查询、注册和 `playTransformation` 必须在客户端线程执行，绘制接口必须在渲染线程执行。本 API 不授予玩法能力，也不提供可作为服务端判定依据的权威外观数据。
 
 ## 依赖与兼容性
 
 API 版本与模组版本独立。`ApiVersion.requireCompatible(1, 0)` 要求已安装 API 的主版本为 1、次版本至少为 0，不满足时抛出明确异常；`isCompatible` 提供不抛异常的兼容性检查。API 次版本更新保持已有签名和语义，不兼容变更必须提升主版本。扩展的模组元数据也必须声明兼容的 Appearance 版本要求；运行时检查无法解决 API 本身未安装的问题。
 
-独立持物视觉上下文与第三人称悬浮入口需要 `ApiVersion.requireCompatible(1, 1)`；魔法活动注册需要 `ApiVersion.requireCompatible(1, 2)`；随实体运动的光焰入口需要 `ApiVersion.requireCompatible(1, 3)`。已有方法签名继续兼容。
+独立持物视觉上下文与第三人称悬浮入口需要 `ApiVersion.requireCompatible(1, 1)`；魔法活动注册需要 `ApiVersion.requireCompatible(1, 2)`；随实体运动的光焰入口需要 `ApiVersion.requireCompatible(1, 3)`；角翅覆盖与变身光尘需要 `ApiVersion.requireCompatible(1, 4)`。已有方法签名继续兼容。
 
-发布坐标为 `top.csituka:magicaland-appearance:0.3.3`。编译时依赖带 `api` 分类标识（classifier）的产物，运行时依赖完整 Appearance 模组。扩展应与主模组使用相同的 Minecraft 1.20.1、Fabric 和映射版本。通过 Loom 引用重映射后的 API 产物，Loom 会将其中的 Minecraft 类型签名转换为扩展开发环境所用的命名空间。
+发布坐标为 `top.csituka:magicaland-appearance:0.3.4`。编译时依赖带 `api` 分类标识（classifier）的产物，运行时依赖完整 Appearance 模组。扩展应与主模组使用相同的 Minecraft 1.20.1、Fabric 和映射版本。通过 Loom 引用重映射后的 API 产物，Loom 会将其中的 Minecraft 类型签名转换为扩展开发环境所用的命名空间。
 
 ```groovy
-modCompileOnly "top.csituka:magicaland-appearance:0.3.3:api"
-modRuntimeOnly "top.csituka:magicaland-appearance:0.3.3"
+modCompileOnly "top.csituka:magicaland-appearance:0.3.4:api"
+modRuntimeOnly "top.csituka:magicaland-appearance:0.3.4"
 ```
 
 `api` JAR 仅用于编译。不要将它放入 `mods` 文件夹、通过 `include` 嵌套打包、合并打包（shade），或把其中的类复制进扩展。运行时由完整 Appearance JAR 提供唯一一份公共 API 及其实现。Appearance 现有的服务端同步功能也保留在这同一个完整 JAR 中。
 
-API 产物包含 `top/csituka/magicaland/api/**` 下的全部类文件，包括嵌套枚举类。v1.3 具体包含 `ApiVersion`、`Registration`、`AppearanceSnapshot`、`Appearances`、`AppearanceOverrides`、`AppearanceOverrides$Visibility`、`AppearanceVisuals` 和 `ItemVisualContext`。它不包含 `client/api` 内部桥接实现、`ModelConfig`、渲染内部类、网络类、Mixin 或资源。公共方法签名只使用 Java、Minecraft 或 API 自身的类型。`api-sources` 分类产物包含相应的公共源码；完整源码产物供主模组开发使用。
+API 产物包含 `top/csituka/magicaland/api/**` 下的全部类文件，包括嵌套枚举类。v1.4 具体包含 `ApiVersion`、`Registration`、`AppearanceSnapshot`、`Appearances`、`AppearanceOverrides`、`AppearanceOverrides$Visibility`、`AppearanceVisuals`、`ItemVisualContext` 和 `AnatomyOverride`。它不包含 `client/api` 内部桥接实现、`ModelConfig`、渲染内部类、网络类、Mixin 或资源。公共方法签名只使用 Java、Minecraft 或 API 自身的类型。`api-sources` 分类产物包含相应的公共源码；完整源码产物供主模组开发使用。
 
 ## 只读外观查询
 
@@ -30,7 +30,7 @@ API 产物包含 `top/csituka/magicaland/api/**` 下的全部类文件，包括�
 | 字段 | 含义 |
 | --- | --- |
 | `modelReplacementEnabled` | 本地设置已启用模型替换；查询远程玩家时，还要求相关远程同步可用。此字段不检查实体是否可见、是否存活，也不代表玩法权限。 |
-| `hasHorn` / `hasWings` | 已应用外观中关于角和翅膀的选择。 |
+| `hasHorn` / `hasWings` | 当前显示的角和翅膀；有有效覆盖时采用覆盖，否则采用已应用外观的选择。仍不代表服务端种族或能力权限。 |
 | `magicColor` | RGB 魔法颜色，不包含透明度通道。 |
 
 `Appearances.magicColor(UUID)` 返回相同的魔法颜色；没有已知外观时沿用现有默认值 `0xAA00FF`。查询结果不会暴露可变配置对象、预设名称或底层映射表。已经保存的快照不会随外观更新而变化；需要最新的同步或已应用数据时，应重新查询。
@@ -45,7 +45,7 @@ API 产物包含 `top/csituka/magicaland/api/**` 下的全部类文件，包括�
 * 注视目标覆盖原有头部和眼睛的目标。null、已移除实体或其他世界中的实体均交给下一条回调处理。没有有效目标时，执行原有注视逻辑。
 * 回调抛出 `RuntimeException` 时，该条注册会被撤销并记录一次日志，然后继续尝试较低优先级条目。对应句柄将报告注册已失效。
 
-`registration.close()` 只撤销该句柄对应的注册，重复调用不会产生额外影响。`unregisterOwner(ownerId)` 撤销该 owner 在全部三类覆盖中的注册，保留其他 owner 的注册。撤销后立即恢复到下一条适用回调或原有行为，并释放已撤销的回调引用。扩展可以通过 `ownerId()`、`priority()` 和 `isRegistered()` 检查自己的注册句柄。
+`registration.close()` 只撤销该句柄对应的注册，重复调用不会产生额外影响。`unregisterOwner(ownerId)` 撤销该 owner 在全部四类覆盖中的注册，保留其他 owner 的注册。撤销后立即恢复到下一条适用回调或原有行为，并释放已撤销的回调引用。扩展可以通过 `ownerId()`、`priority()` 和 `isRegistered()` 检查自己的注册句柄。
 
 每次断线都会清空所有覆盖，并使尚未关闭的句柄失效。需要跨会话使用的扩展必须在 `ClientPlayConnectionEvents.JOIN` 中重新注册，并在 `DISCONNECT` 或功能关闭时关闭自己的句柄。无论断线回调先后顺序如何，关闭已失效句柄都是安全的。回调应根据 UUID 获取当前状态，并在世界切换时释放扩展自己持有的世界和实体引用。能力结束时，可见性返回 `DEFAULT`、注视返回 null、魔法活动返回 false 即可恢复正常视觉表现，无需反复安装回调。
 
@@ -64,7 +64,17 @@ magic.close();
 
 Gameplay 在 JOIN 时注册远控实体注视与魔法活动两条回调，断线时关闭各自句柄。工具已实际转入独立携带槽，无需隐藏本体持物。空手投影也属于魔法活动；远控实体销毁、移出当前世界或不再有效后，回调返回 false。
 
+### 角与翅膀的临时显示覆盖
+
+`AppearanceOverrides.registerAnatomy(ownerId, priority, Function<UUID, AnatomyOverride> provider)` 返回独立注册句柄。回调返回 `new AnatomyOverride(hasHorn, hasWings)`，同时决定该玩家是否显示角和翅膀；两个 false 也是有效决定。返回 null 时交给下一条注册，最终回落到原预设。优先级、异常隔离、owner 清理和断线规则与其他覆盖一致。
+
+覆盖作用于世界、背包和当前玩家的捏脸主预览，并用于飞行动画、角光、持物魔法及对应声音的显示判断。标题界面没有当前玩家时、款式示例缩略图及没有扩展注册时，仍沿用原显示规则。现有模型只有一套角和翅膀，直接复用其几何与配色；不改变发型、眼型或其他外观。
+
+外观模块只生成临时显示副本，原预设、编辑草稿、已应用配置和远端外观缓存均不改写。种族选择、允许外观混搭等设置由 Gameplay 管理；允许混搭时，Gameplay 的回调可返回 null。外观 API 不存储种族，不新增同步协议，也不改变飞行权限或服务端判定。回调应读取当前已同步状态，不要在回调中递归调用 `Appearances.find`。
+
 ## 视觉入口
+
+`AppearanceVisuals.playTransformation(UUID)` 在客户端线程调用，为当前世界中已加载的指定玩家播放现有变身光尘。它使用已应用／远端已知外观的颜色，不读取捏脸草稿，不补发网络消息。未知玩家、缺少外观、模型替换关闭或不在当前世界时忽略；隐身、死亡、旁观、可见距离、粒子设置、每玩家冷却与全局数量限制沿用已有光尘规则。UUID 不可为 null。扩展应只在实际改族事件上调用，不在初次同步、进入范围或重连时重播。
 
 `AppearanceVisuals.renderOrb(matrices, magicColor, ticks, seed)` 保留旧调用签名，使用静态光焰样式。
 
@@ -113,10 +123,13 @@ AppearanceVisuals.renderFirstPerson(owner, visual, buffers, () -> renderVanillaH
 
 在 Appearance 仓库根目录执行 `node tests/api/run-api-tests.mjs`，环境需要可用的 Node 和 JDK 17 或更高版本。这是一组针对源码契约的独立测试，不会构建整个项目。测试使用轻量 Minecraft/Fabric 测试替身编译实际 API 与内部桥接源码，检查以下内容：
 
-- 外观快照：快照数据隔离。
-- 回调与注册：同优先级顺序、逐级回退、owner 与句柄清理、断线会话、无效注视目标和回调异常。
+- 外观快照：快照数据隔离、有效角翅覆盖、本地／远端与预览草稿互不改写。
+- 回调与注册：四类覆盖的同优先级顺序、逐级回退、owner 与句柄清理、断线会话、无效注视目标和回调异常。
 - 视觉状态：刷新异常、新旧第一人称重载的嵌套调用保护与状态恢复、上下文物品复制，以及第三人称入口的参数约束和矩阵恢复。
 - API 打包边界：仅使用公共 API JAR 与 Minecraft 测试替身编译外部调用示例，并检查公共字节码签名是否泄漏内部类型。
+- 变身入口：当前世界玩家解析、已应用颜色，以及未知玩家、缺少外观、关闭替换与断线时不触发；实际粒子绘制沿用既有测试。
+
+`tests/api/ModelDisplayCopyTest.java` 另以真实 `ModelConfig` 和项目依赖运行，检查全部字段保留、三组挑染数组独立复制及原配置不变。后续新增可变字段时，需同步补充复制规则。此项与上述使用配置替身的 API 测试分开执行。
 
 API 测试还在轻量实体替身上执行实际 `MagicEquip` 与装备包络，覆盖空手远控点亮、回收淡出、正常持物保留、物品转入远控时持续发光、隐身和无角资格、断线清理。`tests/render/LevitationVisualIsolationTest.java` 使用真实 `ItemLevitation` 的两组缓存，验证本体与投影的独立状态、时钟、视角与清理。`LevitationMotionTest` 和 `MagicEquipMotionTest` 继续覆盖惯性与装备动画的纯计算规则。这些测试不提供游戏内画面验收。
 

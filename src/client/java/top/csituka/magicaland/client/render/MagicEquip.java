@@ -51,6 +51,7 @@ public final class MagicEquip {
                 || player.isInvisible() || player.isSpectator() || player.isSleeping() || player.hasVehicle()) return false;
         ModelConfig model = player == client.player ? ModelManager.getAppliedModel()
                 : NetworkHandler.serverHasMod ? ClientNetworkHandler.remoteModels.get(player.getUuid()) : null;
+        model = top.csituka.magicaland.client.api.AppearanceAnatomy.apply(player.getUuid(), model);
         return model != null && model.showHorn;
     }
 

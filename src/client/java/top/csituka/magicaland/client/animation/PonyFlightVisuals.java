@@ -41,8 +41,9 @@ public final class PonyFlightVisuals {
     }
 
     public static ModelConfig config(AbstractClientPlayerEntity player) {
-        return player == MinecraftClient.getInstance().player ? ModelManager.getAppliedModel()
+        ModelConfig source = player == MinecraftClient.getInstance().player ? ModelManager.getAppliedModel()
                 : ClientNetworkHandler.remoteModels.get(player.getUuid());
+        return top.csituka.magicaland.client.api.AppearanceAnatomy.apply(player.getUuid(), source);
     }
 
     public static boolean eligible(AbstractClientPlayerEntity player) {

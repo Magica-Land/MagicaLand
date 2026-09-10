@@ -6,7 +6,7 @@ import top.csituka.magicaland.cutiemark.CutieMarkData;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
 import top.csituka.magicaland.client.config.style.PonyStyleRegistry;
 
-public class ModelConfig {
+public class ModelConfig implements Cloneable {
     public String name = "default";
 
     public String frontManeStyle = PonyStyleRegistry.DEFAULT_ID;
@@ -90,6 +90,19 @@ public class ModelConfig {
     public boolean rightFrontLimbColorLocked = true;
     public boolean leftHindLimbColorLocked = true;
     public boolean rightHindLimbColorLocked = true;
+
+    /** A detached rendering copy; editing and persistence keep their existing transaction path. */
+    public ModelConfig copyForDisplay() {
+        try {
+            ModelConfig copy = (ModelConfig) super.clone();
+            copy.frontManeDyeColors = frontManeDyeColors == null ? null : frontManeDyeColors.clone();
+            copy.backManeDyeColors = backManeDyeColors == null ? null : backManeDyeColors.clone();
+            copy.tailDyeColors = tailDyeColors == null ? null : tailDyeColors.clone();
+            return copy;
+        } catch (CloneNotSupportedException impossible) {
+            throw new AssertionError(impossible);
+        }
+    }
 
     public static ModelConfig sanitize(ModelConfig config) {
         if (config == null) {

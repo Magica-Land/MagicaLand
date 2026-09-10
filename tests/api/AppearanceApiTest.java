@@ -38,6 +38,7 @@ public final class AppearanceApiTest {
         check(ApiVersion.isCompatible(1, 1), "independent visuals require v1.1");
         check(ApiVersion.isCompatible(1, 2), "magic activity requires v1.2");
         check(ApiVersion.isCompatible(1, 3), "flame requires v1.3");
+        check(ApiVersion.isCompatible(1, 4), "anatomy and transformation require v1.4");
         check(!ApiVersion.isCompatible(2, 0) && !ApiVersion.isCompatible(1, ApiVersion.MINOR + 1)
                 && !ApiVersion.isCompatible(1, -1), "incompatible requests rejected");
         fails(IllegalStateException.class, () -> ApiVersion.requireCompatible(2, 0));
@@ -46,10 +47,115 @@ public final class AppearanceApiTest {
         magicActivity();
         hornActivity();
         snapshots();
+        anatomy();
+        transformation();
         firstPerson();
         visualContext();
         flame();
         System.out.println("Appearance API: " + checks + " checks passed");
+    }
+
+    private static void anatomy() {
+        var client = MinecraftClient.getInstance();
+        var source = ModelManager.applied;
+        source.showHorn = true; source.showWings = false;
+        source.frontManeDyeColors = new String[] {"#123456"};
+        UUID remoteId = UUID.randomUUID();
+        var remoteModel = new ModelConfig(); remoteModel.showWings = true;
+        ClientNetworkHandler.remoteModels.put(remoteId, remoteModel);
+        check(AppearanceAnatomy.apply(PLAYER, source) == source, "without addon display follows original model");
+        check(AppearanceAnatomy.apply(null, source) == source, "title preview without player keeps original anatomy");
+        var lower = AppearanceOverrides.registerAnatomy("test:race", -1,
+                id -> id.equals(PLAYER) ? new AnatomyOverride(false, true) : null);
+        var absent = AppearanceOverrides.registerAnatomy("test:absent", 100, id -> null);
+        var display = AppearanceAnatomy.apply(PLAYER, source);
+        check(display != source && !display.showHorn && display.showWings, "override makes detached display view");
+        check(source.showHorn && !source.showWings && ModelManager.applied == source, "applied model remains unchanged");
+        display.frontManeDyeColors[0] = "#FFFFFF";
+        check(source.frontManeDyeColors[0].equals("#123456"), "display cannot mutate source color arrays");
+        var snapshot = Appearances.find(PLAYER).orElseThrow();
+        check(!snapshot.hasHorn() && snapshot.hasWings(), "snapshot reports effective anatomy");
+        check(AppearanceAnatomy.apply(remoteId, remoteModel) == remoteModel, "different player remains unaffected");
+        var higher = AppearanceOverrides.registerAnatomy("test:high", 10, id -> new AnatomyOverride(true, true));
+        var tied = AppearanceOverrides.registerAnatomy("test:tie", 10, id -> new AnatomyOverride(false, false));
+        check(Appearances.find(PLAYER).orElseThrow().hasHorn(), "higher priority and earlier tie win");
+        check(Appearances.find(remoteId).orElseThrow().hasHorn() && !remoteModel.showHorn,
+                "remote display covered without changing remote cache");
+        higher.close();
+        check(!Appearances.find(PLAYER).orElseThrow().hasWings(), "closing winner exposes next provider");
+        var broken = AppearanceOverrides.registerAnatomy("test:broken", 200,
+                id -> { throw new IllegalStateException("bad anatomy"); });
+        check(!Appearances.find(PLAYER).orElseThrow().hasHorn() && !broken.isRegistered(),
+                "failed provider removed and query falls back");
+        tied.close();
+        var draft = new ModelConfig(); draft.showHorn = true; draft.magicColor = 987;
+        var preview = AppearanceAnatomy.apply(PLAYER, draft);
+        check(!preview.showHorn && preview.showWings && preview.magicColor == 987,
+                "preview retains draft colors and applies anatomy only");
+        check(draft.showHorn && !draft.showWings && source.showHorn, "preview changes neither draft nor applied anatomy");
+        var player = new net.minecraft.client.network.AbstractClientPlayerEntity(PLAYER, client.world);
+        var previousPlayer = client.player;
+        client.player = player;
+        check(!MagicEquip.enabled(player), "forced hornless appearance disables normal magic equipment");
+        lower.close();
+        source.showHorn = false;
+        var horn = AppearanceOverrides.registerAnatomy("test:race", 0, id -> new AnatomyOverride(true, false));
+        check(MagicEquip.enabled(player) && !source.showHorn, "forced horn enables magic without overwriting choice");
+        client.player = previousPlayer;
+        var visibility = AppearanceOverrides.registerMainHandVisibility("test:race", 0,
+                id -> AppearanceOverrides.Visibility.HIDDEN);
+        var gaze = AppearanceOverrides.registerGaze("test:race", 0, id -> null);
+        var magic = AppearanceOverrides.registerMagicActivity("test:race", 0, id -> true);
+        AppearanceOverrides.unregisterOwner("test:race");
+        check(!horn.isRegistered() && !visibility.isRegistered() && !gaze.isRegistered() && !magic.isRegistered(),
+                "owner removal clears all four channels");
+        check(!snapshot.hasHorn() && snapshot.hasWings(), "previous effective snapshot stays immutable");
+        var rejoined = AppearanceOverrides.registerAnatomy("test:session", 0, id -> new AnatomyOverride(true, true));
+        net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.DISCONNECT.fire();
+        check(!rejoined.isRegistered() && !absent.isRegistered()
+                && AppearanceAnatomy.apply(PLAYER, source) == source, "disconnect clears anatomy without altering saved model");
+        fails(NullPointerException.class, () -> AppearanceOverrides.registerAnatomy("test:null", 0, null));
+        fails(IllegalArgumentException.class, () -> AppearanceOverrides.registerAnatomy("bad owner", 0, id -> null));
+        ClientNetworkHandler.remoteModels.remove(remoteId);
+    }
+
+    private static void transformation() {
+        var client = MinecraftClient.getInstance();
+        var model = ModelManager.applied;
+        client.world.players.put(PLAYER, client.player);
+        int before = top.csituka.magicaland.client.render.TransformationParticles.calls;
+        AppearanceVisuals.playTransformation(PLAYER);
+        check(top.csituka.magicaland.client.render.TransformationParticles.calls == before + 1
+                && top.csituka.magicaland.client.render.TransformationParticles.config == model,
+                "burst uses present local player and applied model, not editor state");
+        UUID remote = UUID.randomUUID();
+        var entity = new LivingEntity(remote, client.world);
+        client.world.players.put(remote, entity);
+        ClientNetworkHandler.remoteModels.put(remote, model);
+        top.csituka.magicaland.network.NetworkHandler.serverHasMod = true;
+        AppearanceVisuals.playTransformation(remote);
+        check(top.csituka.magicaland.client.render.TransformationParticles.calls == before + 2
+                && top.csituka.magicaland.client.render.TransformationParticles.player == entity,
+                "burst resolves remote player from current world");
+        AppearanceVisuals.playTransformation(UUID.randomUUID());
+        entity.removed = true;
+        AppearanceVisuals.playTransformation(remote);
+        entity.removed = false;
+        top.csituka.magicaland.client.config.Config.getInstance().replacePlayerModel = false;
+        AppearanceVisuals.playTransformation(PLAYER);
+        top.csituka.magicaland.client.config.Config.getInstance().replacePlayerModel = true;
+        top.csituka.magicaland.network.NetworkHandler.serverHasMod = false;
+        AppearanceVisuals.playTransformation(remote);
+        ClientNetworkHandler.remoteModels.remove(remote);
+        top.csituka.magicaland.network.NetworkHandler.serverHasMod = true;
+        AppearanceVisuals.playTransformation(remote);
+        var world = client.world; client.world = null;
+        AppearanceVisuals.playTransformation(PLAYER);
+        client.world = world;
+        fails(NullPointerException.class, () -> AppearanceVisuals.playTransformation(null));
+        check(top.csituka.magicaland.client.render.TransformationParticles.calls == before + 2,
+                "unknown, removed, unavailable, disabled and disconnected bursts are ignored");
+        world.players.remove(remote);
     }
 
     private static void flame() {

@@ -163,6 +163,7 @@ public final class MagicHeldItemSounds {
             if (!NetworkHandler.serverHasMod) return null;
             model = ClientNetworkHandler.remoteModels.get(player.getUuid());
         }
+        model = top.csituka.magicaland.client.api.AppearanceAnatomy.apply(player.getUuid(), model);
         return model != null && model.showHorn ? model : null;
     }
 

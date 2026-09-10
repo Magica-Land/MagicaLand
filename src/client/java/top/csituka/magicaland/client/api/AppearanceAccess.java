@@ -20,6 +20,7 @@ public final class AppearanceAccess {
         boolean local = client.player != null && player.equals(client.player.getUuid());
         var model = local ? ModelManager.getAppliedModel() : ClientNetworkHandler.remoteModels.get(player);
         if (model == null) return Optional.empty();
+        model = AppearanceAnatomy.apply(player, model);
         return Optional.of(new AppearanceSnapshot(Config.getInstance().replacePlayerModel
                 && (local || NetworkHandler.serverHasMod), model.showHorn, model.showWings,
                 GlowingItem.getGlowColor(model)));

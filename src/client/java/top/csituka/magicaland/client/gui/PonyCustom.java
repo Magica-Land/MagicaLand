@@ -341,6 +341,8 @@ public class PonyCustom implements ViewCube.RotationTarget {
     private void renderPreview(DrawContext context, float delta, int mouseX, int mouseY) {
         ModelConfig config = ModelManager.getActiveModel();
         if (config == null || ponyRenderer == null) return;
+        var player = MinecraftClient.getInstance().player;
+        config = top.csituka.magicaland.client.api.AppearanceAnatomy.apply(player == null ? null : player.getUuid(), config);
         Rect area = layout.model();
         MatrixStack matrices = context.getMatrices();
         context.draw();

@@ -42,7 +42,7 @@ During flight, winged characters flap their wings while wingless characters hove
 
 The current platform is **Minecraft Java 1.20.1 / Fabric**. Forge / NeoForge support may be considered later.
 
-Current development versions: Appearance **0.3.3**, paired with Gameplay **0.2.2** when using the addon.
+Current development versions: Appearance **0.3.4** (API **1.4**), paired with Gameplay **0.3.0** when using the addon. The new tribe-display integration has passed standalone checks; in-game acceptance is still pending.
 
 Appearance requires:
 
@@ -69,6 +69,8 @@ Edits stay in a draft. Select **“Save & apply”** to update your character an
 | A compatible Gameplay Addon also installed on both sides | Separate gameplay features; see the Gameplay repository. |
 
 Seeing each other's custom appearances in multiplayer requires compatible appearance synchronization on the server. Gameplay uses Appearance's public API. The mods have independent versions; check their release notes for compatible combinations.
+
+Gameplay's server rules can determine whether a pony displays a horn or wings, without changing saved appearance presets. Tribe selection and the option to allow cosmetic combinations are managed by Gameplay; Appearance alone keeps the player's original choices.
 
 ## Development and feedback
 
