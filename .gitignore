@@ -28,4 +28,4 @@ bin
 .vscode
 .workbuddy
 .claude
-tools
+tools/tmp
