@@ -36,8 +36,6 @@
   "text.magicaland.customize.mark.picker": "Pick",
   "text.magicaland.customize.mark.color": "Brush color",
   "text.magicaland.customize.mark.canvas": "Cutie mark pixel canvas",
-  "text.magicaland.customize.mark.undo": "Undo",
-  "text.magicaland.customize.mark.redo": "Redo",
   "text.magicaland.customize.mark.mirror": "Mirror",
   "text.magicaland.customize.mark.link_confirm": "Linking will copy the current %s image over the other side, replacing its separate artwork. Continue? (This can still be undone.)",
   "text.magicaland.customize.mark.replace_other": "Replace & link",

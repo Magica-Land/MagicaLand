@@ -78,18 +78,16 @@ public final class CutieMarkPage implements PonyCustomPage {
                 action(tr("brush"), () -> true, () -> editor.tool() == PixelCanvasHistory.Tool.BRUSH, () -> editor.tool(PixelCanvasHistory.Tool.BRUSH)),
                 action(tr("eraser"), () -> true, () -> editor.tool() == PixelCanvasHistory.Tool.ERASER, () -> editor.tool(PixelCanvasHistory.Tool.ERASER)),
                 action(tr("picker"), () -> true, () -> editor.tool() == PixelCanvasHistory.Tool.PICKER, () -> editor.tool(PixelCanvasHistory.Tool.PICKER))), SettingsList.Alignment.RIGHT);
-        ColorPicker picker = new ColorPicker(x, 0, width, 20, tr("color"), String.format("#%08X", editor.color()), color -> {
+        int mirrorWidth = Math.max(40, Math.min(width / 3, width - 96));
+        ColorPicker picker = new ColorPicker(x + mirrorWidth + 4, 0, width - mirrorWidth - 4, 20, tr("color"), String.format("#%08X", editor.color()), color -> {
             try { editor.color((int) Long.parseLong(color.replace("#", ""), 16)); } catch (NumberFormatException ignored) {}
         });
-        list.addWidget(picker, SettingsList.Alignment.RIGHT);
+        picker.setExternalOverlay(true);
+        list.addWidget(new MirrorColorRow(x, width, mirrorWidth, picker, editor::mirror), SettingsList.Alignment.RIGHT);
         PixelCanvasWidget canvas = new PixelCanvasWidget(x, width, editor,
                 () -> ModelManager.isEditing() && ModelManager.getActiveModel() == config,
                 color -> picker.setColorSilent(String.format("#%08X", color)));
         list.addWidget(canvas, SettingsList.Alignment.RIGHT);
-        list.addWidget(new ActionRowWidget(x, width,
-                action(tr("undo"), editor::canUndo, () -> false, editor::undo),
-                action(tr("redo"), editor::canRedo, () -> false, editor::redo),
-                action(tr("mirror"), editor::mirror)), SettingsList.Alignment.RIGHT);
     }
     private static Text tr(String key) { return Text.translatable("text.magicaland.customize.mark." + key); }
 }

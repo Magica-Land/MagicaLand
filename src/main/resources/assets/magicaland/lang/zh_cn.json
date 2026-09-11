@@ -36,8 +36,6 @@
   "text.magicaland.customize.mark.picker": "吸色",
   "text.magicaland.customize.mark.color": "画笔颜色",
   "text.magicaland.customize.mark.canvas": "可爱标志像素画布",
-  "text.magicaland.customize.mark.undo": "撤销",
-  "text.magicaland.customize.mark.redo": "重做",
   "text.magicaland.customize.mark.mirror": "镜像",
   "text.magicaland.customize.mark.link_confirm": "重新共用将用当前%s的图案覆盖另一侧。另一侧的独立图案会被替换，是否继续？（仍可撤销）",
   "text.magicaland.customize.mark.replace_other": "覆盖并共用",
