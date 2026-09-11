@@ -49,6 +49,10 @@ public final class HorizontalTabBar {
     }
 
     public void render(DrawContext context, int mouseX, int mouseY, boolean enabled) {
+        render(context, mouseX, mouseY, enabled, 1.0f);
+    }
+
+    public void render(DrawContext context, int mouseX, int mouseY, boolean enabled, float alpha) {
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         for (int i = 0; i < labels.length; i++) {
             int left = left(i);
@@ -56,6 +60,7 @@ public final class HorizontalTabBar {
             boolean hovered = enabled && mouseX >= left && mouseX < left + cellWidth
                     && mouseY >= top && mouseY < top + rowHeight;
             int color = !enabled ? 0xFF555555 : i == selected ? 0xFFFFFFFF : hovered ? 0xFFCCCCCC : 0xFF777777;
+            color = withAlpha(color, alpha);
             int textX = left + (cellWidth - textRenderer.getWidth(labels[i])) / 2;
             context.drawText(textRenderer, labels[i], textX, top + 6, color, false);
         }
@@ -74,7 +79,7 @@ public final class HorizontalTabBar {
         int width = textRenderer.getWidth(labels[selected]) + 8;
         int centerX = Math.round(indicatorX);
         int lineY = Math.round(indicatorY);
-        context.fill(centerX - width / 2, lineY, centerX + width / 2, lineY + 2, 0xFFFFFFFF);
+        context.fill(centerX - width / 2, lineY, centerX + width / 2, lineY + 2, withAlpha(0xFFFFFFFF, alpha));
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button, boolean enabled, IntConsumer onSelect) {
@@ -98,4 +103,9 @@ public final class HorizontalTabBar {
 
     private int left(int index) { return x + index % columns * (cellWidth + gap); }
     private int top(int index) { return y + index / columns * rowHeight; }
+
+    private static int withAlpha(int color, float alpha) {
+        int value = Math.round(((color >>> 24) & 255) * Math.max(0, Math.min(1, alpha)));
+        return (value << 24) | (color & 0xFFFFFF);
+    }
 }

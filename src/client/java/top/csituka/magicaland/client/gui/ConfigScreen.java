@@ -203,18 +203,10 @@ public class ConfigScreen extends Screen {
 
         this.tabAnimator.render(context, rightX, rightWidth, this.height, padding, delta);
 
-        context.getMatrices().push();
-        context.getMatrices().translate(0, this.tabAnimator.getContentOffset(), 0);
-
-        float currentAlpha = 1.0f;
-        if (this.tabAnimator.isAnimating()) {
-            currentAlpha = 1.0f - (Math.abs(this.tabAnimator.getContentOffset()) / this.height);
-        }
+        float currentAlpha = this.tabAnimator.getCurrentAlpha();
 
         this.currentTab.getContent().render(context, rightX, 0, rightWidth - padding, this.height, mouseX, mouseY,
                 delta, currentAlpha);
-
-        context.getMatrices().pop();
 
         boolean suppressRightChildren = this.currentTab.getContent().suppressChildRendering();
 
@@ -222,11 +214,8 @@ public class ConfigScreen extends Screen {
             if (element instanceof net.minecraft.client.gui.widget.ClickableWidget widget) {
                 if (widget.getX() >= leftWidth) {
                     if (this.tabAnimator.isAnimating()) {
-                        context.getMatrices().push();
-                        context.getMatrices().translate(0, this.tabAnimator.getContentOffset(), 0);
-                        widget.setAlpha(1.0f);
+                        widget.setAlpha(currentAlpha);
                         widget.render(context, -1, -1, delta);
-                        context.getMatrices().pop();
                     } else if (suppressRightChildren) {
                         continue;
                     } else {
@@ -247,11 +236,8 @@ public class ConfigScreen extends Screen {
             }
         }
         
-        context.getMatrices().push();
-        context.getMatrices().translate(0, this.tabAnimator.getContentOffset(), 0);
         this.currentTab.getContent().postRender(context, rightX, 0, rightWidth - padding, this.height, mouseX, mouseY,
                 delta, currentAlpha);
-        context.getMatrices().pop();
         if (ColorPicker.openPicker != null && ColorPicker.openPicker.open) {
             setTooltip(java.util.List.of());
         }
