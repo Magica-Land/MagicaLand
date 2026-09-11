@@ -220,7 +220,7 @@ public class PonyCustom implements ViewCube.RotationTarget {
                 Text.literal("−"), false, button -> openPresetAction(false));
         deletePreset.active = ModelManager.isEditing() && !currentPage().isEditingPreset() && canDelete;
         screen.addConsoleWidget(deletePreset);
-        CustomButton focus = new CustomButton(x, panel.y() + 28, width - 24, 20,
+        CustomButton focus = new CustomButton(x, panel.y() + 28, width, 20,
                 Text.literal(automaticFocus ? "☑ " : "☐ ").append(tr("preview.auto_focus")),
                 false, button -> {
                     automaticFocus = !automaticFocus;
@@ -229,8 +229,6 @@ public class PonyCustom implements ViewCube.RotationTarget {
                     pageContext.refreshKeepingScroll();
                 });
         screen.addConsoleWidget(focus);
-        screen.addConsoleWidget(new CustomButton(x + width - 22, panel.y() + 28, 22, 20,
-                Text.literal("↺"), false, button -> resetCameraAngle()));
         if (currentPage().usesGlowPreview()) {
             screen.addConsoleWidget(new CustomButton(layout.model().x() + 2, layout.model().y() + 2,
                     Math.min(78, layout.model().width() - 4), 18,
