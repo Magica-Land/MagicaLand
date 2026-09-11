@@ -14,9 +14,9 @@ English | [简体中文](README_ZH.md)
 
 **Magical Land** is a fan mod inspired by *My Little Pony: Friendship Is Magic*. Mix pony styles, choose colors, draw cutie marks, and save your own character presets.
 
-Appearance provides models, customization, animations, and appearance synchronization, and can be used on its own. Tribe abilities, achievements, and other gameplay features are being developed in the separate [Gameplay Addon](https://github.com/Magical-Land-Official/Magical-Land-Gameplay).
+Appearance provides models, customization, animations, and appearance synchronization, and can be used on its own. Tribe abilities, achievements, and other gameplay features are being developed in the separate [Gameplay Addon](https://github.com/Elysian-Herd-Studio/Magical-Land-Gameplay).
 
-[Downloads](https://github.com/Magical-Land-Official/Magical-Land/releases) · [User and developer documentation (Chinese)](docs/README.md) · [Report an issue](https://github.com/Magical-Land-Official/Magical-Land/issues)
+[Downloads](https://github.com/Elysian-Herd-Studio/Magical-Land/releases) · [User and developer documentation (Chinese)](docs/README.md) · [Report an issue](https://github.com/Elysian-Herd-Studio/Magical-Land/issues)
 
 ## Character customization
 
@@ -50,7 +50,7 @@ Appearance requires:
 - **Fabric API** for Minecraft 1.20.1;
 - **GeckoLib 4.7 or later** for Minecraft 1.20.1; development currently uses 4.8.3.
 
-See [Releases](https://github.com/Magical-Land-Official/Magical-Land/releases) for version files and installation notes. Place the Appearance JAR and its dependencies in your game's `mods` folder. When upgrading from the old all-in-one mod, replace it with the new Appearance mod.
+See [Releases](https://github.com/Elysian-Herd-Studio/Magical-Land/releases) for version files and installation notes. Place the Appearance JAR and its dependencies in your game's `mods` folder. When upgrading from the old all-in-one mod, replace it with the new Appearance mod.
 
 Click **“Pony Custom”** at the bottom right of the game's main menu to open the standalone character editor. **F9** opens mod settings by default; the optional Mod Menu also provides an entry to Appearance's settings.
 
@@ -80,7 +80,7 @@ When reporting an issue, include the game and mod versions, whether Gameplay is 
 
 ## Get involved
 
-We want to keep refining the models, hand-painted textures, animations, and customization experience. Contributions in Java development, modeling and animation, art, testing, and translation are welcome. You can also share ideas through [Issues](https://github.com/Magical-Land-Official/Magical-Land/issues).
+We want to keep refining the models, hand-painted textures, animations, and customization experience. Contributions in Java development, modeling and animation, art, testing, and translation are welcome. You can also share ideas through [Issues](https://github.com/Elysian-Herd-Studio/Magical-Land/issues).
 
 Developer resources (Chinese): [Separate-repository guide](docs/module-split.md) · [Public API](docs/appearance-api.md)
 

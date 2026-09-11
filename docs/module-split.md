@@ -6,8 +6,8 @@
 
 | 仓库 | 模组 ID | 内容 |
 | --- | --- | --- |
-| [Magical-Land](https://github.com/Magical-Land-Official/Magical-Land) | `magicaland` | 模型、捏脸、动画、预设、挑染、可爱标志、眼神、耳动、手持物视觉、光效音效、外观同步、公共 API |
-| [Magical-Land-Gameplay](https://github.com/Magical-Land-Official/Magical-Land-Gameplay) | `magicaland_gameplay` | 三族能力、能力轮盘、成就系统及后续玩法 |
+| [Magical-Land](https://github.com/Elysian-Herd-Studio/Magical-Land) | `magicaland` | 模型、捏脸、动画、预设、挑染、可爱标志、眼神、耳动、手持物视觉、光效音效、外观同步、公共 API |
+| [Magical-Land-Gameplay](https://github.com/Elysian-Herd-Studio/Magical-Land-Gameplay) | `magicaland_gameplay` | 三族能力、能力轮盘、成就系统及后续玩法 |
 
 外观不依赖 Gameplay。玩法只通过[公共 API](appearance-api.md)使用外观表现，不读配置管理器、网络缓存或渲染内部实现。权限、库存、伤害和交互仍由 Gameplay 服务端判断，捏脸显示角翼不是授权依据。
 
@@ -22,7 +22,7 @@
 
 新架构从外观 `0.3.0`、Gameplay `0.1.0` 开始，公共 API 主版本为 1；不再要求两包版本号相同。Addon 记录准确开发依赖版本，运行时声明兼容范围，API 破坏性变更必须同步调整范围与测试。
 
-外观预设与可爱标志沿用已有格式。玩法的协议和存档兼容规则由[玩法仓库](https://github.com/Magical-Land-Official/Magical-Land-Gameplay/blob/1.20.1-Fabric/docs/repository-boundary.md)记录。
+外观预设与可爱标志沿用已有格式。玩法的协议和存档兼容规则由[玩法仓库](https://github.com/Elysian-Herd-Studio/Magical-Land-Gameplay/blob/1.20.1-Fabric/docs/repository-boundary.md)记录。
 
 ## 独立构建与联合开发
 
@@ -54,7 +54,7 @@ Gameplay 仓库：
 
 仓库中的独立 Java 测试需要单独运行，Gradle 任务检查的结果不包含它们的测试结果。测试入口与运行要求见[文档目录](README.md#开发与公共-api)。
 
-发布前检查仅外观客户端／同步服务器、两包联合客户端／服务器，以及预设、草稿保存、显示恢复和多人同步。三族能力与成就系统的功能用例按[玩法文档](https://github.com/Magical-Land-Official/Magical-Land-Gameplay/blob/1.20.1-Fabric/docs/README.md)分别执行。
+发布前检查仅外观客户端／同步服务器、两包联合客户端／服务器，以及预设、草稿保存、显示恢复和多人同步。三族能力与成就系统的功能用例按[玩法文档](https://github.com/Elysian-Herd-Studio/Magical-Land-Gameplay/blob/1.20.1-Fabric/docs/README.md)分别执行。
 
 遵循 `AGENTS.md`，未经用户要求不自行构建或启动游戏。[迁移记录](repository-migration.md)区分已执行检查与待实机验收项。
 

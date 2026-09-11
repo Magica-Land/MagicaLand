@@ -14,9 +14,9 @@ Minecraft Java 1.20.1 · Fabric · 开发中
 
 **魔法大陆（Magical Land）** 是一款受《小马宝莉：友谊是魔法》启发的粉丝模组。你可以搭配小马造型、调整颜色、绘制可爱标志，并保存自己的角色预设。
 
-外观包负责模型、捏脸、动画和外观同步，可以单独使用。三族能力、成就系统等玩法在独立的 [Gameplay Addon](https://github.com/Magical-Land-Official/Magical-Land-Gameplay) 中开发。
+外观包负责模型、捏脸、动画和外观同步，可以单独使用。三族能力、成就系统等玩法在独立的 [Gameplay Addon](https://github.com/Elysian-Herd-Studio/Magical-Land-Gameplay) 中开发。
 
-[版本下载](https://github.com/Magical-Land-Official/Magical-Land/releases) · [使用与开发文档](docs/README.md) · [问题反馈](https://github.com/Magical-Land-Official/Magical-Land/issues)
+[版本下载](https://github.com/Elysian-Herd-Studio/Magical-Land/releases) · [使用与开发文档](docs/README.md) · [问题反馈](https://github.com/Elysian-Herd-Studio/Magical-Land/issues)
 
 ## 角色自定义
 
@@ -50,7 +50,7 @@ Minecraft Java 1.20.1 · Fabric · 开发中
 - 适配 Minecraft 1.20.1 的 **Fabric API**；
 - 适配 Minecraft 1.20.1 的 **GeckoLib 4.7 或更高版本**，当前开发使用 4.8.3。
 
-版本文件与安装说明见 [Releases](https://github.com/Magical-Land-Official/Magical-Land/releases)。将外观包和依赖的 JAR 放进游戏的 `mods` 文件夹。由旧一体包升级时，用新的外观包替换旧包。
+版本文件与安装说明见 [Releases](https://github.com/Elysian-Herd-Studio/Magical-Land/releases)。将外观包和依赖的 JAR 放进游戏的 `mods` 文件夹。由旧一体包升级时，用新的外观包替换旧包。
 
 在游戏主菜单右下角点击 **“捏马”**，进入独立的角色编辑器。默认按 **F9** 打开模组设置；安装 Mod Menu 后，也可从模组列表进入外观包设置。
 
@@ -80,7 +80,7 @@ Gameplay 的服务器规则可决定角色是否显示角和翅膀，不改写�
 
 ## 一起参与
 
-我们希望继续打磨模型、手绘纹理、动画和捏脸体验。欢迎参与 Java 开发、模型与动画制作、美术、测试和翻译，也欢迎在 [Issues](https://github.com/Magical-Land-Official/Magical-Land/issues) 分享想法。
+我们希望继续打磨模型、手绘纹理、动画和捏脸体验。欢迎参与 Java 开发、模型与动画制作、美术、测试和翻译，也欢迎在 [Issues](https://github.com/Elysian-Herd-Studio/Magical-Land/issues) 分享想法。
 
 开发资料：[双仓开发说明](docs/module-split.md) · [公共 API](docs/appearance-api.md)
 

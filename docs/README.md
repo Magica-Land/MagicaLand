@@ -62,6 +62,6 @@
 - [v1 宣传片构思草案](v1-trailer-draft.md)：2026-09-09 的讨论记录，尚未定稿。
 - [文档与证据归档方案](development/documentation.md)：文档分类、报告格式与附件维护规则。
 
-三族能力、成就系统的指南和设计资料统一从 [Gameplay 文档目录](https://github.com/Magical-Land-Official/Magical-Land-Gameplay/blob/1.20.1-Fabric/docs/README.md)进入。外观仓库中的旧玩法文档仅保留跳转，方便已有链接继续使用。
+三族能力、成就系统的指南和设计资料统一从 [Gameplay 文档目录](https://github.com/Elysian-Herd-Studio/Magical-Land-Gameplay/blob/1.20.1-Fabric/docs/README.md)进入。外观仓库中的旧玩法文档仅保留跳转，方便已有链接继续使用。
 
 仓库收录精简报告、精选截图和可复用测试。原始日志、批量录屏、实验备份及个人配置保存在本地；需要分享的附件单独整理。历史记录中的本地路径供原作者查证。
