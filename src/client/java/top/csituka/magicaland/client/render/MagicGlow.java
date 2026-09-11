@@ -86,6 +86,8 @@ public abstract class MagicGlow extends RenderPhase {
 
     private static final Cache<LayerKey, RenderLayer> TINTED_LAYERS = CacheBuilder.newBuilder()
             .maximumSize(256).build();
+    private static final Cache<LayerKey, RenderLayer> LEGACY_TINTED_LAYERS = CacheBuilder.newBuilder()
+            .maximumSize(256).build();
 
     private static RenderLayer createTintedLayer(LayerKey key) {
         return RenderLayer.of(
@@ -137,6 +139,31 @@ public abstract class MagicGlow extends RenderPhase {
         if (layer == null) {
             layer = createTintedLayer(key);
             TINTED_LAYERS.put(key, layer);
+        }
+        return layer;
+    }
+
+    public static RenderLayer getLegacyColoured(Identifier texture, int color) {
+        LayerKey key = new LayerKey(texture, color & 0xFFFFFF, false);
+        RenderLayer layer = LEGACY_TINTED_LAYERS.getIfPresent(key);
+        if (layer == null) {
+            layer = RenderLayer.of(
+                    "mod_magic_legacy",
+                    VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
+                    VertexFormat.DrawMode.QUADS,
+                    256,
+                    true,
+                    true,
+                    RenderLayer.MultiPhaseParameters.builder()
+                            .texture(new Colored(key.texture(), key.color()))
+                            .program(EYES_PROGRAM)
+                            .writeMaskState(COLOR_MASK)
+                            .depthTest(LEQUAL_DEPTH_TEST)
+                            .transparency(LIGHTNING_TRANSPARENCY)
+                            .lightmap(DISABLE_LIGHTMAP)
+                            .cull(DISABLE_CULLING)
+                            .build(true));
+            LEGACY_TINTED_LAYERS.put(key, layer);
         }
         return layer;
     }

@@ -24,6 +24,7 @@ public class Config {
     public boolean automaticGaze = true;
     public boolean broadcastOwnModel = true;
     public String mainMenuPonyButton = "all";
+    public String magicGlowStyle = "current";
     
     public String activeModelName = "";
 

@@ -45,6 +45,7 @@ import net.minecraft.world.World;
 
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
+import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.util.RenderLayerHelper;
 
 public class GlowingItem {
@@ -87,6 +88,10 @@ public class GlowingItem {
     public static void renderPreviewWithGlow(ItemRenderer renderer, ItemStack stack, ModelTransformationMode mode,
             MatrixStack matrices, VertexConsumerProvider buffers, @Nullable World world,
             int light, int seed, int glowColor) {
+        if (isLegacyStyle()) {
+            renderLegacy(renderer, null, stack, mode, false, matrices, buffers, world, light, seed, glowColor);
+            return;
+        }
         renderCaptured(renderer, null, stack, mode, false, matrices, buffers, world, light, seed, glowColor, false, LevitationTrail.EMPTY);
     }
 
@@ -115,15 +120,48 @@ public class GlowingItem {
                 || mode == ModelTransformationMode.THIRD_PERSON_LEFT_HAND
                 || mode == ModelTransformationMode.THIRD_PERSON_RIGHT_HAND);
 
-        if (shouldRenderGlow && !stack.isEmpty()) {
+        if (shouldRenderGlow && !stack.isEmpty() && !isLegacyStyle()) {
             renderCaptured(itemRenderer, entity, stack, mode, left, matrices, renderContext, world,
                     lightUv, seed, glowColor, mode.isFirstPerson(), trail);
+        } else if (shouldRenderGlow && !stack.isEmpty()) {
+            renderLegacy(itemRenderer, entity, stack, mode, left, matrices, renderContext, world,
+                    lightUv, seed, glowColor);
         } else {
             itemRenderer.renderItem(
                     entity, stack, mode, left,
                     matrices, renderContext, world,
                     lightUv, OverlayTexture.DEFAULT_UV, seed);
         }
+    }
+
+    private static void renderLegacy(ItemRenderer renderer, @Nullable LivingEntity entity, ItemStack stack,
+            ModelTransformationMode mode, boolean left, MatrixStack matrices, VertexConsumerProvider buffers,
+            @Nullable World world, int light, int seed, int glowColor) {
+        matrices.push();
+        try {
+            renderer.renderItem(entity, stack, mode, left, matrices, buffers, world, light,
+                    OverlayTexture.DEFAULT_UV, seed);
+            VertexConsumerProvider glow = layer -> {
+                if (layer.getVertexFormat() != VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL)
+                    return buffers.getBuffer(layer);
+                return buffers.getBuffer(MagicGlow.getLegacyColoured(
+                        RenderLayerHelper.getTexture(layer).orElse(net.minecraft.screen.PlayerScreenHandler.BLOCK_ATLAS_TEXTURE),
+                        glowColor));
+            };
+            matrices.scale(1.1F, 1.1F, 1.1F);
+            matrices.translate(0.015F, 0.01F, 0.01F);
+            renderer.renderItem(entity, stack, mode, left, matrices, glow, world, light,
+                    OverlayTexture.DEFAULT_UV, seed);
+            matrices.translate(-0.03F, -0.02F, -0.02F);
+            renderer.renderItem(entity, stack, mode, left, matrices, glow, world, light,
+                    OverlayTexture.DEFAULT_UV, seed);
+        } finally {
+            matrices.pop();
+        }
+    }
+
+    private static boolean isLegacyStyle() {
+        return "legacy".equals(Config.getInstance().magicGlowStyle);
     }
 
     private static void renderCaptured(ItemRenderer renderer, @Nullable LivingEntity entity, ItemStack stack,
