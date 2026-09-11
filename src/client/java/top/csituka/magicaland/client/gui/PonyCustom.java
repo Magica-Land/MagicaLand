@@ -282,6 +282,7 @@ public class PonyCustom implements ViewCube.RotationTarget {
         if (page == PonyCustomPageContext.Page.FACE) focusPart(PonyStylePart.EYE);
         else if (page == PonyCustomPageContext.Page.MANE) focusPart(((ManePage) currentPage()).selectedStylePart());
         else focusPart(null);
+        if (page == PonyCustomPageContext.Page.GLOW) showGlowItem = true;
         refreshRequested = false;
         pageContext.reinit();
     }
