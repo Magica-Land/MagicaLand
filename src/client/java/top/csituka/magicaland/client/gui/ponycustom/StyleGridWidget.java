@@ -62,6 +62,18 @@ public final class StyleGridWidget extends ClickableWidget {
                 .append(" " + styles.get(index).id);
     }
 
+    private void fillRoundedRect(DrawContext context, int x, int y, int width, int height, int color) {
+        int x1 = x;
+        int y1 = y;
+        int x2 = x + width;
+        int y2 = y + height;
+        context.fill(x1 + 2, y1, x2 - 2, y1 + 1, color);
+        context.fill(x1 + 1, y1 + 1, x2 - 1, y1 + 2, color);
+        context.fill(x1, y1 + 2, x2, y2 - 2, color);
+        context.fill(x1 + 1, y2 - 2, x2 - 1, y2 - 1, color);
+        context.fill(x1 + 2, y2 - 1, x2 - 2, y2, color);
+    }
+
     @Override
     public void renderButton(DrawContext draw, int mouseX, int mouseY, float delta) {
         int hovered = mouseY >= viewportTop && mouseY < viewportBottom
@@ -72,16 +84,16 @@ public final class StyleGridWidget extends ClickableWidget {
             if (!layout.visible(i, getY(), viewportTop, viewportBottom)) continue;
             int x = getX() + layout.x(i);
             int y = getY() + layout.y(i);
-            boolean focused = isFocused() && cursor == i;
-            draw.fill(x, y, x + layout.cardWidth(), y + StyleGridLayout.CARD_HEIGHT,
-                    selected == i ? 0xCC42394F : hovered == i ? 0xCC303B4D : 0xBB1D2635);
+            int cardWidth = layout.cardWidth();
+            int bgAlpha = (int) ((i == selected || i == hovered ? 0.35f : 0.15f) * alpha * 255);
+            int textAlpha = (int) (alpha * 255);
+            if (bgAlpha > 0)
+                fillRoundedRect(draw, x, y, cardWidth, StyleGridLayout.CARD_HEIGHT, (bgAlpha << 24) | 0xFFFFFF);
             PonyStyleThumbnails.render(draw, config, part, styles.get(i).id, x + 3, y + 3,
-                    layout.cardWidth() - 6, StyleGridLayout.CARD_HEIGHT - 19);
-            draw.drawBorder(x, y, layout.cardWidth(), StyleGridLayout.CARD_HEIGHT,
-                    focused ? 0xFFF0D998 : selected == i ? 0xFFE3C8FF : 0xFF65718A);
-            if (selected == i) draw.drawTextWithShadow(font, "✓", x + 4, y + 4, 0xFFE3C8FF);
-            draw.drawCenteredTextWithShadow(font, styles.get(i).id, x + layout.cardWidth() / 2,
-                    y + StyleGridLayout.CARD_HEIGHT - 12, selected == i ? 0xFFE3C8FF : 0xFFE1E6F0);
+                    cardWidth - 6, StyleGridLayout.CARD_HEIGHT - 19);
+            if (i == selected) draw.drawTextWithShadow(font, "✓", x + 4, y + 4, (textAlpha << 24) | 0xFFFFFF);
+            draw.drawCenteredTextWithShadow(font, styles.get(i).id, x + cardWidth / 2,
+                    y + StyleGridLayout.CARD_HEIGHT - 12, (textAlpha << 24) | 0xFFFFFF);
         }
     }
 
