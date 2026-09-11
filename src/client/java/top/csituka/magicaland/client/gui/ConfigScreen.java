@@ -139,13 +139,17 @@ public class ConfigScreen extends Screen {
             y += tabHeight + tabSpacing;
         }
 
+        this.addDrawableChild(new CustomButton(padding, this.height - 54, leftWidth - padding * 2, 20,
+                Text.translatable("text.magicaland.console.tab.pony_custom"), false,
+                button -> this.client.setScreen(new PonyCustomScreen(this))));
+
         this.addDrawableChild(new CustomButton(padding, this.height - 30, leftWidth - padding * 2, 20,
                 Text.translatable("text.magicaland.config.button.back"), false,
                 button -> close()));
 
         if (this.currentTab.getContent() instanceof ViewCube.RotationTarget rotationTarget) {
             int cubeTop = y + 8;
-            int cubeBottom = this.height - 30 - 8;
+            int cubeBottom = this.height - 54 - 8;
             int cubeSize = Math.min(leftWidth - padding * 2, cubeBottom - cubeTop);
             if (cubeSize >= 40) {
                 cubeSize = Math.min(cubeSize, 72);

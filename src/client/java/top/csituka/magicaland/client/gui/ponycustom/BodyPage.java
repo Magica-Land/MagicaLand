@@ -1,7 +1,6 @@
 package top.csituka.magicaland.client.gui.ponycustom;
 
 import net.minecraft.text.Text;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
@@ -38,7 +37,6 @@ public class BodyPage implements PonyCustomPage {
                 shadingExpanded = expanded;
                 context.refreshKeepingScroll();
             });
-            body.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.color_details.tooltip")));
             if (shadingExpanded) {
                 addShadingControls(context, list, config, buttonX + 12, buttonWidth - 12, buttonHeight);
             }
@@ -98,7 +96,6 @@ public class BodyPage implements PonyCustomPage {
                     ModelManager.saveActiveModel();
                     context.refreshKeepingScroll();
                 });
-        mode.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.body_shading.tooltip")));
         list.addWidget(mode, SettingsList.Alignment.RIGHT);
     }
 
@@ -117,7 +114,6 @@ public class BodyPage implements PonyCustomPage {
             ModelManager.saveActiveModel();
             context.refreshKeepingScroll();
         });
-        shadow.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.body_shading.custom.tooltip")));
         list.addWidget(shadow, SettingsList.Alignment.RIGHT);
         ColorPicker highlight = new ColorPicker(x, 0, width, height,
                 Text.translatable("text.magicaland.config.body_highlight.name"), BodyPalette.hex(BodyPalette.highlight(config, base)),
@@ -131,7 +127,6 @@ public class BodyPage implements PonyCustomPage {
             ModelManager.saveActiveModel();
             context.refreshKeepingScroll();
         });
-        highlight.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.body_shading.custom.tooltip")));
         list.addWidget(highlight, SettingsList.Alignment.RIGHT);
         list.addWidget(new CustomButton(x, 0, width, height,
                 Text.translatable("text.magicaland.config.body_shading.reset"), false, button -> {

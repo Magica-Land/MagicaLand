@@ -81,12 +81,10 @@ public final class CutieMarkPage implements PonyCustomPage {
         ColorPicker picker = new ColorPicker(x, 0, width, 20, tr("color"), String.format("#%08X", editor.color()), color -> {
             try { editor.color((int) Long.parseLong(color.replace("#", ""), 16)); } catch (NumberFormatException ignored) {}
         });
-        picker.setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(tr("color_hint")));
         list.addWidget(picker, SettingsList.Alignment.RIGHT);
         PixelCanvasWidget canvas = new PixelCanvasWidget(x, width, editor,
                 () -> ModelManager.isEditing() && ModelManager.getActiveModel() == config,
                 color -> picker.setColorSilent(String.format("#%08X", color)));
-        canvas.setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(tr("canvas_hint")));
         list.addWidget(canvas, SettingsList.Alignment.RIGHT);
         list.addWidget(new ActionRowWidget(x, width,
                 action(tr("undo"), editor::canUndo, () -> false, editor::undo),

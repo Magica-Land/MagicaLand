@@ -2,7 +2,6 @@ package top.csituka.magicaland.client.gui.ponycustom;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.IntConsumer;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -17,7 +16,7 @@ public final class PixelCanvasWidget extends ClickableWidget {
     private int keyboardX, keyboardY;
 
     public PixelCanvasWidget(int x, int width, PixelCanvasHistory editor, BooleanSupplier currentDraft, IntConsumer pickedColor) {
-        super(x, 0, width, side(width) + 29, Text.translatable("text.magicaland.customize.mark.canvas"));
+        super(x, 0, width, side(width) + 4, Text.translatable("text.magicaland.customize.mark.canvas"));
         this.editor = editor;
         this.currentDraft = currentDraft;
         this.pickedColor = pickedColor;
@@ -72,22 +71,16 @@ public final class PixelCanvasWidget extends ClickableWidget {
     @Override public void renderButton(DrawContext draw, int mouseX, int mouseY, float delta) {
         int[] pixels = editor.pixels();
         int cell = side(width) / CutieMarkData.SIZE;
-        draw.fill(left() - 2, top() - 2, left() + side(width) + 2, top() + side(width) + 2, 0xFF78859A);
         for (int y = 0; y < CutieMarkData.SIZE; y++) for (int x = 0; x < CutieMarkData.SIZE; x++) {
             int color = pixels[y * CutieMarkData.SIZE + x];
-            if ((color >>> 24) == 0) color = ((x + y) & 1) == 0 ? 0xFF333B49 : 0xFF485263;
+            if ((color >>> 24) == 0) color = ((x + y) & 1) == 0 ? 0x66333B49 : 0x66485263;
             int px = left() + x * cell, py = top() + y * cell;
             draw.fill(px, py, px + cell, py + cell, color);
-            if (cell >= 6) draw.drawBorder(px, py, cell, cell, 0x337D8DA8);
         }
         int hx = -1, hy = -1;
         if (overCanvas(mouseX, mouseY)) { hx = pixelX(mouseX); hy = pixelY(mouseY); }
         else if (isFocused()) { hx = keyboardX; hy = keyboardY; }
         if (hx >= 0) draw.drawBorder(left() + hx * cell, top() + hy * cell, cell, cell, 0xFFFFFFFF);
-        draw.drawCenteredTextWithShadow(MinecraftClient.getInstance().textRenderer,
-                Text.translatable("text.magicaland.customize.mark.canvas_size"), getX() + width / 2, top() + side(width) + 5, 0xFFB6C0D2);
-        draw.drawCenteredTextWithShadow(MinecraftClient.getInstance().textRenderer,
-                Text.translatable("text.magicaland.customize.mark.direction"), getX() + width / 2, top() + side(width) + 16, 0xFF94A0B5);
     }
     @Override protected void appendClickableNarrations(NarrationMessageBuilder builder) { appendDefaultNarrations(builder); }
 }
