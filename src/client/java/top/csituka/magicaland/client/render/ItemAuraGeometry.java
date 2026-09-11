@@ -142,16 +142,22 @@ final class ItemAuraGeometry {
             if (isEmpty()) return;
             float red = (color >>> 16 & 255) / 255f, green = (color >>> 8 & 255) / 255f, blue = (color & 255) / 255f;
             float spread = Math.max(0.5f, Math.min(3, extent / 0.32f));
-            Vector3f top = new Vector3f(center.x, max.y - (max.y - min.y) * 0.18f, center.z);
             Matrix4f viewInverse = new Matrix4f(RenderSystem.getModelViewMatrix()).invert();
             Vector3f right = viewInverse.transformDirection(new Vector3f(1, 0, 0)).normalize();
             Vector3f up = viewInverse.transformDirection(new Vector3f(0, 1, 0)).normalize();
             Vector3f normal = viewInverse.transformDirection(new Vector3f(0, 0, 1)).normalize();
+            float halfX = Math.max((max.x - min.x) * 0.5f, extent * 0.08f);
+            float halfZ = Math.max((max.z - min.z) * 0.5f, extent * 0.08f);
+            float margin = Math.max(0.02f, extent * 0.08f);
             for (int slot = 0; slot < 4; slot++) {
                 var star = MagicSparkles.sampleFalling(ticks, seed, slot);
                 if (star == null) continue;
-                Vector3f position = root.transformPosition(new Vector3f(top).add(star.x() * spread,
-                        star.y() * spread, star.z() * spread));
+                float directionLength = Math.max(1e-5f, (float) Math.hypot(star.x(), star.z()));
+                float directionX = star.x() / directionLength, directionZ = star.z() / directionLength;
+                float edge = Math.min(halfX / Math.max(Math.abs(directionX), 1e-5f),
+                        halfZ / Math.max(Math.abs(directionZ), 1e-5f));
+                Vector3f position = root.transformPosition(new Vector3f(center).add(
+                        directionX * (edge + margin), star.y() * spread, directionZ * (edge + margin)));
                 float radius = star.radius() * spread * rootScale * 0.75f;
                 for (int corner = 0; corner < 4; corner++) {
                     float x = corner == 0 || corner == 3 ? -1 : 1, y = corner < 2 ? -1 : 1;

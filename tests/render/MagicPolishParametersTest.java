@@ -43,30 +43,25 @@ public final class MagicPolishParametersTest {
     }
 
     private static void sparkSchedule() {
-        boolean[] countsSeen = new boolean[5];
         for (int index = -1; index <= 211; index++) {
             int seed = index == -1 ? Integer.MIN_VALUE : index == 211 ? Integer.MAX_VALUE : index;
-            int period = 60 + Math.floorMod(seed, 21);
+            int period = 24;
             int phase = Math.floorMod(seed, period);
-            check(period >= 60 && period <= 80, "3–4 second cycle at 20 TPS");
             for (long cycle = -3; cycle < 9; cycle++) {
-                int count = 2 + (int) Math.floorMod(cycle + seed, 3);
-                countsSeen[count] = true;
-                double start = cycle * period - phase + 14;
+                double start = cycle * period - phase;
                 check(MagicSparkles.sampleFalling(start, seed, 0) == null && MagicSparkles.sampleFalling(start + .001, seed, 0) != null,
-                        "first star begins just after 14 tick batch offset");
+                        "first falling star begins just after its cycle offset");
                 check(MagicSparkles.sampleFalling(start + 18, seed, 0) == null, "first star lifetime is exactly 18 ticks");
                 check(MagicSparkles.sampleFalling(start + period, seed, 0) == null
                                 && MagicSparkles.sampleFalling(start + period + .001, seed, 0) != null,
                         "next first-star onset follows the exact seeded period");
                 for (int slot = 0; slot < 4; slot++) {
-                    double birth = start + slot * 2;
+                    double birth = start + slot * 6;
                     check(MagicSparkles.sampleFalling(birth, seed, slot) == null
                                     && MagicSparkles.sampleFalling(birth + 18, seed, slot) == null,
                             "exclusive birth/death endpoints unchanged");
                     for (double progress : new double[] {.0001, .1, .5, .9, .9999}) {
                         var star = MagicSparkles.sampleFalling(birth + progress * 18, seed, slot);
-                        if (slot >= count) { check(star == null, "batch contains only the selected 2–4 stars"); continue; }
                         check(star != null, "all selected slots live for the full 18-tick interval");
                         float radius = (.014f + slot * .002f) * (float) (.75 + progress * .7);
                         float alpha = (float) Math.sin(progress * Math.PI) * .65f;
@@ -83,13 +78,12 @@ public final class MagicPolishParametersTest {
                     double ticks = cycle * period - phase + frame * .25;
                     int active = 0;
                     for (int slot = 0; slot < 4; slot++) if (MagicSparkles.sampleFalling(ticks, seed, slot) != null) active++;
-                    check(active <= count && active <= 4, "concurrent count never exceeds batch limit");
-                    if (active > 0) activeFrames++;
+                    check(active >= 2 && active <= 4, "continuous refresh keeps at least two stars active");
+                    activeFrames++;
                 }
-                check(activeFrames > 0 && activeFrames < period * 2, "more than half of every cycle remains quiet");
+                check(activeFrames == period * 4, "falling stars refresh continuously");
             }
         }
-        check(countsSeen[2] && countsSeen[3] && countsSeen[4], "all original batch sizes still occur");
         for (double invalid : new double[] {Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY})
             check(MagicSparkles.sampleFalling(invalid, 0, 0) == null, "invalid time remains safe");
         check(MagicSparkles.sampleFalling(20, 0, -1) == null && MagicSparkles.sampleFalling(20, 0, 4) == null, "invalid slots remain safe");
