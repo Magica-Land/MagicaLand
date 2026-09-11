@@ -74,9 +74,8 @@ public class Settings implements TabContent {
     @Override
     public void render(DrawContext context, int x, int y, int width, int height, int mouseX, int mouseY, float delta,
             float alpha) {
-        tabBar.render(context, mouseX, mouseY, true, alpha);
+        tabBar.render(context, mouseX, mouseY, true);
         if (listWidget != null) {
-            listWidget.setBaseAlpha(alpha);
             listWidget.render(context, mouseX, mouseY, delta);
         }
     }

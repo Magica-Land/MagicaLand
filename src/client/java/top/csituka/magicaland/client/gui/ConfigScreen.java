@@ -8,12 +8,9 @@ import top.csituka.magicaland.client.gui.widget.TabButton;
 import top.csituka.magicaland.client.gui.widget.ColorPicker;
 import top.csituka.magicaland.client.gui.widget.ViewCube;
 import top.csituka.magicaland.client.gui.tab.TabContent;
-import top.csituka.magicaland.client.gui.tab.TabAnimator;
 import top.csituka.magicaland.client.gui.tab.Settings;
 import top.csituka.magicaland.client.gui.tab.About;
 import net.fabricmc.loader.api.FabricLoader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ConfigScreen extends Screen {
     private final Screen parent;
@@ -22,7 +19,6 @@ public class ConfigScreen extends Screen {
     private float indicatorY = -1;
     private float targetIndicatorY = -1;
 
-    private TabAnimator tabAnimator = new TabAnimator();
     private ViewCube viewCube;
 
     public enum Tab {
@@ -105,16 +101,6 @@ public class ConfigScreen extends Screen {
                             this.currentTab.getContent().onExit();
                             this.viewCube = null;
 
-                            List<net.minecraft.client.gui.widget.ClickableWidget> oldWidgets = new ArrayList<>();
-                            for (net.minecraft.client.gui.Element element : this.children()) {
-                                if (element instanceof net.minecraft.client.gui.widget.ClickableWidget widget) {
-                                    if (widget.getX() >= leftWidth) {
-                                        oldWidgets.add(widget);
-                                    }
-                                }
-                            }
-
-                            this.tabAnimator.startTransition(this.currentTab, tab, this.height, oldWidgets);
                             this.currentTab = tab;
                             this.currentTab.getContent().onEnter();
 
@@ -196,27 +182,18 @@ public class ConfigScreen extends Screen {
                     0xFFFFFFFF);
         }
 
-        this.tabAnimator.update();
-
         int contentTop = 0;
         context.enableScissor(rightX, contentTop, this.width, this.height);
 
-        this.tabAnimator.render(context, rightX, rightWidth, this.height, padding, delta);
-
-        float currentAlpha = this.tabAnimator.getCurrentAlpha();
-
         this.currentTab.getContent().render(context, rightX, 0, rightWidth - padding, this.height, mouseX, mouseY,
-                delta, currentAlpha);
+                delta, 1.0f);
 
         boolean suppressRightChildren = this.currentTab.getContent().suppressChildRendering();
 
         for (net.minecraft.client.gui.Element element : this.children()) {
             if (element instanceof net.minecraft.client.gui.widget.ClickableWidget widget) {
                 if (widget.getX() >= leftWidth) {
-                    if (this.tabAnimator.isAnimating()) {
-                        widget.setAlpha(currentAlpha);
-                        widget.render(context, -1, -1, delta);
-                    } else if (suppressRightChildren) {
+                    if (suppressRightChildren) {
                         continue;
                     } else {
                         widget.setAlpha(1.0f);
@@ -237,7 +214,7 @@ public class ConfigScreen extends Screen {
         }
         
         this.currentTab.getContent().postRender(context, rightX, 0, rightWidth - padding, this.height, mouseX, mouseY,
-                delta, currentAlpha);
+                delta, 1.0f);
         if (ColorPicker.openPicker != null && ColorPicker.openPicker.open) {
             setTooltip(java.util.List.of());
         }

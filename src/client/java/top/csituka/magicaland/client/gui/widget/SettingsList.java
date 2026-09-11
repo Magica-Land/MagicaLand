@@ -19,7 +19,6 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
     private boolean isDraggingScrollbar = false;
     private final int originalTop;
     private final int originalBottom;
-    private float baseAlpha = 1.0f;
 
     public SettingsList(MinecraftClient minecraftClient, int width, int height, int top, int bottom,
             int itemHeight) {
@@ -112,10 +111,6 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
             children().get(i).render(context, i, rowY, getRowLeft(), getRowWidth(), rowHeight(i) - 4,
                     mouseX, mouseY, isMouseOver(mouseX, mouseY) && mouseY >= rowY && mouseY < rowY + rowHeight(i), delta);
         }
-    }
-
-    public void setBaseAlpha(float alpha) {
-        this.baseAlpha = alpha;
     }
 
     public void restoreScrollAmount(double amount) {
@@ -334,7 +329,7 @@ public class SettingsList extends ElementListWidget<SettingsList.Entry> {
                 alpha = Math.max(0.0f, 1.0f - (float) (widgetBottom - this.parent.bottom) / fadeDistance);
             }
 
-            float finalAlpha = (alpha < 0.01f ? 0.0f : alpha) * this.parent.baseAlpha;
+            float finalAlpha = alpha < 0.01f ? 0.0f : alpha;
             this.widget.setAlpha(finalAlpha);
 
             this.widget.render(context, mouseX, mouseY, tickDelta);
