@@ -45,6 +45,11 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
     private final PonyBackwardHeadPose backwardHeadPose = new PonyBackwardHeadPose();
     private PonyHeldItems.Frame heldItems = PonyHeldItems.Frame.NONE;
     private final PonyHeldItemPose.Weights heldWeights = new PonyHeldItemPose.Weights();
+    private Matrix4f magicMouthFrame;
+    private final PonyMagicConsumption magicConsumption = new PonyMagicConsumption();
+
+    public Matrix4f magicMouthFrame() { return magicMouthFrame == null ? null : new Matrix4f(magicMouthFrame); }
+    public PonyMagicConsumption.Pose magicConsumption(boolean main) { return magicConsumption.pose(main); }
 
     private static final class AuraCapture {
         final java.util.Set<RenderLayer> layers = new java.util.LinkedHashSet<>();
@@ -55,6 +60,18 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
     public void defaultRender(MatrixStack stack, GeckoPlayerAnimatable animatable, VertexConsumerProvider buffers,
             RenderLayer renderType, VertexConsumer buffer, float yaw, float partialTick, int light) {
         AuraCapture previous = auraCapture;
+        magicMouthFrame = null;
+        var player = animatable.getPlayer();
+        var config = getEffectiveConfig();
+        boolean magicUse = gazeFrame != null && config != null && config.showHorn && player != null
+                && player.isAlive() && !player.isInvisible() && !player.isSpectator() && !player.isSleeping();
+        if (magicUse) {
+            var use = PonyHeldItems.consumption(player.isUsingItem(), player.getActiveHand(), player.getActiveItem(),
+                    player.getItemUseTimeLeft(), partialTick);
+            magicConsumption.update(player.age + (double) partialTick, use, true,
+                    player.getMainHandStack().isEmpty() ? null : player.getMainHandStack().getItem(),
+                    player.getOffHandStack().isEmpty() ? null : player.getOffHandStack().getItem());
+        } else magicConsumption.reset();
         PonyHeldItems.Frame previousHeld = heldItems;
         heldItems = gazeFrame == null ? PonyHeldItems.Frame.NONE : PonyHeldItems.frame(animatable.getPlayer(), getEffectiveConfig(), partialTick);
         if (heldItems.player() != null) {
@@ -187,6 +204,13 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             try {
                 super.renderRecursively(poseStack, animatable, bone, newRenderType, bufferSource, newBuffer, isReRender,
                         partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+                if (!isReRender && gazeFrame != null && "Head".equals(bone.getName()) && !bone.isHidden()) {
+                    poseStack.push();
+                    try {
+                        RenderUtils.prepMatrixForBone(poseStack, bone);
+                        magicMouthFrame = new Matrix4f(poseStack.peek().getPositionMatrix());
+                    } finally { poseStack.pop(); }
+                }
                 if (!isReRender) PonyHeldItems.renderAtBone(poseStack, bone, bufferSource, heldItems, packedLight, packedOverlay);
             } finally {
                 usingPalette = previousPalette;

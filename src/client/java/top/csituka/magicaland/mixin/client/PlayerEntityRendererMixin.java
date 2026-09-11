@@ -181,7 +181,7 @@ public abstract class PlayerEntityRendererMixin
             ponyRenderer.setFlightFrame(PonyFlightVisuals.Frame.NONE);
         }
 
-        this.renderMagicHeldItem(player, configToUse, matrixStack, vertexConsumerProvider, i, g, gazeFrame);
+        this.renderMagicHeldItem(player, configToUse, matrixStack, vertexConsumerProvider, i, g, gazeFrame, ponyRenderer);
 
         matrixStack.pop();
 
@@ -222,7 +222,7 @@ public abstract class PlayerEntityRendererMixin
 
     @Unique
     private void renderMagicHeldItem(AbstractClientPlayerEntity player, ModelConfig modelConfig, MatrixStack matrices,
-            VertexConsumerProvider vertexConsumers, int light, float tickDelta, org.joml.Matrix4f entityFrame) {
+            VertexConsumerProvider vertexConsumers, int light, float tickDelta, org.joml.Matrix4f entityFrame, PonyRenderer ponyRenderer) {
         boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
 
         // 如果 showHorn 为 false，不渲染发光手持物品
@@ -247,13 +247,13 @@ public abstract class PlayerEntityRendererMixin
         if (!mainHandStack.isEmpty()) {
             boolean isRightArm = mainArm == net.minecraft.util.Arm.RIGHT;
             renderHandItem(player, modelConfig, mainHandStack, matrices, vertexConsumers, light, tickDelta, true,
-                    isRightArm, isSneaking, swingProgress, pitch, entityFrame);
+                    isRightArm, isSneaking, swingProgress, pitch, entityFrame, ponyRenderer);
         }
 
         if (!offHandStack.isEmpty()) {
             boolean isRightArm = mainArm == net.minecraft.util.Arm.LEFT;
             renderHandItem(player, modelConfig, offHandStack, matrices, vertexConsumers, light, tickDelta, false,
-                    isRightArm, isSneaking, swingProgress, pitch, entityFrame);
+                    isRightArm, isSneaking, swingProgress, pitch, entityFrame, ponyRenderer);
         }
     }
 
@@ -262,7 +262,7 @@ public abstract class PlayerEntityRendererMixin
             net.minecraft.item.ItemStack stack,
             MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta,
             boolean isMainHand, boolean isRightArm, boolean isSneaking,
-            float swingProgress, float pitch, org.joml.Matrix4f entityFrame) {
+            float swingProgress, float pitch, org.joml.Matrix4f entityFrame, PonyRenderer ponyRenderer) {
         if (MagicEquip.scale(player, isMainHand, tickDelta) <= MagicEquipMotion.MIN_VISIBLE_SCALE) return;
         matrices.push();
 
@@ -325,9 +325,6 @@ public abstract class PlayerEntityRendererMixin
             matrices.translate(0.0, 1.0, 0.0);
             matrices.multiply(net.minecraft.util.math.RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
         }
-        LevitationTrail trail = ItemLevitation.applyWorld(player, stack, isMainHand, !isRightArm,
-                matrices, entityFrame, anchorFrame, tickDelta);
-
         int glowColor = GlowingItem.getGlowColor(modelConfig);
         net.minecraft.client.render.item.ItemRenderer itemRenderer = net.minecraft.client.MinecraftClient.getInstance()
                 .getItemRenderer();
@@ -335,6 +332,18 @@ public abstract class PlayerEntityRendererMixin
         net.minecraft.client.render.model.json.ModelTransformationMode mode = isRightArm
                 ? net.minecraft.client.render.model.json.ModelTransformationMode.THIRD_PERSON_RIGHT_HAND
                 : net.minecraft.client.render.model.json.ModelTransformationMode.THIRD_PERSON_LEFT_HAND;
+
+        var consumption = ponyRenderer.magicConsumption(isMainHand);
+        if (consumption.weight() > 0) {
+            var display = itemRenderer.getModel(stack, player.getWorld(), player,
+                    net.minecraft.client.render.OverlayTexture.DEFAULT_UV).getTransformation().getTransformation(mode);
+            var translation = new org.joml.Vector3f(display.translation);
+            if (!isRightArm) translation.x = -translation.x;
+            top.csituka.magicaland.client.render.PonyMagicConsumption.apply(matrices, anchorFrame,
+                    ponyRenderer.magicMouthFrame(), consumption, translation);
+        }
+        LevitationTrail trail = ItemLevitation.applyWorld(player, stack, isMainHand, !isRightArm,
+                matrices, entityFrame, anchorFrame, tickDelta);
 
         magicItemRenderer.renderItemWithGlow(
                 itemRenderer, player, stack,

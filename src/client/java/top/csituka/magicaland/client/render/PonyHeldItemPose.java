@@ -13,20 +13,28 @@ final class PonyHeldItemPose implements AutoCloseable {
         String name = bone.getName();
         if (name.equals("Head")) {
             float progress = frame.mouthSwing();
-            if (!(progress > 0 && progress < 1)) return null;
+            boolean swinging = progress > 0 && progress < 1;
+            if (!swinging && weights.cue.headPitch() == 0) return null;
             var saved = new PonyHeldItemPose(bone);
-            float pitch = (float) Math.sin(progress * Math.PI) * (float) Math.toRadians(3);
-            float yaw = (float) Math.sin(progress * Math.PI * 2) * (float) Math.toRadians(6);
+            float pitch = weights.cue.headPitch() + (swinging ? (float) Math.sin(progress * Math.PI) * (float) Math.toRadians(3) : 0);
+            float yaw = swinging ? (float) Math.sin(progress * Math.PI * 2) * (float) Math.toRadians(6) : 0;
             bone.updateRotation(saved.rx + pitch, saved.ry + (frame.mainLeft() ? -yaw : yaw), saved.rz);
             return saved;
         }
         if (!PonyFlightAnimations.isFrontLeg(name)) return null;
-        float weight = name.startsWith("L") ? weights.left : weights.right;
-        if (weight <= .001f) return null;
+        boolean left = name.startsWith("L");
+        float weight = left ? weights.left : weights.right;
+        float cue = PonyFlightAnimations.isFrontUpper(name) ? (left ? weights.cue.leftPitch() : weights.cue.rightPitch()) : 0;
+        if (weight <= .001f) {
+            if (cue == 0) return null;
+            var saved = new PonyHeldItemPose(bone);
+            bone.updateRotation(saved.rx - cue, saved.ry, saved.rz);
+            return saved;
+        }
         var source = carryingPose(name, weights.usePitch(name.startsWith("L")));
         if (source == null) return null;
         var saved = new PonyHeldItemPose(bone);
-        bone.updateRotation(lerp(saved.rx, source.rx(), weight), lerp(saved.ry, source.ry(), weight), lerp(saved.rz, source.rz(), weight));
+        bone.updateRotation(lerp(saved.rx, source.rx(), weight) - cue, lerp(saved.ry, source.ry(), weight), lerp(saved.rz, source.rz(), weight));
         bone.updatePosition(lerp(saved.px, source.x(), weight), lerp(saved.py, source.y(), weight), lerp(saved.pz, source.z(), weight));
         return saved;
     }
@@ -50,6 +58,8 @@ final class PonyHeldItemPose implements AutoCloseable {
             // 只绕肩部抬动整条前腿，保留小腿与蹄子的角度、接缝补偿。
             rx -= Math.max(0, Math.min((float) Math.toRadians(32), usePitch));
             ry = name.startsWith("L") ? (float) Math.PI : -(float) Math.PI; rz = 0;
+            float inward = (float) Math.toRadians(8) * Math.max(0, Math.min(1, usePitch / (float) Math.toRadians(28)));
+            ry += name.startsWith("L") ? -inward : inward;
         }
         return new PonyFlightAnimations.Limb(rx, ry, rz, source.x() * factor, source.y() * factor, source.z() * factor);
     }
@@ -71,9 +81,16 @@ final class PonyHeldItemPose implements AutoCloseable {
     static final class Weights {
         float left, right;
         private float leftUse, rightUse;
+        private final PonyCarryCue cues = new PonyCarryCue();
+        private PonyCarryCue.Pose cue = PonyCarryCue.Pose.NONE;
         private double previous = Double.NaN;
         void update(double tick, PonyHeldItems.Frame frame) {
             update(tick, frame.raises(true), frame.raises(false), frame.consumingPitch(true), frame.consumingPitch(false));
+            Object main = frame.main().isEmpty() ? null : frame.main().getItem();
+            Object off = frame.off().isEmpty() ? null : frame.off().getItem();
+            cue = cues.sample(tick, frame.raises(true) ? (frame.mainLeft() ? main : off) : null,
+                    frame.raises(false) ? (frame.mainLeft() ? off : main) : null,
+                    frame.mainGrip() == PonyHeldItems.Grip.MOUTH ? main : frame.offGrip() == PonyHeldItems.Grip.MOUTH ? off : null);
         }
         void update(double tick, boolean raiseLeft, boolean raiseRight) {
             update(tick, raiseLeft, raiseRight, 0, 0);
@@ -81,19 +98,18 @@ final class PonyHeldItemPose implements AutoCloseable {
         private void update(double tick, boolean raiseLeft, boolean raiseRight, float useLeft, float useRight) {
             if (!Double.isFinite(tick)) { reset(); return; }
             if (!Double.isFinite(previous) || tick < previous || tick - previous > 20) {
-                left = raiseLeft ? 1 : 0; right = raiseRight ? 1 : 0;
                 leftUse = useLeft; rightUse = useRight;
             } else {
-                float step = (float) Math.min(1, Math.max(0, tick - previous) / 4);
-                left += Math.max(-step, Math.min(step, (raiseLeft ? 1 : 0) - left));
-                right += Math.max(-step, Math.min(step, (raiseRight ? 1 : 0) - right));
                 float angleStep = (float) (Math.max(0, tick - previous) * Math.toRadians(10));
                 leftUse += Math.max(-angleStep, Math.min(angleStep, useLeft - leftUse));
                 rightUse += Math.max(-angleStep, Math.min(angleStep, useRight - rightUse));
             }
+            left = raiseLeft ? 1 : 0; right = raiseRight ? 1 : 0;
+            if (!raiseLeft) leftUse = 0;
+            if (!raiseRight) rightUse = 0;
             previous = tick;
         }
         float usePitch(boolean leftArm) { return leftArm ? leftUse : rightUse; }
-        void reset() { previous = Double.NaN; left = right = leftUse = rightUse = 0; }
+        void reset() { previous = Double.NaN; left = right = leftUse = rightUse = 0; cues.reset(); cue = PonyCarryCue.Pose.NONE; }
     }
 }
