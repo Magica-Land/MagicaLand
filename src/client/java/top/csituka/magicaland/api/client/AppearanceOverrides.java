@@ -34,6 +34,11 @@ public final class AppearanceOverrides {
         return AppearanceOverrideState.registerMagicActivity(ownerId, priority, provider);
     }
 
+    /** Requests flight visuals only, without granting flight or changing movement. Since API 1.5. */
+    public static Registration registerFlightActivity(String ownerId, int priority, Predicate<UUID> provider) {
+        return AppearanceOverrideState.registerFlightActivity(ownerId, priority, provider);
+    }
+
     /** Removes this owner's registrations in all channels; other owners are preserved. */
     public static void unregisterOwner(String ownerId) {
         AppearanceOverrideState.unregisterOwner(ownerId);
@@ -50,5 +55,10 @@ public final class AppearanceOverrides {
     /** Whether an addon requests magic activity; normal equipment and appearance eligibility are separate. */
     public static boolean magicActive(UUID player) {
         return AppearanceOverrideState.magicActive(player);
+    }
+
+    /** Only addon requests; native flight and model eligibility are checked separately. */
+    public static boolean flightActive(UUID player) {
+        return AppearanceOverrideState.flightActive(player);
     }
 }

@@ -25,8 +25,10 @@ function Run-FlightJava([string]$Command, [string[]]$Arguments, [string]$Name) {
     [IO.File]::WriteAllLines($flightArgumentFile, @($Arguments | ForEach-Object {
         '"' + $_.Replace('\', '/').Replace('"', '\"') + '"'
     }), [Text.UTF8Encoding]::new($false))
-    & $Command ('@' + $flightArgumentFile) 2>&1 | Tee-Object -FilePath (Join-Path $flightRun ($Name + '.log'))
-    if ($LASTEXITCODE -ne 0) { throw "$Name failed" }
+    $flightOutput = @(& $Command ('@' + $flightArgumentFile) 2>&1 | ForEach-Object { $_.ToString() })
+    $flightExit = $LASTEXITCODE
+    $flightOutput | Tee-Object -FilePath (Join-Path $flightRun ($Name + '.log'))
+    if ($flightExit -ne 0 -or ($flightOutput -match 'An exception has occurred in the compiler')) { throw "$Name failed" }
 }
 Run-FlightJava $flightJavac (@('--release', '17', '-proc:none', '-encoding', 'UTF-8', '-cp', $flightDependencies,
     '-d', $flightRun) + $flightSources) 'compile'

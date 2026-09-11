@@ -16,6 +16,7 @@ public final class AppearanceOverrideState {
     private static final OverrideRegistry<Visibility> VISIBILITY = new OverrideRegistry<>(AppearanceOverrideState::failed);
     private static final OverrideRegistry<Entity> GAZE = new OverrideRegistry<>(AppearanceOverrideState::failed);
     private static final OverrideRegistry<Boolean> MAGIC = new OverrideRegistry<>(AppearanceOverrideState::failed);
+    private static final OverrideRegistry<Boolean> FLIGHT = new OverrideRegistry<>(AppearanceOverrideState::failed);
     private static final OverrideRegistry<AnatomyOverride> ANATOMY = new OverrideRegistry<>(AppearanceOverrideState::failed);
     private static boolean initialized;
 
@@ -28,6 +29,7 @@ public final class AppearanceOverrideState {
             VISIBILITY.clear();
             GAZE.clear();
             MAGIC.clear();
+            FLIGHT.clear();
             ANATOMY.clear();
         });
     }
@@ -53,10 +55,16 @@ public final class AppearanceOverrideState {
         return MAGIC.register(ownerId, priority, provider::test);
     }
 
+    public static Registration registerFlightActivity(String ownerId, int priority, Predicate<UUID> provider) {
+        Objects.requireNonNull(provider, "provider");
+        return FLIGHT.register(ownerId, priority, provider::test);
+    }
+
     public static void unregisterOwner(String ownerId) {
         VISIBILITY.unregisterOwner(ownerId);
         GAZE.unregisterOwner(ownerId);
         MAGIC.unregisterOwner(ownerId);
+        FLIGHT.unregisterOwner(ownerId);
         ANATOMY.unregisterOwner(ownerId);
     }
 
@@ -71,6 +79,10 @@ public final class AppearanceOverrideState {
 
     public static boolean magicActive(UUID player) {
         return MAGIC.resolve(player, Boolean.TRUE::equals, false);
+    }
+
+    public static boolean flightActive(UUID player) {
+        return FLIGHT.resolve(player, Boolean.TRUE::equals, false);
     }
 
     private static void failed(String ownerId, RuntimeException failure) {

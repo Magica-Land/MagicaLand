@@ -83,6 +83,10 @@ check(read(clientBase + 'mixin/client/PlayerEntityRendererMixin.java').includes(
     'world and inventory model display use effective anatomy');
 check(read(clientBase + 'client/animation/PonyFlightVisuals.java').includes('AppearanceAnatomy.apply(player.getUuid(), source)'),
     'flight controller uses effective anatomy');
+check(read(clientBase + 'client/animation/PonyFlightVisuals.java').includes('AppearanceOverrides.flightActive(player.getUuid())'),
+    'addon flight requests enter existing visuals');
+check(!/getAbilities\(\)\.(?:allowFlying|flying)\s*=(?!=)/.test(read(clientBase + 'client/animation/PonyFlightVisuals.java')),
+    'flight visual hook cannot grant native flying permissions');
 check(read(clientBase + 'client/render/MagicEquip.java').includes('AppearanceAnatomy.apply(player.getUuid(), model)'),
     'horn ignition and equipment use effective anatomy');
 check(read(clientBase + 'client/sound/MagicHeldItemSounds.java').includes('AppearanceAnatomy.apply(player.getUuid(), model)'),

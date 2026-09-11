@@ -43,6 +43,8 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
     private BodyFlightAura.Capture bodyAuraCapture;
     private boolean headLookActive;
     private final PonyBackwardHeadPose backwardHeadPose = new PonyBackwardHeadPose();
+    private PonyHeldItems.Frame heldItems = PonyHeldItems.Frame.NONE;
+    private final PonyHeldItemPose.Weights heldWeights = new PonyHeldItemPose.Weights();
 
     private static final class AuraCapture {
         final java.util.Set<RenderLayer> layers = new java.util.LinkedHashSet<>();
@@ -53,6 +55,14 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
     public void defaultRender(MatrixStack stack, GeckoPlayerAnimatable animatable, VertexConsumerProvider buffers,
             RenderLayer renderType, VertexConsumer buffer, float yaw, float partialTick, int light) {
         AuraCapture previous = auraCapture;
+        PonyHeldItems.Frame previousHeld = heldItems;
+        heldItems = gazeFrame == null ? PonyHeldItems.Frame.NONE : PonyHeldItems.frame(animatable.getPlayer(), getEffectiveConfig(), partialTick);
+        if (heldItems.player() != null) {
+            top.csituka.magicaland.client.animation.PonyFlightAnimations.resolve(getGeoModel().getAnimation(animatable, "fly"));
+            heldWeights.update(heldItems.player().age + (double) partialTick, heldItems);
+        } else heldWeights.reset();
+        boolean previousSoundPass = animatable.worldSoundPass();
+        animatable.setWorldSoundPass(worldFlightRender());
         BodyFlightAura.Capture previousBody = bodyAuraCapture;
         AuraCapture capture = new AuraCapture();
         auraCapture = capture;
@@ -67,6 +77,8 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
                 HornAuraPass.submit(glow -> capture.draws.forEach(draw -> draw.accept(glow)));
             }
         } finally {
+            heldItems = previousHeld;
+            animatable.setWorldSoundPass(previousSoundPass);
             auraCapture = previous;
             bodyAuraCapture = previousBody;
         }
@@ -136,6 +148,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
         try (var mirror = ManeMirror.begin(poseStack, config, bone.getName());
                 PonyFlightPose flight = PonyFlightPose.apply(bone, flightFrame, worldFlightRender(), isReRender);
                 HeadPose head = applyHeadLook(bone, animatable);
+                PonyHeldItemPose holding = PonyHeldItemPose.apply(bone, heldItems, heldWeights, isReRender);
                 PonyFacePose face = "Emotions".equals(bone.getName())
                 ? PonyFacePose.apply(bone) : null) {
             if (mirror != null) mirroredMane = !previousMirror;
@@ -174,6 +187,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
             try {
                 super.renderRecursively(poseStack, animatable, bone, newRenderType, bufferSource, newBuffer, isReRender,
                         partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+                if (!isReRender) PonyHeldItems.renderAtBone(poseStack, bone, bufferSource, heldItems, packedLight, packedOverlay);
             } finally {
                 usingPalette = previousPalette;
                 eyeBuffers = previousBuffers;

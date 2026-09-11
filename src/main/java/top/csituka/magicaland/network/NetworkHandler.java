@@ -74,6 +74,8 @@ public class NetworkHandler {
             JsonObject handshake = new JsonObject();
             handshake.addProperty("type", "handshake");
             handshake.addProperty("gaze_version", 1);
+            handshake.addProperty(top.csituka.magicaland.sound.HoofStepProtocol.CAPABILITY,
+                    top.csituka.magicaland.sound.HoofStepProtocol.VERSION);
             send(handler.getPlayer(), GSON.toJson(handshake));
         });
 

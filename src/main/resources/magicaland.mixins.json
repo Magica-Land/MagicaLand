@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "top.csituka.magicaland.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": ["PlayerStepSoundMixin"],
+  "injectors": {"defaultRequire": 1}
+}

@@ -39,12 +39,14 @@ public final class AppearanceApiTest {
         check(ApiVersion.isCompatible(1, 2), "magic activity requires v1.2");
         check(ApiVersion.isCompatible(1, 3), "flame requires v1.3");
         check(ApiVersion.isCompatible(1, 4), "anatomy and transformation require v1.4");
+        check(ApiVersion.isCompatible(1, 5), "flight activity requires v1.5");
         check(!ApiVersion.isCompatible(2, 0) && !ApiVersion.isCompatible(1, ApiVersion.MINOR + 1)
                 && !ApiVersion.isCompatible(1, -1), "incompatible requests rejected");
         fails(IllegalStateException.class, () -> ApiVersion.requireCompatible(2, 0));
         registry();
         gazeAndVisibility();
         magicActivity();
+        flightActivity();
         hornActivity();
         snapshots();
         anatomy();
@@ -324,6 +326,29 @@ public final class AppearanceApiTest {
         fails(NullPointerException.class, () -> AppearanceOverrides.registerMagicActivity("test:null", 0, null));
         fails(IllegalArgumentException.class, () -> AppearanceOverrides.registerMagicActivity("bad owner", 0, id -> true));
         fails(NullPointerException.class, () -> AppearanceOverrides.magicActive(null));
+    }
+
+    private static void flightActivity() {
+        check(!AppearanceOverrides.flightActive(PLAYER), "flight requests default off");
+        var active = AppearanceOverrides.registerFlightActivity("test:flight", 0, PLAYER::equals);
+        var yielded = AppearanceOverrides.registerFlightActivity("test:yield", 100, id -> false);
+        check(AppearanceOverrides.flightActive(PLAYER), "false cannot veto flight requested by another addon");
+        check(!AppearanceOverrides.flightActive(UUID.randomUUID()), "flight requests are player scoped");
+        check(!AppearanceOverrides.magicActive(PLAYER), "flight requests do not mutate separate magic channel");
+        var broken = AppearanceOverrides.registerFlightActivity("test:broken", 200,
+                id -> { throw new IllegalStateException("broken flight provider"); });
+        check(AppearanceOverrides.flightActive(PLAYER) && !broken.isRegistered(), "failed flight provider yields and is removed");
+        AppearanceOverrides.unregisterOwner("test:flight");
+        check(!active.isRegistered() && yielded.isRegistered() && !AppearanceOverrides.flightActive(PLAYER),
+                "owner cleanup removes only matching flight registration");
+        net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.DISCONNECT.fire();
+        check(!yielded.isRegistered(), "disconnect clears flight handles");
+        try (var rejoined = AppearanceOverrides.registerFlightActivity("test:flight", 0, PLAYER::equals)) {
+            check(AppearanceOverrides.flightActive(PLAYER), "flight registration works after rejoin");
+        }
+        check(!AppearanceOverrides.flightActive(PLAYER), "closing final request restores default");
+        fails(NullPointerException.class, () -> AppearanceOverrides.registerFlightActivity("test:null", 0, null));
+        fails(NullPointerException.class, () -> AppearanceOverrides.flightActive(null));
     }
 
     private static void hornActivity() {

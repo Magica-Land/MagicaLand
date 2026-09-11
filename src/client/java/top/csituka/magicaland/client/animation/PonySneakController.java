@@ -12,6 +12,17 @@ import software.bernie.geckolib.core.state.BoneSnapshot;
 public class PonySneakController<T extends GeoAnimatable> extends AnimationController<T> {
     private static final double NORMAL_SNEAK_LIMB_SPEED = .26, MIN_SPEED = .25;
     private double previousTick = Double.NaN, playbackTick, playbackSpeed = 1;
+    private PhaseObserver phaseObserver;
+
+    @FunctionalInterface
+    public interface PhaseObserver {
+        void accept(String action, double phaseTicks, float partialTick);
+    }
+
+    public PonySneakController<T> observePhase(PhaseObserver observer) {
+        phaseObserver = observer;
+        return this;
+    }
 
     public PonySneakController(T animatable, String name, int transitionTicks, AnimationStateHandler<T> handler) {
         super(animatable, name, transitionTicks, handler);
@@ -36,5 +47,9 @@ public class PonySneakController<T extends GeoAnimatable> extends AnimationContr
         }
         // 所有循环、过渡与关键帧比较都使用同一时间轴，不改 Gecko 的重置语义。
         super.process(model, state, bones, snapshots, playbackTick, crashOnMissingBone);
+        if (phaseObserver != null && animationState == State.RUNNING && currentAnimation != null) {
+            phaseObserver.accept(currentAnimation.animation().name(),
+                    Math.max(0, playbackTick - tickOffset) * getAnimationSpeed(), state.getPartialTick());
+        }
     }
 }

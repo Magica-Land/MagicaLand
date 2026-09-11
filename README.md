@@ -42,7 +42,7 @@ During flight, winged characters flap their wings while wingless characters hove
 
 The current platform is **Minecraft Java 1.20.1 / Fabric**. Forge / NeoForge support may be considered later.
 
-Current development versions: Appearance **0.3.4** (API **1.4**), paired with Gameplay **0.3.0** when using the addon. The new tribe-display integration has passed standalone checks; in-game acceptance is still pending.
+Current development versions: Appearance **0.3.5** (API **1.5**), paired with Gameplay **0.3.3** when using the addon. Addons can use the existing flight visuals without changing vanilla flight permissions.
 
 Appearance requires:
 

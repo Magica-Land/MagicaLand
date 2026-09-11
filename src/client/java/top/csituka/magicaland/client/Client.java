@@ -55,6 +55,7 @@ public class Client implements ClientModInitializer {
         });
         top.csituka.magicaland.client.config.ModelManager.init();
         MagicHeldItemSounds.init();
+        top.csituka.magicaland.client.sound.PonyHoofSounds.init();
 
         // 注册客户端网络处理
         ClientNetworkHandler.register();

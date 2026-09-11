@@ -12,6 +12,8 @@
 
 ## 姿态与惯性
 
+扩展可通过 [API 1.5 的飞行活动注册](appearance-api.md#独立飞行表现)启用这套表现。原版飞行和扩展飞行共用姿态、惯性与魔法效果；注册本身只改变视觉，不授予飞行权限。
+
 `PonyFlightAnimations` 从当前 `fly` 动画的第一帧派生内部悬浮姿势。前腿整条保留原收腿幅度的 95%，小腿、蹄子的角度与位置补偿保持配套。普通悬浮只将整条前腿从腿根放低约 30°；冲刺时平滑抬回原冲刺高度。后腿保持普通 60%、冲刺 95% 的规则。躯干、头颈恢复中性基础姿态，头部视角跟随再独立叠加。模型、UV、贴图和 Blockbench 工程保持原样；资源包更新源动画时，派生姿势也随之更新。
 
 源文件为 `src/main/resources/assets/magicaland/animations/mare_animation.json` 中的 `fly`。目前没有独立的悬浮动画资源，`internal.levitate` 由代码派生。修改 `fly` 也会影响有翼飞行；需要只调无翼姿态时，对应倍率在 `PonyFlightMotion`，派生与补偿分别在 `PonyFlightAnimations` 和 `PonyFlightPose`。左右前小腿骨骼名为 `LFrontCalf`、`RFrontCalf`。

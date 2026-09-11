@@ -204,12 +204,15 @@ try {
         ApiVersion.requireCompatible(1,0);
         ApiVersion.requireCompatible(1,3);
         ApiVersion.requireCompatible(1,4);
+        ApiVersion.requireCompatible(1,5);
         java.util.Optional<AppearanceSnapshot> snapshot=Appearances.find(id);
         try (Registration registration=AppearanceOverrides.registerGaze("addon:test",0,player -> camera)) {
           AppearanceOverrides.registerAnatomy("addon:test",0,player -> new AnatomyOverride(true,false)).close();
           AppearanceVisuals.playTransformation(id);
           AppearanceOverrides.registerMagicActivity("addon:test",0,player -> player.equals(id)).close();
           boolean active=AppearanceOverrides.magicActive(id);
+          AppearanceOverrides.registerFlightActivity("addon:test",0,player -> player.equals(id)).close();
+          boolean flying=AppearanceOverrides.flightActive(id);
           AppearanceOverrides.registerMainHandVisibility("addon:test",0,player -> AppearanceOverrides.Visibility.HIDDEN).close();
           AppearanceVisuals.renderOrb(matrices,Appearances.magicColor(id),0,0);
           AppearanceVisuals.renderFlame(matrices,camera,Appearances.magicColor(id),.5f);

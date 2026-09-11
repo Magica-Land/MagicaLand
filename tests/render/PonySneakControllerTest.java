@@ -79,6 +79,16 @@ public final class PonySneakControllerTest {
         near(continuous.phase, phase + .7, "invalid time cannot contaminate pose");
 
         actor = new Actor(); continuous = new Probe(actor); original = new Original(actor);
+        Probe observedController = continuous;
+        int[] observedPhases = {0};
+        continuous.observePhase((action, renderedPhase, partialTick) -> {
+            observedPhases[0]++;
+            check(observedController.getAnimationState() == AnimationController.State.RUNNING,
+                    "hoof observer receives only a running animation, never a transition");
+            near(renderedPhase, observedController.phase, "hoof observer uses the exact Gecko loop phase");
+            near(partialTick, .5, "phase observation retains render interpolation");
+            check(action.equals(observedController.getCurrentAnimation().animation().name()), "phase identifies actual clip");
+        });
         double localTick = 900, previous = 900;
         for (int frame = 0; frame < 2400; frame++) {
             double tick = 900 + frame / 5.0;
@@ -93,6 +103,7 @@ public final class PonySneakControllerTest {
             run(continuous, model, actor, tick); run(original, model, actor, localTick);
             equivalent(continuous, original, "mixed-speed playback delegates identical reset/loop semantics at frame " + frame);
         }
+        check(observedPhases[0] > 1000, "loop, reset and mixed-speed phases are observable without changing playback");
 
         var source = Files.readString(Path.of(args[0], "src/client/java/top/csituka/magicaland/client/model/GeckoPlayerAnimatable.java"));
         check(source.contains("new PonySneakController<>(this, \"controller\", 3, this::predicate)"), "only main controller uses locomotion timeline");

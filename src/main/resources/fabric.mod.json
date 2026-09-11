@@ -30,6 +30,7 @@
     ]
   },
   "mixins": [
+    "magicaland.mixins.json",
     {
       "config": "magicaland.client.mixins.json",
       "environment": "client"

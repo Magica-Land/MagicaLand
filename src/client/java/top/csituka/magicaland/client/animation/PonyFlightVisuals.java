@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import top.csituka.magicaland.api.client.AppearanceOverrides;
 import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
@@ -58,6 +59,7 @@ public final class PonyFlightVisuals {
 
     public static boolean flying(AbstractClientPlayerEntity player) {
         if (!eligible(player)) return false;
+        if (!player.isOnGround() && AppearanceOverrides.flightActive(player.getUuid())) return true;
         if (player == MinecraftClient.getInstance().player) return player.getAbilities().flying && !player.isOnGround();
         if (ClientNetworkHandler.hasRemoteAnimation(player.getUuid(), "controller"))
             return isFlightAction(ClientNetworkHandler.getRemoteAnimation(player.getUuid(), "controller"));

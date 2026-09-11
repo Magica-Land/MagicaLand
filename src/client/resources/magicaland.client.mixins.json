@@ -8,6 +8,8 @@
     "InventoryScreenMixin",
     "LivingEntityRendererAccessor",
     "PlayerEntityRendererMixin",
+    "PonyHoofSoundNetworkMixin",
+    "PonyHoofLocalSoundMixin",
     "ScreenAccessor",
     "TitleScreenMixin"
   ],

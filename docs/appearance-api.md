@@ -1,6 +1,6 @@
-# 外观 API v1.4
+# 外观 API v1.5
 
-Magicaland Appearance 0.3.4 通过 `top.csituka.magicaland.api` 和 `top.csituka.magicaland.api.client` 提供公共接口。Gameplay 及其他扩展（Addon）依赖这些包；配置、渲染实现、动画状态和同步缓存均属于外观模组内部实现。
+Magicaland Appearance 0.3.5 通过 `top.csituka.magicaland.api` 和 `top.csituka.magicaland.api.client` 提供公共接口。Gameplay 及其他扩展（Addon）依赖这些包；配置、渲染实现、动画状态和同步缓存均属于外观模组内部实现。
 
 `ApiVersion` 位于主源码集，只依赖 Java 标准库，可在独立服务端安全查询。`.api.client` 下的接口仅供客户端使用：查询、注册和 `playTransformation` 必须在客户端线程执行，绘制接口必须在渲染线程执行。本 API 不授予玩法能力，也不提供可作为服务端判定依据的权威外观数据。
 
@@ -8,13 +8,13 @@ Magicaland Appearance 0.3.4 通过 `top.csituka.magicaland.api` 和 `top.csituka
 
 API 版本与模组版本独立。`ApiVersion.requireCompatible(1, 0)` 要求已安装 API 的主版本为 1、次版本至少为 0，不满足时抛出明确异常；`isCompatible` 提供不抛异常的兼容性检查。API 次版本更新保持已有签名和语义，不兼容变更必须提升主版本。扩展的模组元数据也必须声明兼容的 Appearance 版本要求；运行时检查无法解决 API 本身未安装的问题。
 
-独立持物视觉上下文与第三人称悬浮入口需要 `ApiVersion.requireCompatible(1, 1)`；魔法活动注册需要 `ApiVersion.requireCompatible(1, 2)`；随实体运动的光焰入口需要 `ApiVersion.requireCompatible(1, 3)`；角翅覆盖与变身光尘需要 `ApiVersion.requireCompatible(1, 4)`。已有方法签名继续兼容。
+独立持物视觉上下文与第三人称悬浮入口需要 `ApiVersion.requireCompatible(1, 1)`；魔法活动注册需要 `ApiVersion.requireCompatible(1, 2)`；随实体运动的光焰入口需要 `ApiVersion.requireCompatible(1, 3)`；角翅覆盖与变身光尘需要 `ApiVersion.requireCompatible(1, 4)`；独立飞行表现需要 `ApiVersion.requireCompatible(1, 5)`。已有方法签名继续兼容。
 
-发布坐标为 `top.csituka:magicaland-appearance:0.3.4`。编译时依赖带 `api` 分类标识（classifier）的产物，运行时依赖完整 Appearance 模组。扩展应与主模组使用相同的 Minecraft 1.20.1、Fabric 和映射版本。通过 Loom 引用重映射后的 API 产物，Loom 会将其中的 Minecraft 类型签名转换为扩展开发环境所用的命名空间。
+发布坐标为 `top.csituka:magicaland-appearance:0.3.5`。编译时依赖带 `api` 分类标识（classifier）的产物，运行时依赖完整 Appearance 模组。扩展应与主模组使用相同的 Minecraft 1.20.1、Fabric 和映射版本。通过 Loom 引用重映射后的 API 产物，Loom 会将其中的 Minecraft 类型签名转换为扩展开发环境所用的命名空间。
 
 ```groovy
-modCompileOnly "top.csituka:magicaland-appearance:0.3.4:api"
-modRuntimeOnly "top.csituka:magicaland-appearance:0.3.4"
+modCompileOnly "top.csituka:magicaland-appearance:0.3.5:api"
+modRuntimeOnly "top.csituka:magicaland-appearance:0.3.5"
 ```
 
 `api` JAR 仅用于编译。不要将它放入 `mods` 文件夹、通过 `include` 嵌套打包、合并打包（shade），或把其中的类复制进扩展。运行时由完整 Appearance JAR 提供唯一一份公共 API 及其实现。Appearance 现有的服务端同步功能也保留在这同一个完整 JAR 中。
@@ -45,7 +45,7 @@ API 产物包含 `top/csituka/magicaland/api/**` 下的全部类文件，包括�
 * 注视目标覆盖原有头部和眼睛的目标。null、已移除实体或其他世界中的实体均交给下一条回调处理。没有有效目标时，执行原有注视逻辑。
 * 回调抛出 `RuntimeException` 时，该条注册会被撤销并记录一次日志，然后继续尝试较低优先级条目。对应句柄将报告注册已失效。
 
-`registration.close()` 只撤销该句柄对应的注册，重复调用不会产生额外影响。`unregisterOwner(ownerId)` 撤销该 owner 在全部四类覆盖中的注册，保留其他 owner 的注册。撤销后立即恢复到下一条适用回调或原有行为，并释放已撤销的回调引用。扩展可以通过 `ownerId()`、`priority()` 和 `isRegistered()` 检查自己的注册句柄。
+`registration.close()` 只撤销该句柄对应的注册，重复调用不会产生额外影响。`unregisterOwner(ownerId)` 撤销该 owner 在全部覆盖类别中的注册，保留其他 owner 的注册。撤销后立即恢复到下一条适用回调或原有行为，并释放已撤销的回调引用。扩展可以通过 `ownerId()`、`priority()` 和 `isRegistered()` 检查自己的注册句柄。
 
 每次断线都会清空所有覆盖，并使尚未关闭的句柄失效。需要跨会话使用的扩展必须在 `ClientPlayConnectionEvents.JOIN` 中重新注册，并在 `DISCONNECT` 或功能关闭时关闭自己的句柄。无论断线回调先后顺序如何，关闭已失效句柄都是安全的。回调应根据 UUID 获取当前状态，并在世界切换时释放扩展自己持有的世界和实体引用。能力结束时，可见性返回 `DEFAULT`、注视返回 null、魔法活动返回 false 即可恢复正常视觉表现，无需反复安装回调。
 
@@ -63,6 +63,12 @@ magic.close();
 ```
 
 Gameplay 在 JOIN 时注册远控实体注视与魔法活动两条回调，断线时关闭各自句柄。工具已实际转入独立携带槽，无需隐藏本体持物。空手投影也属于魔法活动；远控实体销毁、移出当前世界或不再有效后，回调返回 false。
+
+### 独立飞行表现
+
+`AppearanceOverrides.registerFlightActivity(ownerId, priority, Predicate<UUID> provider)` 让扩展启用已有飞行姿态、包身魔法、飞行声音和第一人称边缘光罩。回调返回 true 表示该玩家正在使用扩展的飞行能力；false 交给下一条注册，不会关闭原版飞行。角色仍需满足外观和状态条件，身体光效只用于有角、无翼的悬浮姿态，屏幕光罩只在第一人称显示。
+
+`flightActive(UUID)` 只查询扩展请求。接口不修改速度、重力、碰撞、摔落伤害或原版飞行权限，也不会发出网络消息。扩展负责同步有效施法状态，在停止、换维度或断线后清理。独立飞行与角部施法是两个注册类别，需要点亮角时同时注册魔法活动。
 
 ### 角与翅膀的临时显示覆盖
 

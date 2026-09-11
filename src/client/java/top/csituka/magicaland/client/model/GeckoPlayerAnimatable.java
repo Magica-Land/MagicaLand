@@ -28,6 +28,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
     private AbstractClientPlayerEntity player;
     private String mainAnimationName;
     private String expressionAction;
+    private boolean worldSoundPass;
     private final PonyBackwardLook backwardLook = new PonyBackwardLook();
     private final PonyIdleEars idleEars = new PonyIdleEars();
     private long earEventWindow = Long.MIN_VALUE;
@@ -91,6 +92,19 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         return player;
     }
 
+    public boolean worldSoundPass() { return worldSoundPass; }
+    public void setWorldSoundPass(boolean enabled) { worldSoundPass = enabled; }
+
+    public String hoofAnimation() {
+        if (player == null) return "";
+        if (!isLocalPlayer() && ClientNetworkHandler.hasRemoteAnimation(player.getUuid(), "controller")) {
+            String action = ClientNetworkHandler.getRemoteAnimation(player.getUuid(), "controller");
+            return action == null ? "" : action;
+        }
+        AnimationSelection selection = resolveMainAnimation();
+        return selection == null ? "" : selection.name();
+    }
+
     public boolean allowsAutomaticGaze() {
         return player != null && PonyExpressions.allowsAutomaticGaze(effectiveExpressionAction());
     }
@@ -111,7 +125,10 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new PonySneakController<>(this, "controller", 3, this::predicate));
+        controllers.add(new PonySneakController<>(this, "controller", 3, this::predicate).observePhase((action, phase, partialTick) -> {
+            if (worldSoundPass && player != null)
+                top.csituka.magicaland.client.sound.PonyHoofSounds.observeAnimation(player, action, phase, player.age + (double) partialTick);
+        }));
         controllers.add(new AnimationController<>(this, "blink_controller", 3, this::blinkPredicate));
         controllers.add(new AnimationController<>(this, "expression_controller", 3, this::expressionPredicate));
         controllers.add(new AnimationController<>(this, "ear_controller", 1, this::earPredicate));
@@ -135,7 +152,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         boolean isOnGround = player.isOnGround();
         boolean moving = player.forwardSpeed != 0 || player.sidewaysSpeed != 0;
 
-        if (player.getAbilities().flying)
+        if (player.getAbilities().flying || PonyFlightVisuals.flying(player))
             return false;
         if (player.isTouchingWater() && moving)
             return false;
@@ -270,7 +287,8 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         boolean isOnGround = player.isOnGround();
         boolean moving = player.forwardSpeed != 0 || player.sidewaysSpeed != 0;
 
-        if (!isOnGround && !player.getAbilities().flying && !player.isTouchingWater()) {
+        boolean flying = player.getAbilities().flying || PonyFlightVisuals.flying(player);
+        if (!isOnGround && !flying && !player.isTouchingWater()) {
             fallState.maxFallDistance = Math.max(fallState.maxFallDistance, player.fallDistance);
             if (player.fallDistance > 0.1f && fallState.fallStartTime == -1) {
                 fallState.fallStartTime = player.age;
@@ -294,9 +312,10 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
 
         fallState.wasOnGround = isOnGround;
 
-        if (moving || player.isSneaking() || player.getAbilities().flying || player.isTouchingWater()) {
+        if (moving || player.isSneaking() || flying || player.isTouchingWater()) {
             fallState.landed = false;
         }
+        if (flying) fallState.maxFallDistance = 0;
 
         var flightConfig = PonyFlightVisuals.config(player);
         boolean authoredFlight = player.getAbilities().flying && (flightConfig == null || flightConfig.showWings);
@@ -311,7 +330,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
                     : new AnimationSelection("swim_hold", SWIM_HOLD_ANIM);
         }
 
-        if (!isOnGround && !player.isTouchingWater() && !player.getAbilities().flying) {
+        if (!isOnGround && !player.isTouchingWater() && !flying) {
             if (player.getVelocity().y > 0 || fallState.jumpStartTime != -1) {
                 return new AnimationSelection("jump1", JUMP_ANIM);
             }

@@ -348,13 +348,11 @@ public abstract class PlayerEntityRendererMixin
     @Inject(method = "renderRightArm", at = @At("HEAD"), cancellable = true)
     private void onRenderRightArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
             AbstractClientPlayerEntity player, CallbackInfo ci) {
-        // 获取当前模型配置，检查 showHorn 设置
         ModelConfig modelConfig = top.csituka.magicaland.client.api.AppearanceAnatomy.apply(
                 player.getUuid(), ModelManager.getAppliedModel());
-        boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
 
-        // 当 replacePlayerModel=true 且 showHorn=true 时才隐藏手臂
-        if (Config.getInstance().replacePlayerModel && enableHornEffect) {
+        // 小马第一人称不显示人类手臂，物品动作仍交给原版。
+        if (Config.getInstance().replacePlayerModel && modelConfig != null) {
             ci.cancel();
         }
     }
@@ -362,13 +360,11 @@ public abstract class PlayerEntityRendererMixin
     @Inject(method = "renderLeftArm", at = @At("HEAD"), cancellable = true)
     private void onRenderLeftArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
             AbstractClientPlayerEntity player, CallbackInfo ci) {
-        // 获取当前模型配置，检查 showHorn 设置
         ModelConfig modelConfig = top.csituka.magicaland.client.api.AppearanceAnatomy.apply(
                 player.getUuid(), ModelManager.getAppliedModel());
-        boolean enableHornEffect = modelConfig == null || modelConfig.showHorn;
 
-        // 当 replacePlayerModel=true 且 showHorn=true 时才隐藏手臂
-        if (Config.getInstance().replacePlayerModel && enableHornEffect) {
+        // 小马第一人称不显示人类手臂，物品动作仍交给原版。
+        if (Config.getInstance().replacePlayerModel && modelConfig != null) {
             ci.cancel();
         }
     }

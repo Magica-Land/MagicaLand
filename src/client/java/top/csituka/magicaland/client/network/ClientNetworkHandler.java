@@ -43,6 +43,9 @@ public class ClientNetworkHandler {
     private static boolean pendingModelRemoval;
     private static long lastModelSendNanos;
     private static long lastAnimationSendNanos;
+    private static boolean serverHoofSteps;
+
+    public static boolean supportsHoofSteps() { return NetworkHandler.serverHasMod && serverHoofSteps; }
 
     public static void register() {
         ClientGaze.register();
@@ -65,6 +68,7 @@ public class ClientNetworkHandler {
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             NetworkHandler.serverHasMod = false;
+            serverHoofSteps = false;
             ticksSinceJoin = 0;
             remoteModels.clear();
             remoteAnimations.clear();
@@ -81,6 +85,7 @@ public class ClientNetworkHandler {
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             NetworkHandler.serverHasMod = false;
+            serverHoofSteps = false;
             ticksSinceJoin = -1;
             remoteModels.clear();
             remoteAnimations.clear();
@@ -116,7 +121,9 @@ public class ClientNetworkHandler {
                         return;
                     }
 
-                    client.execute(() -> handleMessage(msg));
+                    client.execute(() -> {
+                        if (client.getNetworkHandler() == handler) handleMessage(msg);
+                    });
                 });
     }
 
@@ -231,6 +238,7 @@ public class ClientNetworkHandler {
             switch (type) {
                 case "handshake" -> {
                     NetworkHandler.serverHasMod = true;
+                    serverHoofSteps = top.csituka.magicaland.sound.HoofStepProtocol.supported(msg);
                     ClientGaze.setServerSupported(msg.has("gaze_version") && msg.get("gaze_version").getAsInt() == 1);
                     ticksSinceJoin = -1;
                     sendModelToServer();
