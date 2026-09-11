@@ -21,7 +21,8 @@ public final class CutieMarkTexture {
         int scale = width / 256;
         int dx = x - side.x * scale, dy = y - side.y * scale;
         if (dx < 0 || dy < 0 || dx >= CutieMarkData.SIZE * scale || dy >= CutieMarkData.SIZE * scale) return -1;
-        return dy / scale * CutieMarkData.SIZE + dx / scale;
+        // 画板到模型外侧面左右镜像：贴图列反向采样。
+        return dy / scale * CutieMarkData.SIZE + (CutieMarkData.SIZE - 1 - dx / scale);
     }
 
     public static int composite(int sourceAbgr, int bodyAbgr, int markArgb) {
