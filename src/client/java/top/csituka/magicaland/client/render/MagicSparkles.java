@@ -5,6 +5,14 @@ public final class MagicSparkles {
     public record Spark(float x, float y, float z, float radius, float alpha) {}
 
     public static Spark sample(double ticks, int seed, int slot) {
+        return sample(ticks, seed, slot, false);
+    }
+
+    public static Spark sampleFalling(double ticks, int seed, int slot) {
+        return sample(ticks, seed, slot, true);
+    }
+
+    private static Spark sample(double ticks, int seed, int slot, boolean falling) {
         if (!Double.isFinite(ticks) || slot < 0 || slot >= 4) return null;
         int period = 60 + Math.floorMod(seed, 21);
         double clock = ticks + Math.floorMod(seed, period);
@@ -17,7 +25,8 @@ public final class MagicSparkles {
         float spread = (float) (0.075 + 0.055 * progress);
         float alpha = (float) Math.sin(progress * Math.PI) * 0.65f;
         float radius = (0.014f + slot * 0.002f) * (float) (0.75 + progress * 0.7);
-        return new Spark((float) Math.cos(angle) * spread, (float) progress * 0.14f,
+        float vertical = falling ? -(float) (progress * progress) * 0.14f : (float) progress * 0.14f;
+        return new Spark((float) Math.cos(angle) * spread, vertical,
                 (float) Math.sin(angle) * spread, radius, alpha);
     }
 }

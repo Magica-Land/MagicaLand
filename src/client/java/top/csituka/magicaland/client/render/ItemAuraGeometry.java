@@ -148,7 +148,7 @@ final class ItemAuraGeometry {
             Vector3f up = viewInverse.transformDirection(new Vector3f(0, 1, 0)).normalize();
             Vector3f normal = viewInverse.transformDirection(new Vector3f(0, 0, 1)).normalize();
             for (int slot = 0; slot < 4; slot++) {
-                var star = MagicSparkles.sample(ticks, seed, slot);
+                var star = MagicSparkles.sampleFalling(ticks, seed, slot);
                 if (star == null) continue;
                 Vector3f position = root.transformPosition(new Vector3f(top).add(star.x() * spread,
                         star.y() * spread, star.z() * spread));
