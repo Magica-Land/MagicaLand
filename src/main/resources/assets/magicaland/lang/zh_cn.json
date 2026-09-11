@@ -66,6 +66,7 @@
   "text.magicaland.config.magic_glow_style.name": "魔法光效样式",
   "text.magicaland.config.magic_glow_style.current": "默认",
   "text.magicaland.config.magic_glow_style.legacy": "Mine Little Pony 风格",
+  "text.magicaland.config.magic_sounds.name": "魔法音效",
   "text.magicaland.config.section.ears.name": "耳朵",
   "text.magicaland.config.section.limbs.name": "四肢",
   "text.magicaland.config.section.mane_colors.name": "染色",

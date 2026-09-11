@@ -56,6 +56,14 @@ public class GamePage implements SettingsPage {
         glowStyleButton.setSegments(GLOW_STYLES.size(), activeGlowStyle);
         list.addWidget(glowStyleButton);
 
+        Toggle magicSoundToggle = new Toggle(buttonX, 0, buttonWidth, 20,
+                Text.translatable("text.magicaland.config.magic_sounds.name"), config.magicSounds,
+                toggle -> {
+                    config.magicSounds = toggle.getState();
+                    Config.save();
+                });
+        list.addWidget(magicSoundToggle);
+
         Toggle gazeToggle = new Toggle(buttonX, 0, buttonWidth, 20,
                 Text.translatable("text.magicaland.config.automatic_gaze.name"), config.automaticGaze,
                 toggle -> {

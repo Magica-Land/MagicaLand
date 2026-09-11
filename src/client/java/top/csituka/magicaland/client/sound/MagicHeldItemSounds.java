@@ -67,6 +67,7 @@ public final class MagicHeldItemSounds {
             trackedPlayer = client.player;
         }
         if (client.world == null || client.player == null || !Config.getInstance().replacePlayerModel
+                || !Config.getInstance().magicSounds
                 || client.options.getSoundVolume(SoundCategory.MASTER) <= 0
                 || client.options.getSoundVolume(SoundCategory.PLAYERS) <= 0) {
             clear(client);

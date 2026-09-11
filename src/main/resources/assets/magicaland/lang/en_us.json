@@ -66,6 +66,7 @@
   "text.magicaland.config.magic_glow_style.name": "Magic Glow Style",
   "text.magicaland.config.magic_glow_style.current": "Default",
   "text.magicaland.config.magic_glow_style.legacy": "Mine Little Pony Style",
+  "text.magicaland.config.magic_sounds.name": "Magic Sounds",
   "text.magicaland.config.section.ears.name": "Ears",
   "text.magicaland.config.section.limbs.name": "Limbs",
   "text.magicaland.config.section.mane_colors.name": "Dye",
