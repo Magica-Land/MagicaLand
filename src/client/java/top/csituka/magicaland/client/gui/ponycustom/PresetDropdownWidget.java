@@ -18,6 +18,7 @@ public final class PresetDropdownWidget extends ClickableWidget {
     private int first, focusedRow;
     private long lastDirtyCheck;
     private boolean dirty;
+    private float currentAlpha = 0.15f;
     private final int popupWidth;
 
     public PresetDropdownWidget(int x, int y, int width, Consumer<String> select, Runnable manage, Runnable beforeOpen) {
@@ -85,14 +86,34 @@ public final class PresetDropdownWidget extends ClickableWidget {
         if (active && isFocused() && (key == 257 || key == 335 || key == 32 || key == 264)) { show(); return true; }
         return false;
     }
+    private void fillRoundedRect(DrawContext context, int x, int y, int width, int height, int color) {
+        int x1 = x;
+        int y1 = y;
+        int x2 = x + width;
+        int y2 = y + height;
+        context.fill(x1 + 2, y1, x2 - 2, y1 + 1, color);
+        context.fill(x1 + 1, y1 + 1, x2 - 1, y1 + 2, color);
+        context.fill(x1, y1 + 2, x2, y2 - 2, color);
+        context.fill(x1 + 1, y2 - 2, x2 - 1, y2 - 1, color);
+        context.fill(x1 + 2, y2 - 1, x2 - 2, y2, color);
+    }
+
     @Override public void renderButton(DrawContext draw, int mouseX, int mouseY, float delta) {
         long now = System.nanoTime();
         if (now - lastDirtyCheck > 100_000_000L) { dirty = ModelManager.isPresetDirty(current()); lastDirtyCheck = now; }
         var font = MinecraftClient.getInstance().textRenderer;
-        draw.fill(getX(), getY(), getX() + width, getY() + height, active ? 0x66495870 : 0x333D4858);
-        draw.drawTextWithShadow(font, font.trimToWidth(current(), Math.max(0, width - 34)), getX() + 6, getY() + 6, active ? 0xFFFFFFFF : 0xFF8C8C8C);
-        if (dirty) draw.drawTextWithShadow(font, "*", getX() + width - 26, getY() + 6, 0xFFFFD49A);
-        draw.drawTextWithShadow(font, open ? "▴" : "▾", getX() + width - 14, getY() + 5, 0xFFD5C6EC);
+        boolean hovered = this.isHovered();
+        float targetAlpha = (active && !hovered) ? 0.15f : 0.35f;
+        if (currentAlpha < targetAlpha) currentAlpha = Math.min(targetAlpha, currentAlpha + 0.05f);
+        else if (currentAlpha > targetAlpha) currentAlpha = Math.max(targetAlpha, currentAlpha - 0.05f);
+        float buttonAlpha = active ? this.alpha : this.alpha * 0.4f;
+        int alpha = (int) (currentAlpha * buttonAlpha * 255);
+        int textAlpha = (int) (buttonAlpha * 255);
+        if (alpha > 0) fillRoundedRect(draw, getX(), getY(), width, height, (alpha << 24) | 0xFFFFFF);
+        int textY = getY() + (height - 8) / 2;
+        draw.drawTextWithShadow(font, font.trimToWidth(current(), Math.max(0, width - 34)), getX() + 6, textY, (textAlpha << 24) | 0xFFFFFF);
+        if (dirty) draw.drawTextWithShadow(font, "*", getX() + width - 26, textY, (textAlpha << 24) | 0xFFFFD49A);
+        draw.drawTextWithShadow(font, open ? "▴" : "▾", getX() + width - 14, textY, (textAlpha << 24) | 0xFFFFFF);
         setMessage(Text.literal(current() + (dirty ? " *" : "")));
     }
     public void renderOverlay(DrawContext draw, int mouseX, int mouseY) {
@@ -103,17 +124,17 @@ public final class PresetDropdownWidget extends ClickableWidget {
         draw.getMatrices().push();
         try {
             draw.getMatrices().translate(0, 0, 600);
-            draw.fill(getX(), menu.top(), getX() + width, menu.top() + menu.height(), 0xFF182230);
-            draw.drawBorder(getX(), menu.top(), width, menu.height(), 0xFF8290A8);
+            fillRoundedRect(draw, getX(), menu.top(), width, menu.height(), 0xE6182230);
             int hover = mouseX >= getX() && mouseX < getX() + width ? menu.rowAt(mouseY) : -1;
             for (int row = 0; row <= menu.rows(); row++) {
                 boolean management = row == menu.rows();
                 int index = management ? names.size() : first + row;
                 if (!management && index >= names.size()) continue;
                 int y = menu.top() + row * menu.rowHeight();
-                if (row == hover || focusedRow == index) draw.fill(getX() + 2, y + 1, getX() + width - 2, y + 19, 0xFF35435A);
+                boolean highlighted = row == hover || focusedRow == index;
+                int rowAlpha = (int) ((highlighted ? 0.35f : 0.15f) * 255);
+                fillRoundedRect(draw, getX() + 2, y + 1, width - 4, menu.rowHeight() - 2, (rowAlpha << 24) | 0xFFFFFF);
                 if (management) {
-                    draw.drawHorizontalLine(getX() + 3, getX() + width - 4, y, 0xFF778298);
                     draw.drawTextWithShadow(font, font.trimToWidth(tr("manage").getString(), width - 12), getX() + 6, y + 6, 0xFFD7C2FF);
                 } else {
                     String name = names.get(index);

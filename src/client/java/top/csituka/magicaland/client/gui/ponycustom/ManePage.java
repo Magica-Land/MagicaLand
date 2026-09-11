@@ -7,6 +7,7 @@ import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
 import top.csituka.magicaland.client.gui.widget.ColorPicker;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
+import top.csituka.magicaland.client.gui.widget.HorizontalTabBar;
 import top.csituka.magicaland.client.gui.widget.SectionLabel;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 import top.csituka.magicaland.client.gui.widget.Toggle;
@@ -20,12 +21,16 @@ public class ManePage implements PonyCustomPage {
     private Part selectedPart = Part.FRONT;
     private final EnumSet<Part> expandedParts = EnumSet.noneOf(Part.class);
     private final EnumSet<Part> expandedDyes = EnumSet.noneOf(Part.class);
+    private final HorizontalTabBar partBar = new HorizontalTabBar(new Text[] {
+            ManePartTabs.label(Part.FRONT), ManePartTabs.label(Part.BACK), ManePartTabs.label(Part.TAIL)
+    }, 3, 0, 24);
 
     @Override
     public void onEnter() {
         selectedPart = Part.FRONT;
         expandedParts.clear();
         expandedDyes.clear();
+        partBar.resetIndicator();
     }
 
     @Override
@@ -40,7 +45,7 @@ public class ManePage implements PonyCustomPage {
 
         Part part = selectedPart;
         PonyStylePart stylePart = stylePart(part);
-        list.addWidget(new ManePartTabs(buttonX, buttonWidth, part, next -> {
+        list.addWidget(new ManePartTabs(buttonX, buttonWidth, partBar, part, next -> {
             context.focusPart(stylePart(next));
             if (selectedPart == next) return;
             selectedPart = next;
