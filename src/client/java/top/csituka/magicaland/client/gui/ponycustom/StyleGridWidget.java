@@ -7,7 +7,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import top.csituka.magicaland.client.config.ModelConfig;
@@ -27,7 +26,6 @@ public final class StyleGridWidget extends ClickableWidget {
     private int cursor;
     private int viewportTop;
     private int viewportBottom = Integer.MAX_VALUE;
-    private int tooltipIndex = -2;
 
     public StyleGridWidget(int x, int width, ModelConfig config, PonyStylePart part, Supplier<String> selectedId,
             Consumer<String> onSelect, SettingsList list) {
@@ -69,12 +67,6 @@ public final class StyleGridWidget extends ClickableWidget {
         int hovered = mouseY >= viewportTop && mouseY < viewportBottom
                 ? layout.indexAt(mouseX - getX(), mouseY - getY()) : -1;
         int selected = indexOf(selectedId.get());
-        int tooltip = hovered >= 0 ? hovered : isFocused() ? cursor : -1;
-        if (tooltip != tooltipIndex) {
-            tooltipIndex = tooltip;
-            setTooltip(tooltip < 0 ? null : Tooltip.of(styleText(tooltip).copy().append("\n")
-                    .append(Text.translatable("text.magicaland.customize.styles.choose_hint"))));
-        }
         var font = MinecraftClient.getInstance().textRenderer;
         for (int i = 0; i < styles.size(); i++) {
             if (!layout.visible(i, getY(), viewportTop, viewportBottom)) continue;

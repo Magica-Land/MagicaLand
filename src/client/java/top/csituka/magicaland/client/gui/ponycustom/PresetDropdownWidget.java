@@ -27,7 +27,6 @@ public final class PresetDropdownWidget extends ClickableWidget {
         super(x, y, width, 20, Text.empty());
         this.popupWidth = Math.max(width, popupWidth);
         this.select = select; this.manage = manage; this.beforeOpen = beforeOpen;
-        setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(tr("switch_hint")));
     }
     public boolean isOpen() { return open; }
     public void close() { open = false; }

@@ -56,7 +56,6 @@ public final class PonyCustomScreen extends Screen {
         }
         saveButton = addDrawableChild(new CustomButton(width - 166, 6, 100, 20,
                 editText("save"), false, button -> saveAndApply()));
-        saveButton.setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(editText("save_hint")));
         addDrawableChild(new CustomButton(width - 62, 6, 54, 20,
                 editText("close"), false, button -> close()));
         if (editingAvailable) ponyCustom.init(this, 8, 31, width - 16, height - 39);

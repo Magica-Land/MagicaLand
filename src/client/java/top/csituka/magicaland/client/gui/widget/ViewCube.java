@@ -4,7 +4,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -61,7 +60,6 @@ public class ViewCube extends ClickableWidget {
     private static final float BASE_Z = 60.0f;
     private static final float LABEL_Z = 120.0f;
     private static final float MIN_LABEL_FACING = 0.25f;
-    private static final Tooltip TOOLTIP = Tooltip.of(Text.translatable("text.magicaland.config.view_cube.tooltip"));
 
     private final RotationTarget target;
 
@@ -87,7 +85,6 @@ public class ViewCube extends ClickableWidget {
     public ViewCube(int x, int y, int width, int height, RotationTarget target) {
         super(x, y, width, height, Text.translatable("text.magicaland.config.view_cube.name"));
         this.target = target;
-        this.setTooltip(TOOLTIP);
     }
 
     @Override
@@ -106,7 +103,6 @@ public class ViewCube extends ClickableWidget {
     protected void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         updateSnap();
         this.fadeAlpha = Math.min(1.0f, this.fadeAlpha + 0.12f);
-        this.setTooltip(this.dragging ? null : TOOLTIP);
         project();
         this.hoveredFace = this.isHovered() ? faceAt(mouseX, mouseY) : -1;
         drawFaces(context);

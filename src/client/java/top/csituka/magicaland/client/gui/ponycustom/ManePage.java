@@ -1,7 +1,6 @@
 package top.csituka.magicaland.client.gui.ponycustom;
 
 import net.minecraft.text.Text;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import java.util.EnumSet;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
@@ -54,7 +53,6 @@ public class ManePage implements PonyCustomPage {
                     ManeMirror.set(config, stylePart, button.getState());
                     ModelManager.saveActiveModel();
                 });
-        mirror.setTooltip(Tooltip.of(Text.translatable("text.magicaland.customize.styles.mirror_hint")));
         list.addWidget(mirror, SettingsList.Alignment.RIGHT);
         list.addWidget(new StyleGridWidget(buttonX, buttonWidth, config, stylePart,
                 () -> styleId(config, part), style -> {
@@ -81,7 +79,6 @@ public class ManePage implements PonyCustomPage {
                     ModelManager.saveActiveModel();
                     context.refreshKeepingScroll();
                 });
-        shading.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.mane_shading.tooltip")));
         list.addWidget(shading, SettingsList.Alignment.RIGHT);
         addDye(context, list, config, part, buttonX, buttonWidth, buttonHeight);
         String label = switch (part) { case FRONT -> "front_mane_color"; case BACK -> "back_mane_color"; case TAIL -> "tail_color"; };
@@ -110,8 +107,6 @@ public class ManePage implements PonyCustomPage {
                     context.refreshKeepingScroll();
                 });
         toggle.active = supported;
-        toggle.setTooltip(Tooltip.of(Text.translatable(supported ? "text.magicaland.customize.styles.dye_shared_hint"
-                : "text.magicaland.customize.styles.dye_unavailable")));
         list.addWidget(toggle, SettingsList.Alignment.RIGHT);
         if (!supported || !config.maneDyeEnabled) return;
         list.addWidget(new SectionLabel(x + 12, 0, width - 12, height,
@@ -146,7 +141,6 @@ public class ManePage implements PonyCustomPage {
                 ModelManager.saveActiveModel();
                 context.refreshKeepingScroll();
             });
-            picker.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.mane_dye.region.tooltip")));
             list.addWidget(picker, SettingsList.Alignment.RIGHT);
         }
         list.addWidget(new CustomButton(x + 12, 0, width - 12, height,
@@ -174,7 +168,6 @@ public class ManePage implements PonyCustomPage {
                 ModelManager.saveActiveModel();
                 context.refreshKeepingScroll();
             });
-            base.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.mane_link.tooltip")));
         }
         boolean hasDetails = soft && !ManePalette.linked(config, part);
         if (hasDetails) {
@@ -184,10 +177,6 @@ public class ManePage implements PonyCustomPage {
                 else expandedParts.remove(part);
                 context.refreshKeepingScroll();
             });
-            base.setTooltip(Tooltip.of(Text.translatable(part == Part.FRONT
-                    ? "text.magicaland.config.color_details.tooltip"
-                    : "text.magicaland.config.mane_link.tooltip").copy().append("\n")
-                    .append(Text.translatable("text.magicaland.config.color_details." + (expanded ? "collapse" : "expand")))));
         }
         list.addWidget(base, SettingsList.Alignment.RIGHT);
         if (hasDetails && expandedParts.contains(part)) {
@@ -213,7 +202,6 @@ public class ManePage implements PonyCustomPage {
             ModelManager.saveActiveModel();
             context.refreshKeepingScroll();
         });
-        picker.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.mane_stop.tooltip")));
         list.addWidget(picker, SettingsList.Alignment.RIGHT);
     }
 

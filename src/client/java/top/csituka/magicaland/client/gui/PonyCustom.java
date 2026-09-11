@@ -212,18 +212,17 @@ public class PonyCustom implements ViewCube.RotationTarget {
         presetDropdown.active = !currentPage().isEditingPreset();
         screen.addConsoleWidget(presetDropdown);
         CustomButton createPreset = new CustomButton(x + header.createX(), y, header.buttonWidth(), 20,
-                Text.literal("+"), tr("preset.create_hint"), false, button -> openPresetAction(true));
+                Text.literal("+"), false, button -> openPresetAction(true));
         createPreset.active = ModelManager.isEditing() && !currentPage().isEditingPreset();
         screen.addConsoleWidget(createPreset);
         boolean canDelete = ModelManager.getActiveModel() != null && ModelManager.getAvailableModels().size() > 1;
         CustomButton deletePreset = new CustomButton(x + header.deleteX(), y, header.buttonWidth(), 20,
-                Text.literal("−"), canDelete ? Text.translatable("text.magicaland.customize.preset.delete_hint", ModelManager.getActiveModel().name)
-                        : tr("preset.last_hint"), false, button -> openPresetAction(false));
+                Text.literal("−"), false, button -> openPresetAction(false));
         deletePreset.active = ModelManager.isEditing() && !currentPage().isEditingPreset() && canDelete;
         screen.addConsoleWidget(deletePreset);
         CustomButton focus = new CustomButton(x, panel.y() + 28, width - 24, 20,
                 Text.literal(automaticFocus ? "☑ " : "☐ ").append(tr("preview.auto_focus")),
-                tr("preview.auto_focus_hint"), false, button -> {
+                false, button -> {
                     automaticFocus = !automaticFocus;
                     resetCameraAngle();
                     snapCamera = !automaticFocus;
@@ -231,7 +230,7 @@ public class PonyCustom implements ViewCube.RotationTarget {
                 });
         screen.addConsoleWidget(focus);
         screen.addConsoleWidget(new CustomButton(x + width - 22, panel.y() + 28, 22, 20,
-                Text.literal("↺"), tr("preview.reset_view"), false, button -> resetCameraAngle()));
+                Text.literal("↺"), false, button -> resetCameraAngle()));
         if (currentPage().usesGlowPreview()) {
             screen.addConsoleWidget(new CustomButton(layout.model().x() + 2, layout.model().y() + 2,
                     Math.min(78, layout.model().width() - 4), 18,

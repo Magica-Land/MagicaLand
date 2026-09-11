@@ -1,7 +1,6 @@
 package top.csituka.magicaland.client.gui.ponycustom;
 
 import net.minecraft.text.Text;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
@@ -61,7 +60,6 @@ public class FacePage implements PonyCustomPage {
             irisExpanded = expanded;
             context.refreshKeepingScroll();
         }, "text.magicaland.config.iris_details");
-        base.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.iris_color.tooltip")));
         list.addWidget(base, SettingsList.Alignment.RIGHT);
         if (!irisExpanded) return;
 
@@ -77,7 +75,6 @@ public class FacePage implements PonyCustomPage {
             ModelManager.saveActiveModel();
             context.refreshKeepingScroll();
         });
-        light.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config.iris_light_color.tooltip")));
         list.addWidget(light, SettingsList.Alignment.RIGHT);
         list.addWidget(new CustomButton(x + 12, 0, width - 12, height,
                 Text.translatable("text.magicaland.config.iris_color.reset"), false, button -> {
@@ -118,7 +115,6 @@ public class FacePage implements PonyCustomPage {
                     update.accept(color);
                     ModelManager.requestSaveActiveModel();
                 });
-        picker.setTooltip(Tooltip.of(Text.translatable("text.magicaland.config." + part + "_color.tooltip")));
         list.addWidget(picker, SettingsList.Alignment.RIGHT);
     }
 
