@@ -88,17 +88,6 @@ public class ManePage implements PonyCustomPage {
         addDye(context, list, config, part, buttonX, buttonWidth, buttonHeight);
         String label = switch (part) { case FRONT -> "front_mane_color"; case BACK -> "back_mane_color"; case TAIL -> "tail_color"; };
         addPart(context, list, config, part, label, buttonX, buttonWidth, buttonHeight, soft);
-        if (soft && !ManePalette.linked(config, part)) {
-            list.addWidget(new CustomButton(buttonX, 0, buttonWidth, buttonHeight,
-                    Text.translatable("text.magicaland.customize.styles.reset_part_shading"), false,
-                    button -> {
-                        context.focusPart(stylePart);
-                        ManePalette.setStopLocked(config, part, false, true);
-                        ManePalette.setStopLocked(config, part, true, true);
-                        ModelManager.saveActiveModel();
-                        context.refreshKeepingScroll();
-                    }, false, true), SettingsList.Alignment.RIGHT);
-        }
     }
 
     private void addDye(PonyCustomPageContext context, SettingsList list, ModelConfig config, Part part,
