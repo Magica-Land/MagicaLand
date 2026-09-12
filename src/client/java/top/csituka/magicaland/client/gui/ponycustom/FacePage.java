@@ -87,7 +87,7 @@ public class FacePage implements PonyCustomPage {
 
     private void addAdvancedEyes(PonyCustomPageContext context, SettingsList list, ModelConfig config, int x, int width, int height) {
         list.addWidget(new CustomButton(x, 0, width, height,
-                Text.literal(advancedEyesExpanded ? "\u25be " : "\u25b8 ").append(Text.translatable("text.magicaland.config.advanced_eyes.name")),
+                Text.literal(advancedEyesExpanded ? "\u25bc " : "\u25b6 ").append(Text.translatable("text.magicaland.config.advanced_eyes.name")),
                 false, button -> {
                     context.focusPart(PonyStylePart.EYE);
                     advancedEyesExpanded = !advancedEyesExpanded;
