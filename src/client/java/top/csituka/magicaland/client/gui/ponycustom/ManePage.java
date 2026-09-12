@@ -113,9 +113,6 @@ public class ManePage implements PonyCustomPage {
                 });
         toggle.active = supported;
         list.addWidget(toggle, SettingsList.Alignment.RIGHT);
-        if (!supported || !config.maneDyeEnabled) return;
-        list.addWidget(new SectionLabel(x + 12, 0, width - 12, height,
-                Text.translatable("text.magicaland.config.mane_dye.style", styleId(config, part))), SettingsList.Alignment.RIGHT);
     }
 
     private void addDyePart(PonyCustomPageContext context, SettingsList list, ModelConfig config,
