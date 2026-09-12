@@ -15,6 +15,7 @@ import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.network.ClientNetworkHandler;
 import top.csituka.magicaland.client.render.PonyRenderer;
+import top.csituka.magicaland.client.render.PonyVisibility;
 import top.csituka.magicaland.client.render.PonyBodyYaw;
 import top.csituka.magicaland.client.animation.PonyFlightVisuals;
 import top.csituka.magicaland.network.NetworkHandler;
@@ -26,6 +27,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -53,6 +55,12 @@ public abstract class PlayerEntityRendererMixin
 
     @Unique
     private int playerStateCleanupTimer;
+
+    @Unique
+    private boolean magicaland$featuresOnly;
+
+    @Shadow
+    private void setModelPose(AbstractClientPlayerEntity player) {}
 
     @Unique
     private static final Map<UUID, Float> flightRolls = new HashMap<>();
@@ -105,6 +113,13 @@ public abstract class PlayerEntityRendererMixin
         configToUse = top.csituka.magicaland.client.api.AppearanceAnatomy.apply(player.getUuid(), configToUse);
         ponyRenderer.setOverrideConfig(configToUse);
         ponyAnimatable.setPlayer(player);
+
+        PonyVisibility visibility = PonyRenderer.visibilityFor(player, isVisible(player));
+        if (visibility == PonyVisibility.HIDDEN) {
+            // 原版仍需绘制隐身玩家的装备和持握物。
+            ponyRenderer.clearOverride();
+            return;
+        }
 
         matrixStack.push();
 
@@ -168,28 +183,48 @@ public abstract class PlayerEntityRendererMixin
 
         matrixStack.translate(-0.5, yOffset, -0.5);
 
-        RenderLayer renderLayer = ponyRenderer.getRenderType(ponyAnimatable,
-                ponyRenderer.getTextureLocation(ponyAnimatable), vertexConsumerProvider, g);
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(renderLayer);
+        ponyRenderer.setBodyVisibility(visibility);
         ponyRenderer.setGazeFrame(gazeFrame, g);
         ponyRenderer.setFlightFrame(PonyFlightVisuals.sample(player, configToUse, g));
         try {
+            RenderLayer renderLayer = ponyRenderer.getRenderType(ponyAnimatable,
+                    ponyRenderer.getTextureLocation(ponyAnimatable), vertexConsumerProvider, g);
+            VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(renderLayer);
             ponyRenderer.render(matrixStack, ponyAnimatable, vertexConsumerProvider, renderLayer,
                     vertexConsumer, i);
         } finally {
+            ponyRenderer.setBodyVisibility(PonyVisibility.VISIBLE);
             ponyRenderer.setGazeFrame(null, 0);
             ponyRenderer.setFlightFrame(PonyFlightVisuals.Frame.NONE);
         }
 
-        this.renderMagicHeldItem(player, configToUse, matrixStack, vertexConsumerProvider, i, g, gazeFrame, ponyRenderer);
+        if (visibility == PonyVisibility.VISIBLE)
+            this.renderMagicHeldItem(player, configToUse, matrixStack, vertexConsumerProvider, i, g, gazeFrame, ponyRenderer);
 
         matrixStack.pop();
 
-        this.renderLabelIfPresent(player, player.getDisplayName(), matrixStack, vertexConsumerProvider, i);
+        if (visibility != PonyVisibility.VISIBLE) {
+            boolean previousFeaturesOnly = magicaland$featuresOnly;
+            magicaland$featuresOnly = true;
+            try {
+                setModelPose(player);
+                super.render(player, f, g, matrixStack, vertexConsumerProvider, i);
+            } finally {
+                magicaland$featuresOnly = previousFeaturesOnly;
+            }
+        } else if (this.hasLabel(player)) {
+            this.renderLabelIfPresent(player, player.getDisplayName(), matrixStack, vertexConsumerProvider, i);
+        }
 
         ponyRenderer.clearOverride();
 
         ci.cancel();
+    }
+
+    @Override
+    protected RenderLayer getRenderLayer(AbstractClientPlayerEntity player, boolean visible, boolean translucent,
+            boolean outline) {
+        return magicaland$featuresOnly ? null : super.getRenderLayer(player, visible, translucent, outline);
     }
 
     @Unique

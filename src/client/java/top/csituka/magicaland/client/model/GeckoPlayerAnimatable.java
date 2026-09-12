@@ -16,6 +16,7 @@ import top.csituka.magicaland.client.animation.PonyIdleEars;
 import top.csituka.magicaland.client.animation.PonyIdleEarAnimations;
 import top.csituka.magicaland.client.animation.PonyFlightAnimations;
 import top.csituka.magicaland.client.animation.PonyFlightVisuals;
+import top.csituka.magicaland.client.animation.PonyJumpAnimation;
 import top.csituka.magicaland.client.animation.PonySneakController;
 import top.csituka.magicaland.client.network.ClientNetworkHandler;
 
@@ -64,7 +65,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         float maxFallDistance = 0;
         int fallStartTime = -1;
         int landStartTime = -1;
-        int jumpStartTime = -1;
+        final PonyJumpAnimation jump = new PonyJumpAnimation();
         boolean landed = false;
         boolean isLarge = false;
         boolean wasOnGround = true;
@@ -156,7 +157,8 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
             return false;
         if (player.isTouchingWater() && moving)
             return false;
-        if (!isOnGround && !player.isTouchingWater() && !player.getAbilities().flying && (player.getVelocity().y > 0 || player.fallDistance > 0.1f || (fallState.jumpStartTime != -1 && player.age - fallState.jumpStartTime < 10)))
+        if (!isOnGround && !player.isTouchingWater() && !player.getAbilities().flying
+                && (player.fallDistance > 0.1f || fallState.jump.isJumping(player.age, player.getVelocity().y)))
             return false;
         if (fallState.landed)
             return false;
@@ -288,17 +290,15 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         boolean moving = player.forwardSpeed != 0 || player.sidewaysSpeed != 0;
 
         boolean flying = player.getAbilities().flying || PonyFlightVisuals.flying(player);
+        fallState.jump.update(player.age, player.getVelocity().y,
+                !isOnGround && !flying && !player.isTouchingWater());
         if (!isOnGround && !flying && !player.isTouchingWater()) {
             fallState.maxFallDistance = Math.max(fallState.maxFallDistance, player.fallDistance);
             if (player.fallDistance > 0.1f && fallState.fallStartTime == -1) {
                 fallState.fallStartTime = player.age;
             }
-            if (player.getVelocity().y > 0) {
-                fallState.jumpStartTime = player.age;
-            }
         } else {
             fallState.fallStartTime = -1;
-            fallState.jumpStartTime = -1;
         }
 
         if (isOnGround && !fallState.wasOnGround) {
@@ -331,7 +331,7 @@ public class GeckoPlayerAnimatable implements GeoAnimatable {
         }
 
         if (!isOnGround && !player.isTouchingWater() && !flying) {
-            if (player.getVelocity().y > 0 || fallState.jumpStartTime != -1) {
+            if (fallState.jump.isJumping(player.age, player.getVelocity().y)) {
                 return new AnimationSelection("jump1", JUMP_ANIM);
             }
             if (player.fallDistance > 0.1f && fallState.fallStartTime != -1) {

@@ -31,7 +31,6 @@ public class NetworkHandler {
     private static final long MODEL_UPDATE_INTERVAL_NANOS = 100_000_000L;
     private static final long ANIMATION_UPDATE_INTERVAL_NANOS = 50_000_000L;
     private static final LatestModelUpdates modelUpdates = new LatestModelUpdates(MODEL_UPDATE_INTERVAL_NANOS);
-    private static final Map<UUID, Long> lastAnimationUpdates = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> lastTransformations = new ConcurrentHashMap<>();
     private static final Map<String, Set<String>> ALLOWED_ANIMATIONS = Map.of(
             "controller", Set.of("fly", "elytra_fly", "swim", "swim_hold", "sneak", "sneaking", "run",
@@ -40,6 +39,8 @@ public class NetworkHandler {
             "blink_controller", Set.of("blink_parallel"),
             "ear_controller", Set.of("ear_parallel"),
             "tail_controller", Set.of("tail_parallel"));
+    private static final LatestAnimationUpdates animationUpdates = new LatestAnimationUpdates(
+            ANIMATION_UPDATE_INTERVAL_NANOS, ALLOWED_ANIMATIONS.keySet());
 
     public static final Map<UUID, String> playerModels = new ConcurrentHashMap<>();
     public static final Map<UUID, Map<String, String>> playerAnimations = new ConcurrentHashMap<>();
@@ -50,11 +51,12 @@ public class NetworkHandler {
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (UUID uuid : modelUpdates.pendingPlayers()) applyPendingModel(server, uuid);
+            for (UUID uuid : animationUpdates.pendingPlayers()) applyPendingAnimation(server, uuid);
         });
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
             modelUpdates.clear();
             lastTransformations.clear();
-            lastAnimationUpdates.clear();
+            animationUpdates.clear();
             playerModels.clear();
             playerAnimations.clear();
         });
@@ -77,6 +79,7 @@ public class NetworkHandler {
             handshake.addProperty(top.csituka.magicaland.sound.HoofStepProtocol.CAPABILITY,
                     top.csituka.magicaland.sound.HoofStepProtocol.VERSION);
             send(handler.getPlayer(), GSON.toJson(handshake));
+            sendAppearanceSnapshot(handler.getPlayer());
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
@@ -84,7 +87,7 @@ public class NetworkHandler {
             playerModels.remove(uuid);
             playerAnimations.remove(uuid);
             modelUpdates.remove(uuid);
-            lastAnimationUpdates.remove(uuid);
+            animationUpdates.remove(uuid);
             lastTransformations.remove(uuid);
 
             JsonObject remove = new JsonObject();
@@ -131,7 +134,7 @@ public class NetworkHandler {
                 boolean removedModel = playerModels.remove(uuid) != null;
                 boolean removedAnimations = playerAnimations.remove(uuid) != null;
                 modelUpdates.remove(uuid);
-                lastAnimationUpdates.remove(uuid);
+                animationUpdates.remove(uuid);
                 if (!removedModel && !removedAnimations) {
                     return;
                 }
@@ -148,23 +151,11 @@ public class NetworkHandler {
             } else if ("animation_update".equals(type)) {
                 String controller = readString(msg, "controller", 32);
                 String animation = msg.has("animation") ? readString(msg, "animation", MAX_ANIMATION_LENGTH) : "";
-                if (!playerModels.containsKey(uuid) || !isAllowedAnimation(controller, animation)
-                        || isRateLimited(lastAnimationUpdates, uuid, ANIMATION_UPDATE_INTERVAL_NANOS)) {
+                if (!playerModels.containsKey(uuid) || !isAllowedAnimation(controller, animation)) {
                     return;
                 }
-
-                Map<String, String> animations = playerAnimations.computeIfAbsent(uuid,
-                        ignored -> new ConcurrentHashMap<>());
-                String previous = animations.put(controller, animation);
-                if (animation.equals(previous)) {
-                    return;
-                }
-
-                for (ServerPlayerEntity other : server.getPlayerManager().getPlayerList()) {
-                    if (!other.getUuid().equals(uuid)) {
-                        sendAnimationState(other, uuid, controller, animation);
-                    }
-                }
+                animationUpdates.offer(uuid, controller, animation);
+                applyPendingAnimation(server, uuid);
             }
         } catch (RuntimeException ignored) {
         }
@@ -201,16 +192,24 @@ public class NetworkHandler {
             if (!other.getUuid().equals(uuid)) send(other, broadcastJson);
         }
 
-        for (Map.Entry<UUID, String> entry : playerModels.entrySet()) {
-            if (!entry.getKey().equals(uuid)) {
-                JsonObject existing = new JsonObject();
-                existing.addProperty("type", "model_update");
-                existing.addProperty("uuid", entry.getKey().toString());
-                existing.addProperty("data", entry.getValue());
-                send(player, GSON.toJson(existing));
+    }
+
+    private static void applyPendingAnimation(MinecraftServer server, UUID uuid) {
+        if (server.getPlayerManager().getPlayer(uuid) == null || !playerModels.containsKey(uuid)) {
+            animationUpdates.remove(uuid);
+            return;
+        }
+        LatestAnimationUpdates.Update update = animationUpdates.poll(uuid, System.nanoTime());
+        if (update == null) return;
+        Map<String, String> animations = playerAnimations.computeIfAbsent(uuid,
+                ignored -> new ConcurrentHashMap<>());
+        String previous = animations.put(update.controller(), update.animation());
+        if (update.animation().equals(previous)) return;
+        for (ServerPlayerEntity other : server.getPlayerManager().getPlayerList()) {
+            if (!other.getUuid().equals(uuid)) {
+                sendAnimationState(other, uuid, update.controller(), update.animation());
             }
         }
-        sendAnimationStates(player, uuid);
     }
 
     private static String readString(JsonObject object, String name, int maxLength) {
@@ -231,22 +230,17 @@ public class NetworkHandler {
         }
     }
 
-    private static boolean isRateLimited(Map<UUID, Long> lastUpdates, UUID uuid, long intervalNanos) {
-        long now = System.nanoTime();
-        Long previous = lastUpdates.get(uuid);
-        if (previous != null && now - previous < intervalNanos) {
-            return true;
-        }
-        lastUpdates.put(uuid, now);
-        return false;
-    }
-
-    private static void sendAnimationStates(ServerPlayerEntity player, UUID excludedUuid) {
-        for (Map.Entry<UUID, Map<String, String>> entry : playerAnimations.entrySet()) {
-            if (entry.getKey().equals(excludedUuid)) {
-                continue;
-            }
-            for (Map.Entry<String, String> animation : entry.getValue().entrySet()) {
+    private static void sendAppearanceSnapshot(ServerPlayerEntity player) {
+        for (Map.Entry<UUID, String> entry : playerModels.entrySet()) {
+            if (entry.getKey().equals(player.getUuid())) continue;
+            JsonObject existing = new JsonObject();
+            existing.addProperty("type", "model_update");
+            existing.addProperty("uuid", entry.getKey().toString());
+            existing.addProperty("data", entry.getValue());
+            send(player, GSON.toJson(existing));
+            Map<String, String> animations = playerAnimations.get(entry.getKey());
+            if (animations == null) continue;
+            for (Map.Entry<String, String> animation : animations.entrySet()) {
                 sendAnimationState(player, entry.getKey(), animation.getKey(), animation.getValue());
             }
         }

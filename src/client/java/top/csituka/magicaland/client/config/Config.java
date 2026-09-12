@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.Reader;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -44,7 +44,7 @@ public class Config {
             BASE_DIR.mkdirs();
         }
         if (CONFIG_FILE.exists()) {
-            try (FileReader reader = new FileReader(CONFIG_FILE)) {
+            try (Reader reader = Files.newBufferedReader(CONFIG_FILE.toPath(), StandardCharsets.UTF_8)) {
                 instance = GSON.fromJson(reader, Config.class);
                 if (instance == null) {
                     instance = new Config();

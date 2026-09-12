@@ -80,6 +80,7 @@ public final class PonyCustomPageHelper {
         if (config == null) return;
 
         if (config.hornColorLocked) config.hornColor = color;
+        if (config.wingColorLocked) config.wingColor = color;
         if (config.bodyColorLocked) config.bodyColor = color;
         if (config.neckColorLocked) config.neckColor = color;
         if (config.headColorLocked) config.headColor = color;

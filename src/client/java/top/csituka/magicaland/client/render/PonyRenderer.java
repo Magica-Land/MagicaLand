@@ -10,6 +10,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.object.GeoQuad;
+import software.bernie.geckolib.core.object.Color;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
 import software.bernie.geckolib.util.RenderUtils;
 import top.csituka.magicaland.client.animation.ClientGaze;
@@ -27,6 +28,7 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
     private static final Identifier PONY_TS = new Identifier("magicaland", "textures/entity/mane.png");
 
     private ModelConfig overrideConfig = null;
+    private PonyVisibility bodyVisibility = PonyVisibility.VISIBLE;
     private boolean usingPalette;
     private boolean mirroredMane;
     private VertexConsumerProvider eyeBuffers;
@@ -131,6 +133,33 @@ public class PonyRenderer extends GeoObjectRenderer<GeckoPlayerAnimatable> {
 
     public PonyRenderer(GeckoPlayerModel model) {
         super(model);
+    }
+
+    public static PonyVisibility visibilityFor(net.minecraft.client.network.AbstractClientPlayerEntity player,
+            boolean visible) {
+        var client = net.minecraft.client.MinecraftClient.getInstance();
+        return PonyVisibility.select(PonyGuiGaze.current() != null, visible,
+                !player.isInvisibleTo(client.player), client.hasOutline(player));
+    }
+
+    public void setBodyVisibility(PonyVisibility visibility) {
+        bodyVisibility = visibility;
+    }
+
+    @Override
+    public RenderLayer getRenderType(GeckoPlayerAnimatable animatable, Identifier texture,
+            VertexConsumerProvider buffers, float partialTick) {
+        return switch (bodyVisibility) {
+            case TRANSLUCENT -> RenderLayer.getItemEntityTranslucentCull(texture);
+            case OUTLINE -> RenderLayer.getOutline(texture);
+            default -> super.getRenderType(animatable, texture, buffers, partialTick);
+        };
+    }
+
+    @Override
+    public Color getRenderColor(GeckoPlayerAnimatable animatable, float partialTick, int light) {
+        return bodyVisibility == PonyVisibility.TRANSLUCENT ? Color.ofRGBA(1f, 1f, 1f, .15f)
+                : super.getRenderColor(animatable, partialTick, light);
     }
 
     public void setOverrideConfig(ModelConfig config) {
