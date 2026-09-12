@@ -26,6 +26,7 @@ public class Config {
     public boolean broadcastOwnModel = true;
     public String mainMenuPonyButton = "all";
     public String magicGlowStyle = "current";
+    public String previewLighting = "balanced";
     
     public String activeModelName = "";
 

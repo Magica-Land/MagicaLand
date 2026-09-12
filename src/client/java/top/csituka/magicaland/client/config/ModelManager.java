@@ -77,6 +77,24 @@ public class ModelManager {
         return activeModel;
     }
 
+    public static String exportActiveModel() {
+        return activeModel == null ? "" : GSON.toJson(activeModel);
+    }
+
+    public static boolean importActiveModel(String json) {
+        if (editing == null || activeModel == null || json == null || json.length() > 1_000_000) return false;
+        try {
+            ModelConfig imported = GSON.fromJson(json, ModelConfig.class);
+            if (imported == null) return false;
+            ModelConfig.sanitize(imported);
+            imported.name = activeModel.name;
+            setActiveModel(imported);
+            return true;
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
+
     public static ModelConfig getAppliedModel() {
         return editing == null ? activeModel : editing.applied;
     }

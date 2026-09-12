@@ -1,6 +1,9 @@
 package top.csituka.magicaland.client.gui.ponycustom;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.text.Text;
+import top.csituka.magicaland.client.config.Config;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.gui.widget.CustomButton;
@@ -27,6 +30,8 @@ public class BodyPage implements PonyCustomPage {
         int buttonHeight = 20;
         int buttonX = getButtonX(context, buttonWidth);
 
+        addTransferActions(context, list, buttonX, buttonWidth, buttonHeight);
+        addLightingSetting(list, buttonX, buttonWidth, buttonHeight);
 
         addShadingMode(context, list, config, buttonX, buttonWidth, buttonHeight);
         ColorPicker body = addColorPicker(list, buttonX, buttonWidth, buttonHeight,
@@ -75,6 +80,36 @@ public class BodyPage implements PonyCustomPage {
                 "text.magicaland.config.right_hind_limb_color.name", config.rightHindLimbColor,
                 config.rightHindLimbColorLocked,
                 color -> config.rightHindLimbColor = color, locked -> config.rightHindLimbColorLocked = locked);
+    }
+
+    private void addTransferActions(PonyCustomPageContext context, SettingsList list, int x, int width, int height) {
+        ActionRowWidget transfer = new ActionRowWidget(x, width,
+                ActionRowWidget.action(Text.translatable("text.magicaland.customize.body.export"), () -> {
+                    MinecraftClient.getInstance().keyboard.setClipboard(ModelManager.exportActiveModel());
+                }),
+                ActionRowWidget.action(Text.translatable("text.magicaland.customize.body.import"), () -> {
+                    if (ModelManager.importActiveModel(MinecraftClient.getInstance().keyboard.getClipboard())) {
+                        context.refreshKeepingScroll();
+                    }
+                }));
+        transfer.setTooltip(Tooltip.of(Text.translatable("text.magicaland.customize.body.export_import.tooltip")));
+        list.addWidget(transfer, SettingsList.Alignment.RIGHT);
+    }
+
+    private void addLightingSetting(SettingsList list, int x, int width, int height) {
+        String mode = PreviewLightingRig.mode();
+        CustomButton lighting = new CustomButton(x, 0, width, height,
+                Text.translatable("text.magicaland.customize.body.lighting"),
+                Text.translatable("text.magicaland.customize.body.lighting." + mode).getString(), false, button -> {
+                    String next = PreviewLightingRig.nextMode();
+                    Config.save();
+                    ((CustomButton) button).setValue(
+                            Text.translatable("text.magicaland.customize.body.lighting." + next).getString());
+                    ((CustomButton) button).setSegments(PreviewLightingRig.modeCount(), PreviewLightingRig.modeIndex());
+                });
+        lighting.setTooltip(Tooltip.of(Text.translatable("text.magicaland.customize.body.lighting.tooltip")));
+        lighting.setSegments(PreviewLightingRig.modeCount(), PreviewLightingRig.modeIndex());
+        list.addWidget(lighting, SettingsList.Alignment.RIGHT);
     }
 
     private ColorPicker addColorPicker(SettingsList list, int x, int width, int height, String labelKey,
