@@ -95,16 +95,18 @@ public final class PonyPreviewClockTest {
     private static void sourceContract(Path root) throws Exception {
         String custom = Files.readString(root.resolve("src/client/java/top/csituka/magicaland/client/gui/PonyCustom.java"));
         String preview = Files.readString(root.resolve("src/client/java/top/csituka/magicaland/client/model/PonyPreviewAnimatable.java"));
+        String renderer = Files.readString(root.resolve("src/client/java/top/csituka/magicaland/client/gui/ponycustom/PonyPreviewRenderer.java"));
         String init = custom.substring(custom.indexOf("private void initRenderer()"), custom.indexOf("private void renderGrassBlockPreview"));
-        check(init.contains("if (ponyAnimatable != null) return;"), "page/color reinit reuses preview instance");
-        check(custom.contains("ponyAnimatable = null;") && custom.contains("ponyRenderer = null;"), "exit discards animation manager and model time together");
-        check(init.contains("prepareAnimationFrame(instanceId, state)") && init.contains("super.handleAnimations(animatable, instanceId, state)"),
+        check(init.contains("if (ponyRenderer == null)"), "page/color reinit reuses preview instance");
+        check(custom.contains("ponyRenderer.close()") && custom.contains("ponyRenderer = null;")
+                && renderer.contains("ponyAnimatable.reset()"), "exit discards animation manager and model time together");
+        check(renderer.contains("prepareAnimationFrame(instanceId, state)") && renderer.contains("super.handleAnimations(animatable, instanceId, state)"),
                 "only the local preview model uses the custom tick");
         check(!preview.contains("ClientNetworkHandler") && !preview.contains("getWorld()") && !preview.contains("player.age"),
                 "preview animation and ears have no world/network clock dependency");
         check(preview.contains("PonyIdleEarAnimations.raw(event.variant())") && !custom.contains("\"ear_parallel\""),
                 "preview reuses authored probabilistic ear variants rather than fixed old loop");
-        check(custom.contains("try (var gaze = PonyGuiGaze.begin(this, ponyAnimatable.getPlayer(), mouseX, mouseY,"),
+        check(renderer.contains("try (var gaze = PonyGuiGaze.begin(this, ponyAnimatable.getPlayer(), mouseX, mouseY,"),
                 "mouse gaze is scoped to the main pony draw");
         String thumbnails = Files.readString(root.resolve("src/client/java/top/csituka/magicaland/client/gui/ponycustom/PonyStyleThumbnails.java"));
         check(!thumbnails.contains("PonyPreviewAnimatable") && !thumbnails.contains("PonyGuiGaze.begin"), "static thumbnail path stays independent");

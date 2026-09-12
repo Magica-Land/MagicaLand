@@ -44,8 +44,11 @@ import top.csituka.magicaland.client.render.ManeMirror;
 public final class PonyStyleThumbnails {
     private static final Logger LOGGER = LoggerFactory.getLogger(PonyStyleThumbnails.class);
     private static final int MAX_ENTRIES = 40;
+    private static final int MAX_MODELS = 96;
     private static final Map<Key, Tile> CACHE = new LinkedHashMap<>(16, .75f, true);
     private static final Map<Key, Boolean> FAILED = new LinkedHashMap<>();
+    private static final Map<ModelKey, Tile> MODELS = new LinkedHashMap<>(16, .75f, true);
+    private static final Map<ModelKey, Boolean> FAILED_MODELS = new LinkedHashMap<>();
     private static boolean initialized;
     private static DrawContext lastContext;
     private static int remaining;
@@ -81,10 +84,40 @@ public final class PonyStyleThumbnails {
         if (tile != null) blit(context, tile, x, y, width, height);
     }
 
+    public static void renderModel(DrawContext context, ModelConfig snapshot, int x, int y, int width, int height) {
+        if (snapshot == null || width < 4 || height < 4) return;
+        init();
+        if (lastContext != context) { lastContext = context; remaining = 2; }
+        ThumbnailSize size = ThumbnailSize.of(width, height);
+        ModelKey key = new ModelKey(snapshot, size.width(), size.height());
+        Tile tile = MODELS.get(key);
+        if (tile == null && remaining > 0 && !FAILED_MODELS.containsKey(key)) {
+            remaining--;
+            try {
+                context.draw();
+                tile = create(snapshot, null, size.width(), size.height());
+                if (MODELS.size() >= MAX_MODELS) delete(MODELS.remove(MODELS.keySet().iterator().next()));
+                MODELS.put(key, tile);
+            } catch (RuntimeException failure) {
+                if (FAILED_MODELS.size() >= MAX_MODELS) FAILED_MODELS.remove(FAILED_MODELS.keySet().iterator().next());
+                FAILED_MODELS.put(key, true);
+                LOGGER.warn("Unable to render pony model thumbnail {}", snapshot.name, failure);
+            }
+        }
+        if (tile != null) blit(context, tile, x, y, width, height);
+    }
+
+    public static void clearModels() {
+        for (Tile tile : MODELS.values()) delete(tile);
+        MODELS.clear();
+        FAILED_MODELS.clear();
+    }
+
     public static void clear() {
         for (Tile tile : CACHE.values()) delete(tile);
         CACHE.clear();
         FAILED.clear();
+        clearModels();
         lastContext = null;
         renderer = null;
         PreviewGeometryBounds.clear();
@@ -241,6 +274,7 @@ public final class PonyStyleThumbnails {
     }
 
     private record Key(PonyStylePart part, String style, int width, int height, boolean mirrored) {}
+    private record ModelKey(ModelConfig snapshot, int width, int height) {}
     private record Tile(SimpleFramebuffer framebuffer) {}
 
     private static final class FrozenRenderer extends PonyRenderer {

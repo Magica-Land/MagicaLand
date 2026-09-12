@@ -77,6 +77,15 @@ public class ModelManager {
         return activeModel;
     }
 
+    public static ModelConfig getModelPreview(String name) {
+        if (editing != null) {
+            ModelConfig model = editing.drafts.get(name);
+            return model == null ? null : model.copyForDisplay();
+        }
+        if (activeModel != null && Objects.equals(activeModel.name, name)) return activeModel.copyForDisplay();
+        return readModel(name);
+    }
+
     public static String exportActiveModel() {
         return activeModel == null ? "" : GSON.toJson(activeModel);
     }
@@ -355,22 +364,28 @@ public class ModelManager {
             return true;
         }
         if (savePending && !saveActiveModelChecked()) return false;
+        ModelConfig model = readModel(name);
+        if (model == null) return false;
+        setActiveModel(model);
+        return true;
+    }
+
+    private static ModelConfig readModel(String name) {
         File file = resolveModelFile(name);
         if (file == null || !file.exists()) {
-            return false;
+            return null;
         }
         try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
             ModelConfig model = GSON.fromJson(reader, ModelConfig.class);
             if (model != null) {
                 ModelConfig.sanitize(model);
                 model.name = name;
-                setActiveModel(model);
-                return true;
+                return model;
             }
         } catch (IOException | RuntimeException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     public static void saveActiveModel() {

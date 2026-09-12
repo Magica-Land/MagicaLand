@@ -1,32 +1,18 @@
 package top.csituka.magicaland.client.gui;
 
-import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.loading.FileLoader;
-import software.bernie.geckolib.loading.object.BakedModelFactory;
-import software.bernie.geckolib.loading.object.GeometryTree;
-import software.bernie.geckolib.renderer.GeoObjectRenderer;
 import top.csituka.magicaland.client.config.ModelConfig;
 import top.csituka.magicaland.client.config.ModelManager;
 import top.csituka.magicaland.client.config.style.PonyStylePart;
@@ -37,14 +23,7 @@ import top.csituka.magicaland.client.gui.widget.CustomButton;
 import top.csituka.magicaland.client.gui.widget.HorizontalTabBar;
 import top.csituka.magicaland.client.gui.widget.SettingsList;
 import top.csituka.magicaland.client.gui.widget.ViewCube;
-import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
-import top.csituka.magicaland.client.model.GeckoPlayerModel;
-import top.csituka.magicaland.client.model.PonyPreviewAnimatable;
 import top.csituka.magicaland.client.render.GlowingItem;
-import top.csituka.magicaland.client.render.MagicGlow;
-import top.csituka.magicaland.client.render.PonyRenderer;
-import top.csituka.magicaland.client.render.PonyGuiGaze;
-import top.csituka.magicaland.client.util.RenderLayerHelper;
 
 public class PonyCustom implements ViewCube.RotationTarget {
     private static final Logger LOGGER = LoggerFactory.getLogger(PonyCustom.class);
@@ -70,12 +49,9 @@ public class PonyCustom implements ViewCube.RotationTarget {
     private CustomizationLayout layout;
     private int selectedPage = PonyCustomPageContext.Page.BODY.ordinal();
     private boolean refreshRequested;
-    private PresetDropdownWidget presetDropdown;
     private PonyCustomPageContext.Page managementReturnPage = PonyCustomPageContext.Page.BODY;
-    private boolean presetError;
     private boolean showGlowItem;
-    private PonyPreviewAnimatable ponyAnimatable;
-    private GeoObjectRenderer<GeckoPlayerAnimatable> ponyRenderer;
+    private PonyPreviewRenderer ponyRenderer;
     private float previewYaw = 155.0f;
     private float previewPitch = -10.0f;
     private boolean isDraggingModel;
@@ -90,8 +66,6 @@ public class PonyCustom implements ViewCube.RotationTarget {
     public void onEnter() {
         selectedPage = PonyCustomPageContext.Page.BODY.ordinal();
         refreshRequested = false;
-        presetDropdown = null;
-        presetError = false;
         managementReturnPage = PonyCustomPageContext.Page.BODY;
         showGlowItem = false;
         isDraggingModel = false;
@@ -109,13 +83,10 @@ public class PonyCustom implements ViewCube.RotationTarget {
     public void onExit() {
         refreshRequested = false;
         isDraggingModel = false;
-        if (presetDropdown != null) presetDropdown.close();
         currentPage().onLeave();
         ColorPicker.clearBodyLinkGroup();
         PonyStyleThumbnails.clear();
-        if (ponyRenderer instanceof PonyRenderer renderer) renderer.clearOverride();
-        if (ponyAnimatable != null) ponyAnimatable.reset();
-        ponyAnimatable = null;
+        if (ponyRenderer != null) ponyRenderer.close();
         ponyRenderer = null;
     }
 
@@ -145,7 +116,6 @@ public class PonyCustom implements ViewCube.RotationTarget {
     }
 
     public boolean keyPressed(int key) {
-        if (presetDropdown != null && presetDropdown.isOpen()) return presetDropdown.overlayKey(key);
         return currentPage().keyPressed(key);
     }
 
@@ -155,21 +125,7 @@ public class PonyCustom implements ViewCube.RotationTarget {
         for (PonyCustomPage page : PAGES) if (page instanceof CutieMarkPage marks) marks.releaseSession();
         listWidget = null;
         pageContext = null;
-        presetDropdown = null;
         layout = null;
-    }
-
-    public boolean overlayClick(double x, double y, int button) {
-        return presetDropdown != null && presetDropdown.overlayClick(x, y, button);
-    }
-
-    public boolean overlayScroll(double amount) {
-        return presetDropdown != null && presetDropdown.overlayScroll(amount);
-    }
-
-    public void postRender(DrawContext context, int x, int y, int width, int height,
-            int mouseX, int mouseY, float delta, float alpha) {
-        if (presetDropdown != null) presetDropdown.renderOverlay(context, mouseX, mouseY);
     }
 
     @Override public float getPreviewYaw() { return previewYaw; }
@@ -206,21 +162,7 @@ public class PonyCustom implements ViewCube.RotationTarget {
         int x = panel.x() + 5;
         int y = panel.y() + 5;
         int width = panel.width() - 10;
-        var header = PresetMenuLayout.header(width);
-        presetDropdown = new PresetDropdownWidget(x, y, header.dropdownWidth(), width, this::selectPreset,
-                () -> switchPage(PonyCustomPageContext.Page.MODEL, 0), () -> currentPage().onLeave());
-        presetDropdown.active = !currentPage().isEditingPreset();
-        screen.addConsoleWidget(presetDropdown);
-        CustomButton createPreset = new CustomButton(x + header.createX(), y, header.buttonWidth(), 20,
-                Text.literal("+"), false, button -> openPresetAction(true));
-        createPreset.active = ModelManager.isEditing() && !currentPage().isEditingPreset();
-        screen.addConsoleWidget(createPreset);
-        boolean canDelete = ModelManager.getActiveModel() != null && ModelManager.getAvailableModels().size() > 1;
-        CustomButton deletePreset = new CustomButton(x + header.deleteX(), y, header.buttonWidth(), 20,
-                Text.literal("−"), false, button -> openPresetAction(false));
-        deletePreset.active = ModelManager.isEditing() && !currentPage().isEditingPreset() && canDelete;
-        screen.addConsoleWidget(deletePreset);
-        CustomButton focus = new CustomButton(x, panel.y() + 28, width, 20,
+        CustomButton focus = new CustomButton(x, y, width, 20,
                 Text.literal(automaticFocus ? "☑ " : "☐ ").append(tr("preview.auto_focus")),
                 false, button -> {
                     automaticFocus = !automaticFocus;
@@ -240,22 +182,6 @@ public class PonyCustom implements ViewCube.RotationTarget {
         if (!automaticFocus && layout.model().width() >= 170 && layout.model().height() >= 140) {
             screen.addConsoleWidget(new ViewCube(layout.model().right() - 46, layout.model().y() + 2, 44, 44, this));
         }
-    }
-
-    private void selectPreset(String name) {
-        currentPage().onLeave();
-        presetError = !ModelManager.loadModel(name);
-        pageContext.refreshKeepingScroll();
-    }
-
-    private void openPresetAction(boolean create) {
-        if (pageContext == null || currentPage().isEditingPreset() || !ModelManager.isEditing()) return;
-        ModelPage manager = (ModelPage) PAGES[PonyCustomPageContext.Page.MODEL.ordinal()];
-        boolean quick = selectedPage != PonyCustomPageContext.Page.MODEL.ordinal();
-        if (!(create ? manager.beginCreate(quick) : manager.beginDelete(quick))) return;
-        if (presetDropdown != null) presetDropdown.close();
-        if (quick) switchPage(PonyCustomPageContext.Page.MODEL, 0);
-        else pageContext.reinit();
     }
 
     private void applyPendingRefresh() {
@@ -321,11 +247,8 @@ public class PonyCustom implements ViewCube.RotationTarget {
             float delta, float alpha) {
         if (layout == null) return;
         applyPendingRefresh();
-        Rect panel = layout.preview();
         categoryBar.render(context, mouseX, mouseY, !currentPage().isEditingPreset());
         renderPreview(context, delta, mouseX, mouseY);
-        if (presetError) PonyCustomPageHelper.drawWrapped(context, tr("preset.operation_error"),
-                panel.x() + 5, layout.model().y() + 2, panel.width() - 10, 0xFFFF9999);
         currentPage().render(pageContext, context, mouseX, mouseY, delta, alpha);
         listWidget.render(context, mouseX, mouseY, delta);
         scrollPositions[selectedPage] = listWidget.getScrollAmount();
@@ -342,14 +265,7 @@ public class PonyCustom implements ViewCube.RotationTarget {
         var player = MinecraftClient.getInstance().player;
         config = top.csituka.magicaland.client.api.AppearanceAnatomy.apply(player == null ? null : player.getUuid(), config);
         Rect area = layout.model();
-        MatrixStack matrices = context.getMatrices();
-        context.draw();
-        float[] previousColor = RenderSystem.getShaderColor().clone();
-        context.enableScissor(area.x(), area.y(), area.right(), area.bottom());
-        matrices.push();
         try {
-            RenderSystem.setShaderColor(1, 1, 1, 1);
-            PreviewLightingRig.apply();
             var box = automaticFocus && focusedMarkSide != null ? PreviewGeometryBounds.cutieMarkFramingBounds(config)
                     : PreviewGeometryBounds.framingBounds(config, automaticFocus ? focusedPart : null);
             long now = System.nanoTime();
@@ -362,30 +278,37 @@ public class PonyCustom implements ViewCube.RotationTarget {
             if (currentPage().usesGlowPreview() && showGlowItem) {
                 renderGrassBlockPreview(context, config, area);
             } else {
-                ponyAnimatable.beginFrame(now);
-                ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
-                ((PonyRenderer) ponyRenderer).setOverrideConfig(config);
-                float scale = pose.scale();
-                matrices.translate(area.x() + area.width() * .5f, area.y() + area.height() * .5f, 150);
-                matrices.scale(scale, scale, scale);
-                matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180));
-                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(previewYaw));
-                matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(previewPitch));
-                matrices.translate(-pose.x() - .5f, -pose.y() - .51f, -pose.z() - .5f);
-                RenderLayer layer = ponyRenderer.getRenderType(ponyAnimatable,
-                        ponyRenderer.getTextureLocation(ponyAnimatable), context.getVertexConsumers(), delta);
-                if (layer != null) {
-                    VertexConsumer consumer = context.getVertexConsumers().getBuffer(layer);
-                    var window = MinecraftClient.getInstance().getWindow();
-                    try (var gaze = PonyGuiGaze.begin(this, ponyAnimatable.getPlayer(), mouseX, mouseY,
-                            window.getScaledWidth(), window.getScaledHeight())) {
-                        ponyRenderer.render(matrices, ponyAnimatable, context.getVertexConsumers(), layer, consumer, 0xF000F0);
-                    }
-                }
+                ponyRenderer.renderPreview(context, config, area, pose, now, delta, mouseX, mouseY);
             }
-            context.draw();
         } catch (Exception e) {
             LOGGER.warn("Failed to render pony customization preview", e);
+        }
+    }
+
+    private void initRenderer() {
+        if (ponyRenderer == null) ponyRenderer = new PonyPreviewRenderer();
+    }
+
+    private void renderGrassBlockPreview(DrawContext context, ModelConfig config, Rect area) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        ItemStack stack = new ItemStack(Blocks.GRASS_BLOCK);
+        MatrixStack matrices = context.getMatrices();
+        VertexConsumerProvider buffers = context.getVertexConsumers();
+        context.draw();
+        float[] previousColor = RenderSystem.getShaderColor().clone();
+        context.enableScissor(area.x(), area.y(), area.right(), area.bottom());
+        matrices.push();
+        try {
+            RenderSystem.setShaderColor(1, 1, 1, 1);
+            PreviewLightingRig.apply();
+            float scale = Math.min(area.width() / 2.2f, area.height() / 2.2f);
+            matrices.translate(area.x() + area.width() / 2f, area.y() + area.height() / 2f, 150);
+            matrices.scale(scale, scale, scale);
+            matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180));
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(previewYaw));
+            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(previewPitch));
+            GlowingItem.renderPreviewWithGlow(client.getItemRenderer(), stack, ModelTransformationMode.NONE,
+                    matrices, buffers, client.world, 0xF000F0, 0, GlowingItem.getGlowColor(config));
         } finally {
             try {
                 context.draw();
@@ -396,62 +319,5 @@ public class PonyCustom implements ViewCube.RotationTarget {
                 RenderSystem.setShaderColor(previousColor[0], previousColor[1], previousColor[2], previousColor[3]);
             }
         }
-    }
-
-    private void initRenderer() {
-        if (ponyAnimatable != null) return;
-        ponyAnimatable = new PonyPreviewAnimatable();
-        ponyAnimatable.setPlayer(MinecraftClient.getInstance().player);
-        ponyRenderer = new PonyRenderer(new GeckoPlayerModel() {
-            private BakedGeoModel sharedSource, previewModel;
-
-            @Override
-            public BakedGeoModel getBakedModel(Identifier location) {
-                BakedGeoModel source = super.getBakedModel(location);
-                if (source != sharedSource) {
-                    var raw = FileLoader.loadModelFile(location, MinecraftClient.getInstance().getResourceManager());
-                    previewModel = BakedModelFactory.getForNamespace(location.getNamespace())
-                            .constructGeoModel(GeometryTree.fromModel(raw));
-                    // 动画只写私有骨骼；共享缓存仅用来识别资源重载。
-                    getAnimationProcessor().setActiveModel(previewModel);
-                    sharedSource = source;
-                }
-                return previewModel;
-            }
-
-            @Override
-            public void handleAnimations(GeckoPlayerAnimatable animatable, long instanceId,
-                    AnimationState<GeckoPlayerAnimatable> state) {
-                ((PonyPreviewAnimatable) animatable).prepareAnimationFrame(instanceId, state);
-                super.handleAnimations(animatable, instanceId, state);
-            }
-
-            @Override
-            public void applyMolangQueries(GeckoPlayerAnimatable animatable, double animTime) {
-                if (MinecraftClient.getInstance().world == null) return;
-                super.applyMolangQueries(animatable, animTime);
-            }
-        }) {
-            @Override
-            public RenderLayer getRenderType(GeckoPlayerAnimatable animatable, Identifier texture,
-                    VertexConsumerProvider buffers, float partialTick) {
-                return RenderLayer.getEntityTranslucent(texture);
-            }
-        };
-    }
-
-    private void renderGrassBlockPreview(DrawContext context, ModelConfig config, Rect area) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        ItemStack stack = new ItemStack(Blocks.GRASS_BLOCK);
-        MatrixStack matrices = context.getMatrices();
-        VertexConsumerProvider buffers = context.getVertexConsumers();
-        float scale = Math.min(area.width() / 2.2f, area.height() / 2.2f);
-        matrices.translate(area.x() + area.width() / 2f, area.y() + area.height() / 2f, 150);
-        matrices.scale(scale, scale, scale);
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180));
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(previewYaw));
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(previewPitch));
-        GlowingItem.renderPreviewWithGlow(client.getItemRenderer(), stack, ModelTransformationMode.NONE,
-                matrices, buffers, client.world, 0xF000F0, 0, GlowingItem.getGlowColor(config));
     }
 }

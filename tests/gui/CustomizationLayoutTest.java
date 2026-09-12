@@ -14,7 +14,7 @@ public final class CustomizationLayoutTest {
                 check(preview.right() < details.x(), "independent columns");
                 check(details.right() <= width - 8, "right edge");
                 check(preview.bottom() <= height - 8 && details.bottom() <= height - 8, "bottom edge");
-                check(model.y() >= preview.y() + 31, "preset controls excluded from dragging");
+                check(model.y() >= preview.y() + 30, "auto-focus control excluded from dragging");
                 check(model.bottom() <= preview.bottom(), "preview stays within panel");
                 check(model.height() >= 80, "usable rotatable preview");
                 check(!model.contains(model.right(), model.y()), "right edge exclusive");

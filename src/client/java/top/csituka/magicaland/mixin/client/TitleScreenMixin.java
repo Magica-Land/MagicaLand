@@ -19,14 +19,14 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import top.csituka.magicaland.client.config.Config;
-import top.csituka.magicaland.client.gui.PonyCustomScreen;
+import top.csituka.magicaland.client.gui.PonyManagerScreen;
 import top.csituka.magicaland.client.model.GeckoPlayerAnimatable;
 import top.csituka.magicaland.client.model.GeckoPlayerModel;
 import top.csituka.magicaland.client.render.PonyRenderer;
 import top.csituka.magicaland.client.animation.PonyExpressions;
 
 /**
- * 主菜单右下角小马模型 + 捏马按钮
+ * 主菜单右下角小马模型与管理入口。
  */
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin {
@@ -111,7 +111,7 @@ public class TitleScreenMixin {
         int screenWidth = client.getWindow().getScaledWidth();
         int screenHeight = client.getWindow().getScaledHeight();
 
-        int buttonWidth = 60;
+        int buttonWidth = 80;
         int buttonHeight = 20;
         int padding = 15;
 
@@ -119,9 +119,9 @@ public class TitleScreenMixin {
         int y = screenHeight - buttonHeight - padding - 20;
 
         ButtonWidget ponyButton = ButtonWidget.builder(
-                Text.translatable("text.magicaland.console.tab.pony_custom"),
+                Text.translatable("text.magicaland.pony_manager.title"),
                 button -> client.setScreen(
-                        new PonyCustomScreen((Screen) (Object) this)))
+                        new PonyManagerScreen((Screen) (Object) this)))
                 .dimensions(x, y, buttonWidth, buttonHeight)
                 .build();
 
@@ -145,8 +145,8 @@ public class TitleScreenMixin {
 
         int btnHeight = 20;
         int padding = 15;
-        int btnX = screenWidth - 60 - padding;
-        int btnCenterX = btnX + 30;
+        int btnX = screenWidth - 80 - padding;
+        int btnCenterX = btnX + 40;
         int btnTopY = screenHeight - btnHeight - padding;
 
         int modelX = btnCenterX;

@@ -126,8 +126,8 @@ public class ConfigScreen extends Screen {
         }
 
         this.addDrawableChild(new CustomButton(padding, this.height - 54, leftWidth - padding * 2, 20,
-                Text.translatable("text.magicaland.console.tab.pony_custom"), false,
-                button -> this.client.setScreen(new PonyCustomScreen(this))));
+                Text.translatable("text.magicaland.pony_manager.title"), false,
+                button -> this.client.setScreen(new PonyManagerScreen(this))));
 
         this.addDrawableChild(new CustomButton(padding, this.height - 30, leftWidth - padding * 2, 20,
                 Text.translatable("text.magicaland.config.button.back"), false,
