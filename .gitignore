@@ -29,3 +29,6 @@ bin
 .workbuddy
 .claude
 tools/tmp
+
+# 个人测试仅在本地维护；已跟踪的协作测试继续保留。
+/tests/

@@ -30,7 +30,7 @@
 - 锁定色区必须继承完整色阶，而不只是同一个主色 RGB，否则主色手动调阴影时仍会露出分界。
 - `Resources` 中的贴图/模型与 `src/main/resources` 中的运行时版本要一起维护；Blockbench 不会执行 Java 调色代码，玩家分色不应烘焙回基础贴图。
 
-独立逻辑测试：`./tests/mane/run-dye-tests.ps1 -GsonJar '本机现有 gson.jar 的绝对路径'`。需要 JDK 17+，仅编译测试到临时目录，不运行 Gradle。
+本地独立逻辑测试（需另行取得测试源码与入口）：`./tests/mane/run-dye-tests.ps1 -GsonJar '本机现有 gson.jar 的绝对路径'`。需要 JDK 17+，仅编译测试到临时目录，不运行 Gradle。
 
 ## 使用
 

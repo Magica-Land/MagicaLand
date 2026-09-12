@@ -50,9 +50,9 @@ Gameplay 仓库：
 
 ## 验证与后续
 
-两仓分别运行 `node tests/architecture/RepositoryArchitectureTest.mjs`；Gameplay 另运行 `node tests/remote/RemoteStructureTest.mjs`。外观 `node tools/generate-mane-dye-masks.mjs` 默认仅检查。
+架构、API、资源与玩法回归由维护者通过本地工具运行；个人测试源码和入口不随仓库发布。需要复跑时先向维护者取得对应版本的测试。
 
-仓库中的独立 Java 测试需要单独运行，Gradle 任务检查的结果不包含它们的测试结果。测试入口与运行要求见[文档目录](README.md#开发与公共-api)。
+外观仓库保留其他开发者参与维护的协作测试及必要替身。这些独立 Java 测试需要单独运行，Gradle 构建成功不代表它们已通过。
 
 发布前检查仅外观客户端／同步服务器、两包联合客户端／服务器，以及预设、草稿保存、显示恢复和多人同步。三族能力与成就系统的功能用例按[玩法文档](https://github.com/Elysian-Herd-Studio/Magical-Land-Gameplay/blob/1.20.1-Fabric/docs/README.md)分别执行。
 

@@ -127,7 +127,7 @@ AppearanceVisuals.renderFirstPerson(owner, visual, buffers, () -> renderVanillaH
 
 ## 验证方式与范围
 
-在 Appearance 仓库根目录执行 `node tests/api/run-api-tests.mjs`，环境需要可用的 Node 和 JDK 17 或更高版本。这是一组针对源码契约的独立测试，不会构建整个项目。测试使用轻量 Minecraft/Fabric 测试替身编译实际 API 与内部桥接源码，检查以下内容：
+API 回归源码与入口由作者在本地维护，需要复跑时先取得对应版本的测试。环境需要可用的 Node 和 JDK 17 或更高版本。这是一组针对源码契约的独立测试，不会构建整个项目。测试使用轻量 Minecraft/Fabric 测试替身编译实际 API 与内部桥接源码，检查以下内容：
 
 - 外观快照：快照数据隔离、有效角翅覆盖、本地／远端与预览草稿互不改写。
 - 回调与注册：四类覆盖的同优先级顺序、逐级回退、owner 与句柄清理、断线会话、无效注视目标和回调异常。

@@ -60,4 +60,4 @@
 - 普通／Fabulous 画质下靠近墙壁、玻璃、水面，检查身体、背景和柔边遮挡；在多人同屏时检查帧率。
 - 飞行期间打开背包或捏脸，关闭后确认世界角色姿态不受预览影响。
 
-独立逻辑回归入口为 `tests/render/run-flight-tests.ps1`，需要已有开发依赖的 classpath 文件，可用 `-JavaBin` 指定 JDK。该入口包括飞行运动、派生动画以及屏幕边光的几何、渐变和界面层检查。`PonyFlightPoseTest` 另检查绘制后的骨骼恢复；`BodyFlightAuraShaderTest` 用隐藏的 OpenGL 场景检查实际着色器。独立测试不能替代游戏内的姿态、光效观感和兼容性验收。
+本地独立回归入口为 `tests/render/run-flight-tests.ps1`（不随仓库发布），需要已有开发依赖的 classpath 文件，可用 `-JavaBin` 指定 JDK。该入口包括飞行运动、派生动画以及屏幕边光的几何、渐变和界面层检查。`PonyFlightPoseTest` 另检查绘制后的骨骼恢复；`BodyFlightAuraShaderTest` 用隐藏的 OpenGL 场景检查实际着色器。独立测试不能替代游戏内的姿态、光效观感和兼容性验收。
